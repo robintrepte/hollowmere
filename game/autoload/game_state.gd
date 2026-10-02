@@ -19,6 +19,13 @@ var _map_cache: Dictionary = {}       # map_id -> build result (non-persistent m
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	EventBus.quest_updated.connect(_queue_story)
+	EventBus.creature_befriended.connect(_queue_story.unbind(1))
+	EventBus.farm_level_up.connect(_queue_story.unbind(2))
+	EventBus.shrine_restored.connect(_queue_story.unbind(1))
+
+func _queue_story() -> void:
+	check_story.call_deferred()
 
 # --- Setup ------------------------------------------------------------------------
 
@@ -457,6 +464,9 @@ func end_day(passed_out: bool = false) -> Dictionary:
 		world.weekly_week = wk
 		world.board = Progression.board_for(day(), int(world.seed))
 		world.board_week = wk
+	for k in world.flags.keys():
+		if str(k).begins_with("chest:"):
+			world.flags.erase(k)
 	_map_cache.clear()
 	report["day"] = day()
 	report["festival"] = Calendar.festival_on(day())
@@ -971,6 +981,176 @@ func earn(amount: int) -> void:
 	else:
 		Coop.act("reward_act", [amount])
 
+# --- Adventure: Wardens, shrines, mines, legends, festivals, story -----------------------------
+
+func warden_won_act(_pid: String, region: String) -> Dictionary:
+	if Adventure.warden_of(region) == "" or not region_unlocked(region):
+		return _res(false, "There's no Warden there.")
+	world.flags["warden:" + region] = true
+	EventBus.quest_updated.emit()
+	return _res(true)
+
+## The shrine's guardian was beaten or befriended; the first time, the shrine wakes.
+func guardian_result_act(pid: String, region: String, befriended: bool) -> Dictionary:
+	var state := Adventure.shrine_state(world, region)
+	if state == "dark":
+		return _res(false, "The shrine is still dark.")
+	if befriended:
+		world.flags["guardian_home:" + region] = true
+	var r := _res(true)
+	if state == "restored":
+		return r
+	world.shrines.append(region)
+	var rw := Adventure.shrine_reward(world.shrines.size())
+	grant(rw.get("items", {}), player(pid))
+	var next: String = rw.get("unlock_region", "")
+	if next != "" and not next in world.regions:
+		world.regions.append(next)
+	add_farm_xp(Progression.XP.shrine)
+	bump_stat("shrine")
+	r["text"] = rw.get("text", "The shrine glows!")
+	r.sfx = "levelup"
+	EventBus.shrine_restored.emit(region)
+	return r
+
+func legend_result_act(_pid: String, legend_id: String) -> Dictionary:
+	if not Data.legends.has(legend_id) or legend_id in world.legends:
+		return _res(false)
+	world.legends.append(legend_id)
+	EventBus.quest_updated.emit()
+	return _res(true)
+
+## Records reaching a mine floor; you can only go one floor deeper than your best.
+func mine_floor_act(_pid: String, region: String, floor_n: int) -> Dictionary:
+	if not Data.regions.get(region, {}).has("mine") or not region_unlocked(region) or floor_n < 1:
+		return _res(false, "The cave is blocked.")
+	var deep := Adventure.deepest(world, region)
+	if floor_n > deep + 1 and not floor_n in Adventure.elevator_floors(world, region):
+		return _res(false, "You haven't been that deep yet.")
+	var r := _res(true)
+	if floor_n > deep:
+		world.mine_depth[region] = floor_n
+		add_farm_xp(Progression.XP.mine_floor)
+		bump_stat("mine_floor")
+		r["new_elevator"] = floor_n % Adventure.ELEVATOR_STEP == 0
+	return r
+
+func open_treasure_act(pid: String, map_id: String, x: int, y: int) -> Dictionary:
+	var info := map_info(map_id)
+	var t := Vector2i(x, y)
+	var chest := {}
+	for o in info.get("objects", []):
+		if o.type == "treasure" and int(o.x) == x and int(o.y) == y:
+			chest = o
+	if chest.is_empty():
+		return _res(false)
+	var key := Adventure.treasure_key(str(info.id), day(), t)
+	if world.flags.get(key, false):
+		return _res(false, "It's empty.")
+	world.flags[key] = true
+	var r := _res(true)
+	if chest.get("mimic", false):
+		r["mimic"] = true
+		return r
+	var trng := RandomNumberGenerator.new()
+	trng.seed = hash([int(world.seed), key])
+	var loot := Adventure.treasure_loot(str(info.region), int(info.get("floor", 1)), trng, chest.get("grand", false))
+	grant(loot, player(pid))
+	r["loot"] = loot
+	r.sfx = "chest"
+	return r
+
+func treasure_opened(map_id: String, t: Vector2i) -> bool:
+	return world.flags.get(Adventure.treasure_key(str(map_info(map_id).id), day(), t), false)
+
+## Festival participation at the Show Ring. op: social | eggs | show | fair | cup.
+func festival_act(pid: String, op: String) -> Dictionary:
+	var fest := Adventure.festival_today(day())
+	var p := player(pid)
+	if fest.is_empty() or p == null:
+		return _res(false, "There's no festival today.")
+	if Adventure.festival_done(world, day(), fest.id, pid):
+		return _res(false, "You've already joined this year's %s." % fest.name)
+	var r := _res(true)
+	var reward: Dictionary = fest.get("reward", {}).duplicate()
+	var frng := RandomNumberGenerator.new()
+	frng.seed = hash([int(world.seed), day(), pid, "festival"])
+	match op:
+		"social":
+			for vid in Data.villagers:
+				Relationships.add_points(vid, p.relationship(vid), int(fest.get("friendship", 20)))
+		"eggs":
+			var n := p.inventory.count("festival_egg")
+			if n <= 0:
+				return _res(false, "You haven't found any eggs yet.")
+			p.inventory.remove("festival_egg", n)
+			r["eggs"] = n
+			reward = Adventure.egg_hunt_reward(n, fest)
+		"show":
+			var lead := p.lead()
+			if lead == null:
+				return _res(false, "You need a Wildling to enter.")
+			var mine: int = Progression.show_score(lead, frng).score
+			var rivals := Progression.rival_show_scores(frng, world.shrines.size() / 2)
+			var place := 1
+			for s in rivals:
+				if int(s) > mine:
+					place += 1
+			r["score"] = mine
+			r["rivals"] = rivals
+			r["place"] = place
+			if place > 1:
+				reward = {"money": [0, 0, 600, 300, 100][place]}
+		"fair":
+			var picks := Adventure.fair_pick(p.inventory.all_entries())
+			if picks.is_empty():
+				return _res(false, "You have nothing to display. Bring crops, artisan goods or gems.")
+			var mine2 := Adventure.fair_score(picks)
+			var rivals2 := Adventure.fair_rivals(frng, Calendar.year(day()))
+			var place2 := 1
+			for rv in rivals2:
+				if int(rv[1]) > mine2:
+					place2 += 1
+			r["picks"] = picks
+			r["score"] = mine2
+			r["rivals"] = rivals2
+			r["place"] = place2
+			if place2 > 1:
+				reward = {"money": [0, 0, 500, 250, 100][place2]}
+		"cup":
+			pass
+		_:
+			return _res(false)
+	world.festival_done.append(Adventure.festival_key(day(), fest.id, pid))
+	grant(reward, p)
+	r["reward"] = reward
+	r.sfx = "levelup"
+	EventBus.inventory_changed.emit()
+	return r
+
+func story_seen_act(_pid: String, chapter_id: String) -> Dictionary:
+	world.flags["story_seen:" + chapter_id] = true
+	EventBus.quest_updated.emit()
+	return _res(true)
+
+var _story_busy := false
+
+## Moves the main story on when the current chapter's goal is met.
+func check_story() -> void:
+	if not started or _story_busy or not Net.is_authority():
+		return
+	_story_busy = true
+	while true:
+		var ch := Adventure.chapter(world)
+		if ch.is_empty() or not world.flags.get("story_seen:" + str(ch.id), false):
+			break
+		if not Adventure.goal_done(ch.goal, Adventure.story_facts(world, local_player())):
+			break
+		world.quest = int(world.quest) + 1
+		grant(ch.get("reward", {}), local_player())
+		EventBus.story_advanced.emit(ch)
+	_story_busy = false
+
 ## Checks one side of a trade: [{kind:"item", uid, n} | {kind:"creature", uid}]. Returns "" if ok.
 func validate_offer(p: PlayerData, offer: Array) -> String:
 	var giving := 0
@@ -1070,6 +1250,9 @@ func spawn_forage(map_id: String) -> void:
 	if info.get("forage_done", false) or info.get("indoor", false) or map_id in ["greenhouse"]:
 		return
 	info["forage_done"] = true
+	if map_id == "town" and Calendar.festival_on(day()) == "egg_hunt":
+		for t in Adventure.egg_spots(info.grid, int(world.seed), day()):
+			info.grid.objects[Tiles.key(t)] = {"id": "festival_egg", "kind": "forage"}
 	var region: String = info.get("region", "")
 	var pool: Array = []
 	if region != "":

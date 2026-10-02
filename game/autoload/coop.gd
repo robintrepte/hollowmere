@@ -11,7 +11,8 @@ signal act_result(result: Dictionary)
 const CHUNK := 3000
 const ACTIONS := ["use_tool", "use_item", "harvest_at", "load_machine", "ship", "eat", "pick_up_object", "buy", "sell",
 	"craft", "construct", "upgrade_tool", "buy_backpack", "deliver_board", "set_pair_act", "clear_pair_act", "incubate", "set_job_act", "move_creature_act",
-	"befriend_act", "dex_seen_act", "reward_act"]
+	"befriend_act", "dex_seen_act", "reward_act", "warden_won_act", "guardian_result_act", "legend_result_act",
+	"mine_floor_act", "open_treasure_act", "festival_act", "story_seen_act"]
 
 var _chunks: Dictionary = {}       # transfer id -> Array
 var _ready_to_sleep: Dictionary = {}
@@ -66,11 +67,20 @@ func result(res: Dictionary, player_json: String) -> void:
 	_apply_player(player_json)
 	act_result.emit(res)
 
+## Like act(), but a client waits for the host's answer (results arrive in request order).
+func act_async(action: String, args: Array) -> Dictionary:
+	var r := act(action, args)
+	if r.get("pending", false):
+		r = await act_result
+	return r
+
 func _plain(res: Dictionary) -> Dictionary:
 	var fx: Array = []
 	for f in res.get("fx", []):
 		fx.append([f[0], (f[1] as Color).to_html()])
-	return {"ok": res.get("ok", false), "fx": fx, "sfx": res.get("sfx", ""), "reason": res.get("reason", "")}
+	var out := res.duplicate(true)
+	out.fx = fx
+	return out
 
 func _pid_of(peer_id: int) -> String:
 	return Net.peers.get(peer_id, {}).get("pid", "")

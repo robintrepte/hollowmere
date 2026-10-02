@@ -27,5 +27,8 @@ signal weather_changed(weather: String)
 signal creature_befriended(creature: Creature)
 signal egg_hatched(creature: Creature)
 signal quest_updated()
+signal shrine_restored(region: String)
+## A main-story chapter was completed (its rewards are already granted).
+signal story_advanced(chapter: Dictionary)
 signal net_status(text: String)
 signal shake(strength: float)

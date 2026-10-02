@@ -2,9 +2,9 @@ extends Node
 ## Root: title <-> game flow, map transitions, sleeping, camera, menus and remote players.
 
 const INTRO := [
-	"Dear {name},\nGrandma Juniper's old farm in Hollowmere is yours now. It's overgrown, but the soil is good.",
+	"Dear {name},\nGrandma Hazel's old farm in Hollowmere is yours now. It's overgrown, but the soil is good.",
 	"The Wildlings of the valley have always helped this farm. Treat them kindly, and they'll stay.",
-	"Mira at the General Store has seeds. The village is just east of the farm. Welcome home!",
+	"Mira at the General Store has seeds, and Elder Barley would love to meet you. The village is just east of the farm. Welcome home!",
 ]
 
 var ui: UIRoot
@@ -50,6 +50,7 @@ func _ready() -> void:
 	Coop.trade_updated.connect(_on_trade_state)
 	Net.coop_ended.connect(_on_coop_ended)
 	EventBus.battle_requested.connect(_on_battle_requested)
+	EventBus.story_advanced.connect(_on_story_advanced)
 	show_title()
 
 # --- Title ------------------------------------------------------------------------------
@@ -64,6 +65,13 @@ func show_title() -> void:
 	title.new_game_requested.connect(_start_new)
 	title.load_requested.connect(_load_slot)
 	title.coop_requested.connect(func(): ui.open(CoopPanel.new(ui, false)))
+
+func _on_story_advanced(ch: Dictionary) -> void:
+	Audio.sfx("levelup")
+	var rw: Dictionary = ch.get("reward", {})
+	EventBus.toast.emit("Chapter complete: %s%s" % [ch.title, (" (%s)" % AdventureFlow.loot_text(rw)) if not rw.is_empty() else ""], "star")
+	if not Adventure.chapter(GameState.world).is_empty():
+		EventBus.toast.emit("Elder Barley has something to tell you.", "book")
 
 func _start_new(opts: Dictionary) -> void:
 	var slot := SaveManager.first_free_slot()
@@ -94,6 +102,7 @@ func _load_slot(slot: int) -> void:
 	await _fade_to(0.0)
 
 var _visiting := false
+var _redraw_after_battle := false
 
 func _on_snapshot() -> void:
 	_visiting = Net.mode == "client"
@@ -386,6 +395,17 @@ func _on_battle_requested(s: Dictionary) -> void:
 			after.append("%s joined %s!" % [c2.display_name(), {"party": "your party", "den": "the farm Den", "sanctuary": "the Sanctuary"}[where]])
 			if node:
 				world.remove_creature(node)
+			for rid in Data.regions:
+				if Adventure.guardian_of(rid) == c2.species_id:
+					var gr: Dictionary = await Coop.act_async("guardian_result_act", [rid, true])
+					GameState.world.flags["guardian_home:" + rid] = true
+					if gr.has("text"):
+						after.append(str(gr.text))
+						Audio.sfx("levelup")
+					_redraw_after_battle = true
+			if Data.legends.has(c2.species_id):
+				await Coop.act_async("legend_result_act", [c2.species_id])
+				after.append("A legend of the seasons walks with you now.")
 		"win":
 			if node:
 				world.remove_creature(node)
@@ -396,9 +416,13 @@ func _on_battle_requested(s: Dictionary) -> void:
 				node.stun(3.0)
 		"lose":
 			pd.heal_party()
-			var sp: Array = Data.get_map("farm").spawn
-			_go_to("farm", GameState.tile_center(Vector2i(int(sp[0]), int(sp[1]))))
-			GameState.advance_minutes(120)
+			if not s.get("friendly", false):
+				var sp: Array = Data.get_map("farm").spawn
+				_go_to("farm", GameState.tile_center(Vector2i(int(sp[0]), int(sp[1]))))
+				GameState.advance_minutes(120)
+	if _redraw_after_battle:
+		_redraw_after_battle = false
+		world.refresh_all()
 	Audio.music(world.info.get("music", "farm"))
 	EventBus.party_changed.emit()
 	await _fade_to(0.0, 0.3)

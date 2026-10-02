@@ -7,12 +7,15 @@ var ui: UIRoot
 var world: World
 var player: Player
 var busy := false
+var adventure: AdventureFlow
 
 func setup(m: Node, u: UIRoot, w: World, p: Player) -> void:
 	main = m
 	ui = u
 	world = w
 	player = p
+	adventure = AdventureFlow.new(self)
+	add_child(adventure)
 	player.use_pressed.connect(_on_use)
 	player.interact_pressed.connect(_on_interact)
 	Coop.act_result.connect(_feedback)
@@ -106,7 +109,9 @@ func _on_interact(t: Vector2i) -> void:
 				return
 	var io := world.interactable_at(t)
 	if not io.is_empty():
+		busy = true
 		await _interact_static(io)
+		busy = false
 
 func _interact_object(t: Vector2i, o: Dictionary) -> bool:
 	match o.get("kind", ""):
@@ -160,6 +165,16 @@ func _open_chest(t: Vector2i, o: Dictionary) -> void:
 func _interact_static(io: Dictionary) -> void:
 	var p := _pdata()
 	match io.get("type", ""):
+		"shrine":
+			await adventure.shrine(io)
+		"cave":
+			await adventure.cave(io)
+		"ladder":
+			await adventure.ladder_down()
+		"ladder_up":
+			await adventure.ladder_up()
+		"treasure":
+			await adventure.treasure(Vector2i(int(io.x), int(io.y)), io)
 		"shipping_bin":
 			ui.open(InventoryPanel.new(p, null, "Shipping Bin", "ship"))
 		"farm_chest":
@@ -170,7 +185,7 @@ func _interact_static(io: Dictionary) -> void:
 		"board":
 			await _board()
 		"wayshrine":
-			await ui.say(["An old wayshrine hums softly. Its stones remember every road in the valley."])
+			await adventure.wayshrine()
 		"fountain":
 			if int(p.stats.get("wish_day", -1)) != GameState.day() and GameState.money() >= 10:
 				var c: int = await ui.ask("Toss a coin into the fountain? (10g)", ["Make a wish", "Not today"])
@@ -182,7 +197,7 @@ func _interact_static(io: Dictionary) -> void:
 			else:
 				await ui.say(["The fountain burbles happily."])
 		"show_ring":
-			await ui.say(["The Creature Show ring. Shows are held on festival days and weekends."])
+			await adventure.show_ring()
 		"stairs":
 			if GameState.is_open_requirement(io.get("requires", "")):
 				EventBus.map_change_requested.emit(io.to, Vector2i(int(io.tx), int(io.ty)))
@@ -267,7 +282,12 @@ func _pet(wc: WildCreature) -> void:
 
 func _offer_battle(vid: String) -> void:
 	var tr: Dictionary = Data.villagers.get(vid, {}).get("trainer", {})
-	if tr.is_empty() or tr.has("warden"):
+	if tr.has("warden"):
+		busy = true
+		await adventure.warden_battle(vid)
+		busy = false
+		return
+	if tr.is_empty():
 		return
 	var p := _pdata()
 	var key := "battled:" + vid
@@ -305,7 +325,9 @@ func _talk(npc: Npc) -> void:
 	var st := p.relationship(vid)
 	var ev := Relationships.pending_event(vid, st)
 	var name := Data.villager_name(vid)
-	if ev != "":
+	if await adventure.story_talk(vid):
+		pass
+	elif ev != "":
 		var lines: Array = Data.villagers[vid].events[ev].get("lines", [])
 		await ui.say(lines, name, _portrait(vid))
 		st.events.append(ev)

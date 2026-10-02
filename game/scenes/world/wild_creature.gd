@@ -12,6 +12,8 @@ var species := ""
 var level := 1
 var starry := false
 var pet := false
+## Guardians and legends: larger, calm, and battle with the smart AI.
+var boss := false
 var creature: Creature          # ranch creatures keep a reference
 var world: World
 var sprite: Sprite2D
@@ -53,7 +55,20 @@ func _ready() -> void:
 	_emote.size = Vector2(40, 12)
 	_emote.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	add_child(_emote)
-	_curious = not pet and _rng.randf() < 0.45
+	if boss:
+		sprite.scale = Vector2(1.4, 1.4)
+		var aura := CPUParticles2D.new()
+		aura.amount = 10
+		aura.lifetime = 1.6
+		aura.position = Vector2(0, -20)
+		aura.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+		aura.emission_sphere_radius = 18.0
+		aura.gravity = Vector2(0, -16)
+		aura.color = Color(Data.type_color(str(Data.species.get(species, {}).get("types", ["glow"])[0])), 0.8)
+		aura.scale_amount_min = 1.0
+		aura.scale_amount_max = 2.5
+		add_child(aura)
+	_curious = not pet and not boss and _rng.randf() < 0.45
 	_target = position
 	_wait = _rng.randf_range(0.2, 2.0)
 
@@ -90,7 +105,11 @@ func _process(delta: float) -> void:
 		d = pl.position.distance_to(position)
 		if d < TOUCH_DIST and not pl.locked and not UIRoot.blocking:
 			_stun = 0.5
-			EventBus.battle_requested.emit({"kind": "wild", "species": species, "level": level, "starry": starry, "node": self})
+			var setup := {"kind": "wild", "species": species, "level": level, "starry": starry, "node": self}
+			if boss:
+				setup["ai"] = 2
+				setup["boss"] = true
+			EventBus.battle_requested.emit(setup)
 			return
 		_notice_cd -= delta
 		if _curious and d < NOTICE_DIST and _chasing <= 0.0 and _notice_cd <= 0.0:

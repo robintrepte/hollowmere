@@ -334,12 +334,17 @@ static func build_mine(region_id: String, floor_n: int, world_seed: int, day_ind
 			elif roll < 0.16:
 				g.deco[i] = Tiles.DECO.rock
 	g.set_deco(entry, Tiles.DECO.ladder_up)
-	g.set_deco(ladder, Tiles.DECO.ladder)
 	var objects: Array = []
+	var bottom := Adventure.is_bottom(region_id, floor_n)
+	if bottom:
+		g.set_deco(ladder, 0)
+		objects.append({"type": "treasure", "x": ladder.x, "y": ladder.y, "grand": true})
+	else:
+		g.set_deco(ladder, Tiles.DECO.ladder)
 	if rng.randf() < 0.35:
 		for tries in 30:
 			var tp := Vector2i(rng.randi_range(3, g.w - 4), rng.randi_range(2, g.h - 3))
-			if g.get_deco(tp) == 0:
+			if g.get_deco(tp) == 0 and tp != ladder and tp.distance_to(entry) > 2.0:
 				objects.append({"type": "treasure", "x": tp.x, "y": tp.y, "mimic": rng.randf() < 0.25 and int(r.order) >= 4})
 				break
 	var lv: Array = r.levels
@@ -349,6 +354,7 @@ static func build_mine(region_id: String, floor_n: int, world_seed: int, day_ind
 		"spawn": [entry.x + 1, entry.y], "music": "cave", "farm": false, "seasonal": false, "indoor": true,
 		"biome": "cave", "region": region_id, "spawns": mine.spawns, "levels": [lvl_min, lvl_min + 3],
 		"mine": true, "floor": floor_n, "max_floor": int(mine.floors), "ore_types": ore_types, "ladder": [ladder.x, ladder.y], "entry": [entry.x, entry.y],
+		"bottom": bottom,
 	}
 
 ## Picks a spawn entry for current conditions. Returns species id or "".

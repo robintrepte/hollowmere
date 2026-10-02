@@ -20,6 +20,7 @@ var _lead_hp: ProgressBar
 var _lead_name: Label
 var _hotbar_name: Label
 var _name_t := 0.0
+var _quest: Label
 
 func _ready() -> void:
 	layer = 10
@@ -86,6 +87,10 @@ func _ready() -> void:
 	_lead_hp.custom_minimum_size = Vector2(44, 5)
 	_lead_hp.show_percentage = false
 	lcol.add_child(_lead_hp)
+	_quest = UITheme.label("", 8, UITheme.WOOD)
+	_quest.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_quest.custom_minimum_size = Vector2(150, 0)
+	lvv.add_child(_quest)
 
 	# Energy (bottom right)
 	var en := PanelContainer.new()
@@ -149,7 +154,7 @@ func _ready() -> void:
 
 	# Toasts (left)
 	_toasts = VBoxContainer.new()
-	_toasts.position = Vector2(6, 90)
+	_toasts.position = Vector2(6, 118)
 	_toasts.custom_minimum_size = Vector2(220, 0)
 	_toasts.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_toasts)
@@ -164,6 +169,10 @@ func _ready() -> void:
 	EventBus.toast.connect(toast)
 	EventBus.farm_level_up.connect(func(lv2, _i): toast("Farm level %d!" % lv2, "star"); _refresh_level())
 	EventBus.weather_changed.connect(func(_w): _refresh_clock())
+	EventBus.quest_updated.connect(_refresh_quest)
+	EventBus.story_advanced.connect(func(_c): _refresh_quest())
+	EventBus.creature_befriended.connect(func(_c): _refresh_quest.call_deferred())
+	EventBus.map_changed.connect(func(_m): _refresh_quest())
 	_refresh_all()
 
 func _refresh_all() -> void:
@@ -172,7 +181,21 @@ func _refresh_all() -> void:
 	_refresh_hotbar()
 	_refresh_lead()
 	_refresh_level()
+	_refresh_quest()
 	_money_shown = GameState.money()
+
+func _refresh_quest() -> void:
+	if not GameState.started:
+		return
+	var bits: Array = []
+	var fest := Adventure.festival_today(GameState.day())
+	if not fest.is_empty():
+		bits.append("Today: %s at the Show Ring" % fest.name)
+	var t := Adventure.tracker(GameState.world, GameState.local_player())
+	if t != "":
+		bits.append("» " + t)
+	_quest.text = "\n".join(bits)
+	_quest.visible = not bits.is_empty()
 
 func _refresh_clock() -> void:
 	if not GameState.started:

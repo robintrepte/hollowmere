@@ -103,6 +103,7 @@
 
   "heirloom_charm": {"name": "Heirloom Charm", "cat": "key", "sell": 0, "buy": 5000, "color": "#d0a0f0", "icon": "charm", "desc": "Keep in your bag to pass a parent's Nature to Den eggs."},
   "starry_charm":   {"name": "Starry Charm", "cat": "key", "sell": 0, "color": "#f8f0a0", "icon": "star", "desc": "Triples the chance of meeting Starry Wildlings."},
+  "festival_egg":   {"name": "Festival Egg", "cat": "forage", "sell": 5, "color": "#f8e070", "icon": "egg", "desc": "A painted egg from the Egg Hunt. Hand them in at the Show Ring."},
   "bouquet":        {"name": "Bouquet", "cat": "gift", "sell": 50, "buy": 200, "color": "#f080b0", "icon": "flower", "desc": "Give to a villager at 8 hearts to start dating."},
   "hollow_pendant": {"name": "Hollow Pendant", "cat": "gift", "sell": 0, "buy": 5000, "color": "#60c0f0", "icon": "charm", "desc": "Give to your partner at 10 hearts to propose."},
   "straw_hat":      {"name": "Straw Hat", "cat": "cosmetic", "sell": 0, "color": "#e0c060", "icon": "hat", "desc": "A classic farmer's hat."},

@@ -99,6 +99,7 @@ func load_map(id: String) -> void:
 	_deco_nodes.clear()
 	_object_nodes.clear()
 	_static_nodes.clear()
+	_treasure_sprites.clear()
 	npcs.clear()
 	blockers.clear()
 	interactables.clear()
@@ -364,8 +365,97 @@ func _build_static_objects() -> void:
 					s2.position = Vector2(p.x * T, p.y * T)
 					decals.add_child(s2)
 				interactables[p + Vector2i(2, 1)] = o
-	for c in info.get("shrines", []):
-		pass
+			"shrine":
+				_add_shrine(o)
+			"cave":
+				interactables[p] = o
+				interactables[p + Vector2i(0, 1)] = o
+			"treasure":
+				_add_treasure(o)
+	if info.get("mine", false):
+		var e: Array = info.get("entry", [])
+		if e.size() == 2:
+			interactables[Vector2i(int(e[0]), int(e[1]))] = {"type": "ladder_up"}
+		var l: Array = info.get("ladder", [])
+		if l.size() == 2 and not info.get("bottom", false):
+			interactables[Vector2i(int(l[0]), int(l[1]))] = {"type": "ladder"}
+
+func _add_shrine(o: Dictionary) -> void:
+	var p := Vector2i(int(o.x), int(o.y))
+	var region: String = o.get("region", "")
+	var state := Adventure.shrine_state(GameState.world, region)
+	var tex := Art.world("shrine" if state == "restored" else "shrine_ruined")
+	var node := Node2D.new()
+	node.position = Vector2((p.x + 1) * T, (p.y + 2) * T)
+	ysort.add_child(node)
+	_static_nodes.append(node)
+	if tex:
+		var s := Sprite2D.new()
+		s.texture = tex
+		s.centered = false
+		s.offset = Vector2(-tex.get_size().x / 2.0, -tex.get_size().y)
+		node.add_child(s)
+	if state == "restored":
+		var tcol: Color = Data.type_color(str(Data.regions.get(region, {}).get("type", "glow")))
+		var glow := Sprite2D.new()
+		glow.texture = _glow_texture()
+		glow.modulate = Color(tcol, 0.55)
+		glow.position = Vector2(0, -44)
+		var mat := CanvasItemMaterial.new()
+		mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+		glow.material = mat
+		node.add_child(glow)
+		var tw := glow.create_tween().set_loops()
+		tw.tween_property(glow, "scale", Vector2(1.15, 1.15), 1.4).set_trans(Tween.TRANS_SINE)
+		tw.tween_property(glow, "scale", Vector2(0.9, 0.9), 1.4).set_trans(Tween.TRANS_SINE)
+	for dx in 2:
+		for dy in 2:
+			blockers[p + Vector2i(dx, dy)] = true
+			interactables[p + Vector2i(dx, dy)] = o
+	interactables[p + Vector2i(0, 2)] = o
+	interactables[p + Vector2i(1, 2)] = o
+
+static var _glow_tex: Texture2D
+
+static func _glow_texture() -> Texture2D:
+	if _glow_tex == null:
+		var g := GradientTexture2D.new()
+		g.width = 40
+		g.height = 40
+		g.fill = GradientTexture2D.FILL_RADIAL
+		g.fill_from = Vector2(0.5, 0.5)
+		g.fill_to = Vector2(0.5, 0.0)
+		var grad := Gradient.new()
+		grad.set_color(0, Color(1, 1, 1, 1))
+		grad.set_color(1, Color(1, 1, 1, 0))
+		g.gradient = grad
+		_glow_tex = g
+	return _glow_tex
+
+func _add_treasure(o: Dictionary) -> void:
+	var p := Vector2i(int(o.x), int(o.y))
+	var tex := Art.world("treasure")
+	if tex:
+		var s := Sprite2D.new()
+		s.texture = tex
+		s.centered = false
+		s.offset = Vector2(-tex.get_size().x / 2.0, -tex.get_size().y)
+		s.position = Vector2(p.x * T + T / 2.0, (p.y + 1) * T)
+		if o.get("grand", false):
+			s.scale = Vector2(1.25, 1.25)
+		if GameState.treasure_opened(map_id, p):
+			s.modulate = Color(0.55, 0.5, 0.5)
+		ysort.add_child(s)
+		_static_nodes.append(s)
+		_treasure_sprites[p] = s
+	blockers[p] = true
+	interactables[p] = o
+
+var _treasure_sprites: Dictionary = {}
+
+func mark_treasure_opened(t: Vector2i) -> void:
+	if _treasure_sprites.has(t) and is_instance_valid(_treasure_sprites[t]):
+		_treasure_sprites[t].modulate = Color(0.55, 0.5, 0.5)
 
 func _add_building(o: Dictionary) -> void:
 	var bid: String = o.id
@@ -414,19 +504,34 @@ func _spawn_creatures() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash([int(GameState.world.seed), GameState.day(), map_id, int(GameState.minute() / 120)])
 	var spawns: Array = info.get("spawns", [])
-	if not spawns.is_empty():
-		var night := Calendar.is_night(GameState.minute())
+	var night := Calendar.is_night(GameState.minute())
+	var levels: Array = info.get("levels", [2, 6])
+	var bonus: Array = []
+	var fest := Adventure.festival_today(GameState.day())
+	if fest.get("kind", "") == "spawns" and night and not info.get("indoor", false) and not info.get("mine", false):
+		bonus = fest.get("spawn_bonus", [])
+		if spawns.is_empty():
+			var sh: int = GameState.world.shrines.size()
+			levels = [5 + sh * 4, 10 + sh * 5]
+	if not spawns.is_empty() or not bonus.is_empty():
 		var starry_mult := 3.0 if GameState._anyone_has("starry_charm") else 1.0
 		for i in 7:
-			var sid := MapBuilder.pick_spawn(spawns, GameState.season(), GameState.world.weather, night, rng)
+			var sid := MapBuilder.pick_spawn(spawns, GameState.season(), GameState.world.weather, night, rng, bonus)
 			if sid == "" or not Data.species.has(sid):
 				continue
 			var t := _random_open_tile(rng, true)
 			if t.x < 0:
 				continue
-			var lvl := Trainers.wild_level(info.get("levels", [2, 6]), rng, night)
+			var lvl := Trainers.wild_level(levels, rng, night)
 			var starry := rng.randf() * float(Creature.STARRY_ODDS) / starry_mult < 1.0
 			_add_creature(sid, lvl, starry, t, null)
+	var region: String = info.get("region", "")
+	if region != "" and not info.get("mine", false):
+		if Adventure.guardian_free(GameState.world, region) and Data.species.has(Adventure.guardian_of(region)):
+			_add_creature(Adventure.guardian_of(region), Adventure.guardian_level(region), false, Vector2i(39, 20), null, true)
+		var lid := Adventure.legend_here(GameState.world, region, GameState.season())
+		if lid != "" and Data.species.has(lid):
+			_add_creature(lid, int(Data.legends[lid].level), false, Vector2i(38, 15), null, true)
 	if map_id == "farm":
 		var den := Vector2i(-1, -1)
 		for o in info.get("objects", []):
@@ -437,11 +542,12 @@ func _spawn_creatures() -> void:
 			if t2.x >= 0:
 				_add_creature(c.species_id, c.level, c.starry, t2, c)
 
-func _add_creature(sid: String, lvl: int, starry: bool, t: Vector2i, c: Creature) -> WildCreature:
+func _add_creature(sid: String, lvl: int, starry: bool, t: Vector2i, c: Creature, boss: bool = false) -> WildCreature:
 	var w := WildCreature.new()
 	w.species = sid
 	w.level = lvl
 	w.starry = starry
+	w.boss = boss
 	w.pet = c != null
 	w.creature = c
 	w.world = self

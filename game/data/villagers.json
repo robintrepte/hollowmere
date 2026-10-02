@@ -73,7 +73,8 @@
       "5": ["Fern shows you an ancient carving of eight creatures.", "Fern: The Grove Guardians. Legend says they kept this valley in balance.", "Fern: Restoring the shrines may wake them..."],
       "8": ["Fern gives you a shimmering charm.", "Fern: This charm makes Starry Wildlings appear more often.", "Fern: I can't think of anyone better to have it."]
     },
-    "event_rewards": {"2": {"lure_charm": 5}, "8": {"starry_charm": 1}}
+    "event_rewards": {"2": {"lure_charm": 5}, "8": {"starry_charm": 1}},
+    "trainer": {"lines": ["glimmer", "mushlet", "petalfly", "clovehare", "lumibub", "wishmite"], "reward": 500, "kind": "trainer"}
   },
   "theo": {
     "name": "Theo", "role": "Cafe Owner", "romance": true, "birthday": ["summer", 22],

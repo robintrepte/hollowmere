@@ -17,10 +17,15 @@ while read -r f _url names; do
 done < tools/art_pipeline/icon_sheets.txt
 # icons_03 drew a second pickaxe in the hoe cell; this single image replaces it.
 $P icons "$RAW/icons/hoe_fix.png" hoe game/assets/items --auto
+# Cropped from raw/world/adventure.png (the egg cell, without its caption).
+$P icons "$RAW/icons/festival_egg.png" festival_egg game/assets/items --auto
 $PY tools/art_pipeline/derive_icons.py
 
 while read -r f _url names; do
-  $P sprites "$RAW/world/$f" "$names" game/assets/world
+  extra=()
+  # adventure.png has the model's "1 2 3 4" captions under each object.
+  [ "$f" = adventure.png ] && extra=(--drop-small 0.05)
+  $P sprites "$RAW/world/$f" "$names" game/assets/world ${extra[@]+"${extra[@]}"}
 done < tools/art_pipeline/world_sheets.txt
 
 while read -r n w _url; do
