@@ -1,0 +1,19 @@
+{$HOLLOWMERE_DOMAIN} {
+	encode gzip
+
+	# Nakama API + realtime socket share the game's origin, so the browser build needs no CORS setup.
+	@nakama path /v2/* /ws /ws/* /healthcheck
+	handle @nakama {
+		reverse_proxy nakama:7350
+	}
+
+	# Godot web build (threads off, so no cross-origin isolation; COEP would also block Google sign-in).
+	handle {
+		root * /srv/site
+		header Cache-Control "public, max-age=300"
+		@wasm path *.wasm *.pck
+		header @wasm Cache-Control "public, max-age=86400"
+		try_files {path} /index.html
+		file_server
+	}
+}

@@ -50,6 +50,16 @@ enabled=PackedStringArray("res://addons/gut/plugin.cfg")
 
 common/snap_controls_to_pixels=true
 
+[hollowmere]
+
+server/host="127.0.0.1"
+server/port=7350
+server/ssl=false
+server/key="hollowmere_dev"
+server/host.release="%HOLLOWMERE_DOMAIN%"
+server/port.release=443
+server/ssl.release=true
+
 [input_devices]
 
 pointing/emulate_touch_from_mouse=false

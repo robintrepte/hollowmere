@@ -28,6 +28,12 @@ jobs:
         run: godot --headless --path game -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json -gjunit_xml_file=res://../test-results.xml
       - name: Balance simulation
         run: godot --headless --path game res://tests/sim/balance_sim.tscn -- --days=112
+      - name: Start Nakama
+        run: |
+          docker compose -f server/docker-compose.yml up -d --build
+          for i in $(seq 1 60); do curl -sf http://127.0.0.1:7350/healthcheck && break; sleep 2; done
+      - name: Server integration test
+        run: godot --headless --path game res://tests/net/server_test.tscn -- --require-server
       - name: Co-op network test
         run: godot --headless --path game res://tests/net/net_test.tscn
       - uses: actions/upload-artifact@v4
@@ -55,6 +61,9 @@ jobs:
           mv templates/* ~/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_RELEASE}/
       - name: Import
         run: godot --headless --path game --import || true
+      - name: Point release builds at the live server
+        if: vars.HOLLOWMERE_DOMAIN != ''
+        run: sed -i "s/%HOLLOWMERE_DOMAIN%/${{ vars.HOLLOWMERE_DOMAIN }}/" game/project.godot
       - name: Export
         run: |
           mkdir -p build/windows build/macos build/web
@@ -72,6 +81,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: hollowmere-web
@@ -83,4 +93,6 @@ jobs:
         run: |
           mkdir -p ~/.ssh && echo "$DEPLOY_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
-          rsync -az --delete site/web/ deploy@"$DEPLOY_HOST":/srv/hollowmere/web/
+          rsync -az --delete site/web/ deploy@"$DEPLOY_HOST":/srv/hollowmere/site/
+          rsync -az --exclude .env --exclude site/ server/ deploy@"$DEPLOY_HOST":/srv/hollowmere/
+          ssh deploy@"$DEPLOY_HOST" "cd /srv/hollowmere && docker compose --profile prod up -d --build"

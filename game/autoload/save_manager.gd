@@ -5,7 +5,6 @@ const DIR := "user://saves"
 const MAX_SLOTS := 6
 
 var current_slot: int = -1
-var cloud_enabled: bool = false
 
 func _ready() -> void:
 	DirAccess.make_dir_recursive_absolute(DIR)
@@ -68,9 +67,46 @@ func save_game(slot: int = -1) -> bool:
 		DirAccess.copy_absolute(path, path + ".bak")
 	DirAccess.rename_absolute(tmp, path)
 	current_slot = slot
-	if cloud_enabled and Net.has_session():
+	if Settings.cloud_saves and Net.has_session():
 		Net.cloud_save(slot, payload)
 	return true
+
+func read_payload(slot: int) -> Dictionary:
+	var d = _read_json(slot_path(slot))
+	return d if d is Dictionary and d.has("state") else {}
+
+## Cloud entries ({slot, meta, payload}) that are missing locally or saved later than the local copy.
+func newer_in_cloud(cloud: Array) -> Array:
+	var out: Array = []
+	for c: Dictionary in cloud:
+		var local := read_meta(int(c.slot))
+		var cloud_t := float(c.meta.get("saved_at", 0))
+		if local.is_empty() or local.get("corrupt", false) or cloud_t > float(local.get("saved_at", 0)) + 1.0:
+			out.append(c)
+	return out
+
+## Writes a downloaded cloud payload to its local slot (keeping a .bak of what was there).
+func install_payload(slot: int, payload: Dictionary) -> bool:
+	if not payload.has("state"):
+		return false
+	var path := slot_path(slot)
+	if FileAccess.file_exists(path):
+		DirAccess.copy_absolute(path, path + ".bak")
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	if f == null:
+		return false
+	f.store_string(JSON.stringify(payload))
+	f.close()
+	return true
+
+## Uploads every local farm; returns how many made it.
+func upload_all() -> int:
+	var n := 0
+	for i in MAX_SLOTS:
+		var p := read_payload(i)
+		if not p.is_empty() and await Net.cloud_save(i, p):
+			n += 1
+	return n
 
 func autosave() -> void:
 	if current_slot >= 0:
@@ -94,6 +130,8 @@ func delete_slot(slot: int) -> void:
 	for suffix in ["", ".bak", ".tmp"]:
 		if FileAccess.file_exists(slot_path(slot) + suffix):
 			DirAccess.remove_absolute(slot_path(slot) + suffix)
+	if Net.has_session():
+		Net.cloud_delete(slot)
 
 ## Upgrades older save formats in place.
 func migrate(d: Dictionary) -> Dictionary:

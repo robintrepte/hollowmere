@@ -1,0 +1,71 @@
+# Hollowmere backend: Nakama (accounts, cloud saves, relayed co-op) on Postgres.
+#
+#   Local dev:   docker compose up -d                  -> http://127.0.0.1:7350, console :7351
+#   Production:  HOLLOWMERE_DOMAIN=play.example.com docker compose --profile prod up -d
+#                (Caddy terminates TLS for the domain, serves the web build from ./site, proxies the API)
+#
+# Secrets come from .env (see .env.example). Never commit the real .env.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nakama
+      POSTGRES_USER: nakama
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nakama -d nakama"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  nakama:
+    build: .
+    image: hollowmere-nakama
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint:
+      - /bin/sh
+      - -ecx
+      - >
+        /nakama/nakama migrate up --database.address nakama:${POSTGRES_PASSWORD:-localdev}@postgres:5432/nakama &&
+        exec /nakama/nakama --config /nakama/data/hollowmere.yml
+        --database.address nakama:${POSTGRES_PASSWORD:-localdev}@postgres:5432/nakama
+        --socket.server_key ${NAKAMA_SERVER_KEY:-hollowmere_dev}
+        --session.encryption_key ${NAKAMA_SESSION_KEY:-dev_session_key_change_me}
+        --session.refresh_encryption_key ${NAKAMA_REFRESH_KEY:-dev_refresh_key_change_me}
+        --runtime.http_key ${NAKAMA_HTTP_KEY:-dev_http_key_change_me}
+        --console.username ${NAKAMA_CONSOLE_USER:-admin}
+        --console.password ${NAKAMA_CONSOLE_PASSWORD:-localdevpassword}
+    ports:
+      - "127.0.0.1:7350:7350"
+      - "127.0.0.1:7351:7351"
+    healthcheck:
+      test: ["CMD", "/nakama/nakama", "healthcheck"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["prod"]
+    restart: unless-stopped
+    depends_on: [nakama]
+    environment:
+      HOLLOWMERE_DOMAIN: ${HOLLOWMERE_DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./site:/srv/site:ro
+      - caddy_data:/data
+
+volumes:
+  pgdata:
+  caddy_data:

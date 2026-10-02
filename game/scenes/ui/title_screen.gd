@@ -10,6 +10,8 @@ var ui: UIRoot
 var _menu: VBoxContainer
 var _bg: TextureRect
 var _logo: TextureRect
+var _load_btn: Button
+var _account: Button
 var _t := 0.0
 
 func _init(u: UIRoot = null) -> void:
@@ -58,10 +60,14 @@ func _ready() -> void:
 	_menu.add_child(ng)
 	if latest < 0:
 		ng.call_deferred("grab_focus")
-	var ld := UITheme.button("Load", _open_load)
-	ld.disabled = latest < 0
-	_menu.add_child(ld)
-	_menu.add_child(UITheme.button("Co-op", func(): coop_requested.emit()))
+	_load_btn = UITheme.button("Load", _open_load)
+	_load_btn.disabled = latest < 0 and not Net.has_session()
+	_menu.add_child(_load_btn)
+	_menu.add_child(UITheme.button("Co-op", func():
+		if Net.has_session():
+			coop_requested.emit()
+		else:
+			ui.open(AccountPanel.new())))
 	_menu.add_child(UITheme.button("Settings", func(): ui.open(SettingsPanel.new())))
 	if OS.get_name() != "Web":
 		_menu.add_child(UITheme.button("Quit", func(): get_tree().quit()))
@@ -71,7 +77,25 @@ func _ready() -> void:
 	ver.offset_left = 6
 	ver.offset_top = -14
 	add_child(ver)
+	_account = UITheme.button("", func(): ui.open(AccountPanel.new()))
+	_account.add_theme_font_size_override("font_size", 9)
+	_account.anchor_left = 1
+	_account.anchor_right = 1
+	_account.offset_left = -6
+	_account.offset_right = -6
+	_account.offset_top = 6
+	_account.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	add_child(_account)
+	Net.session_changed.connect(_on_session)
+	_on_session(Net.has_session())
+	if not Net.has_session():
+		Net.try_restore_session()
 	Audio.music("title")
+
+func _on_session(signed_in: bool) -> void:
+	_account.text = ("● %s" % Net.display_name) if signed_in else "Sign in"
+	if signed_in:
+		_load_btn.disabled = false
 
 func _latest_slot() -> int:
 	var best := -1
@@ -103,6 +127,8 @@ func _open_load() -> void:
 	var v := VBoxContainer.new()
 	p.add_child(v)
 	v.add_child(UITheme.label("Load a farm", 13, UITheme.WOOD_DK))
+	if _saves().is_empty() and not Net.has_session():
+		v.add_child(UITheme.label("No farms yet.", 10, UITheme.MUTED))
 	for m in _saves():
 		var s := int(m.slot)
 		var h := HBoxContainer.new()
@@ -117,8 +143,35 @@ func _open_load() -> void:
 			if c == 0:
 				SaveManager.delete_slot(int(s))
 				ui.close(p)))
+	var cloud_box := VBoxContainer.new()
+	v.add_child(cloud_box)
 	v.add_child(UITheme.button("Back", func(): ui.close(p)))
 	ui.open(p)
+	if Net.has_session():
+		_fill_cloud(cloud_box, p)
+
+func _fill_cloud(box: VBoxContainer, p: Control) -> void:
+	var wait := UITheme.label("Checking the cloud...", 9, UITheme.MUTED)
+	box.add_child(wait)
+	var newer: Array = SaveManager.newer_in_cloud(await Net.cloud_list())
+	if not is_instance_valid(box):
+		return
+	wait.queue_free()
+	if newer.is_empty():
+		box.add_child(UITheme.label("Cloud backups are up to date.", 9, UITheme.LEAF))
+		return
+	box.add_child(UITheme.label("Newer in the cloud", 10, UITheme.WOOD_DK))
+	for c: Dictionary in newer:
+		var m: Dictionary = c.meta
+		var s := int(c.slot)
+		var payload: Dictionary = c.payload
+		var txt := "● %s · %s Farm\n%s · %dg" % [m.get("player", "?"), m.get("farm", "?"), Calendar.date_string(int(m.get("day", 0))), int(m.get("money", 0))]
+		var b := UITheme.button(txt, func():
+			if SaveManager.install_payload(s, payload):
+				ui.close(p)
+				load_requested.emit(s))
+		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		box.add_child(b)
 
 func _process(delta: float) -> void:
 	_t += delta

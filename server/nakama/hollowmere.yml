@@ -1,0 +1,18 @@
+name: hollowmere
+logger:
+  level: "INFO"
+session:
+  token_expiry_sec: 86400          # 1 day
+  refresh_token_expiry_sec: 2592000 # 30 days
+socket:
+  max_message_size_bytes: 1048576   # world snapshots are chunked by the client, this is headroom
+  max_request_size_bytes: 4194304
+  ping_period_ms: 10000
+  pong_wait_ms: 25000
+runtime:
+  path: "/nakama/data/modules"
+  env:
+    - "max_save_bytes=3145728"
+    - "code_ttl_sec=43200"
+match:
+  max_empty_sec: 30

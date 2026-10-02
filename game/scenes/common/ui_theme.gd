@@ -107,6 +107,15 @@ static func theme() -> Theme:
 	t.set_color("font_color", "CheckBox", INK)
 	t.set_color("font_hover_color", "CheckBox", INK)
 	t.set_color("font_pressed_color", "CheckBox", INK)
+	t.set_color("font_hover_pressed_color", "CheckBox", INK)
+	t.set_color("font_focus_color", "CheckBox", INK)
+	var cb_flat := StyleBoxEmpty.new()
+	cb_flat.content_margin_left = 2
+	cb_flat.content_margin_right = 4
+	var cb_focus := box(Color(0, 0, 0, 0), Color("#ffd447"), 1, 2, 2, false)
+	for st in ["normal", "hover", "pressed", "hover_pressed", "disabled"]:
+		t.set_stylebox(st, "CheckBox", cb_flat)
+	t.set_stylebox("focus", "CheckBox", cb_focus)
 	t.set_color("font_color", "OptionButton", CREAM)
 	t.set_stylebox("panel", "PopupMenu", parchment(4))
 	t.set_color("font_color", "PopupMenu", INK)

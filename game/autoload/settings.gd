@@ -53,11 +53,19 @@ var screen_shake: bool = true
 var fullscreen: bool = false
 var twelve_hour: bool = true
 var auto_pause_menus: bool = true
-var server_host: String = "127.0.0.1"
-var server_port: int = 7350
-var server_key: String = "hollowmere_dev"
-var server_ssl: bool = false
+var server_host: String = default_server("host", "127.0.0.1")
+var server_port: int = default_server("port", 7350)
+var server_key: String = default_server("key", "hollowmere_dev")
+var server_ssl: bool = default_server("ssl", false)
+var cloud_saves: bool = true
 var custom_keys: Dictionary = {}       ## action -> [keycodes]
+
+## Server address baked into the build (project setting hollowmere/server/*, with .release overrides).
+static func default_server(key: String, fallback: Variant) -> Variant:
+	var v: Variant = ProjectSettings.get_setting("hollowmere/server/" + key, fallback)
+	if v is String and (v == "" or v.begins_with("%")):
+		return fallback
+	return v
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -141,13 +149,16 @@ func load_settings() -> void:
 	if cfg.load(PATH) != OK:
 		return
 	for k in ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "colorblind", "screen_shake",
-			"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "custom_keys"]:
+			"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves", "custom_keys"]:
 		if cfg.has_section_key("settings", k):
 			set(k, cfg.get_value("settings", k))
 
 func save_settings() -> void:
 	var cfg := ConfigFile.new()
 	for k in ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "colorblind", "screen_shake",
-			"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "custom_keys"]:
+			"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves", "custom_keys"]:
+		## Only a server the player changed is pinned, so builds can move to a new address.
+		if k.begins_with("server_") and get(k) == default_server(k.trim_prefix("server_"), get(k)):
+			continue
 		cfg.set_value("settings", k, get(k))
 	cfg.save(PATH)
