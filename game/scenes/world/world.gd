@@ -37,6 +37,7 @@ var _static_nodes: Array = []
 var blockers: Dictionary = {}        # Vector2i -> true
 var interactables: Dictionary = {}   # Vector2i -> Dictionary (authored map objects)
 var npcs: Dictionary = {}            # vid -> Npc
+var creatures: Array = []            # WildCreature nodes (wild + ranch)
 var actors: Node2D
 var astar: AStarGrid2D
 
@@ -73,6 +74,9 @@ func _ready() -> void:
 	EventBus.time_changed.connect(_on_time)
 	EventBus.popup.connect(_on_popup)
 	EventBus.weather_changed.connect(func(_w): _apply_weather())
+	EventBus.party_changed.connect(func():
+		if map_id == "farm":
+			_spawn_creatures())
 
 # --- Loading --------------------------------------------------------------------------
 
@@ -120,6 +124,7 @@ func load_map(id: String) -> void:
 		_draw_crop(Tiles.parse_key(k))
 	_build_astar()
 	_spawn_npcs()
+	_spawn_creatures()
 	_on_time(GameState.minute())
 	_apply_weather()
 
@@ -398,6 +403,82 @@ func _add_building(o: Dictionary) -> void:
 		door["action"] = "ruined"
 	for dx in range(maxi(0, w / 2 - 1), mini(w, w / 2 + 1)):
 		interactables[Vector2i(p.x + dx, p.y + h - 1)] = door
+
+# --- Wildlings --------------------------------------------------------------------------
+
+func _spawn_creatures() -> void:
+	for c in creatures:
+		if is_instance_valid(c):
+			c.queue_free()
+	creatures.clear()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash([int(GameState.world.seed), GameState.day(), map_id, int(GameState.minute() / 120)])
+	var spawns: Array = info.get("spawns", [])
+	if not spawns.is_empty():
+		var night := Calendar.is_night(GameState.minute())
+		var starry_mult := 3.0 if GameState._anyone_has("starry_charm") else 1.0
+		for i in 7:
+			var sid := MapBuilder.pick_spawn(spawns, GameState.season(), GameState.world.weather, night, rng)
+			if sid == "" or not Data.species.has(sid):
+				continue
+			var t := _random_open_tile(rng, true)
+			if t.x < 0:
+				continue
+			var lvl := Trainers.wild_level(info.get("levels", [2, 6]), rng, night)
+			var starry := rng.randf() * float(Creature.STARRY_ODDS) / starry_mult < 1.0
+			_add_creature(sid, lvl, starry, t, null)
+	if map_id == "farm":
+		var den := Vector2i(-1, -1)
+		for o in info.get("objects", []):
+			if o.get("id", "") == "den":
+				den = Vector2i(int(o.x) + int(o.w) / 2, int(o.y) + int(o.h) + 3)
+		for c in GameState.ranch.slice(0, 30):
+			var t2 := _random_open_tile(rng, false, den)
+			if t2.x >= 0:
+				_add_creature(c.species_id, c.level, c.starry, t2, c)
+
+func _add_creature(sid: String, lvl: int, starry: bool, t: Vector2i, c: Creature) -> WildCreature:
+	var w := WildCreature.new()
+	w.species = sid
+	w.level = lvl
+	w.starry = starry
+	w.pet = c != null
+	w.creature = c
+	w.world = self
+	w.position = GameState.tile_center(t) + Vector2(0, 6)
+	ysort.add_child(w)
+	creatures.append(w)
+	return w
+
+func _random_open_tile(rng: RandomNumberGenerator, prefer_grass: bool, near := Vector2i(-1, -1)) -> Vector2i:
+	var sp: Array = info.get("spawn", [1, 1])
+	var spawn_t := Vector2i(int(sp[0]), int(sp[1]))
+	for i in 80:
+		var t := Vector2i(rng.randi_range(3, grid.w - 4), rng.randi_range(3, grid.h - 4))
+		if near.x >= 0 and i < 60:
+			t = Vector2i(clampi(near.x + rng.randi_range(-6, 6), 1, grid.w - 2), clampi(near.y + rng.randi_range(-3, 3), 1, grid.h - 2))
+		elif t.distance_to(spawn_t) < 6.0:
+			continue
+		if is_tile_solid(t) or not warp_at(t).is_empty() or interactables.has(t):
+			continue
+		if prefer_grass and i < 40 and grid.get_ground(t) != Tiles.GROUND.tallgrass:
+			continue
+		if not grid.crop_at(t).is_empty():
+			continue
+		return t
+	return Vector2i(-1, -1)
+
+func creature_at(t: Vector2i) -> WildCreature:
+	var c := GameState.tile_center(t)
+	for w in creatures:
+		if is_instance_valid(w) and w.position.distance_to(c) < 20.0:
+			return w
+	return null
+
+func remove_creature(w: WildCreature) -> void:
+	creatures.erase(w)
+	if is_instance_valid(w):
+		w.queue_free()
 
 # --- NPCs -------------------------------------------------------------------------------
 

@@ -89,6 +89,11 @@ func _on_interact(t: Vector2i) -> void:
 	var npc := world.npc_at(t)
 	if npc:
 		await _talk(npc)
+		await _offer_battle(npc.vid)
+		return
+	var wc := world.creature_at(t)
+	if wc and wc.pet and wc.creature:
+		_pet(wc)
 		return
 	var g := world.grid
 	if g:
@@ -222,7 +227,8 @@ func _building(io: Dictionary) -> void:
 				var sp: Array = Data.get_map("greenhouse").get("spawn", [7, 10])
 				EventBus.map_change_requested.emit("greenhouse", Vector2i(int(sp[0]), int(sp[1])))
 		"den":
-			await ui.say(["The Wildling Den. %d Wildlings live on the farm (room for %d)." % [GameState.ranch.size(), GameState.den_capacity()]])
+			Audio.sfx("door")
+			ui.open(PartyPanel.new(_pdata(), "farm"))
 		"hatchery":
 			await ui.say(["The Hatchery. %d egg%s incubating." % [GameState.world.hatchery.size(), "" if GameState.world.hatchery.size() == 1 else "s"]])
 		"spa":
@@ -239,6 +245,49 @@ func _board() -> void:
 	if lines.is_empty():
 		lines = ["The board is empty. New requests are posted every week."]
 	await ui.say(lines, "Village Board")
+
+# --- Wildlings ------------------------------------------------------------------------
+
+func _pet(wc: WildCreature) -> void:
+	var c := wc.creature
+	var key := "pet:" + c.uid
+	var flags: Dictionary = GameState.world.flags
+	if int(flags.get(key, -1)) == GameState.day():
+		wc.emote("♪")
+		EventBus.toast.emit("%s is enjoying the farm." % c.display_name(), "")
+		return
+	flags[key] = GameState.day()
+	c.change_happiness(6)
+	c.grooming = mini(100, c.grooming + 4)
+	wc.emote("♥", 1.5)
+	Audio.sfx("heart")
+	var job := "resting" if c.job == "" else "working as a " + str(Data.job_info(c.job).get("job_name", "worker")).to_lower()
+	EventBus.toast.emit("You pet %s. It's %s." % [c.display_name(), job], "")
+
+func _offer_battle(vid: String) -> void:
+	var tr: Dictionary = Data.villagers.get(vid, {}).get("trainer", {})
+	if tr.is_empty() or tr.has("warden"):
+		return
+	var p := _pdata()
+	var key := "battled:" + vid
+	if int(p.stats.get(key, -1)) == GameState.day() or not p.has_usable_party():
+		return
+	var name := Data.villager_name(vid)
+	busy = true
+	var c: int = await ui.ask("%s: Up for a Wildling battle?" % name, ["Let's battle!", "Not now"], name, _portrait(vid))
+	busy = false
+	if c != 0:
+		return
+	p.stats[key] = GameState.day()
+	var lead := p.lead()
+	var info := Trainers.team_for(vid, GameState.world.shrines.size(), lead.level if lead else 5, GameState.rng)
+	EventBus.battle_requested.emit({
+		"kind": info.kind, "vid": vid, "team": info.team, "foe_name": name, "reward": info.reward,
+		"lose_lines": ["%s: Wow, you're good! Rematch tomorrow?" % name],
+	})
+	var res: Dictionary = await EventBus.battle_finished
+	if res.get("result", "") == "win":
+		Relationships.add_points(vid, p.relationship(vid), 30)
 
 # --- Villagers ------------------------------------------------------------------------
 

@@ -206,6 +206,13 @@ func type_mult(atk_type: String, def_types: Array) -> float:
 func type_color(t: String) -> Color:
 	return Color(types[t].color) if types.has(t) else Color.GRAY
 
+## Type info ({job, job_name, job_desc, ...}) for the type that performs `job_id`.
+func job_info(job_id: String) -> Dictionary:
+	for t in types:
+		if types[t].get("job", "") == job_id:
+			return types[t]
+	return {}
+
 func type_name(t: String) -> String:
 	return types[t].name if types.has(t) else t.capitalize()
 

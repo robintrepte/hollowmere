@@ -17,6 +17,7 @@ var title: TitleScreen
 var title_layer: CanvasLayer
 var fade: ColorRect
 var remotes: Dictionary = {}     # pid -> Player
+var battle: BattleScreen
 var _transitioning := false
 var _shake := 0.0
 
@@ -43,6 +44,7 @@ func _ready() -> void:
 	Coop.remote_moved.connect(_on_remote_moved)
 	Coop.remote_left.connect(_remove_remote)
 	Coop.snapshot_loaded.connect(_on_snapshot)
+	EventBus.battle_requested.connect(_on_battle_requested)
 	show_title()
 
 # --- Title ------------------------------------------------------------------------------
@@ -206,7 +208,7 @@ func _on_day_started(_day: int, report: Dictionary) -> void:
 	await _fade_to(0.0, 0.5)
 	var dr := DayReport.new(report)
 	ui.open(dr)
-	await dr.closed
+	await dr.tree_exited
 	if player:
 		player.locked = false
 	_transitioning = false
@@ -230,6 +232,77 @@ func _unhandled_input(event: InputEvent) -> void:
 		Audio.sfx("open")
 		ui.open(InventoryPanel.new(GameState.local_player()))
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("party"):
+		Audio.sfx("open")
+		ui.open(PartyPanel.new(GameState.local_player()))
+		get_viewport().set_input_as_handled()
+
+# --- Battles ----------------------------------------------------------------------------
+
+func _backdrop_for(info: Dictionary) -> String:
+	if str(info.get("id", "")).begins_with("mine:"):
+		return "cave"
+	var b: String = info.get("biome", "grass")
+	return b if Art.backdrop(b) != null else "grass"
+
+## setup: {kind: "wild", species, level, starry, node} or {kind: "trainer"|"rival"|"warden", vid, team, foe_name, reward}
+func _on_battle_requested(s: Dictionary) -> void:
+	if world == null or battle != null or _transitioning or ui.is_open():
+		return
+	var pd := GameState.local_player()
+	var node: WildCreature = s.get("node")
+	if not pd.has_usable_party():
+		EventBus.toast.emit("Your Wildlings are too tired to battle. Rest at home or the Wildling Center.", "")
+		if node:
+			node.stun(3.0)
+		return
+	if s.kind == "wild":
+		var c := Creature.create(s.species, int(s.level), GameState.rng, {"starry": s.get("starry", false)})
+		s["team"] = [c]
+	s["backdrop"] = _backdrop_for(world.info)
+	player.locked = true
+	GameClock.pause("battle")
+	hud.visible = false
+	battle = BattleScreen.new(s)
+	add_child(battle)
+	var res: Dictionary = await battle.run()
+	await _fade_to(1.0, 0.25)
+	battle.queue_free()
+	battle = null
+	hud.visible = true
+	var after: Array = []
+	match res.result:
+		"befriend":
+			var c2: Creature = res.befriended
+			c2.met = "Befriended in %s at Lv%d" % [world.info.get("name", world.map_id), c2.level]
+			c2.heal_full()
+			var where := GameState.add_creature(pd, c2)
+			GameState.bump_stat("befriend")
+			after.append("%s joined %s!" % [c2.display_name(), {"party": "your party", "den": "the farm Den", "sanctuary": "the Sanctuary"}[where]])
+			if node:
+				world.remove_creature(node)
+		"win":
+			if node:
+				world.remove_creature(node)
+			if s.kind != "wild":
+				pd.stat_add("trainer_wins")
+		"run":
+			if node:
+				node.stun(3.0)
+		"lose":
+			pd.heal_party()
+			var sp: Array = Data.get_map("farm").spawn
+			_go_to("farm", GameState.tile_center(Vector2i(int(sp[0]), int(sp[1]))))
+			GameState.advance_minutes(120)
+	Audio.music(world.info.get("music", "farm"))
+	EventBus.party_changed.emit()
+	await _fade_to(0.0, 0.3)
+	if not after.is_empty():
+		Audio.sfx("befriend")
+		await ui.say(after)
+	player.locked = false
+	GameClock.resume("battle")
+	EventBus.battle_finished.emit(res)
 
 # --- Co-op remote players ---------------------------------------------------------------
 

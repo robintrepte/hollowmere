@@ -9,6 +9,8 @@ var root: Control
 var dim: ColorRect
 var stack: Array = []
 var dialogue: DialogueBox
+## True while any modal panel or dialogue is up; the local player doesn't move then.
+static var blocking := false
 
 func _ready() -> void:
 	layer = 20
@@ -67,6 +69,7 @@ func top() -> Control:
 	return stack[-1] if not stack.is_empty() else null
 
 func _pause(on: bool) -> void:
+	blocking = on
 	if on:
 		if not Net.is_online() and Settings.auto_pause_menus:
 			GameClock.pause("ui")

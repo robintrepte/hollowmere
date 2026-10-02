@@ -60,7 +60,7 @@ func _physics_process(delta: float) -> void:
 		return
 	_warp_cooldown = maxf(0.0, _warp_cooldown - delta)
 	var dir := Vector2.ZERO
-	if not locked and not doll.is_swinging():
+	if not locked and not UIRoot.blocking and not doll.is_swinging():
 		dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	moving = dir.length() > 0.1
 	if moving:
