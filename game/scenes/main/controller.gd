@@ -283,6 +283,7 @@ func _offer_battle(vid: String) -> void:
 	var info := Trainers.team_for(vid, GameState.world.shrines.size(), lead.level if lead else 5, GameState.rng)
 	EventBus.battle_requested.emit({
 		"kind": info.kind, "vid": vid, "team": info.team, "foe_name": name, "reward": info.reward,
+		"items": info.items, "ai": info.ai,
 		"lose_lines": ["%s: Wow, you're good! Rematch tomorrow?" % name],
 	})
 	var res: Dictionary = await EventBus.battle_finished

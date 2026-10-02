@@ -169,6 +169,25 @@ func gain_xp(amount: int) -> Array:
 		events.append({"t": "evolve_ready", "to": evo})
 	return events
 
+## Puts a learned move into slot `slot` (0-3). A slot past the end appends while there's room.
+## Swapping in a move that's already equipped swaps the two slots.
+func equip_move(slot: int, move_id: String) -> bool:
+	if not learned.has(move_id) or slot < 0 or slot >= 4:
+		return false
+	var at := moves.find(move_id)
+	if slot >= moves.size():
+		if at >= 0 or moves.size() >= 4:
+			return false
+		moves.append(move_id)
+		return true
+	if at >= 0:
+		moves[at] = moves[slot]
+	moves[slot] = move_id
+	return true
+
+func spare_moves() -> Array:
+	return learned.filter(func(m): return not moves.has(m))
+
 func can_evolve() -> String:
 	var evo = species().evo
 	if evo == null:

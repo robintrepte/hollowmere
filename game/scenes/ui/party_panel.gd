@@ -7,6 +7,7 @@ signal closed
 var player: PlayerData
 var tab := "party"
 var _sel: Creature
+var _swap_slot := -1
 var _list: VBoxContainer
 var _detail: VBoxContainer
 var _tabs: HBoxContainer
@@ -88,7 +89,7 @@ func _row(c: Creature) -> Control:
 	b.add_theme_stylebox_override("hover", picked)
 	b.add_theme_stylebox_override("pressed", picked)
 	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
-	b.pressed.connect(func(): _sel = c; Audio.sfx("tick", 0.0); _refresh())
+	b.pressed.connect(func(): _sel = c; _swap_slot = -1; Audio.sfx("tick", 0.0); _refresh())
 	var h := HBoxContainer.new()
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -127,6 +128,32 @@ func _chip(text: String, col: Color) -> Control:
 	p.add_theme_stylebox_override("panel", UITheme.box(col, col.darkened(0.4), 1, 2, 2, false))
 	p.add_child(UITheme.label(text, 8, Color.WHITE, true))
 	return p
+
+func _move_chip(mid: String, picked: bool, on_press: Callable) -> Button:
+	var b := Button.new()
+	b.custom_minimum_size = Vector2(140, 16)
+	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	b.add_theme_font_size_override("font_size", 9)
+	b.add_theme_color_override("font_color", UITheme.INK)
+	b.add_theme_color_override("font_hover_color", UITheme.INK)
+	b.add_theme_color_override("font_pressed_color", UITheme.INK)
+	var base := UITheme.CREAM
+	var edge := Color("#b09060")
+	if mid != "":
+		var m: Dictionary = Data.get_move(mid)
+		base = Data.type_color(m.type).lightened(0.35)
+		edge = Data.type_color(m.type).darkened(0.3)
+		b.text = "%s  %s" % [m.name, ("· %d" % int(m.power)) if int(m.power) > 0 else "· status"]
+		b.tooltip_text = "%s · %s\n%s" % [Data.type_name(m.type), "Physical" if m.cat == "phys" else "Special" if m.cat == "spec" else "Status", m.get("desc", "")]
+	else:
+		b.text = "+ empty slot"
+	var normal := UITheme.box(base, Color("#ffd447") if picked else edge, 2 if picked else 1, 3, 3, false)
+	b.add_theme_stylebox_override("normal", normal)
+	b.add_theme_stylebox_override("hover", UITheme.box(base.lightened(0.15), Color("#ffd447"), 1, 3, 3, false))
+	b.add_theme_stylebox_override("pressed", normal)
+	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+	b.pressed.connect(on_press)
+	return b
 
 func _show_detail() -> void:
 	for c in _detail.get_children():
@@ -186,14 +213,32 @@ func _show_detail() -> void:
 	mg.add_theme_constant_override("h_separation", 4)
 	mg.add_theme_constant_override("v_separation", 3)
 	_detail.add_child(mg)
-	for mid in c.moves:
-		var m: Dictionary = Data.get_move(mid)
-		var chip := PanelContainer.new()
-		chip.custom_minimum_size = Vector2(140, 0)
-		chip.add_theme_stylebox_override("panel", UITheme.box(Data.type_color(m.type).lightened(0.35), Data.type_color(m.type).darkened(0.3), 1, 3, 3, false))
-		chip.tooltip_text = m.get("desc", "")
-		chip.add_child(UITheme.label("%s  %s" % [m.name, ("· %d" % int(m.power)) if int(m.power) > 0 else "· status"], 9, UITheme.INK))
-		mg.add_child(chip)
+	var spare := c.spare_moves()
+	for slot in 4:
+		if slot >= c.moves.size() and (spare.is_empty() or slot > c.moves.size()):
+			break
+		var mid: String = c.moves[slot] if slot < c.moves.size() else ""
+		mg.add_child(_move_chip(mid, slot == _swap_slot, func():
+			_swap_slot = -1 if _swap_slot == slot else slot
+			Audio.sfx("tick", 0.0)
+			_show_detail()))
+	if not spare.is_empty():
+		if _swap_slot < 0:
+			_detail.add_child(UITheme.label("%d more known move%s. Click a slot to swap." % [spare.size(), "" if spare.size() == 1 else "s"], 8, UITheme.MUTED))
+		else:
+			_detail.add_child(UITheme.label("Swap in:", 9, UITheme.WOOD))
+			var sg := GridContainer.new()
+			sg.columns = 2
+			sg.add_theme_constant_override("h_separation", 4)
+			sg.add_theme_constant_override("v_separation", 3)
+			_detail.add_child(sg)
+			for sm in spare:
+				sg.add_child(_move_chip(sm, false, func():
+					if c.equip_move(_swap_slot, sm):
+						Audio.sfx("open")
+						EventBus.party_changed.emit()
+					_swap_slot = -1
+					_show_detail()))
 	# Farm job
 	var job_t: Dictionary = Data.job_info(c.job_type())
 	_detail.add_child(UITheme.label("Farm job: %s. %s" % [job_t.job_name, job_t.job_desc], 9, UITheme.LEAF.darkened(0.35)))

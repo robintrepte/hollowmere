@@ -103,6 +103,19 @@ func _ready() -> void:
 	for c in pd.party:
 		c.level = 12
 		c.heal_full()
+		for e in c.species().learnset:
+			if not c.learned.has(e[1]):
+				c.learned.append(e[1])
+	var pp := PartyPanel.new(pd)
+	main.ui.open(pp)
+	await _wait(0.2)
+	pp._swap_slot = 0
+	pp._show_detail()
+	await _wait(0.2)
+	await _shot("c085_move_swap")
+	main.ui.close_all()
+	await _wait(0.2)
+	GameState.world.weather = "rain"
 	EventBus.battle_requested.emit({"kind": info.kind, "vid": "rowan", "team": info.team, "foe_name": "Rowan", "reward": info.reward})
 	await _until(func(): return main.battle != null and main.battle._cmd.visible and main.battle._cmd.get_child_count() > 0, 30.0)
 	await _shot("c09_trainer_battle")

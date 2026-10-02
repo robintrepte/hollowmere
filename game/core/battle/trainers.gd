@@ -25,10 +25,16 @@ static func team_for(vid: String, shrines_done: int, lead_level: int, rng: Rando
 		for i in mini(n, lines.size()):
 			var l := maxi(2, lvl2 - (n - 1 - i))
 			team.append(_make(Data.form_at_level(lines[i], l), l, rng, 4))
+	var items := {}
+	if tr.has("warden"):
+		items = {"super_potion": 2, "remedy": 1}
+	elif shrines_done >= 2:
+		items = {"potion": mini(3, shrines_done / 2)}
 	return {
 		"name": v.get("name", vid), "kind": kind, "team": team,
 		"reward": int(tr.get("reward", 200)) * (1 + shrines_done if kind == "rival" else 1),
-		"warden": tr.get("warden", ""),
+		"warden": tr.get("warden", ""), "items": items,
+		"ai": 2 if tr.has("warden") else 1,
 	}
 
 static func _make(species: String, lvl: int, rng: RandomNumberGenerator, min_gene: int) -> Creature:

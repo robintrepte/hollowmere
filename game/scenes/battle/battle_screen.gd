@@ -24,6 +24,10 @@ var _cmd: GridContainer
 var _overlay: PanelContainer
 var _typing := false
 var _hp_shown := [0.0, 0.0]
+var _wx: Control
+var _wx_kind := ""
+var _wx_parts: Array = []
+var _wx_flash := 0.0
 
 func _init(s: Dictionary = {}) -> void:
 	setup = s
@@ -51,9 +55,14 @@ func _ready() -> void:
 			plat.draw_circle(Vector2.ZERO, p[1] - 6.0, Color(0.85, 0.9, 0.6, 0.25))
 		plat.draw_set_transform(Vector2.ZERO))
 	root.add_child(plat)
+	_wx = Control.new()
+	_wx.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_wx.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_wx.draw.connect(_draw_weather)
 	_foe_spr = _make_sprite(2.0)
 	_me_spr = _make_sprite(2.5)
 	_me_spr.flip_h = true
+	root.add_child(_wx)
 	_foe_box = _info_box(Vector2(16, 18), false)
 	_me_box = _info_box(Vector2(404, 196), true)
 	# Bottom bar: message + commands
@@ -89,6 +98,70 @@ func _ready() -> void:
 	_flash.modulate.a = 0.0
 	root.add_child(_flash)
 
+func _set_weather(w: String) -> void:
+	_wx_kind = w
+	_wx_parts.clear()
+	var n: int = {"rain": 90, "storm": 120, "snow": 70, "fog": 6, "sun": 14}.get(w, 0)
+	for i in n:
+		_wx_parts.append(Vector3(randf() * 640.0, randf() * 360.0, randf()))
+	_wx.queue_redraw()
+
+func _process(delta: float) -> void:
+	if _wx_kind == "":
+		return
+	for i in _wx_parts.size():
+		var p: Vector3 = _wx_parts[i]
+		match _wx_kind:
+			"rain", "storm":
+				p.y += delta * (420.0 + p.z * 200.0)
+				p.x -= delta * (60.0 if _wx_kind == "rain" else 160.0)
+			"snow":
+				p.y += delta * (30.0 + p.z * 30.0)
+				p.x += sin(p.y * 0.05 + p.z * 6.0) * delta * 20.0
+			"fog":
+				p.x += delta * (8.0 + p.z * 10.0)
+			"sun":
+				p.y -= delta * (6.0 + p.z * 8.0)
+		if p.y > 370.0:
+			p.y = -10.0
+		elif p.y < -10.0:
+			p.y = 370.0
+		if p.x < -60.0:
+			p.x = 700.0
+		elif p.x > 700.0:
+			p.x = -60.0
+		_wx_parts[i] = p
+	if _wx_kind == "storm":
+		_wx_flash = maxf(0.0, _wx_flash - delta * 2.5)
+		if randf() < delta * 0.25:
+			_wx_flash = 0.6
+			Audio.sfx("thunder")
+	_wx.queue_redraw()
+
+func _draw_weather() -> void:
+	match _wx_kind:
+		"rain", "storm":
+			_wx.draw_rect(Rect2(0, 0, 640, 360), Color(0.1, 0.15, 0.3, 0.18))
+			for p: Vector3 in _wx_parts:
+				var len := 7.0 + p.z * 6.0
+				_wx.draw_line(Vector2(p.x, p.y), Vector2(p.x + len * 0.25, p.y - len), Color(0.75, 0.85, 1.0, 0.45 + p.z * 0.3), 1.0)
+			if _wx_flash > 0.0:
+				_wx.draw_rect(Rect2(0, 0, 640, 360), Color(1, 1, 0.9, _wx_flash * 0.5))
+		"snow":
+			_wx.draw_rect(Rect2(0, 0, 640, 360), Color(0.85, 0.9, 1.0, 0.12))
+			for p in _wx_parts:
+				_wx.draw_rect(Rect2(floorf(p.x), floorf(p.y), 2 if p.z > 0.5 else 1, 2 if p.z > 0.5 else 1), Color(1, 1, 1, 0.85))
+		"fog":
+			_wx.draw_rect(Rect2(0, 0, 640, 360), Color(0.85, 0.88, 0.9, 0.28))
+			for p in _wx_parts:
+				_wx.draw_set_transform(Vector2(p.x, 120.0 + p.z * 170.0), 0.0, Vector2(1.0, 0.3))
+				_wx.draw_circle(Vector2.ZERO, 90.0 + p.z * 50.0, Color(0.95, 0.95, 0.97, 0.22))
+			_wx.draw_set_transform(Vector2.ZERO)
+		"sun":
+			_wx.draw_rect(Rect2(0, 0, 640, 360), Color(1.0, 0.8, 0.4, 0.14))
+			for p in _wx_parts:
+				_wx.draw_circle(Vector2(p.x, p.y), 1.5 + p.z, Color(1, 0.95, 0.6, 0.5))
+
 func _make_sprite(sc: float) -> Sprite2D:
 	var s := Sprite2D.new()
 	s.centered = false
@@ -113,6 +186,8 @@ func _info_box(pos: Vector2, mine: bool) -> Dictionary:
 	top.add_child(name)
 	var status := UITheme.label("", 9, Color.WHITE, true)
 	top.add_child(status)
+	var pips := UITheme.label("", 8, UITheme.WOOD)
+	top.add_child(pips)
 	var lvl := UITheme.label("", 10, UITheme.INK)
 	top.add_child(lvl)
 	var hp := ProgressBar.new()
@@ -121,7 +196,7 @@ func _info_box(pos: Vector2, mine: bool) -> Dictionary:
 	hp.max_value = 1.0
 	hp.step = 0.0
 	v.add_child(hp)
-	var d := {"panel": p, "name": name, "lvl": lvl, "hp": hp, "status": status}
+	var d := {"panel": p, "name": name, "lvl": lvl, "hp": hp, "status": status, "pips": pips}
 	if mine:
 		var nums := UITheme.label("", 9, UITheme.INK)
 		nums.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -144,6 +219,12 @@ func _refresh_box(side: int, animate_hp: bool = false) -> void:
 	var b: Dictionary = _me_box if side == 0 else _foe_box
 	b.name.text = ("★ " if c.starry else "") + c.display_name()
 	b.lvl.text = "Lv%d" % c.level
+	var team: Array = engine.sides[side].team
+	var pips := ""
+	if team.size() > 1:
+		for m in team:
+			pips += "○" if m.is_fainted() else "●"
+	b.pips.text = pips + (" " if pips != "" else "")
 	var tag: Array = STATUS_TAG.get(c.status, ["", "#000000"])
 	b.status.text = tag[0]
 	b.status.add_theme_color_override("font_outline_color", Color(tag[1]))
@@ -197,6 +278,10 @@ func run() -> Dictionary:
 	var foe_team: Array = setup.get("team", [])
 	var kind: int = BattleEngine.Kind.TRAINER if setup.get("kind", "wild") != "wild" else BattleEngine.Kind.WILD
 	engine = BattleEngine.new(player.party, foe_team, kind, randi(), setup.get("foe_name", ""), player.name)
+	engine.set_field_weather(setup.get("weather", ""))
+	engine.sides[1].items = setup.get("items", {}).duplicate()
+	if setup.has("ai"):
+		engine.sides[1].ai_level = int(setup.ai)
 	for c in foe_team:
 		Progression.mark(GameState.world.dex, c.species_id, false)
 	Audio.music("battle" if kind == BattleEngine.Kind.WILD else "trainer", 0.3)
@@ -280,6 +365,12 @@ func _play(events: Array) -> void:
 				await _hit(int(e.side), e)
 			"miss":
 				Audio.sfx("miss")
+			"weather":
+				_set_weather(str(e.w))
+				if e.w == "storm":
+					_wx_flash = 0.8
+			"item":
+				Audio.sfx("open")
 			"heal":
 				Audio.sfx("heal")
 				if int(e.side) == 0:

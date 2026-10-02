@@ -260,6 +260,8 @@ func _on_battle_requested(s: Dictionary) -> void:
 		var c := Creature.create(s.species, int(s.level), GameState.rng, {"starry": s.get("starry", false)})
 		s["team"] = [c]
 	s["backdrop"] = _backdrop_for(world.info)
+	var indoor: bool = world.info.get("indoor", false) or str(world.info.get("id", "")).begins_with("mine:")
+	s["weather"] = "" if indoor else str(GameState.world.get("weather", ""))
 	player.locked = true
 	GameClock.pause("battle")
 	hud.visible = false

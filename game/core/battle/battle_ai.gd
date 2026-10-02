@@ -7,7 +7,11 @@ static func choose_action(engine: BattleEngine, side: int) -> Dictionary:
 	var me: Creature = s.current()
 	var foe: Creature = engine.active(engine.foe_of(side))
 	var lvl: int = s.ai_level
-	if lvl >= 2 and engine.can_switch(side):
+	if lvl >= 1:
+		var item := _consider_item(engine, side)
+		if item != "":
+			return {"k": "item", "id": item, "target": s.active}
+	if lvl >= 1 and engine.can_switch(side) and (lvl >= 2 or engine.rng.randf() < 0.35):
 		var sw := _consider_switch(engine, side)
 		if sw >= 0:
 			return {"k": "switch", "i": sw}
@@ -48,7 +52,13 @@ static func score_move(engine: BattleEngine, side: int, move_id: String, lvl: in
 					var frac := float(me.hp) / float(me.max_hp())
 					sc = 90.0 * (1.0 - frac) if frac < 0.5 else 5.0
 				"status":
-					sc = 45.0 if foe.status == "" else 0.0
+					sc = 45.0 if foe.status == "" and _status_lands(foe, str(e.s)) else 0.0
+				"weather":
+					var w := str(e.w)
+					var gain := 0.0
+					for t in me.types():
+						gain = maxf(gain, float(BattleEngine.WEATHER[w].mult.get(t, 1.0)))
+					sc = 40.0 if engine.weather != w and gain > 1.0 else 0.0
 				"stat":
 					var tgt_self: bool = e.get("target", "foe") == "self"
 					var cur: int = int(stages.get(e.stat, 0)) if tgt_self else int(engine.sides[engine.foe_of(side)].stages.get(e.stat, 0))
@@ -65,6 +75,36 @@ static func score_move(engine: BattleEngine, side: int, move_id: String, lvl: in
 	if dmg >= foe.hp:
 		dmg += 60.0 + float(m.get("prio", 0)) * 20.0
 	return dmg
+
+static func _status_lands(foe: Creature, st: String) -> bool:
+	if st in Data.traits.get(foe.trait_id, {}).get("status_immune", []):
+		return false
+	var immune := {"burn": "ember", "soak": "tide", "root": "leaf"}
+	return not (immune.has(st) and immune[st] in foe.types())
+
+## Heals the active creature when it's in danger and the side carries medicine.
+static func _consider_item(engine: BattleEngine, side: int) -> String:
+	var s: BattleEngine.BattleSide = engine.sides[side]
+	if s.items.is_empty():
+		return ""
+	var me: Creature = s.current()
+	if me.status != "" and me.status != "soak" and s.items.has("remedy") and engine.rng.randf() < 0.5:
+		return "remedy"
+	if me.hp * 4 > me.max_hp():
+		return ""
+	if engine.rng.randf() > (0.8 if s.ai_level >= 2 else 0.5):
+		return ""
+	var missing := me.max_hp() - me.hp
+	var best := ""
+	var best_heal := 0
+	for id in s.items:
+		var heal := int(Data.get_item(id).get("heal", 0))
+		if heal <= 0:
+			continue
+		if best == "" or (best_heal < missing and heal > best_heal) or (heal >= missing and heal < best_heal):
+			best = id
+			best_heal = heal
+	return best
 
 static func _consider_switch(engine: BattleEngine, side: int) -> int:
 	var s: BattleEngine.BattleSide = engine.sides[side]

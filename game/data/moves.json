@@ -81,5 +81,10 @@
   "cozy_nap":      {"name": "Cozy Nap",      "type": "wild",  "cat": "status", "power": 0,   "acc": 0,   "effects": [{"k": "rest"}], "desc": "Fully heals, then sleeps for two turns."},
   "body_slam":     {"name": "Body Slam",     "type": "wild",  "cat": "phys",   "power": 85,  "acc": 100, "desc": "Slams with its whole body."},
   "hyper_rush":    {"name": "Hyper Rush",    "type": "wild",  "cat": "phys",   "power": 110, "acc": 85,  "desc": "A reckless all-out rush."},
+  "heat_haze":     {"name": "Heat Haze",     "type": "ember", "cat": "status", "power": 0,   "acc": 0,   "effects": [{"k": "weather", "w": "sun"}], "desc": "Calls harsh sunlight for 5 turns. Ember moves grow stronger."},
+  "rain_song":     {"name": "Rain Song",     "type": "tide",  "cat": "status", "power": 0,   "acc": 0,   "effects": [{"k": "weather", "w": "rain"}], "desc": "Sings up a rain shower for 5 turns. Tide moves grow stronger."},
+  "snowfall":      {"name": "Snowfall",      "type": "frost", "cat": "status", "power": 0,   "acc": 0,   "effects": [{"k": "weather", "w": "snow"}], "desc": "Summons snow for 5 turns. Chills all but Frost types."},
+  "storm_call":    {"name": "Storm Call",    "type": "spark", "cat": "status", "power": 0,   "acc": 0,   "effects": [{"k": "weather", "w": "storm"}], "desc": "Brews a thunderstorm for 5 turns. Spark and Gale moves surge."},
+  "mist_veil":     {"name": "Mist Veil",     "type": "shade", "cat": "status", "power": 0,   "acc": 0,   "effects": [{"k": "weather", "w": "fog"}], "desc": "Rolls in thick fog for 5 turns. Attacks miss more often."},
   "struggle":      {"name": "Struggle",      "type": "none",  "cat": "phys",   "power": 30,  "acc": 0,   "effects": [{"k": "recoil", "f": 0.25}], "desc": "A desperate attack."}
 }

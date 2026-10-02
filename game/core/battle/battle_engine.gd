@@ -7,6 +7,16 @@ enum Kind { WILD, TRAINER, PVP }
 
 const STAGE_STATS := ["power", "guard", "focus", "speed"]
 const MAJOR_STATUS := ["burn", "soak", "root", "daze", "sleep"]
+const WEATHER_TURNS := 5
+const WEATHER := {
+	"sun": {"mult": {"ember": 1.5, "tide": 0.6}, "start": "The sunlight turned harsh!", "end": "The sunlight faded."},
+	"rain": {"mult": {"tide": 1.5, "ember": 0.6}, "start": "Rain started to pour!", "end": "The rain stopped."},
+	"storm": {"mult": {"spark": 1.3, "gale": 1.3}, "start": "A thunderstorm rolled in!", "end": "The storm passed."},
+	"snow": {"mult": {"frost": 1.5}, "start": "Snow began to fall!", "end": "The snow stopped."},
+	"fog": {"mult": {"shade": 1.3, "glow": 0.8}, "start": "A thick fog rolled in!", "end": "The fog lifted."},
+}
+## Overworld weather -> battle weather. Plain sunny days are a clear field.
+const OVERWORLD_WEATHER := {"rain": "rain", "storm": "storm", "snow": "snow", "fog": "fog"}
 
 class BattleSide:
 	var name: String = ""
@@ -15,6 +25,7 @@ class BattleSide:
 	var stages: Dictionary = {"power": 0, "guard": 0, "focus": 0, "speed": 0}
 	var ai_level: int = 0
 	var sturdy_used: Dictionary = {}
+	var items: Dictionary = {}           # AI-only item stock {item_id: count}
 
 	func current() -> Creature:
 		return team[active]
@@ -45,6 +56,9 @@ var befriended: Creature = null
 var participants: Dictionary = {}
 var xp_mult: float = 1.0
 var run_attempts: int = 0
+var weather: String = ""
+var weather_turns: int = -1            # -1 = lasts the whole battle
+var base_weather: String = ""
 
 func _init(player_team: Array, foe_team: Array, battle_kind: int = Kind.WILD, seed_value: int = 0, foe_name: String = "", player_name: String = "You") -> void:
 	kind = battle_kind
@@ -61,6 +75,17 @@ func _init(player_team: Array, foe_team: Array, battle_kind: int = Kind.WILD, se
 	sides = [a, b]
 	if battle_kind == Kind.TRAINER:
 		xp_mult = 1.5
+
+## Sets the field weather the battle starts with (pass the overworld weather id).
+func set_field_weather(overworld: String) -> void:
+	base_weather = OVERWORLD_WEATHER.get(overworld, "")
+	weather = base_weather
+	weather_turns = -1
+
+func weather_mult(move_type: String) -> float:
+	if weather == "":
+		return 1.0
+	return float(WEATHER[weather].mult.get(move_type, 1.0))
 
 func active(side: int) -> Creature:
 	return sides[side].current()
@@ -83,6 +108,9 @@ func start() -> Array:
 		ev.append({"t": "text", "msg": "%s sent out %s!" % [sides[1].name, active(1).display_name()]})
 	ev.append({"t": "switch", "side": 0, "index": sides[0].active, "species": active(0).species_id})
 	ev.append({"t": "text", "msg": "Go, %s!" % active(0).display_name()})
+	if weather != "":
+		ev.append({"t": "weather", "w": weather})
+		ev.append({"t": "text", "msg": {"rain": "It's raining.", "storm": "A storm is raging.", "snow": "Snow is falling.", "fog": "The fog is thick.", "sun": "The sunlight is harsh."}[weather]})
 	_on_entry(0, ev)
 	_on_entry(1, ev)
 	return ev
@@ -173,7 +201,10 @@ func submit(a0: Dictionary, a1: Dictionary) -> Array:
 	for side in [0, 1]:
 		if acts[side].get("k", "") == "move":
 			movers.append(side)
-	movers.sort_custom(func(x, y): return _move_order_key(x, acts[x]) > _move_order_key(y, acts[y]))
+	var keys := {}
+	for side in movers:
+		keys[side] = _move_order_key(side, acts[side])
+	movers.sort_custom(func(x, y): return keys[x] > keys[y])
 	for side in movers:
 		if is_over():
 			break
@@ -239,9 +270,13 @@ func _execute_move(side: int, move_id: String, ev: Array) -> void:
 	var m: Dictionary = Data.get_move(move_id)
 	ev.append({"t": "move", "side": side, "move": move_id, "name": m.name, "type": m.type, "cat": m.cat})
 	ev.append({"t": "text", "msg": "%s used %s!" % [user.display_name(), m.name]})
-	var acc: int = int(m.acc)
-	if acc > 0 and (m.cat != "status" or _targets_foe(m)):
-		if rng.randi_range(1, 100) > acc:
+	var acc := float(m.acc)
+	if weather == "fog" and not "shade" in user.types():
+		acc *= 0.85
+	if weather == "storm" and m.type == "spark":
+		acc = 0.0
+	if acc > 0.0 and (m.cat != "status" or _targets_foe(m)):
+		if rng.randf() * 100.0 >= acc:
 			ev.append({"t": "miss", "side": side})
 			ev.append({"t": "text", "msg": "But it missed!"})
 			return
@@ -292,7 +327,7 @@ func calc_damage(side: int, move_id: String, force_no_random: bool = false) -> D
 	var lvl := float(user.level)
 	var base: float = floorf(floorf(floorf(2.0 * lvl / 5.0 + 2.0) * power * a / maxf(1.0, d)) / 50.0) + 2.0
 	var eff := 1.0 if m.type == "none" else Data.type_mult(m.type, target.types())
-	var mult := eff
+	var mult := eff * weather_mult(m.type)
 	if m.type in user.types():
 		mult *= 1.5
 	var utr: Dictionary = Data.traits.get(user.trait_id, {})
@@ -332,7 +367,14 @@ func _apply_effects(side: int, m: Dictionary, ev: Array, dealt: int) -> void:
 					if not active(tgt).is_fainted():
 						_apply_stage(tgt, e.stat, int(e.n), ev)
 			"heal":
-				_heal(side, int(ceil(user.max_hp() * float(e.f))), ev)
+				var f := float(e.f)
+				if m.type == "leaf" and weather == "sun":
+					f = 0.66
+				elif m.type == "leaf" and weather in ["rain", "storm", "snow", "fog"]:
+					f = 0.25
+				_heal(side, int(ceil(user.max_hp() * f)), ev)
+			"weather":
+				_start_weather(str(e.w), ev)
 			"drain":
 				if dealt > 0:
 					_heal(side, max(1, int(dealt * float(e.f))), ev)
@@ -349,6 +391,15 @@ func _apply_effects(side: int, m: Dictionary, ev: Array, dealt: int) -> void:
 				ev.append({"t": "heal", "side": side, "amount": user.max_hp(), "hp": user.hp, "max": user.max_hp()})
 				ev.append({"t": "status", "side": side, "status": "sleep"})
 				ev.append({"t": "text", "msg": "%s curled up for a cozy nap!" % user.display_name()})
+
+func _start_weather(w: String, ev: Array) -> void:
+	if weather == w:
+		ev.append({"t": "text", "msg": "But it failed!"})
+		return
+	weather = w
+	weather_turns = WEATHER_TURNS
+	ev.append({"t": "weather", "w": w})
+	ev.append({"t": "text", "msg": WEATHER[w].start})
 
 func _inflict(target_side: int, st: String, ev: Array, announce_fail: bool = false) -> void:
 	var c := active(target_side)
@@ -406,6 +457,12 @@ func _use_item(side: int, item_id: String, target: int, ev: Array) -> void:
 	if target < 0 or target >= team.size():
 		target = sides[side].active
 	var c: Creature = team[target]
+	var stock: Dictionary = sides[side].items
+	if stock.has(item_id):
+		stock[item_id] = int(stock[item_id]) - 1
+		if int(stock[item_id]) <= 0:
+			stock.erase(item_id)
+	ev.append({"t": "item", "side": side, "id": item_id})
 	ev.append({"t": "text", "msg": "%s used a %s." % [sides[side].name, it.get("name", item_id)]})
 	if it.has("revive"):
 		if c.is_fainted():
@@ -510,6 +567,18 @@ func _end_of_turn(ev: Array) -> void:
 		var regen := float(Data.traits.get(c.trait_id, {}).get("regen", 0.0))
 		if regen > 0.0 and not c.is_fainted() and c.hp < c.max_hp():
 			_heal(side, max(1, int(c.max_hp() * regen)), ev)
+		if weather == "snow" and weather_turns > 0 and not c.is_fainted() and not "frost" in c.types():
+			var chill := maxi(1, c.max_hp() / 16)
+			c.hp = max(0, c.hp - chill)
+			ev.append({"t": "damage", "side": side, "amount": chill, "hp": c.hp, "max": c.max_hp(), "eff": 1.0, "crit": false})
+			ev.append({"t": "text", "msg": "%s is chilled by the snow!" % c.display_name()})
+	if weather_turns > 0:
+		weather_turns -= 1
+		if weather_turns == 0:
+			ev.append({"t": "text", "msg": WEATHER[weather].end})
+			weather = base_weather
+			weather_turns = -1
+			ev.append({"t": "weather", "w": weather})
 
 func _check_faints(ev: Array) -> void:
 	for side in [1, 0]:
