@@ -263,7 +263,7 @@ func _show_detail() -> void:
 				EventBus.party_changed.emit()
 				_refresh()))
 		var send := UITheme.button("Send to farm", func():
-			if GameState.move_creature(c.uid, "den", player):
+			if Coop.act("move_creature_act", [c.uid, "den"]).ok:
 				EventBus.toast.emit("%s moved to the farm." % c.display_name(), "")
 				_sel = null
 				_refresh()
@@ -273,7 +273,7 @@ func _show_detail() -> void:
 		acts.add_child(send)
 	else:
 		var join := UITheme.button("Join party", func():
-			if GameState.move_creature(c.uid, "party", player):
+			if Coop.act("move_creature_act", [c.uid, "party"]).ok:
 				_sel = null
 				_refresh())
 		join.disabled = player.party.size() >= PlayerData.PARTY_MAX
@@ -292,7 +292,7 @@ func _show_detail() -> void:
 					sel_i = jobs.item_count - 1
 		jobs.select(sel_i)
 		jobs.item_selected.connect(func(i: int):
-			GameState.set_job(c.uid, jobs.get_item_metadata(i))
+			Coop.act("set_job_act", [c.uid, str(jobs.get_item_metadata(i))])
 			Audio.sfx("tick", 0.0)
 			_refresh())
 		acts.add_child(jobs)
@@ -307,7 +307,7 @@ func _breeding_section(c: Creature) -> void:
 		row.add_child(UITheme.label("Paired with %s · %d%% egg chance each night" % [mate.display_name(), int(Breeding.egg_chance(c, mate) * 100.0)], 9, UITheme.INK))
 		_detail.add_child(row)
 		_detail.add_child(UITheme.button("Unpair", func():
-			GameState.clear_pair(c.uid)
+			Coop.act("clear_pair_act", [c.uid])
 			Audio.sfx("close")
 			_show_detail()))
 		return
@@ -330,7 +330,7 @@ func _breeding_section(c: Creature) -> void:
 	for o in options:
 		var b: Creature = o.creature
 		var btn := UITheme.button("%s  %d%%" % [b.display_name(), int(o.chance * 100.0)], func():
-			var res: Dictionary = GameState.set_pair(c.uid, b.uid)
+			var res: Dictionary = Coop.act("set_pair_act", [c.uid, b.uid])
 			_picking_mate = false
 			if res.ok:
 				Audio.sfx("gift")

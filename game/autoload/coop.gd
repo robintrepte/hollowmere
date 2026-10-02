@@ -9,7 +9,8 @@ signal remote_left(pid: String)
 signal act_result(result: Dictionary)
 
 const CHUNK := 3000
-const ACTIONS := ["use_tool", "use_item", "harvest_at", "load_machine", "ship", "eat", "pick_up_object", "buy", "sell"]
+const ACTIONS := ["use_tool", "use_item", "harvest_at", "load_machine", "ship", "eat", "pick_up_object", "buy", "sell",
+	"craft", "construct", "upgrade_tool", "buy_backpack", "deliver_board", "set_pair_act", "clear_pair_act", "incubate", "set_job_act", "move_creature_act"]
 
 var _chunks: Dictionary = {}       # transfer id -> Array
 var _ready_to_sleep: Dictionary = {}

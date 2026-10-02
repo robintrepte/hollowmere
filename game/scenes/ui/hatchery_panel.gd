@@ -105,7 +105,7 @@ func _refresh() -> void:
 		l2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row2.add_child(l2)
 		var b := UITheme.button("Incubate", func():
-			if GameState.add_egg_to_hatchery(player, e.entry.uid):
+			if Coop.act("incubate", [e.entry.uid]).ok:
 				Audio.sfx("chest")
 				GameState.bump_stat("incubate")
 			_refresh())

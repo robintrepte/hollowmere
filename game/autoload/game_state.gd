@@ -793,6 +793,148 @@ func sell(pid: String, uid: String, n: int = -1) -> Dictionary:
 	r.sfx = "coin"
 	return r
 
+## Inventories a player can craft from: their pack, plus the farm chest when at home.
+func craft_sources(p: PlayerData) -> Array:
+	if p.map_id in ["farm", "farmhouse", "greenhouse"]:
+		return [p.inventory, farm_chest]
+	return [p.inventory]
+
+func craft(pid: String, kind: String, recipe_id: String) -> Dictionary:
+	var p := player(pid)
+	var r := _res(false)
+	if p == null:
+		return r
+	var c := ctx()
+	c["recipes"] = p.recipes
+	if not recipe_id in Economy.known_recipes(kind, c):
+		r.reason = "You don't know that recipe yet."
+		return r
+	if kind == "cooking" and not has_building("kitchen"):
+		r.reason = "You need a kitchen to cook."
+		return r
+	var srcs := craft_sources(p)
+	if not Economy.can_make(kind, recipe_id, srcs):
+		r.reason = "Missing ingredients."
+		return r
+	if not Economy.make(kind, recipe_id, srcs):
+		r.reason = "Your pack is full."
+		return r
+	bump_stat("cook" if kind == "cooking" else "craft")
+	add_farm_xp(3 if kind == "cooking" else 2)
+	EventBus.inventory_changed.emit()
+	r.ok = true
+	r.sfx = "chest"
+	return r
+
+func construct(pid: String, building_id: String) -> Dictionary:
+	var p := player(pid)
+	var r := _res(false)
+	if p == null:
+		return r
+	var srcs := craft_sources(p)
+	var chk := Economy.building_ok(building_id, ctx(), money(), srcs)
+	if not chk.ok:
+		r.reason = chk.reason
+		return r
+	var b: Dictionary = Data.buildings[building_id]
+	spend(int(b.price))
+	Economy.consume(srcs, b.materials)
+	world.buildings.append(building_id)
+	bump_stat("build")
+	add_farm_xp(50)
+	EventBus.inventory_changed.emit()
+	EventBus.toast.emit("%s is ready!" % b.name, "")
+	r.ok = true
+	r.sfx = "levelup"
+	return r
+
+func upgrade_tool(pid: String, tool: String) -> Dictionary:
+	var p := player(pid)
+	var r := _res(false)
+	if p == null or not p.tool_levels.has(tool):
+		return r
+	var spec := Economy.upgrade_spec(p.tool_level(tool) + 1)
+	if spec.is_empty():
+		r.reason = "That tool is already the best it can be."
+		return r
+	var srcs := craft_sources(p)
+	if Economy.count_in(srcs, spec.bar) < int(spec.n):
+		r.reason = "Bring %d %s." % [int(spec.n), Data.item_name(spec.bar)]
+		return r
+	if not spend(int(spec.price)):
+		r.reason = "Not enough gold."
+		return r
+	Economy.consume(srcs, {spec.bar: int(spec.n)})
+	p.tool_levels[tool] = int(spec.level)
+	bump_stat("upgrade")
+	EventBus.inventory_changed.emit()
+	r.ok = true
+	r.sfx = "levelup"
+	return r
+
+func buy_backpack(pid: String, level: int) -> Dictionary:
+	var p := player(pid)
+	var r := _res(false)
+	if p == null or level != p.backpack_level + 1:
+		return r
+	var spec := Economy.backpack_spec(level)
+	if spec.is_empty():
+		return r
+	if not is_open_requirement(spec.get("requires", "")):
+		r.reason = Economy.req_text(spec.requires)
+		return r
+	if not spend(int(spec.price)):
+		r.reason = "Not enough gold."
+		return r
+	p.set_backpack(level)
+	EventBus.inventory_changed.emit()
+	r.ok = true
+	r.sfx = "levelup"
+	return r
+
+## Hands in a Village Board request from the player's pack.
+func deliver_board(pid: String, idx: int) -> Dictionary:
+	var p := player(pid)
+	var r := _res(false)
+	if p == null or idx < 0 or idx >= world.board.size():
+		return r
+	var b: Dictionary = world.board[idx]
+	if b.get("done", false):
+		r.reason = "Already delivered."
+		return r
+	if p.inventory.count(b.item) < int(b.n):
+		r.reason = "You need %d %s." % [int(b.n), Data.item_name(b.item)]
+		return r
+	p.inventory.remove(b.item, int(b.n))
+	b.done = true
+	add_money(int(b.money))
+	Relationships.add_points(b.from, p.relationship(b.from), 40)
+	bump_stat("board")
+	add_farm_xp(20)
+	EventBus.inventory_changed.emit()
+	r.ok = true
+	r.sfx = "coin"
+	return r
+
+func set_pair_act(_pid: String, a_uid: String, b_uid: String) -> Dictionary:
+	var res := set_pair(a_uid, b_uid)
+	return _res(res.ok, res.reason)
+
+func clear_pair_act(_pid: String, uid: String) -> Dictionary:
+	clear_pair(uid)
+	return _res(true)
+
+func incubate(pid: String, egg_uid: String) -> Dictionary:
+	var ok := add_egg_to_hatchery(player(pid), egg_uid)
+	return _res(ok, "" if ok else "The Hatchery is full.")
+
+func set_job_act(_pid: String, uid: String, job_id: String) -> Dictionary:
+	return _res(set_job(uid, job_id))
+
+func move_creature_act(pid: String, uid: String, dest: String) -> Dictionary:
+	var ok := move_creature(uid, dest, player(pid))
+	return _res(ok, "" if ok else "There's no room there.")
+
 func eat(pid: String, uid: String) -> Dictionary:
 	var p := player(pid)
 	var r := _res(false)

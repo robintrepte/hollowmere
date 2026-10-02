@@ -12,6 +12,7 @@ const DEFAULT_KEYS := {
 	"interact": [KEY_E],
 	"inventory": [KEY_TAB, KEY_I],
 	"party": [KEY_P],
+	"craft": [KEY_C],
 	"journal": [KEY_J],
 	"map": [KEY_M],
 	"menu": [KEY_ESCAPE],

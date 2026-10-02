@@ -210,9 +210,13 @@ func _building(io: Dictionary) -> void:
 		return
 	match action:
 		"house":
-			var c: int = await ui.ask("Go to bed for the night?", ["Sleep", "Not yet"])
-			if c == 0:
+			var opts: Array = ["Sleep", "Cook", "Not yet"] if GameState.has_building("kitchen") else ["Sleep", "Not yet"]
+			var c: int = await ui.ask("Welcome home. What would you like to do?", opts)
+			if opts[c] == "Sleep":
 				main.sleep()
+			elif opts[c] == "Cook":
+				Audio.sfx("open")
+				ui.open(CraftPanel.new(_pdata(), "cooking"))
 		"center":
 			_pdata().heal_party()
 			EventBus.party_changed.emit()
@@ -240,12 +244,8 @@ func _building(io: Dictionary) -> void:
 			await ui.say(["It's locked."])
 
 func _board() -> void:
-	var lines: Array = []
-	for b in GameState.world.get("board", []):
-		lines.append("%s: %d %s for %dg%s" % [Data.villager_name(b.get("from", "")), int(b.get("n", 1)), Data.item_name(b.get("item", "")), int(b.get("money", 0)), " (done)" if b.get("done", false) else ""])
-	if lines.is_empty():
-		lines = ["The board is empty. New requests are posted every week."]
-	await ui.say(lines, "Village Board")
+	Audio.sfx("open")
+	ui.open(JournalPanel.new(_pdata(), "board"))
 
 # --- Wildlings ------------------------------------------------------------------------
 

@@ -236,6 +236,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		Audio.sfx("open")
 		ui.open(PartyPanel.new(GameState.local_player()))
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("journal"):
+		Audio.sfx("open")
+		ui.open(JournalPanel.new(GameState.local_player()))
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("craft"):
+		Audio.sfx("open")
+		ui.open(CraftPanel.new(GameState.local_player(), "crafting"))
+		get_viewport().set_input_as_handled()
 
 # --- Battles ----------------------------------------------------------------------------
 
