@@ -8,6 +8,7 @@ var player: PlayerData
 var tab := "party"
 var _sel: Creature
 var _swap_slot := -1
+var _picking_mate := false
 var _list: VBoxContainer
 var _detail: VBoxContainer
 var _tabs: HBoxContainer
@@ -89,7 +90,7 @@ func _row(c: Creature) -> Control:
 	b.add_theme_stylebox_override("hover", picked)
 	b.add_theme_stylebox_override("pressed", picked)
 	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
-	b.pressed.connect(func(): _sel = c; _swap_slot = -1; Audio.sfx("tick", 0.0); _refresh())
+	b.pressed.connect(func(): _sel = c; _swap_slot = -1; _picking_mate = false; Audio.sfx("tick", 0.0); _refresh())
 	var h := HBoxContainer.new()
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -206,6 +207,12 @@ func _show_detail() -> void:
 		var val := c.max_hp() if s == "hp" else c.stat(s)
 		var mult := c.nature_mult(s)
 		grid.add_child(UITheme.label(str(val), 10, Color("#3a8a3a") if mult > 1.0 else (Color("#b04040") if mult < 1.0 else UITheme.INK)))
+	for s in Data.STATS:
+		var g := Breeding.gene_grade(int(c.genes[s]))
+		var gl := UITheme.label("Gene " + g, 8, Breeding.grade_color(g))
+		gl.mouse_filter = Control.MOUSE_FILTER_PASS
+		gl.tooltip_text = "Genes are inherited when breeding. S is the best."
+		grid.add_child(gl)
 	# Moves
 	_detail.add_child(UITheme.label("Moves", 10, UITheme.WOOD))
 	var mg := GridContainer.new()
@@ -289,3 +296,51 @@ func _show_detail() -> void:
 			Audio.sfx("tick", 0.0)
 			_refresh())
 		acts.add_child(jobs)
+		_breeding_section(c)
+
+func _breeding_section(c: Creature) -> void:
+	_detail.add_child(UITheme.label("Breeding", 10, UITheme.WOOD))
+	var mate := GameState.find_creature(GameState.pair_of(c.uid))
+	if mate:
+		var row := HBoxContainer.new()
+		row.add_child(UITheme.icon_rect(Art.creature(mate.species_id, true), 24))
+		row.add_child(UITheme.label("Paired with %s · %d%% egg chance each night" % [mate.display_name(), int(Breeding.egg_chance(c, mate) * 100.0)], 9, UITheme.INK))
+		_detail.add_child(row)
+		_detail.add_child(UITheme.button("Unpair", func():
+			GameState.clear_pair(c.uid)
+			Audio.sfx("close")
+			_show_detail()))
+		return
+	var options := Breeding.partners(c, GameState.ranch)
+	if "none" in c.species().egg:
+		_detail.add_child(UITheme.label("This Wildling can't have eggs.", 8, UITheme.MUTED))
+		return
+	if options.is_empty():
+		_detail.add_child(UITheme.label("No compatible partner in the Den. Egg groups: %s." % ", ".join(c.species().egg), 8, UITheme.MUTED))
+		return
+	if not _picking_mate:
+		_detail.add_child(UITheme.button("Pair for eggs...", func():
+			_picking_mate = true
+			_show_detail()))
+		return
+	var flow := HFlowContainer.new()
+	flow.add_theme_constant_override("h_separation", 4)
+	flow.add_theme_constant_override("v_separation", 4)
+	_detail.add_child(flow)
+	for o in options:
+		var b: Creature = o.creature
+		var btn := UITheme.button("%s  %d%%" % [b.display_name(), int(o.chance * 100.0)], func():
+			var res: Dictionary = GameState.set_pair(c.uid, b.uid)
+			_picking_mate = false
+			if res.ok:
+				Audio.sfx("gift")
+				EventBus.toast.emit("%s and %s are now a pair. Eggs will appear in the farm chest." % [c.display_name(), b.display_name()], "")
+			else:
+				EventBus.toast.emit(res.reason, "")
+			_show_detail())
+		btn.icon = Art.creature(b.species_id, true)
+		btn.add_theme_constant_override("icon_max_width", 20)
+		flow.add_child(btn)
+	flow.add_child(UITheme.button("Cancel", func():
+		_picking_mate = false
+		_show_detail()))

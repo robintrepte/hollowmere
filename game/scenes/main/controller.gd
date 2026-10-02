@@ -230,7 +230,8 @@ func _building(io: Dictionary) -> void:
 			Audio.sfx("door")
 			ui.open(PartyPanel.new(_pdata(), "farm"))
 		"hatchery":
-			await ui.say(["The Hatchery. %d egg%s incubating." % [GameState.world.hatchery.size(), "" if GameState.world.hatchery.size() == 1 else "s"]])
+			Audio.sfx("door")
+			ui.open(HatcheryPanel.new(_pdata()))
 		"spa":
 			await ui.say(["The Wildling Spa. Tired workers rest twice as fast here."])
 		"ruined":

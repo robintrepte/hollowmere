@@ -306,10 +306,23 @@ func set_pair(a_uid: String, b_uid: String) -> Dictionary:
 	world.pairs = [[a_uid, b_uid]] if world.pairs.size() < 1 + int(has_building("big_den")) else world.pairs.slice(1) + [[a_uid, b_uid]]
 	return {"ok": true, "reason": "", "chance": Breeding.egg_chance(a, b)}
 
+func pair_of(uid: String) -> String:
+	for pr in world.pairs:
+		if pr[0] == uid:
+			return pr[1]
+		if pr[1] == uid:
+			return pr[0]
+	return ""
+
+func clear_pair(uid: String) -> void:
+	world.pairs = world.pairs.filter(func(pr): return pr[0] != uid and pr[1] != uid)
+
 func add_egg_to_hatchery(p: PlayerData, uid: String) -> bool:
 	if world.hatchery.size() >= hatchery_capacity():
 		return false
 	var f := p.inventory.find(uid)
+	if f.is_empty():
+		f = farm_chest.find(uid)
 	if f.is_empty() or f.entry.id != "wildling_egg":
 		return false
 	var egg: Dictionary = f.entry.meta.get("egg", {})
@@ -367,6 +380,15 @@ func end_day(passed_out: bool = false) -> Dictionary:
 	FarmJobs.rest(ranch, has_building("wildling_spa"))
 	report.jobs = job_rep
 	Machines.apply_power(farm_grids(), int(job_rep.powered))
+	# Farm work XP can push Wildlings to evolve; they do it overnight in the Den.
+	report["evolved"] = []
+	for c: Creature in ranch:
+		if c.can_evolve() != "":
+			var from: String = c.display_name()
+			var from_species: String = c.species_id
+			c.evolve()
+			Progression.mark(world.dex, c.species_id, true, c.starry)
+			report.evolved.append({"from": from, "from_species": from_species, "to": c.species_id})
 	# Breeding
 	for pair in world.pairs:
 		var a := find_creature(pair[0])

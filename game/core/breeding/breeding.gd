@@ -5,6 +5,30 @@ extends RefCounted
 const BASE_EGG_CHANCE := 0.25
 const MUTATION_CHANCE := 0.06
 
+## Letter grade for a 0-15 gene, used wherever genes are shown to players.
+static func gene_grade(v: int) -> String:
+	if v >= 15:
+		return "S"
+	if v >= 12:
+		return "A"
+	if v >= 8:
+		return "B"
+	if v >= 4:
+		return "C"
+	return "D"
+
+static func grade_color(g: String) -> Color:
+	return {"S": Color("#d0a020"), "A": Color("#3a8a3a"), "B": Color("#3a6ab0"), "C": Color("#7a6a5a"), "D": Color("#b04040")}.get(g, Color.GRAY)
+
+## Compatible Den partners for `a`, best egg odds first: [{creature, chance}].
+static func partners(a: Creature, residents: Array) -> Array:
+	var out: Array = []
+	for b in residents:
+		if compatible(a, b):
+			out.append({"creature": b, "chance": egg_chance(a, b)})
+	out.sort_custom(func(x, y): return x.chance > y.chance)
+	return out
+
 static func compatible(a: Creature, b: Creature) -> bool:
 	if a == null or b == null or a.uid == b.uid:
 		return false

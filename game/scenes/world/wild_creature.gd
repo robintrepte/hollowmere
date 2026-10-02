@@ -23,6 +23,8 @@ var _curious := false
 var _chasing := 0.0
 var _notice_cd := 1.5
 var _emote: Label
+var _working := false
+var _stuck := 0.0
 var _rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
@@ -104,11 +106,20 @@ func _process(delta: float) -> void:
 			_wait = _rng.randf_range(2.0, 4.0)
 	else:
 		if position.distance_to(_target) < 2.0:
+			if _working:
+				_working = false
+				_work_fx()
 			_wait -= delta
 			if _wait <= 0.0:
 				_pick_target()
 		else:
+			var before := position
 			moving = _step(WANDER_SPEED * delta)
+			_stuck = _stuck + delta if position.distance_to(before) < 0.05 else 0.0
+			if _stuck > 1.5:
+				_stuck = 0.0
+				_working = false
+				_target = position
 	# Hop while moving, gentle breathing while idle
 	if moving:
 		sprite.position.y = -absf(sin(_t * 12.0)) * 3.0
@@ -116,7 +127,58 @@ func _process(delta: float) -> void:
 		sprite.position.y = 0.0
 		sprite.scale = Vector2(1.0, 1.0 + sin(_t * 3.0) * 0.03)
 
+## Ranch workers walk to something relevant to their job (crops, debris, machines) now and then.
+func _work_target() -> Vector2:
+	var g: FarmGrid = world.grid
+	if g == null:
+		return Vector2.INF
+	var tiles: Array = []
+	match creature.job:
+		"water", "grow", "pollinate", "harvest", "preserve":
+			tiles = g.planted_tiles()
+		"clear", "smelt":
+			for i in g.deco.size():
+				if g.deco[i] in [Tiles.DECO.weed, Tiles.DECO.rock, Tiles.DECO.branch]:
+					tiles.append(Vector2i(i % g.w, int(i / g.w)))
+		"power":
+			for k in g.objects:
+				if g.objects[k].kind == "machine":
+					tiles.append(Tiles.parse_key(k))
+	if tiles.is_empty():
+		return Vector2.INF
+	var t: Vector2i = tiles[_rng.randi() % tiles.size()]
+	return GameState.tile_center(t) + Vector2(_rng.randf_range(-6, 6), 10)
+
+func _work_fx() -> void:
+	var p := CPUParticles2D.new()
+	p.one_shot = true
+	p.emitting = true
+	p.amount = 8
+	p.lifetime = 0.7
+	p.explosiveness = 0.8
+	p.position = Vector2(0, -12)
+	p.direction = Vector2(0, -1)
+	p.spread = 60.0
+	p.initial_velocity_min = 20.0
+	p.initial_velocity_max = 40.0
+	p.gravity = Vector2(0, 90)
+	p.scale_amount_min = 1.0
+	p.scale_amount_max = 2.0
+	p.color = Data.type_color(FarmJobs.job_type(creature.job))
+	add_child(p)
+	p.finished.connect(p.queue_free)
+	var tw := create_tween()
+	tw.tween_property(sprite, "scale", Vector2(1.15, 0.85), 0.08)
+	tw.tween_property(sprite, "scale", Vector2.ONE, 0.12)
+
 func _pick_target() -> void:
+	if pet and creature and creature.job != "" and creature.energy > 0 and _rng.randf() < 0.55:
+		var wt := _work_target()
+		if wt != Vector2.INF and not world.is_solid_at(wt, Vector2(6, 3)):
+			_target = wt
+			_working = true
+			_wait = _rng.randf_range(1.5, 3.0)
+			return
 	for i in 6:
 		var off := Vector2(_rng.randf_range(-80, 80), _rng.randf_range(-60, 60))
 		var p := position + off
