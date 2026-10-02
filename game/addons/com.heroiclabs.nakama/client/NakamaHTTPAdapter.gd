@@ -147,6 +147,8 @@ func send_async(p_method : String, p_uri : String, p_headers : Dictionary, p_bod
 	req.timeout = timeout
 	if use_threads and OS.get_name() != 'Web':
 		req.use_threads = true # Threads not available nor needed on the web.
+	if OS.get_name() == 'Web':
+		req.accept_gzip = false # The browser already inflates fetch bodies; inflating again fails.
 
 	# Parse method
 	var method = HTTPClient.METHOD_GET

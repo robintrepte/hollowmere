@@ -45,8 +45,9 @@ func _ready() -> void:
 	panel.anchor_bottom = 1
 	panel.offset_left = -70
 	panel.offset_right = 70
-	panel.offset_top = -200
+	panel.offset_top = -20
 	panel.offset_bottom = -20
+	panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	add_child(panel)
 	_menu = VBoxContainer.new()
 	_menu.add_theme_constant_override("separation", 5)

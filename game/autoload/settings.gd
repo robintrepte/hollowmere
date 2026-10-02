@@ -21,6 +21,7 @@ const DEFAULT_KEYS := {
 	"hotbar_next": [KEY_PERIOD],
 	"hotbar_prev": [KEY_COMMA],
 	"chat": [KEY_ENTER],
+	"coop": [KEY_O],
 }
 const DEFAULT_MOUSE := {
 	"use_tool": [MOUSE_BUTTON_LEFT],

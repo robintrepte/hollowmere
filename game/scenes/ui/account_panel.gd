@@ -102,7 +102,8 @@ func _signed_out() -> void:
 	if OS.get_name() == "Web":
 		r2.add_child(UITheme.button("Sign in with Google", _google))
 	pw.text_submitted.connect(func(_t: String): _run(func(): return await Net.login_email(email.text.strip_edges(), pw.text, false)))
-	_server_row()
+	if OS.get_name() != "Web":
+		_server_row()
 
 func _server_row() -> void:
 	var r := _row()

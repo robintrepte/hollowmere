@@ -10,13 +10,16 @@ signal act_result(result: Dictionary)
 
 const CHUNK := 3000
 const ACTIONS := ["use_tool", "use_item", "harvest_at", "load_machine", "ship", "eat", "pick_up_object", "buy", "sell",
-	"craft", "construct", "upgrade_tool", "buy_backpack", "deliver_board", "set_pair_act", "clear_pair_act", "incubate", "set_job_act", "move_creature_act"]
+	"craft", "construct", "upgrade_tool", "buy_backpack", "deliver_board", "set_pair_act", "clear_pair_act", "incubate", "set_job_act", "move_creature_act",
+	"befriend_act", "dex_seen_act", "reward_act"]
 
 var _chunks: Dictionary = {}       # transfer id -> Array
 var _ready_to_sleep: Dictionary = {}
 var _dirty_player := false
 var _pos_timer := 0.0
 var _push_timer := 0.0
+var _meta_dirty := false
+var _meta_timer := 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -26,7 +29,12 @@ func _ready() -> void:
 	EventBus.time_changed.connect(func(m): if m % 30 == 0: _broadcast_world())
 	EventBus.day_started.connect(_on_day_started)
 	EventBus.inventory_changed.connect(func(): _dirty_player = true)
-	Net.peer_left.connect(func(pid): remote_left.emit(pid))
+	EventBus.party_changed.connect(func(): _meta_dirty = true; _dirty_player = true)
+	EventBus.quest_updated.connect(func(): _meta_dirty = true)
+	Net.peer_left.connect(func(pid): remote_left.emit(pid); _cancel_trades_of(pid))
+	Net.chat_received.connect(func(from_name: String, text: String):
+		if from_name != (GameState.local_player().name if GameState.local_player() else ""):
+			EventBus.toast.emit("%s: %s" % [from_name, text], "chat"))
 
 # --- Actions --------------------------------------------------------------------------
 
@@ -34,6 +42,7 @@ func _ready() -> void:
 func act(action: String, args: Array) -> Dictionary:
 	assert(action in ACTIONS)
 	if Net.is_authority():
+		_meta_dirty = true
 		return GameState.callv(action, [Net.local_id()] + args)
 	_flush_player()
 	rpc_id(1, "req", action, args)
@@ -50,6 +59,7 @@ func req(action: String, args: Array) -> void:
 	var res: Dictionary = GameState.callv(action, [pid] + args)
 	var p := GameState.player(pid)
 	rpc_id(sender, "result", _plain(res), JSON.stringify(p.to_dict()))
+	_meta_dirty = true
 
 @rpc("authority", "reliable")
 func result(res: Dictionary, player_json: String) -> void:
@@ -272,6 +282,29 @@ func _process(delta: float) -> void:
 	if _push_timer > 5.0:
 		_push_timer = 0.0
 		_flush_player()
+	if Net.mode == "host" and _meta_dirty:
+		_meta_timer += delta
+		if _meta_timer > 0.4:
+			_meta_timer = 0.0
+			_meta_dirty = false
+			_broadcast_meta()
+
+# --- Farm-level state (ranch, chest, dex, buildings, quests) ---------------------------------
+
+func _broadcast_meta() -> void:
+	if Net.peers.is_empty():
+		return
+	var d := GameState.to_dict()
+	d.erase("grids")
+	d.erase("players")
+	var raw := JSON.stringify(d).to_utf8_buffer()
+	rpc("meta_sync", raw.size(), raw.compress(FileAccess.COMPRESSION_GZIP))
+
+@rpc("authority", "reliable")
+func meta_sync(raw_size: int, data: PackedByteArray) -> void:
+	var d = JSON.parse_string(data.decompress(raw_size, FileAccess.COMPRESSION_GZIP).get_string_from_utf8())
+	if d is Dictionary and GameState.started:
+		GameState.apply_meta(d)
 
 ## Called by the local player node ~10x per second.
 func send_position(map_id: String, pos: Vector2, facing: Vector2, moving: bool) -> void:
@@ -375,6 +408,10 @@ func challenge(to_pid: String) -> void:
 func pvp_invite(from_pid: String, from_name: String) -> void:
 	pvp_challenge.emit(from_pid, from_name)
 
+func decline_challenge(from_pid: String) -> void:
+	for peer_id in _peer_ids_for(from_pid):
+		rpc_id(peer_id, "notify", "%s can't battle right now." % GameState.local_player().name)
+
 func accept_challenge(from_pid: String) -> void:
 	var team: Array = []
 	for c in GameState.local_player().party:
@@ -423,9 +460,135 @@ func _peer_ids_for(pid: String) -> Array:
 		out.append(1)
 	return out
 
+# --- Trades (host arbitrates; both players offer, both confirm, host swaps atomically) ---------
+
+signal trade_invited(tid: int, from_name: String)
+signal trade_updated(state: Dictionary)
+
+var _trades: Dictionary = {}   # host only: tid -> state
+
+## Sends a trade operation to the host (or handles it locally when we are the host).
+func trade_op(op: String, data: Dictionary = {}) -> void:
+	if Net.is_authority():
+		_trade_op(Net.local_id(), op, data)
+	else:
+		_flush_player()
+		rpc_id(1, "trade_op_rpc", op, JSON.stringify(data))
+
+@rpc("any_peer", "reliable")
+func trade_op_rpc(op: String, json: String) -> void:
+	var pid := _pid_of(multiplayer.get_remote_sender_id())
+	var d = JSON.parse_string(json)
+	if Net.is_authority() and pid != "" and d is Dictionary:
+		_trade_op(pid, op, d)
+
+func _trade_op(pid: String, op: String, d: Dictionary) -> void:
+	if op == "open":
+		var to := str(d.get("to", ""))
+		if GameState.player(to) == null or to == pid:
+			return
+		var tid := randi() % 1000000000
+		_trades[tid] = {"tid": tid, "a": pid, "b": to, "a_name": GameState.player(pid).name, "b_name": GameState.player(to).name,
+			"offer": {pid: [], to: []}, "ok": {pid: false, to: false}, "status": "invite", "msg": ""}
+		_send_trade(tid)
+		if to == Net.local_id():
+			trade_invited.emit(tid, GameState.player(pid).name)
+		else:
+			for peer_id in _peer_ids_for(to):
+				rpc_id(peer_id, "trade_invite", tid, GameState.player(pid).name)
+		return
+	var tid2 := int(d.get("tid", -1))
+	var t: Dictionary = _trades.get(tid2, {})
+	if t.is_empty() or not pid in [t.a, t.b]:
+		return
+	match op:
+		"join":
+			if pid == t.b:
+				t.status = "open"
+		"offer":
+			var offer: Array = d.get("offer", [])
+			var err := GameState.validate_offer(GameState.player(pid), offer)
+			if err != "":
+				t.msg = err
+			else:
+				t.offer[pid] = offer.slice(0, 9)
+				t.msg = ""
+			t.ok[t.a] = false
+			t.ok[t.b] = false
+		"ready":
+			t.ok[pid] = bool(d.get("on", true))
+			if t.ok[t.a] and t.ok[t.b]:
+				var a := GameState.player(t.a)
+				var b := GameState.player(t.b)
+				var err2 := GameState.execute_trade(a, t.offer[t.a], b, t.offer[t.b])
+				if err2 == "":
+					t.status = "done"
+					_sync_player(t.a)
+					_sync_player(t.b)
+					_meta_dirty = true
+				else:
+					t.msg = err2
+					t.ok[t.a] = false
+					t.ok[t.b] = false
+		"cancel":
+			t.status = "closed"
+			t.msg = "%s closed the trade." % GameState.player(pid).name
+	_send_trade(tid2)
+	if t.status in ["done", "closed"]:
+		_trades.erase(tid2)
+
+func _send_trade(tid: int) -> void:
+	var t: Dictionary = _trades[tid]
+	var view := t.duplicate(true)
+	view["views"] = {}
+	for pid in [t.a, t.b]:
+		view.views[pid] = _describe_offer(GameState.player(pid), t.offer[pid])
+	for pid in [t.a, t.b]:
+		if pid == Net.local_id():
+			trade_updated.emit(view)
+		else:
+			for peer_id in _peer_ids_for(pid):
+				rpc_id(peer_id, "trade_state", JSON.stringify(view))
+
+## Human-readable lines (with icons) for an offer, built on the host where the items live.
+func _describe_offer(p: PlayerData, offer: Array) -> Array:
+	var out: Array = []
+	for o: Dictionary in offer:
+		if o.kind == "item":
+			var f := p.inventory.find(str(o.uid))
+			if not f.is_empty():
+				out.append({"icon": "item", "id": f.entry.id, "text": "%s x%d" % [Data.item_name(f.entry.id), int(o.n)]})
+		else:
+			var c := GameState.find_creature(str(o.uid))
+			if c:
+				out.append({"icon": "creature", "id": c.species_id, "text": "%s Lv%d" % [c.display_name(), c.level]})
+	return out
+
+@rpc("authority", "reliable")
+func trade_invite(tid: int, from_name: String) -> void:
+	trade_invited.emit(tid, from_name)
+
+@rpc("any_peer", "reliable")
+func trade_state(json: String) -> void:
+	var d = JSON.parse_string(json)
+	if d is Dictionary:
+		d.tid = int(d.tid)
+		trade_updated.emit(d)
+
+func _cancel_trades_of(pid: String) -> void:
+	for tid in _trades.keys():
+		var t: Dictionary = _trades[tid]
+		if pid in [t.a, t.b]:
+			t.status = "closed"
+			t.msg = "The other player left."
+			_send_trade(tid)
+			_trades.erase(tid)
+
+## Everyone else currently connected: [{pid, name}].
 func online_players() -> Array:
 	var out: Array = []
-	for pid in GameState.players:
-		if pid != Net.local_id():
-			out.append({"pid": pid, "name": GameState.players[pid].name})
+	for peer_id in Net.peers:
+		var info: Dictionary = Net.peers[peer_id]
+		if info.pid != Net.local_id():
+			out.append({"pid": info.pid, "name": info.name})
 	return out

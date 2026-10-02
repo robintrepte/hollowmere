@@ -102,12 +102,19 @@ func start() -> Array:
 	if kind == Kind.WILD:
 		var foe := active(1)
 		ev.append({"t": "text", "msg": "A wild %s%s appeared!" % ["Starry " if foe.starry else "", foe.display_name()]})
+	elif kind == Kind.PVP:
+		## Both players watch these events, so PvP text names each side instead of saying "you".
+		ev.append({"t": "text", "msg": "%s and %s face off!" % [sides[0].name, sides[1].name]})
+		for side in [0, 1]:
+			ev.append({"t": "switch", "side": side, "index": sides[side].active, "species": active(side).species_id})
+			ev.append({"t": "text", "msg": "%s sent out %s!" % [sides[side].name, active(side).display_name()]})
 	else:
 		ev.append({"t": "text", "msg": "%s wants to battle!" % sides[1].name})
 		ev.append({"t": "switch", "side": 1, "index": sides[1].active, "species": active(1).species_id})
 		ev.append({"t": "text", "msg": "%s sent out %s!" % [sides[1].name, active(1).display_name()]})
-	ev.append({"t": "switch", "side": 0, "index": sides[0].active, "species": active(0).species_id})
-	ev.append({"t": "text", "msg": "Go, %s!" % active(0).display_name()})
+	if kind != Kind.PVP:
+		ev.append({"t": "switch", "side": 0, "index": sides[0].active, "species": active(0).species_id})
+		ev.append({"t": "text", "msg": "Go, %s!" % active(0).display_name()})
 	if weather != "":
 		ev.append({"t": "weather", "w": weather})
 		ev.append({"t": "text", "msg": {"rain": "It's raining.", "storm": "A storm is raging.", "snow": "Snow is falling.", "fog": "The fog is thick.", "sun": "The sunlight is harsh."}[weather]})
@@ -139,8 +146,9 @@ func _do_switch(side: int, index: int, ev: Array) -> void:
 	if index < 0 or index >= s.team.size() or s.team[index].is_fainted() or index == s.active and not s.current().is_fainted():
 		return
 	var old := s.current()
+	var mine := side == 0 and kind != Kind.PVP
 	if not old.is_fainted():
-		ev.append({"t": "text", "msg": "%s, come back!" % old.display_name()} if side == 0 else {"t": "text", "msg": "%s withdrew %s." % [s.name, old.display_name()]})
+		ev.append({"t": "text", "msg": "%s, come back!" % old.display_name()} if mine else {"t": "text", "msg": "%s withdrew %s." % [s.name, old.display_name()]})
 	if old.status == "root" or old.status == "daze":
 		old.status = ""
 	s.active = index
@@ -148,8 +156,49 @@ func _do_switch(side: int, index: int, ev: Array) -> void:
 	if side == 0:
 		participants[s.current().uid] = true
 	ev.append({"t": "switch", "side": side, "index": index, "species": s.current().species_id})
-	ev.append({"t": "text", "msg": ("Go, %s!" % s.current().display_name()) if side == 0 else ("%s sent out %s!" % [s.name, s.current().display_name()])})
+	ev.append({"t": "text", "msg": ("Go, %s!" % s.current().display_name()) if mine else ("%s sent out %s!" % [s.name, s.current().display_name()])})
 	_on_entry(side, ev)
+
+# --- PvP sync (the challenger runs the engine; the opponent mirrors it) -------------------------
+
+func snapshot() -> Dictionary:
+	var out: Array = []
+	for s: BattleSide in sides:
+		var team: Array = []
+		for c: Creature in s.team:
+			team.append([c.hp, c.status])
+		out.append({"active": s.active, "stages": s.stages.duplicate(), "team": team})
+	return {"sides": out, "weather": weather, "weather_turns": weather_turns, "result": result, "turn": turn}
+
+## Applies a snapshot taken by the other player's engine (mirror = their side 0 is our side 1).
+func apply_snapshot(d: Dictionary, mirror: bool) -> void:
+	for i in 2:
+		var src: Dictionary = d.sides[1 - i if mirror else i]
+		var s: BattleSide = sides[i]
+		s.active = int(src.active)
+		for k in src.stages:
+			s.stages[k] = int(src.stages[k])
+		for j in mini(s.team.size(), src.team.size()):
+			s.team[j].hp = int(src.team[j][0])
+			s.team[j].status = str(src.team[j][1])
+	weather = str(d.weather)
+	weather_turns = int(d.weather_turns)
+	turn = int(d.turn)
+	result = mirror_result(str(d.result)) if mirror else str(d.result)
+
+static func mirror_result(r: String) -> String:
+	return {"win": "lose", "lose": "win"}.get(r, r)
+
+static func mirror_events(events: Array) -> Array:
+	var out: Array = []
+	for e: Dictionary in events:
+		var m := e.duplicate()
+		if m.has("side"):
+			m.side = 1 - int(m.side)
+		if m.t == "end":
+			m.result = mirror_result(str(m.result))
+		out.append(m)
+	return out
 
 ## Resolves one turn. Actions: {k:"move", i:int} {k:"switch", i:int} {k:"item", id:String, target:int}
 ## {k:"befriend", id:String} (treat or charm) {k:"run"}

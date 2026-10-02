@@ -36,12 +36,14 @@ func _make_client() -> void:
 	var host := Settings.server_host
 	var port := Settings.server_port
 	var ssl := Settings.server_ssl
-	if OS.get_name() == "Web" and host == "127.0.0.1":
+	## The web build talks to the server that served it (Caddy proxies /v2 and /ws to Nakama).
+	if OS.get_name() == "Web" and host == Settings.default_server("host", "127.0.0.1"):
 		var loc := str(JavaScriptBridge.eval("location.hostname", true))
-		if loc != "" and loc != "localhost" and loc != "127.0.0.1":
+		if loc != "":
 			host = loc
 			ssl = str(JavaScriptBridge.eval("location.protocol", true)) == "https:"
-			port = 443 if ssl else 80
+			var p := str(JavaScriptBridge.eval("location.port", true))
+			port = int(p) if p.is_valid_int() else (443 if ssl else 80)
 	client = Nakama.create_client(Settings.server_key, host, port, "https" if ssl else "http", 10, NakamaLogger.LOG_LEVEL.ERROR)
 
 ## Drops the client so the next call picks up changed server settings.
@@ -59,6 +61,7 @@ func ping_server() -> bool:
 	_make_client()
 	var req := HTTPRequest.new()
 	req.timeout = 4.0
+	req.accept_gzip = false
 	add_child(req)
 	if req.request("%s://%s:%d/healthcheck" % [client.scheme, client.host, client.port]) != OK:
 		req.queue_free()
@@ -155,9 +158,13 @@ func _load_account() -> void:
 	var acc = await client.get_account_async(session)
 	if acc.is_exception():
 		return
+	is_guest = acc.email == "" and acc.user.google_id == ""
 	if acc.user.display_name != "":
 		display_name = acc.user.display_name
-	is_guest = acc.email == "" and acc.user.google_id == ""
+	else:
+		var nm: String = "Farmer %d" % randi_range(1000, 9999) if is_guest else acc.user.username
+		if not (await client.update_account_async(session, null, nm)).is_exception():
+			display_name = nm
 
 func set_display_name(nm: String) -> String:
 	if not has_session():

@@ -935,6 +935,113 @@ func move_creature_act(pid: String, uid: String, dest: String) -> Dictionary:
 	var ok := move_creature(uid, dest, player(pid))
 	return _res(ok, "" if ok else "There's no room there.")
 
+## A co-op client befriended a Wildling in its own battle; the host files it (dex, den, farm XP).
+func befriend_act(pid: String, creature_json: String) -> Dictionary:
+	var p := player(pid)
+	var d = JSON.parse_string(creature_json)
+	if p == null or not d is Dictionary:
+		return _res(false, "Bad creature.")
+	var c := Creature.from_dict(d)
+	if find_creature(c.uid) != null:
+		return _res(false, "Already on the farm.")
+	var r := _res(true, add_creature(p, c))
+	bump_stat("befriend")
+	return r
+
+func dex_seen_act(_pid: String, species_id: String, owned: bool = false, starry: bool = false) -> Dictionary:
+	if Data.species.has(species_id):
+		Progression.mark(world.dex, species_id, owned, starry)
+	return _res(true)
+
+## Prize money from a client's trainer battle (money is shared by the farm).
+func reward_act(_pid: String, amount: int) -> Dictionary:
+	add_money(clampi(amount, 0, 20000))
+	return _res(true)
+
+## Marks a species seen/owned in the farm dex, routing through the host when we're a client.
+func dex_mark(species_id: String, owned: bool = false, starry: bool = false) -> void:
+	Progression.mark(world.dex, species_id, owned, starry)
+	if not Net.is_authority():
+		Coop.act("dex_seen_act", [species_id, owned, starry])
+
+## Farm money earned by the local player (routed to the host when visiting).
+func earn(amount: int) -> void:
+	if Net.is_authority():
+		add_money(amount)
+	else:
+		Coop.act("reward_act", [amount])
+
+## Checks one side of a trade: [{kind:"item", uid, n} | {kind:"creature", uid}]. Returns "" if ok.
+func validate_offer(p: PlayerData, offer: Array) -> String:
+	var giving := 0
+	for o: Dictionary in offer:
+		if o.kind == "item":
+			var f := p.inventory.find(str(o.uid))
+			if f.is_empty() or int(f.entry.n) < int(o.n) or int(o.n) <= 0:
+				return "%s no longer has that item." % p.name
+		elif o.kind == "creature":
+			var c := find_creature(str(o.uid))
+			if c == null or not c in p.party:
+				return "%s no longer has that Wildling." % p.name
+			giving += 1
+		else:
+			return "Unknown offer."
+	if giving > 0 and giving >= p.party.size():
+		return "%s has to keep at least one Wildling." % p.name
+	return ""
+
+## Swaps both offers at once. Both must validate first.
+func execute_trade(a: PlayerData, offer_a: Array, b: PlayerData, offer_b: Array) -> String:
+	var err := validate_offer(a, offer_a)
+	if err == "":
+		err = validate_offer(b, offer_b)
+	if err != "":
+		return err
+	var moving: Array = []
+	for pair in [[a, offer_a, b], [b, offer_b, a]]:
+		var from: PlayerData = pair[0]
+		for o: Dictionary in pair[1]:
+			if o.kind == "item":
+				moving.append([pair[2], from.inventory.take(str(o.uid), int(o.n))])
+			else:
+				var c := find_creature(str(o.uid))
+				from.party.erase(c)
+				moving.append([pair[2], c])
+	for m in moving:
+		var to: PlayerData = m[0]
+		if m[1] is Creature:
+			var c2: Creature = m[1]
+			add_creature(to, c2)
+		else:
+			var e: Dictionary = m[1]
+			give_item(to, e.id, int(e.n), int(e.q), e.meta)
+	bump_stat("trades")
+	EventBus.inventory_changed.emit()
+	EventBus.party_changed.emit()
+	return ""
+
+## Applies the host's world-level state (everything except map grids and players).
+func apply_meta(d: Dictionary) -> void:
+	var before := _ranch_signature()
+	world = d.world.duplicate(true)
+	farm_chest.from_dict(d.get("farm_chest", {}))
+	ranch.clear()
+	for c in d.get("ranch", []):
+		ranch.append(Creature.from_dict(c))
+	sanctuary.clear()
+	for c in d.get("sanctuary", []):
+		sanctuary.append(Creature.from_dict(c))
+	EventBus.money_changed.emit(int(world.money), 0)
+	if _ranch_signature() != before:
+		EventBus.party_changed.emit()
+	EventBus.quest_updated.emit()
+
+func _ranch_signature() -> String:
+	var parts: PackedStringArray = []
+	for c: Creature in ranch:
+		parts.append(c.uid + c.species_id)
+	return ",".join(parts)
+
 func eat(pid: String, uid: String) -> Dictionary:
 	var p := player(pid)
 	var r := _res(false)

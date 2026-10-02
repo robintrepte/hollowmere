@@ -44,6 +44,11 @@ func _ready() -> void:
 	Coop.remote_moved.connect(_on_remote_moved)
 	Coop.remote_left.connect(_remove_remote)
 	Coop.snapshot_loaded.connect(_on_snapshot)
+	Coop.pvp_challenge.connect(_on_pvp_challenge)
+	Coop.pvp_started.connect(_on_pvp_started)
+	Coop.trade_invited.connect(_on_trade_invited)
+	Coop.trade_updated.connect(_on_trade_state)
+	Net.coop_ended.connect(_on_coop_ended)
 	EventBus.battle_requested.connect(_on_battle_requested)
 	show_title()
 
@@ -58,7 +63,7 @@ func show_title() -> void:
 	title_layer.add_child(title)
 	title.new_game_requested.connect(_start_new)
 	title.load_requested.connect(_load_slot)
-	title.coop_requested.connect(func(): EventBus.toast.emit("Online co-op arrives with the server update.", ""))
+	title.coop_requested.connect(func(): ui.open(CoopPanel.new(ui, false)))
 
 func _start_new(opts: Dictionary) -> void:
 	var slot := SaveManager.first_free_slot()
@@ -88,9 +93,26 @@ func _load_slot(slot: int) -> void:
 	_enter_game()
 	await _fade_to(0.0)
 
+var _visiting := false
+
 func _on_snapshot() -> void:
+	_visiting = Net.mode == "client"
 	if world == null:
+		ui.close_all()
 		_enter_game()
+
+func _on_coop_ended(reason: String) -> void:
+	if not _visiting:
+		return
+	_visiting = false
+	if battle:
+		await EventBus.battle_finished
+	await _fade_to(1.0)
+	GameState.started = false
+	show_title()
+	await _fade_to(0.0)
+	if reason != "left":
+		await ui.say([reason if reason != "" else "The connection to the farm was lost."])
 
 # --- Game -------------------------------------------------------------------------------
 
@@ -221,6 +243,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("menu"):
 		var pm := PauseMenu.new(ui)
 		pm.quit_to_title.connect(func():
+			_visiting = false
 			await _fade_to(1.0)
 			Net.leave()
 			GameState.started = false
@@ -244,6 +267,74 @@ func _unhandled_input(event: InputEvent) -> void:
 		Audio.sfx("open")
 		ui.open(CraftPanel.new(GameState.local_player(), "crafting"))
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("coop"):
+		Audio.sfx("open")
+		ui.open(CoopPanel.new(ui, true))
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("chat") and Net.is_online():
+		_open_chat()
+		get_viewport().set_input_as_handled()
+
+func _open_chat() -> void:
+	var bar := PanelContainer.new()
+	bar.add_theme_stylebox_override("panel", UITheme.box(Color(0.1, 0.08, 0.1, 0.85), UITheme.COIN, 1, 3, 4, false))
+	bar.anchor_top = 1
+	bar.anchor_bottom = 1
+	bar.offset_left = 8
+	bar.offset_right = 300
+	bar.offset_top = -66
+	bar.offset_bottom = -44
+	var e := LineEdit.new()
+	e.placeholder_text = "Say something (Enter to send, Esc to cancel)"
+	e.max_length = 200
+	e.add_theme_font_size_override("font_size", 10)
+	bar.add_child(e)
+	e.text_submitted.connect(func(t: String):
+		Coop.send_chat(t)
+		ui.close(bar))
+	ui.open(bar, false)
+	e.call_deferred("grab_focus")
+
+# --- Friendly battles + trades ------------------------------------------------------------------
+
+func _busy() -> bool:
+	return world == null or battle != null or _transitioning
+
+func _on_pvp_challenge(from_pid: String, from_name: String) -> void:
+	if _busy() or not GameState.local_player().has_usable_party():
+		Coop.decline_challenge(from_pid)
+		return
+	Audio.sfx("encounter")
+	var c: int = await ui.ask("%s challenges you to a friendly battle! (Nothing is lost, win or lose.)" % from_name, ["Battle!", "Not now"])
+	if c == 0 and not _busy():
+		Coop.accept_challenge(from_pid)
+	else:
+		Coop.decline_challenge(from_pid)
+
+func _on_pvp_started(s: Dictionary) -> void:
+	ui.close_all()
+	var setup := s.duplicate()
+	setup["kind"] = "pvp"
+	setup["foe_name"] = s.name
+	_on_battle_requested(setup)
+
+func _on_trade_invited(tid: int, from_name: String) -> void:
+	if _busy():
+		Coop.trade_op("cancel", {"tid": tid})
+		return
+	var c: int = await ui.ask("%s wants to trade with you." % from_name, ["Let's trade", "No thanks"])
+	Coop.trade_op("join" if c == 0 else "cancel", {"tid": tid})
+
+func _on_trade_state(s: Dictionary) -> void:
+	if _busy() or not str(s.status) in ["invite", "open"]:
+		return
+	for p in ui.stack:
+		if p is TradePanel and (p as TradePanel).tid == int(s.tid):
+			return
+	var me := Net.local_id()
+	if (str(s.status) == "invite" and str(s.a) == me) or (str(s.status) == "open" and str(s.b) == me):
+		ui.close_all()
+		ui.open(TradePanel.new(s))
 
 # --- Battles ----------------------------------------------------------------------------
 
@@ -286,8 +377,12 @@ func _on_battle_requested(s: Dictionary) -> void:
 			var c2: Creature = res.befriended
 			c2.met = "Befriended in %s at Lv%d" % [world.info.get("name", world.map_id), c2.level]
 			c2.heal_full()
-			var where := GameState.add_creature(pd, c2)
-			GameState.bump_stat("befriend")
+			var where := "party" if pd.party.size() < PlayerData.PARTY_MAX else "den"
+			if Net.is_authority():
+				where = GameState.add_creature(pd, c2)
+				GameState.bump_stat("befriend")
+			else:
+				Coop.act("befriend_act", [JSON.stringify(c2.to_dict())])
 			after.append("%s joined %s!" % [c2.display_name(), {"party": "your party", "den": "the farm Den", "sanctuary": "the Sanctuary"}[where]])
 			if node:
 				world.remove_creature(node)

@@ -35,6 +35,9 @@ func _ready() -> void:
 			EventBus.toast.emit("Only the host can save in co-op.", ""))
 	save.disabled = not Net.is_authority()
 	v.add_child(save)
+	v.add_child(UITheme.button("Play together", func():
+		closed.emit()
+		ui.open(CoopPanel.new(ui, true))))
 	v.add_child(UITheme.button("Settings", func(): ui.open(SettingsPanel.new())))
 	v.add_child(UITheme.button("Quit to title", func():
 		if Net.is_authority():

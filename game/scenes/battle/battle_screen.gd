@@ -275,6 +275,8 @@ func _show_creature(side: int, pop: bool) -> void:
 # --- Main loop -------------------------------------------------------------------------
 
 func run() -> Dictionary:
+	if setup.get("kind", "") == "pvp":
+		return await _run_pvp()
 	var foe_team: Array = setup.get("team", [])
 	var kind: int = BattleEngine.Kind.TRAINER if setup.get("kind", "wild") != "wild" else BattleEngine.Kind.WILD
 	engine = BattleEngine.new(player.party, foe_team, kind, randi(), setup.get("foe_name", ""), player.name)
@@ -283,7 +285,7 @@ func run() -> Dictionary:
 	if setup.has("ai"):
 		engine.sides[1].ai_level = int(setup.ai)
 	for c in foe_team:
-		Progression.mark(GameState.world.dex, c.species_id, false)
+		GameState.dex_mark(c.species_id)
 	Audio.music("battle" if kind == BattleEngine.Kind.WILD else "trainer", 0.3)
 	Audio.sfx("encounter")
 	_foe_spr.visible = false
@@ -311,6 +313,146 @@ func run() -> Dictionary:
 	await _after_battle()
 	return {"result": engine.result, "befriended": engine.befriended, "foe_species": foe_team[0].species_id if foe_team.size() > 0 else ""}
 
+# --- Friendly battles -------------------------------------------------------------------------
+## The challenger (host_side) owns the engine. The opponent shows mirrored events and snaps to
+## the challenger's snapshot after every step. Teams are copies, so nothing carries over.
+
+signal _remote_msg
+
+var _remote_q: Array = []
+var _opponent := ""
+
+func _run_pvp() -> Dictionary:
+	_opponent = str(setup.opponent)
+	var host: bool = setup.get("host_side", false)
+	var mine: Array = []
+	for c: Creature in player.party:
+		var copy := Creature.from_dict(c.to_dict())
+		copy.heal_full()
+		mine.append(copy)
+	var theirs: Array = []
+	for d in setup.team:
+		var c2 := Creature.from_dict(d)
+		c2.heal_full()
+		theirs.append(c2)
+	engine = BattleEngine.new(mine, theirs, BattleEngine.Kind.PVP, int(setup.seed), str(setup.name), player.name)
+	engine.set_field_weather(setup.get("weather", ""))
+	Coop.pvp_action.connect(_on_remote)
+	Net.peer_left.connect(_on_peer_left)
+	Audio.music("trainer", 0.3)
+	Audio.sfx("encounter")
+	_foe_spr.visible = false
+	_me_spr.visible = false
+	_foe_box.panel.visible = false
+	_me_box.panel.visible = false
+	await _flash_screen(3)
+	if host:
+		await _host_pvp()
+	else:
+		await _guest_pvp()
+	Coop.pvp_action.disconnect(_on_remote)
+	Net.peer_left.disconnect(_on_peer_left)
+	match engine.result:
+		"win":
+			await _say("You won the friendly battle!")
+		"lose":
+			await _say("%s won the friendly battle. Good match!" % setup.name)
+	return {"result": "pvp_" + engine.result, "befriended": null, "foe_species": ""}
+
+func _send(msg: Dictionary) -> void:
+	Coop.send_pvp_action(_opponent, msg)
+
+func _on_remote(msg: Dictionary) -> void:
+	_remote_q.append(msg)
+	_remote_msg.emit()
+
+func _on_peer_left(pid: String) -> void:
+	if pid == _opponent:
+		_on_remote({"op": "left"})
+
+## Next message from the opponent (optionally of one op); "left" always wins.
+func _next_remote(op: String = "") -> Dictionary:
+	while true:
+		for i in _remote_q.size():
+			var m: Dictionary = _remote_q[i]
+			if m.get("op", "") == "left" or op == "" or m.get("op", "") == op:
+				_remote_q.remove_at(i)
+				return m
+		await _remote_msg
+	return {}
+
+func _opponent_left() -> void:
+	if engine.result == "":
+		engine.result = "win"
+	await _say("%s left the battle." % setup.name)
+
+func _host_step(ev: Array) -> void:
+	_send({"op": "ev", "ev": BattleEngine.mirror_events(ev), "st": engine.snapshot()})
+	await _play(ev)
+
+func _host_pvp() -> void:
+	await _host_step(engine.start())
+	while not engine.is_over():
+		if engine.needs_switch(1):
+			_send({"op": "force"})
+			_msg.text = "Waiting for %s..." % setup.name
+			var f := await _next_remote("force")
+			if f.op == "left":
+				await _opponent_left()
+				return
+			await _host_step(engine.force_switch(1, int(f.i)))
+			continue
+		if engine.needs_switch(0):
+			var idx: int = await _choose_party(true)
+			await _host_step(engine.force_switch(0, idx))
+			continue
+		_send({"op": "turn"})
+		var a0: Dictionary = await _choose_action()
+		_msg.text = "Waiting for %s..." % setup.name
+		var m := await _next_remote("act")
+		if m.op == "left":
+			await _opponent_left()
+			return
+		await _host_step(engine.submit(a0, m.a))
+
+func _guest_pvp() -> void:
+	while not engine.is_over():
+		var m := await _next_remote()
+		match str(m.get("op", "")):
+			"left":
+				await _opponent_left()
+				return
+			"ev":
+				for e: Dictionary in m.ev:
+					_apply_event_state(e)
+					await _play([e])
+				engine.apply_snapshot(m.st, true)
+				_refresh_box(0)
+				_refresh_box(1)
+			"force":
+				var idx: int = await _choose_party(true)
+				_send({"op": "force", "i": idx})
+				_msg.text = "Waiting for %s..." % setup.name
+			"turn":
+				var a: Dictionary = await _choose_action()
+				_send({"op": "act", "a": a})
+				_msg.text = "Waiting for %s..." % setup.name
+
+## Keeps the display-only engine in step while mirrored events play.
+func _apply_event_state(e: Dictionary) -> void:
+	var side := int(e.get("side", 0))
+	match str(e.t):
+		"switch":
+			engine.sides[side].active = int(e.index)
+		"damage", "heal":
+			engine.active(side).hp = int(e.hp)
+		"status":
+			engine.active(side).status = str(e.status)
+		"faint":
+			engine.active(side).hp = 0
+		"end":
+			engine.result = str(e.result)
+
 func _after_battle() -> void:
 	match engine.result:
 		"win":
@@ -320,7 +462,7 @@ func _after_battle() -> void:
 				for l in setup.get("lose_lines", []):
 					await _say(l)
 				if reward > 0:
-					GameState.add_money(reward)
+					GameState.earn(reward)
 					Audio.sfx("coin")
 					await _say("You got %dg for winning." % reward)
 		"lose":
@@ -343,7 +485,7 @@ func _after_battle() -> void:
 			Audio.sfx("levelup")
 			await _flash_screen(1)
 			await _say("%s evolved into %s!" % [before, Data.get_species(c.species_id).name])
-			Progression.mark(GameState.world.dex, c.species_id, true, c.starry)
+			GameState.dex_mark(c.species_id, true, c.starry)
 	EventBus.party_changed.emit()
 
 # --- Event playback ----------------------------------------------------------------------
@@ -572,13 +714,22 @@ func _show_main_menu() -> void:
 			_picked.emit({"k": "switch", "i": i})
 		else:
 			_show_main_menu())
-	_cmd_button("Run", func():
-		if setup.get("kind", "wild") != "wild":
+	var pvp: bool = setup.get("kind", "") == "pvp"
+	_cmd_button("Forfeit" if pvp else "Run", func():
+		if pvp:
+			_confirm_forfeit()
+		elif setup.get("kind", "wild") != "wild":
 			_msg.text = "You can't run from a trainer battle!"
 			Audio.sfx("error")
 		else:
 			_picked.emit({"k": "run"}))
 	f.call_deferred("grab_focus")
+
+func _confirm_forfeit() -> void:
+	_clear_cmd()
+	_msg.text = "Forfeit the friendly battle?"
+	_cmd_button("Forfeit", func(): _picked.emit({"k": "run"}), UITheme.HEART.darkened(0.3))
+	_cmd_button("Keep going", _show_main_menu).call_deferred("grab_focus")
 
 func _show_moves() -> void:
 	_clear_cmd()
@@ -621,10 +772,13 @@ func _bag_items() -> Array:
 	return out
 
 func _show_bag() -> void:
-	var items := _bag_items()
+	var pvp: bool = setup.get("kind", "") == "pvp"
+	var items := [] if pvp else _bag_items()
 	var p := _list_overlay("Bag")
 	var v: VBoxContainer = p.get_meta("list")
-	if items.is_empty():
+	if pvp:
+		v.add_child(UITheme.label("Items stay in the bag during friendly battles.", 10, UITheme.MUTED))
+	elif items.is_empty():
 		v.add_child(UITheme.label("Nothing useful to use here.", 10, UITheme.MUTED))
 	for it in items:
 		var row := HBoxContainer.new()
@@ -658,8 +812,9 @@ func _choose_party(forced: bool) -> int:
 	var p := _list_overlay("Choose a Wildling" if forced else "Party")
 	var v: VBoxContainer = p.get_meta("list")
 	var result := [-2]
-	for i in player.party.size():
-		var c: Creature = player.party[i]
+	var team: Array = engine.sides[0].team
+	for i in team.size():
+		var c: Creature = team[i]
 		var row := HBoxContainer.new()
 		v.add_child(row)
 		row.add_child(UITheme.icon_rect(Art.creature(c.species_id, true), 32))
