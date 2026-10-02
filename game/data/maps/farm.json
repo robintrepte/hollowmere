@@ -1,0 +1,48 @@
+{
+  "id": "farm", "name": "Your Farm", "w": 48, "h": 34, "base": "grass", "border": "tree", "music": "farm",
+  "farm": true, "tillable": ["grass", "dirt"], "seasonal": true,
+  "ops": [
+    ["rect", "path", 4, 6, 44, 2],
+    ["rect", "path", 7, 5, 1, 1],
+    ["rect", "path", 18, 5, 1, 1],
+    ["rect", "path", 33, 6, 1, 1],
+    ["rect", "water", 38, 11, 6, 5],
+    ["rect", "dirt", 3, 10, 12, 6],
+    ["open", "e", 6, 2],
+    ["scatter", "weed", 2, 9, 35, 14, 0.10, 11],
+    ["scatter", "rock", 2, 9, 35, 14, 0.05, 12],
+    ["scatter", "branch", 2, 9, 35, 14, 0.05, 13],
+    ["scatter", "stump", 2, 9, 35, 14, 0.012, 14],
+    ["scatter", "boulder", 2, 9, 35, 14, 0.006, 15],
+    ["scatter", "tree", 20, 9, 17, 14, 0.03, 16],
+    ["scatter", "weed", 37, 17, 9, 6, 0.10, 17],
+    ["scatter", "tree", 44, 9, 3, 13, 0.25, 18],
+    ["clear", 3, 10, 12, 6],
+    ["fence", "south_field", 1, 23, 23, 1],
+    ["fence", "lakeside", 25, 23, 22, 1],
+    ["fence", "lakeside", 24, 23, 1, 10],
+    ["scatter", "weed", 1, 24, 23, 9, 0.12, 21],
+    ["scatter", "rock", 1, 24, 23, 9, 0.06, 22],
+    ["scatter", "stump", 1, 24, 23, 9, 0.02, 23],
+    ["scatter", "tree", 1, 24, 23, 9, 0.04, 24],
+    ["rect", "water", 33, 26, 11, 6],
+    ["scatter", "weed", 25, 24, 8, 9, 0.12, 25],
+    ["scatter", "branch", 25, 24, 8, 9, 0.06, 26],
+    ["scatter", "flowers", 25, 24, 21, 9, 0.05, 27]
+  ],
+  "warps": [
+    {"x": 47, "y": 6, "w": 1, "h": 2, "to": "town", "tx": 1, "ty": 16}
+  ],
+  "objects": [
+    {"type": "building", "id": "farmhouse", "x": 5, "y": 2, "w": 5, "h": 3, "label": "Farmhouse", "roof": "#b04a3a", "action": "house"},
+    {"type": "building", "id": "den", "x": 16, "y": 2, "w": 5, "h": 3, "label": "Wildling Den", "roof": "#6a8a3a", "action": "den"},
+    {"type": "building", "id": "hatchery", "x": 23, "y": 2, "w": 4, "h": 3, "label": "Hatchery", "roof": "#d0a050", "action": "hatchery", "requires": "hatchery"},
+    {"type": "building", "id": "greenhouse", "x": 30, "y": 2, "w": 6, "h": 4, "label": "Greenhouse", "roof": "#80c0d0", "action": "greenhouse", "ruined_unless": "greenhouse"},
+    {"type": "building", "id": "spa", "x": 38, "y": 2, "w": 4, "h": 3, "label": "Wildling Spa", "roof": "#70b0b0", "action": "spa", "requires": "wildling_spa"},
+    {"type": "shipping_bin", "x": 11, "y": 4},
+    {"type": "farm_chest", "x": 12, "y": 4},
+    {"type": "sign", "x": 4, "y": 5, "text": "Your Farm. Clear the land, plant seeds, and let your Wildlings help!"},
+    {"type": "stairs", "x": 44, "y": 3, "to": "terrace", "tx": 20, "ty": 21, "requires": "terrace"}
+  ],
+  "spawn": [7, 6]
+}

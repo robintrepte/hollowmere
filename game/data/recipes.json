@@ -1,0 +1,59 @@
+{
+  "cooking": {
+    "fried_egg":         {"in": {"cluckle_egg": 1}, "unlock": "start"},
+    "garden_salad":      {"in": {"leek": 1, "parsnip": 1}, "unlock": "start"},
+    "trail_mix":         {"in": {"hazelnut": 1, "wild_berry": 1}, "unlock": "start"},
+    "veggie_stew":       {"in": {"potato": 1, "kale": 1}, "unlock": "hearts:theo:2"},
+    "berry_tart":        {"in": {"wild_berry": 2, "wheat": 1}, "unlock": "hearts:mira:3"},
+    "pumpkin_soup":      {"in": {"pumpkin": 1, "milk": 1}, "unlock": "hearts:theo:4"},
+    "spicy_curry":       {"in": {"hot_pepper": 2, "potato": 1}, "unlock": "shrine:3"},
+    "honey_cake":        {"in": {"honey": 1, "wheat": 1, "cluckle_egg": 1}, "unlock": "hearts:lila:3"},
+    "cream_pudding":     {"in": {"milk": 1, "cluckle_egg": 1}, "unlock": "hearts:barley:3"},
+    "farmer_lunch":      {"in": {"potato": 1, "cluckle_egg": 1, "parsnip": 1}, "unlock": "start"},
+    "mushroom_risotto":  {"in": {"mushroom": 2, "garlic": 1}, "unlock": "shrine:1"},
+    "frost_sorbet":      {"in": {"frostberry": 2, "milk": 1}, "unlock": "shrine:7"},
+    "corn_chowder":      {"in": {"corn": 1, "milk": 1}, "unlock": "hearts:rowan:3"},
+    "starfruit_parfait": {"in": {"starfruit": 1, "honey": 1, "milk": 1}, "unlock": "shrine:6"},
+    "glow_tea":          {"in": {"blue_jazz": 1, "honey": 1}, "unlock": "hearts:selene:3"},
+    "hearty_pancakes":   {"in": {"wheat": 2, "cluckle_egg": 1, "honey": 1}, "unlock": "hearts:cora:3"}
+  },
+  "crafting": {
+    "basic_treat":       {"in": {"fiber": 3, "wild_berry": 1}, "unlock": "start"},
+    "sweet_treat":       {"in": {"wild_berry": 2, "sap": 2}, "unlock": "shrine:1"},
+    "deluxe_treat":      {"in": {"honey": 1, "crystal_fruit": 1}, "unlock": "shrine:4"},
+    "lure_charm":        {"in": {"wood": 2, "sap": 2, "stone": 2}, "unlock": "start"},
+    "great_charm":       {"in": {"copper_bar": 1, "sap": 3, "quartz": 1}, "unlock": "shrine:2"},
+    "ultra_charm":       {"in": {"gold_bar": 1, "amethyst": 1}, "unlock": "shrine:5"},
+    "potion":            {"in": {"fiber": 5, "sap": 2}, "unlock": "start"},
+    "remedy":            {"in": {"mushroom": 1, "fiber": 3}, "unlock": "shrine:1"},
+    "chest":             {"in": {"wood": 50}, "unlock": "start"},
+    "sprinkler":         {"in": {"copper_bar": 1, "stone": 10}, "unlock": "start"},
+    "quality_sprinkler": {"in": {"iron_bar": 1, "gold_bar": 1, "quartz": 1}, "unlock": "shrine:3"},
+    "gold_sprinkler":    {"in": {"gold_bar": 2, "mystic_bar": 1, "diamond": 1}, "unlock": "shrine:6"},
+    "scarecrow":         {"in": {"wood": 20, "fiber": 20, "coal": 1}, "unlock": "start"},
+    "furnace":           {"in": {"copper_ore": 20, "stone": 25}, "unlock": "start"},
+    "keg":               {"in": {"wood": 30, "copper_bar": 1, "sap": 5}, "unlock": "shrine:1"},
+    "preserves_jar":     {"in": {"wood": 30, "stone": 30, "coal": 1}, "unlock": "start"},
+    "seed_maker":        {"in": {"wood": 25, "coal": 5, "gold_bar": 1}, "unlock": "shrine:4"},
+    "basic_fertilizer":  {"in": {"sap": 2}, "unlock": "start"},
+    "quality_fertilizer":{"in": {"sap": 4, "clay": 1}, "unlock": "shrine:2"},
+    "speed_gro":         {"in": {"sap": 3, "fiber": 5}, "unlock": "shrine:1"},
+    "flower_pot":        {"in": {"clay": 2, "stone": 5}, "unlock": "start"},
+    "wooden_bench":      {"in": {"wood": 15}, "unlock": "start"},
+    "stone_lantern":     {"in": {"stone": 20, "coal": 1}, "unlock": "start"},
+    "hay_bale":          {"in": {"fiber": 30}, "unlock": "start"}
+  },
+  "machines": {
+    "furnace": {
+      "recipes": [
+        {"in": "copper_ore", "n": 5, "fuel": "coal", "out": "copper_bar", "time": 30},
+        {"in": "iron_ore", "n": 5, "fuel": "coal", "out": "iron_bar", "time": 120},
+        {"in": "gold_ore", "n": 5, "fuel": "coal", "out": "gold_bar", "time": 300},
+        {"in": "mystic_ore", "n": 5, "fuel": "coal", "out": "mystic_bar", "time": 480}
+      ]
+    },
+    "keg":           {"any": "crop", "prefix": "juice", "time": 1440, "mult": 2.25, "add": 0},
+    "preserves_jar": {"any": "crop", "prefix": "jam", "time": 1440, "mult": 2.0, "add": 50},
+    "seed_maker":    {"any": "crop", "seeds": 2, "time": 20}
+  }
+}

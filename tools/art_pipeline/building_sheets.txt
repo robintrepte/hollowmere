@@ -1,0 +1,16 @@
+farmhouse 5 https://replicate.delivery/xezq/bZ2AwpLmLMrTG9GVNBSG8qfuy0GkscUVf3fImG0XwQjzG5muA/tmp12_emm2e.png
+den 5 https://replicate.delivery/xezq/tZQ5NZsnAH5yKx79AmT22ZnuveFYaDasobaUijxBQQCvRupLA/tmp0088lr88.png
+hatchery 4 https://replicate.delivery/xezq/skfdjEwFWAXDOaeUDeUVi5jQljcs1zz998SfHKnjVWaHOyNdB/tmpvwer_w8y.png
+greenhouse 6 https://replicate.delivery/xezq/eLzP6MGZyiRgJipUWBCJmwYle6JfPepe0GxT7zluv2lbckb6C/tmpk1ov8nwx.png
+greenhouse_ruined 6 https://replicate.delivery/xezq/LfoWv88HXhQfSUCVXNeICnu2aE5M44iDPeKTv5XLSi8dOyNdB/tmpvvoeelp2.png
+spa 4 https://replicate.delivery/xezq/H5dDxzLAE5rII1t6qJguArDNeIixcVy2ihS8P2d3AMC1RupLA/tmpabgysaeo.png
+general_store 5 https://replicate.delivery/xezq/t4qF9TlflyVbDqadJuFntl7QB7LXIbsl3O0fieuBVZGaH5muA/tmpuytsxn09.png
+museum 5 https://replicate.delivery/xezq/VAkoa0deZazGBK7ZP7Fb0PmasCM7Nuarehf8IFX9W4djH5muA/tmpzjgh5va_.png
+wildling_center 6 https://replicate.delivery/xezq/i974PAFr8iIsGdtdJI9ekb9Ebsp92dWSJJtiUojH1XYBSupLA/tmpwoi29x7a.png
+blacksmith 5 https://replicate.delivery/xezq/5mAAzwJ9aMaSOlXDCpUeRmaTyvjJfKeW2YfFwTpoN4sSQyNdB/tmptd7xucg2.png
+carpenter 5 https://replicate.delivery/xezq/SyaP5XfPj81e20eSA7kvXVmZ8Oo8dH0tHvSZXEdzuG1QI5muA/tmptn5f9s3b.png
+cafe 6 https://replicate.delivery/xezq/q5TVrSK5eSSOUCPx8prm465Fwb1LU0XfUBRZW7JWG0YMkcTXA/tmpm47kujo7.png
+elder_house 5 https://replicate.delivery/xezq/Ub0wjBqKLX6vIdPZQzsQ7j0LIYHWcwEyW9nlJDcGobyDJ30F/tmphlqs7ure.png
+house_a 5 https://replicate.delivery/xezq/nOMZPuJJgIY0HNqfG7rd0x8SdGZ0cOyPvdwYKe1YfuViI5muA/tmp3vv7sa2j.png
+house_b 5 https://replicate.delivery/xezq/evzofWFZ9zuqkE4Fegpd5yZotn2adudSE4UhmT1A9ihmI5muA/tmpmsx4d_cr.png
+house_c 5 https://replicate.delivery/xezq/sSGYF7mnUKJFN9z8If0eAinUBuxR6GAUJs0nm6UFWlHYkcTXA/tmp1y3bwb36.png

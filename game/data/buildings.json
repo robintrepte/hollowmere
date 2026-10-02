@@ -1,0 +1,13 @@
+{
+  "kitchen":       {"name": "Farmhouse Kitchen", "kind": "upgrade",   "price": 4000,  "materials": {"wood": 150},                    "requires": "",         "desc": "Adds a kitchen to your farmhouse so you can cook."},
+  "big_den":       {"name": "Big Den",           "kind": "upgrade",   "price": 6000,  "materials": {"wood": 200, "stone": 100},     "requires": "",         "desc": "Room for 8 working Wildlings."},
+  "deluxe_den":    {"name": "Deluxe Den",        "kind": "upgrade",   "price": 15000, "materials": {"hardwood": 50, "iron_bar": 5}, "requires": "big_den",  "desc": "Room for 16 working Wildlings."},
+  "hatchery":      {"name": "Hatchery",          "kind": "building",  "price": 2500,  "materials": {"wood": 100, "stone": 50},     "requires": "",         "desc": "Incubates up to 2 eggs at a time."},
+  "big_hatchery":  {"name": "Big Hatchery",      "kind": "upgrade",   "price": 8000,  "materials": {"wood": 150, "copper_bar": 5}, "requires": "hatchery", "desc": "Incubates up to 4 eggs, and they hatch a day sooner."},
+  "greenhouse":    {"name": "Greenhouse",        "kind": "building",  "price": 5000,  "materials": {"wood": 150, "copper_bar": 5}, "requires": "shrine:2", "desc": "Repairs the old greenhouse. Crops grow there in any season."},
+  "south_field":   {"name": "South Field",       "kind": "expansion", "price": 3000,  "materials": {"wood": 100},                    "requires": "",         "desc": "Clears the fence to open up the southern field."},
+  "lakeside":      {"name": "Lakeside Plot",     "kind": "expansion", "price": 7000,  "materials": {"stone": 200},                   "requires": "south_field", "desc": "Opens up the lakeside land in the southeast."},
+  "terrace":       {"name": "Hilltop Terrace",   "kind": "expansion", "price": 20000, "materials": {"hardwood": 100, "iron_bar": 10}, "requires": "shrine:4", "desc": "Builds stairs to a big new terrace above your farm."},
+  "auto_shipper":  {"name": "Auto-Shipper",      "kind": "upgrade",   "price": 10000, "materials": {"iron_bar": 5, "spark_dust": 5}, "requires": "shrine:3", "desc": "Each night, the farm chest's contents are shipped automatically."},
+  "wildling_spa":  {"name": "Wildling Spa",      "kind": "building",  "price": 12000, "materials": {"stone": 300, "gold_bar": 3},  "requires": "shrine:5", "desc": "Working Wildlings fully recover energy every night and gain happiness."}
+}

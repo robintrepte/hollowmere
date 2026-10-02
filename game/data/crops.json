@@ -1,0 +1,48 @@
+{
+  "columns": ["id", "name", "seasons", "days", "regrow", "seed", "sell", "color"],
+  "rows": [
+    ["parsnip", "Parsnip", ["spring"], 4, 0, 20, 35, "#f0e0a0"],
+    ["potato", "Potato", ["spring"], 6, 0, 50, 80, "#c09060"],
+    ["cauliflower", "Cauliflower", ["spring"], 12, 0, 80, 175, "#f4f0e0"],
+    ["green_bean", "Green Bean", ["spring"], 10, 3, 60, 40, "#58b048"],
+    ["kale", "Kale", ["spring"], 6, 0, 70, 110, "#3a8a4a"],
+    ["strawberry", "Strawberry", ["spring"], 8, 4, 100, 120, "#e83a4a"],
+    ["garlic", "Garlic", ["spring"], 4, 0, 40, 60, "#e8e0d0"],
+    ["tulip", "Tulip", ["spring"], 6, 0, 20, 30, "#e85a8a"],
+    ["rhubarb", "Rhubarb", ["spring"], 13, 0, 100, 220, "#c83a5a"],
+    ["blue_jazz", "Blue Jazz", ["spring"], 7, 0, 30, 50, "#4a7ae8"],
+
+    ["tomato", "Tomato", ["summer"], 11, 4, 50, 60, "#e84a3a"],
+    ["blueberry", "Blueberry", ["summer"], 13, 4, 80, 50, "#4a5ae0"],
+    ["melon", "Melon", ["summer"], 12, 0, 80, 250, "#e89a9a"],
+    ["hot_pepper", "Hot Pepper", ["summer"], 5, 3, 40, 40, "#e8301a"],
+    ["corn", "Corn", ["summer", "fall"], 14, 4, 150, 50, "#f0d040"],
+    ["wheat", "Wheat", ["summer", "fall"], 4, 0, 10, 25, "#d8b860"],
+    ["sunflower", "Sunflower", ["summer", "fall"], 8, 0, 200, 80, "#f0c020"],
+    ["radish", "Radish", ["summer"], 6, 0, 40, 90, "#e85a6a"],
+    ["red_cabbage", "Red Cabbage", ["summer"], 9, 0, 100, 260, "#a03a8a"],
+    ["starfruit", "Starfruit", ["summer"], 13, 0, 400, 750, "#f8e858"],
+
+    ["pumpkin", "Pumpkin", ["fall"], 13, 0, 100, 320, "#e88a2a"],
+    ["cranberry", "Cranberry", ["fall"], 7, 5, 240, 75, "#c8203a"],
+    ["eggplant", "Eggplant", ["fall"], 5, 5, 20, 60, "#6a3a8a"],
+    ["yam", "Yam", ["fall"], 10, 0, 60, 160, "#c86a4a"],
+    ["grape", "Grape", ["fall"], 10, 3, 60, 80, "#8a4ab0"],
+    ["bok_choy", "Bok Choy", ["fall"], 4, 0, 50, 80, "#7ac85a"],
+    ["beet", "Beet", ["fall"], 6, 0, 20, 100, "#a02a4a"],
+    ["amaranth", "Amaranth", ["fall"], 7, 0, 70, 150, "#b03a6a"],
+    ["artichoke", "Artichoke", ["fall"], 8, 0, 30, 160, "#6a9a5a"],
+    ["fairy_rose", "Fairy Rose", ["fall"], 12, 0, 200, 290, "#f0a0d8"],
+
+    ["frostberry", "Frostberry", ["winter"], 8, 4, 90, 70, "#9ad8f0"],
+    ["snow_yam", "Snow Yam", ["winter"], 7, 0, 60, 120, "#e0e8f0"],
+    ["winter_squash", "Winter Squash", ["winter"], 12, 0, 120, 280, "#d8a050"],
+    ["ice_lily", "Ice Lily", ["winter"], 9, 0, 80, 140, "#c8e8ff"],
+    ["crystal_root", "Crystal Root", ["winter"], 10, 0, 150, 240, "#b8a0f0"],
+    ["wintergreen", "Wintergreen", ["winter"], 6, 0, 40, 85, "#3aa070"],
+    ["snowpea", "Snowpea", ["winter"], 5, 3, 50, 35, "#a0e0a0"],
+    ["glacier_melon", "Glacier Melon", ["winter"], 13, 0, 300, 600, "#7ac0e8"],
+    ["frost_cabbage", "Frost Cabbage", ["winter"], 8, 0, 70, 150, "#8ac8c8"],
+    ["moonbloom", "Moonbloom", ["winter"], 11, 0, 180, 300, "#d8d0ff"]
+  ]
+}

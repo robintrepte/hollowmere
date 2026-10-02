@@ -1,0 +1,86 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+env:
+  GODOT_VERSION: "4.7.2"
+  GODOT_RELEASE: "stable"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${GODOT_RELEASE}/Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64.zip
+          unzip -q Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64.zip
+          sudo mv Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64 /usr/local/bin/godot
+      - name: Import project
+        run: godot --headless --path game --import || true
+      - name: Compile all scripts
+        run: godot --headless --path game res://tests/check_scripts.tscn
+      - name: Unit tests
+        run: godot --headless --path game -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json -gjunit_xml_file=res://../test-results.xml
+      - name: Balance simulation
+        run: godot --headless --path game res://tests/sim/balance_sim.tscn -- --days=112
+      - name: Co-op network test
+        run: godot --headless --path game res://tests/net/net_test.tscn
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: test-results.xml
+
+  export:
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        preset: ["Windows Desktop", "macOS", "Web"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot + export templates
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${GODOT_RELEASE}/Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64.zip
+          unzip -q Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64.zip
+          sudo mv Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64 /usr/local/bin/godot
+          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${GODOT_RELEASE}/Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_export_templates.tpz
+          mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_RELEASE}
+          unzip -q Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_export_templates.tpz
+          mv templates/* ~/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_RELEASE}/
+      - name: Import
+        run: godot --headless --path game --import || true
+      - name: Export
+        run: |
+          mkdir -p build/windows build/macos build/web
+          godot --headless --path game --export-release "${{ matrix.preset }}"
+      - name: Inject Google client id (web)
+        if: matrix.preset == 'Web'
+        run: sed -i "s/%GOOGLE_CLIENT_ID%/${{ secrets.GOOGLE_CLIENT_ID }}/" build/web/index.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hollowmere-${{ matrix.preset == 'Windows Desktop' && 'windows' || matrix.preset == 'macOS' && 'macos' || 'web' }}
+          path: build/
+
+  deploy-web:
+    needs: export
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: hollowmere-web
+          path: site
+      - name: Upload to server
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh && echo "$DEPLOY_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+          rsync -az --delete site/web/ deploy@"$DEPLOY_HOST":/srv/hollowmere/web/

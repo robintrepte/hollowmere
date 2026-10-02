@@ -1,0 +1,29 @@
+# Godot
+game/.godot/
+game/export_credentials.cfg
+*.translation
+
+# Builds
+build/
+*.tpz
+
+# Local tooling
+.tools/
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+server/build/
+
+# Art pipeline scratch
+tools/art_pipeline/out/
+.shots/
+
+# Secrets
+.env
+*.p12
+*.keystore
+
+# OS
+.DS_Store
+Thumbs.db

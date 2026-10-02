@@ -1,0 +1,63 @@
+{
+  "general_store": {
+    "name": "Mira's General Store", "owner": "mira", "open": [900, 1800],
+    "stock": [
+      {"id": "@season_seeds"},
+      {"id": "@saplings"},
+      {"id": "basic_treat"}, {"id": "sweet_treat", "requires": "shrine:1"},
+      {"id": "basic_fertilizer"}, {"id": "speed_gro", "requires": "shrine:1"}, {"id": "quality_fertilizer", "requires": "shrine:2"},
+      {"id": "seed_pouch"}, {"id": "forage_basket", "requires": "level:3"},
+      {"id": "bouquet"}
+    ],
+    "backpacks": true
+  },
+  "wildling_center": {
+    "name": "Wildling Center", "owner": "fern", "open": [800, 2000],
+    "stock": [
+      {"id": "lure_charm"}, {"id": "great_charm", "requires": "shrine:2"}, {"id": "ultra_charm", "requires": "shrine:5"},
+      {"id": "potion"}, {"id": "super_potion", "requires": "shrine:3"}, {"id": "max_potion", "requires": "shrine:6"},
+      {"id": "remedy"}, {"id": "revive_seed", "requires": "shrine:2"},
+      {"id": "deluxe_treat", "requires": "shrine:4"}, {"id": "brush", "price": 500},
+      {"id": "treat_tin"}, {"id": "egg_carrier", "requires": "shrine:1"},
+      {"id": "heirloom_charm", "requires": "shrine:4"}
+    ]
+  },
+  "blacksmith": {
+    "name": "Greta's Forge", "owner": "greta", "open": [900, 1700],
+    "stock": [
+      {"id": "coal", "price": 150}, {"id": "copper_ore", "price": 75}, {"id": "iron_ore", "price": 150, "requires": "shrine:2"},
+      {"id": "gold_ore", "price": 400, "requires": "shrine:4"}, {"id": "gem_case", "requires": "shrine:1"}
+    ],
+    "upgrades": true
+  },
+  "carpenter": {
+    "name": "Bram's Workshop", "owner": "bram", "open": [900, 1700],
+    "stock": [
+      {"id": "wood", "price": 10}, {"id": "stone", "price": 20}, {"id": "hardwood", "price": 120, "requires": "shrine:3"}, {"id": "clay", "price": 60},
+      {"id": "tool_belt"}, {"id": "storage_crate", "requires": "level:4"},
+      {"id": "picket_fence", "requires": "level:2"}, {"id": "flower_bed", "requires": "level:2"}, {"id": "garden_gnome", "requires": "level:3"},
+      {"id": "birdbath", "requires": "level:4"}, {"id": "string_lights", "requires": "level:5"}, {"id": "wildling_statue", "requires": "level:6"},
+      {"id": "wishing_well", "requires": "level:8"}, {"id": "windmill", "requires": "level:10"}
+    ],
+    "buildings": true
+  },
+  "cafe": {
+    "name": "The Sleepy Sprout Cafe", "owner": "theo", "open": [1000, 2400],
+    "stock": [
+      {"id": "fried_egg", "price": 100}, {"id": "garden_salad", "price": 220}, {"id": "veggie_stew", "price": 350},
+      {"id": "honey_cake", "price": 500}, {"id": "glow_tea", "price": 320}, {"id": "farmer_lunch", "price": 300}
+    ]
+  },
+  "traveler": {
+    "name": "Sable's Traveling Cart", "owner": "sable", "open": [800, 2000], "days": [4, 6],
+    "random": 6,
+    "pool": [
+      {"id": "star_shard", "price": 2000}, {"id": "deluxe_treat", "price": 400}, {"id": "ultra_charm", "price": 900},
+      {"id": "heirloom_charm", "price": 4000}, {"id": "starfruit_seeds", "price": 800}, {"id": "fairy_rose_seeds", "price": 400},
+      {"id": "glacier_melon_seeds", "price": 600}, {"id": "moonbloom_seeds", "price": 360}, {"id": "truffle", "price": 1200},
+      {"id": "straw_hat", "price": 1000}, {"id": "flower_crown", "price": 1500}, {"id": "revive_seed", "price": 1500},
+      {"id": "gold_sprinkler", "price": 8000}, {"id": "great_charm", "price": 450}, {"id": "crystal_fruit", "price": 350},
+      {"id": "storage_crate", "price": 3000}, {"id": "egg_carrier", "price": 1500}, {"id": "starapple_sapling", "price": 30000}
+    ]
+  }
+}

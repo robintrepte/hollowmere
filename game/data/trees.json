@@ -1,0 +1,10 @@
+{
+  "cherry":      {"name": "Cherry",      "seasons": ["spring"],           "days": 20, "sapling": 1500, "sell": 80,  "color": "#e03050", "requires": ""},
+  "plum":        {"name": "Plum",        "seasons": ["spring"],           "days": 20, "sapling": 1800, "sell": 95,  "color": "#8040a0", "requires": "level:3"},
+  "peach":       {"name": "Peach",       "seasons": ["summer"],           "days": 20, "sapling": 2000, "sell": 140, "color": "#f8a070", "requires": ""},
+  "orange":      {"name": "Orange",      "seasons": ["summer"],           "days": 20, "sapling": 2000, "sell": 100, "color": "#f09020", "requires": "level:4"},
+  "apple":       {"name": "Apple",       "seasons": ["fall"],             "days": 20, "sapling": 1500, "sell": 100, "color": "#e04030", "requires": ""},
+  "pomegranate": {"name": "Pomegranate", "seasons": ["fall"],             "days": 20, "sapling": 2500, "sell": 140, "color": "#c02040", "requires": "level:5"},
+  "snowpear":    {"name": "Snowpear",    "seasons": ["winter"],           "days": 20, "sapling": 3000, "sell": 160, "color": "#e0f0f0", "requires": "level:6"},
+  "starapple":   {"name": "Starapple",   "seasons": ["spring", "summer", "fall", "winter"], "days": 28, "sapling": 25000, "sell": 400, "color": "#f8e060", "requires": "shrine:8"}
+}

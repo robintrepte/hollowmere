@@ -1,0 +1,16 @@
+{
+  "id": "terrace", "name": "Hilltop Terrace", "w": 40, "h": 24, "base": "grass", "border": "tree", "music": "farm",
+  "farm": true, "tillable": ["grass", "dirt"], "seasonal": true,
+  "ops": [
+    ["rect", "path", 19, 18, 2, 6],
+    ["rect", "water", 3, 3, 5, 4],
+    ["scatter", "weed", 1, 1, 38, 16, 0.06, 41],
+    ["scatter", "flowers", 1, 1, 38, 22, 0.03, 42],
+    ["open", "s", 19, 2]
+  ],
+  "warps": [
+    {"x": 19, "y": 23, "w": 2, "h": 1, "to": "farm", "tx": 44, "ty": 5}
+  ],
+  "objects": [],
+  "spawn": [20, 21]
+}

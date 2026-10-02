@@ -1,0 +1,13 @@
+{
+  "hardy":  {"name": "Hardy",  "up": "",      "down": ""},
+  "cozy":   {"name": "Cozy",   "up": "",      "down": "", "happiness_bonus": 1},
+  "brave":  {"name": "Brave",  "up": "power", "down": "speed"},
+  "fierce": {"name": "Fierce", "up": "power", "down": "focus"},
+  "sturdy": {"name": "Sturdy", "up": "guard", "down": "speed"},
+  "steady": {"name": "Steady", "up": "guard", "down": "focus"},
+  "clever": {"name": "Clever", "up": "focus", "down": "power"},
+  "dreamy": {"name": "Dreamy", "up": "focus", "down": "speed"},
+  "hasty":  {"name": "Hasty",  "up": "speed", "down": "guard"},
+  "lively": {"name": "Lively", "up": "speed", "down": "power"},
+  "gentle": {"name": "Gentle", "up": "focus", "down": "guard"}
+}

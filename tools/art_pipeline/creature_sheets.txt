@@ -1,0 +1,11 @@
+sheet_01.png sproutle,bramblet,thornwarden,puddlop,brooklet,torrentide,embercub,cindermane,blazeroar
+sheet_02.png mossbun,clovehare,petalfly,bloomwing,acornib,oakhorn,elderbough,mushlet,fungloom
+sheet_03.png ripplefin,wavelash,shelldo,shellfort,bubbloo,lumibub,splashpup,surfhound,cinderbug
+sheet_04.png flarewing,kilnmole,forgemole,wickling,lanternoir,pebblit,bouldron,monolux,crystoad
+sheet_05.png geodrake,dustail,mesacoyote,breezlet,zephyrkite,galecrest,fluffeather,cloudmoo,gustmoth
+sheet_06_lite.png duskmoth,voltick,joltbeetle,staticat,thundermew,stormlynx,zapfin,eelectra,frostpip
+sheet_07.png snowpaca,iciclaw,glacierox,shiverwisp,auroray,chillchick,blizzowl,shadeling,umbrakit
+sheet_08.png nocturnyx,gloomrat,duskrat,glimmer,radiantelle,solaria,wishmite,starbloom,pudgepig
+sheet_09.png truffleboar,nibblet,squeakster,moocalf,meadowmoo,cluckle,roostrum,burrowpup,digsby
+sheet_10.png snailmail,couriersnail,mimicrate,hollowisp,verdantis,maelstride,pyrrhex,terragorn,zephyros
+sheet_11.png voltaris,glaciel,eclipsar,vernalis,solstara,harvestus,hibernox,egg,egg_starry

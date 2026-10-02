@@ -1,0 +1,14 @@
+{
+  "id": "greenhouse", "name": "Greenhouse", "w": 16, "h": 13, "base": "wood", "border": "cliff", "music": "farm",
+  "farm": true, "greenhouse": true, "tillable": ["dirt"], "indoor": true,
+  "ops": [
+    ["rect", "dirt", 2, 2, 12, 8],
+    ["rect", "wood", 7, 10, 2, 3],
+    ["open", "s", 7, 2]
+  ],
+  "warps": [
+    {"x": 7, "y": 12, "w": 2, "h": 1, "to": "farm", "tx": 33, "ty": 7}
+  ],
+  "objects": [],
+  "spawn": [7, 10]
+}

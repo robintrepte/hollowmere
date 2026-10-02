@@ -1,0 +1,359 @@
+{
+  "mira": {
+    "name": "Mira", "role": "General Store Owner", "romance": false, "birthday": ["spring", 5],
+    "look": {"skin": "#f0c8a0", "hair": "#7a3a2a", "shirt": "#d07050"},
+    "loves": ["strawberry", "honey_cake", "daffodil"], "likes": ["parsnip", "tulip", "fried_egg"], "dislikes": ["coal", "stone"],
+    "schedule": [[600, "town", 10, 9], [1800, "town", 20, 18]],
+    "lines": {
+      "0": ["Welcome to Hollowmere! Seeds are in the back.", "New farmers always buy too few parsnips. Just saying."],
+      "3": ["You're becoming a regular! I like that.", "The Wildlings around your farm seem happier lately."],
+      "6": ["I saved the freshest seeds for you this morning.", "My grandmother ran this store. She'd have liked you."],
+      "9": ["You feel like family now. Don't tell anyone I gave you a discount.", "Hollowmere is livelier since you came."]
+    },
+    "season": {"spring": "Spring is the best season for parsnips. Trust me.", "summer": "Melons sell for a fortune in summer!", "fall": "Pumpkins fly off the shelves in fall.", "winter": "Winter crops are tricky, but Frost Wildlings help."},
+    "events": {
+      "2": ["Mira is counting seed packets.", "Mira: Oh! You startled me. Inventory day...", "Mira: Here, take these. A thank-you for being such a good customer."],
+      "5": ["Mira shows you an old photo of the store.", "Mira: My grandmother founded this place with one bag of seeds.", "Mira: She always said a valley grows as much as its people do."],
+      "8": ["Mira hands you a hand-written recipe card.", "Mira: Grandma's berry tart. I've never shared it with anyone.", "Mira: I think she'd want you to have it."]
+    },
+    "event_rewards": {"2": {"parsnip_seeds": 10}, "8": {"recipe": "berry_tart"}}
+  },
+  "bram": {
+    "name": "Bram", "role": "Carpenter", "romance": false, "birthday": ["summer", 9],
+    "look": {"skin": "#c89070", "hair": "#3a2a1a", "shirt": "#6a8a4a"},
+    "loves": ["hardwood", "spicy_curry", "iron_bar"], "likes": ["wood", "corn_chowder", "veggie_stew"], "dislikes": ["fiber", "tulip"],
+    "schedule": [[600, "town", 10, 26], [1800, "town", 26, 18]],
+    "lines": {
+      "0": ["Need something built? Bring wood and coin.", "That old farm of yours has good bones."],
+      "3": ["Your fences are holding up nicely.", "A Stone Wildling clears land faster than any shovel."],
+      "6": ["I carved this bench myself. Took three weeks.", "You've got a builder's eye, you know."],
+      "9": ["If you ever want to learn woodworking, my door's open.", "Best client I've ever had. And friend."]
+    },
+    "season": {"spring": "Spring rain warps the lumber. Keep it dry!", "summer": "Hot days are good for drying wood.", "fall": "Fall is building season. Everyone wants a barn.", "winter": "I fix tools in winter. Quiet work."},
+    "events": {
+      "2": ["Bram is struggling with a heavy beam.", "Bram: Mind lending a hand? ... Thanks. You're stronger than you look.", "Bram: Take some wood. I cut too much anyway."],
+      "5": ["Bram shows you a tiny wooden Wildling figurine.", "Bram: I carve one for every kid born in town.", "Bram: Maybe I'll carve one for you someday."],
+      "8": ["Bram hands you a polished wooden key.", "Bram: Spare key to my workshop. Use any tools you like.", "Bram: And I'll give you a discount on your next building."]
+    },
+    "event_rewards": {"2": {"wood": 50}, "5": {"hardwood": 10}}
+  },
+  "greta": {
+    "name": "Greta", "role": "Blacksmith", "romance": false, "birthday": ["fall", 21],
+    "look": {"skin": "#d8a080", "hair": "#c8c8c8", "shirt": "#5a5a6a"},
+    "loves": ["gold_bar", "ruby", "diamond"], "likes": ["copper_bar", "iron_bar", "coal"], "dislikes": ["daffodil", "honey"],
+    "schedule": [[600, "town", 41, 10], [1700, "town", 34, 18]],
+    "lines": {
+      "0": ["Bring ore, get bars. Bring bars, get better tools.", "Hmph. Another farmer."],
+      "3": ["Your pickaxe swings are getting cleaner.", "Ember Wildlings make the best forge companions."],
+      "6": ["I forged my first sword at age nine. Terrible sword.", "You're alright, farmer."],
+      "9": ["You're the only one who listens to my metal stories.", "I'd forge anything for you. Within reason."]
+    },
+    "season": {"spring": "Spring means broken hoes. Lots of them.", "summer": "The forge in summer is miserable. I love it.", "fall": "Fall ore from Cinder Ridge is the finest.", "winter": "Nothing beats a warm forge in winter."},
+    "events": {
+      "2": ["Greta is hammering a glowing bar.", "Greta: Watch. See how it rings? Means it's pure.", "Greta: Take some ore. Practice."],
+      "5": ["Greta shows you an old, notched hammer.", "Greta: My mentor's hammer. She taught me patience.", "Greta: Metal doesn't care about your mood. Neither do Wildlings, if you rush them."],
+      "8": ["Greta hands you a gleaming gold bar.", "Greta: Don't make it weird. Just... thanks for visiting."]
+    },
+    "event_rewards": {"2": {"copper_ore": 15}, "8": {"gold_bar": 1}}
+  },
+  "fern": {
+    "name": "Dr. Fern", "role": "Wildling Researcher", "romance": false, "birthday": ["spring", 18],
+    "look": {"skin": "#f0d0b0", "hair": "#4a8a5a", "shirt": "#f0f0f0"},
+    "loves": ["crystal_fruit", "starfruit_parfait", "star_shard"], "likes": ["mushroom", "glow_tea", "quartz"], "dislikes": ["coal"],
+    "schedule": [[600, "town", 33, 8], [2000, "town", 30, 14]],
+    "lines": {
+      "0": ["Every Wildling you befriend helps my research. Keep your Wildling-dex updated!", "Wildlings love food from the farm. Use it when befriending."],
+      "3": ["Did you know Wildlings level up from farm work too?", "Breeding in the Den can pass on great genes."],
+      "6": ["Your Wildlings are remarkably healthy. You treat them well.", "I suspect there are Wildlings that only appear in certain seasons..."],
+      "9": ["You've done more for Wildling science than anyone.", "Without you, the Grove Shrines would still be dark."]
+    },
+    "season": {"spring": "Spring brings many Leaf Wildlings out.", "summer": "Watch for Spark Wildlings during storms.", "fall": "Shade Wildlings get bolder in fall.", "winter": "Frost Wildlings come down from the mountains in winter."},
+    "events": {
+      "2": ["Fern is studying a sleeping Mossbun.", "Fern: Shh... Wildlings dream, you know. Look at its ears twitch.", "Fern: Here, take these charms for your research."],
+      "5": ["Fern shows you an ancient carving of eight creatures.", "Fern: The Grove Guardians. Legend says they kept this valley in balance.", "Fern: Restoring the shrines may wake them..."],
+      "8": ["Fern gives you a shimmering charm.", "Fern: This charm makes Starry Wildlings appear more often.", "Fern: I can't think of anyone better to have it."]
+    },
+    "event_rewards": {"2": {"lure_charm": 5}, "8": {"starry_charm": 1}}
+  },
+  "theo": {
+    "name": "Theo", "role": "Cafe Owner", "romance": true, "birthday": ["summer", 22],
+    "look": {"skin": "#a87050", "hair": "#2a1a1a", "shirt": "#e0a040"},
+    "loves": ["pumpkin_soup", "honey", "melon"], "likes": ["milk", "wheat", "cluckle_egg"], "dislikes": ["coal", "fiber"],
+    "schedule": [[1000, "town", 35, 26], [2200, "town", 22, 18]],
+    "lines": {
+      "0": ["Welcome to the Sleepy Sprout! Take a seat anywhere.", "Our special today is whatever's fresh from your farm."],
+      "3": ["Your veggies make the best stew. Seriously.", "I named the cafe after a Sproutle that slept on my doorstep."],
+      "6": ["I saved you a slice of honey cake.", "Cooking for you is my favorite part of the day."],
+      "9": ["I'd cook for you every day if you let me.", "Whenever I see you walk in, the whole cafe feels warmer."]
+    },
+    "season": {"spring": "Spring salads are my favorite.", "summer": "Cold melon soup! Trust me.", "fall": "Pumpkin season! Best season!", "winter": "Hot cocoa is free for farmers in winter."},
+    "events": {
+      "2": ["Theo is experimenting with a new recipe.", "Theo: Try this. Honest opinion... You like it? I'll call it Veggie Stew."],
+      "5": ["Theo is cleaning up after closing time.", "Theo: I opened this place because my parents had a cafe in the city.", "Theo: But here, people actually talk to each other. I love that."],
+      "8": ["Theo sets two cups of tea on the table.", "Theo: I closed early tonight. For us.", "Theo: ...I really like spending time with you, you know."]
+    },
+    "event_rewards": {"2": {"recipe": "veggie_stew"}}
+  },
+  "lila": {
+    "name": "Lila", "role": "Painter and Florist", "romance": true, "birthday": ["spring", 26],
+    "look": {"skin": "#f8d8c0", "hair": "#e070a0", "shirt": "#80a0e0"},
+    "loves": ["fairy_rose", "tulip", "blue_jazz"], "likes": ["daffodil", "sunflower", "honey"], "dislikes": ["stone", "coal", "copper_ore"],
+    "schedule": [[900, "town", 21, 20], [1400, "town", 16, 26], [1900, "town", 34, 27]],
+    "lines": {
+      "0": ["Oh, hello! Mind the paint, it's still wet.", "I'm trying to paint Glimmer's glow. It's impossible!"],
+      "3": ["Your farm would make a lovely painting.", "Flowers are just paintings that grow."],
+      "6": ["I painted your Wildlings last night. Don't laugh!", "You make the valley more colorful."],
+      "9": ["Every painting I make has a little bit of you in it now.", "Will you sit for a portrait someday?"]
+    },
+    "season": {"spring": "The tulips are blooming! I'm painting all day.", "summer": "Sunflowers are the happiest flowers.", "fall": "The leaves give me so many new colors.", "winter": "Snow is the hardest thing to paint. It's all blue, really."},
+    "events": {
+      "2": ["Lila is painting a Petalfly on a flower.", "Lila: Shh! It's almost perfect... There! Oh, it flew away.", "Lila: Take these seeds. Plant something pretty for me."],
+      "5": ["Lila shows you a gallery of tiny paintings.", "Lila: These are all the Wildlings I've ever met.", "Lila: I want to paint every one in the valley someday."],
+      "8": ["Lila hands you a small canvas.", "Lila: It's you and your Wildlings, on the farm at sunset.", "Lila: I hope you like it... I painted it for you."]
+    },
+    "event_rewards": {"2": {"tulip_seeds": 10}, "5": {"recipe": "honey_cake"}}
+  },
+  "juniper": {
+    "name": "Juniper", "role": "Wildling Researcher and Rival", "romance": true, "birthday": ["fall", 3],
+    "look": {"skin": "#e8b890", "hair": "#e8c040", "shirt": "#5050a0"},
+    "loves": ["star_shard", "crystal_fruit", "glow_tea"], "likes": ["quartz", "amethyst", "fried_egg"], "dislikes": ["wheat", "fiber"],
+    "schedule": [[800, "town", 30, 9], [1300, "town", 25, 3], [1800, "town", 21, 15]],
+    "lines": {
+      "0": ["You're the new farmer? Bet my Wildlings could beat yours.", "Dr. Fern says you have potential. We'll see."],
+      "3": ["Okay, you're not bad. Rematch soon?", "I'm writing a paper on Glow Wildlings. Want to help?"],
+      "6": ["Battling you is the most fun I've had all year.", "You know a lot more about Wildlings than you let on."],
+      "9": ["Partners in research. And... maybe more?", "I don't want a rival anymore. I want you around."]
+    },
+    "season": {"spring": "Spring is perfect for field research.", "summer": "Storm season! Spark Wildlings everywhere!", "fall": "My birthday's in fall. Just mentioning it.", "winter": "Winter is for writing papers. Ugh."},
+    "events": {
+      "2": ["Juniper is scribbling in a notebook.", "Juniper: Your Wildlings are healthier than mine. How?!", "Juniper: Fine. I'll study YOU then."],
+      "5": ["Juniper shows you a rare Starry feather.", "Juniper: I found it when I was a kid. It's why I became a researcher.", "Juniper: I've never shown anyone before."],
+      "8": ["Juniper looks nervous.", "Juniper: I'm not great at this... but I like being around you.", "Juniper: Not as rivals. As something more."]
+    },
+    "trainer": {"lines": ["glimmer", "bubbloo", "breezlet", "staticat", "crystoad", "shiverwisp"], "reward": 400, "kind": "rival"},
+    "event_rewards": {"2": {"great_charm": 2}}
+  },
+  "rowan": {
+    "name": "Rowan", "role": "Neighbor Farmer and Rival", "romance": true, "birthday": ["winter", 14],
+    "look": {"skin": "#c08060", "hair": "#8a4a2a", "shirt": "#a04040"},
+    "loves": ["corn", "farmer_lunch", "pumpkin"], "likes": ["potato", "wheat", "milk"], "dislikes": ["amethyst", "fairy_rose"],
+    "schedule": [[700, "town", 5, 17], [1300, "town", 38, 18], [1900, "town", 32, 27]],
+    "lines": {
+      "0": ["So you're the new farmer. My corn's taller than yours.", "Wanna battle? Loser buys lunch."],
+      "3": ["Your farm's coming along. Not bad, neighbor.", "My grandpa taught me farming and battling. Same thing, really."],
+      "6": ["You ever just watch the crops grow? Me neither. Ha.", "Want to plant something together sometime?"],
+      "9": ["Best neighbor I've ever had.", "Farming's better with you around."]
+    },
+    "season": {"spring": "Spring planting! The best feeling.", "summer": "Corn! Summer is all about corn.", "fall": "Harvest Fair is mine this year.", "winter": "Winter's for resting. And battling."},
+    "events": {
+      "2": ["Rowan is leaning on a fence, looking at your farm.", "Rowan: You've done more with this place in weeks than anyone in years.", "Rowan: Here. Some of my best corn seeds."],
+      "5": ["Rowan is sitting by the river.", "Rowan: Grandpa used to bring me here. He passed last winter.", "Rowan: ...Thanks for listening."],
+      "8": ["Rowan hands you a wildflower.", "Rowan: Saw this and thought of you. That's... dumb, right?", "Rowan: Not dumb? Okay. Good."]
+    },
+    "trainer": {"lines": ["embercub", "dustail", "pudgepig", "kilnmole", "splashpup", "iciclaw"], "reward": 400, "kind": "rival"},
+    "event_rewards": {"2": {"corn_seeds": 8}, "5": {"recipe": "corn_chowder"}}
+  },
+  "barley": {
+    "name": "Old Barley", "role": "Village Elder", "romance": false, "birthday": ["fall", 11],
+    "look": {"skin": "#e0b898", "hair": "#f0f0f0", "shirt": "#8a6a4a"},
+    "loves": ["cream_pudding", "hazelnut", "truffle"], "likes": ["potato", "milk", "mushroom"], "dislikes": ["hot_pepper", "spark_dust"],
+    "schedule": [[800, "town", 42, 26], [1200, "town", 19, 14], [1700, "town", 42, 26]],
+    "lines": {
+      "0": ["Ah, the new farmer. Your grandparent would be proud.", "The Grove Shrines have been dark for many years."],
+      "3": ["Long ago, Wildlings and people farmed side by side.", "Each shrine has a Warden. Prove yourself to them."],
+      "6": ["You remind me of myself, long ago. Only far better at farming.", "The valley is waking up. Can you feel it?"],
+      "9": ["The valley chose you, I think.", "Come sit with an old man sometime. I have stories."]
+    },
+    "season": {"spring": "Spring is when the valley remembers how to live.", "summer": "Summer storms once lit up the Sparkmarsh like day.", "fall": "In fall, we give thanks to the Guardians.", "winter": "Winter is long, but it always ends."},
+    "events": {
+      "2": ["Barley is feeding a Gloomrat.", "Barley: Don't tell anyone. He's my friend.", "Barley: Every Wildling deserves kindness. Even snack thieves."],
+      "5": ["Barley tells you about the Great Storm.", "Barley: The year the shrines went dark, the Guardians vanished.", "Barley: I believe you can bring them back."],
+      "8": ["Barley gives you a dusty recipe book.", "Barley: My late wife's pudding. Best in the valley.", "Barley: Make it for someone you love."]
+    },
+    "event_rewards": {"8": {"recipe": "cream_pudding"}}
+  },
+  "pip": {
+    "name": "Pip", "role": "Village Kid", "romance": false, "birthday": ["summer", 3],
+    "look": {"skin": "#f0c8a0", "hair": "#d08040", "shirt": "#50b050"},
+    "loves": ["berry_tart", "wild_berry", "honey_cake"], "likes": ["strawberry", "blueberry", "melon"], "dislikes": ["kale", "garlic"],
+    "schedule": [[900, "town", 25, 20], [1500, "town", 12, 18], [1900, "town", 17, 26]],
+    "lines": {
+      "0": ["Is that a Wildling? Can I pet it?!", "I'm gonna be a Warden when I grow up!"],
+      "3": ["You're the coolest grown-up in town.", "I found a shiny rock! It's mine though."],
+      "6": ["Can you teach me to battle?", "My Nibblet likes you!"],
+      "9": ["You're my best friend. Don't tell Nibblet.", "When I'm a Warden, you can be my first challenger!"]
+    },
+    "season": {"spring": "Egg Hunt is the best day ever!", "summer": "I'm gonna catch a Ripplefin with my hands!", "fall": "Spirit's Eve is spooky! I love it!", "winter": "Snowball fights with Frostpips!"},
+    "events": {
+      "2": ["Pip is chasing a Nibblet.", "Pip: Come back! ...It never listens to me.", "Pip: How do you get Wildlings to like you? Treats? Ooh!"],
+      "5": ["Pip shows you a drawing.", "Pip: That's you and me as Wardens! I'm the tall one."],
+      "8": ["Pip gives you a shiny rock.", "Pip: My best one. You can have it. You earned it!"]
+    },
+    "event_rewards": {"8": {"amethyst": 1}}
+  },
+  "sable": {
+    "name": "Sable", "role": "Traveling Merchant", "romance": true, "birthday": ["winter", 28],
+    "look": {"skin": "#b07858", "hair": "#2a2a3a", "shirt": "#6a3a8a"},
+    "loves": ["truffle", "star_shard", "diamond"], "likes": ["gold_bar", "emerald", "coconut"], "dislikes": ["parsnip", "fiber"],
+    "schedule": [[800, "town", 27, 19], [2000, "away", 0, 0]],
+    "lines": {
+      "0": ["Rare goods from far away. Fair prices. Mostly.", "I come by on Fridays and Sundays."],
+      "3": ["You have an eye for quality.", "I've traveled to seven valleys. This one's the nicest."],
+      "6": ["I kept something special aside for you.", "Funny. I used to never stay anywhere long."],
+      "9": ["Maybe I'll stop traveling someday. If someone gave me a reason.", "You're the reason I keep coming back."]
+    },
+    "season": {"spring": "Spring brings rare seeds from the south.", "summer": "Summer markets are wild out east.", "fall": "Fall is when the best truffles turn up.", "winter": "Winter roads are rough. Worth it to see you."},
+    "events": {
+      "2": ["Sable is polishing a strange gem.", "Sable: From the far north. Want it? I'll trade for a smile."],
+      "5": ["Sable stares at the stars.", "Sable: I never had a home. Just roads.", "Sable: Hollowmere feels... different."],
+      "8": ["Sable hands you a worn map.", "Sable: Every place I've been. Maybe I don't need any new ones.", "Sable: Maybe I just need one place. And one person."]
+    },
+    "event_rewards": {"2": {"topaz": 1}}
+  },
+  "cora": {
+    "name": "Cora", "role": "Librarian and Postmistress", "romance": true, "birthday": ["winter", 6],
+    "look": {"skin": "#e8c0a0", "hair": "#303050", "shirt": "#a0c0a0"},
+    "loves": ["hearty_pancakes", "blue_jazz", "aquamarine"], "likes": ["glow_tea", "honey", "quartz"], "dislikes": ["hot_pepper", "coal"],
+    "schedule": [[900, "town", 16, 8], [1700, "town", 28, 20]],
+    "lines": {
+      "0": ["The museum takes donations of gems and rare items.", "Your mail arrives every morning, rain or shine."],
+      "3": ["I found a book about Wildling breeding. Want to borrow it?", "Couriersnail delivers our mail. It's slow but never late."],
+      "6": ["I've started a scrapbook of the valley. You're in it a lot.", "Quiet mornings here are my favorite."],
+      "9": ["I'd rather read with you than alone.", "You've filled more pages of my life than any book."]
+    },
+    "season": {"spring": "Spring cleaning at the library. So many dusty books!", "summer": "Summer is perfect for reading under a tree.", "fall": "Fall evenings are for mystery novels.", "winter": "Winter means long nights and longer books."},
+    "events": {
+      "2": ["Cora is sorting a mountain of letters.", "Cora: Oh, one for you! Someone's been asking about you... Mira wants more parsnips."],
+      "5": ["Cora reads you a passage from an old book.", "Cora: 'The Guardians sleep where the valley dreams.'", "Cora: I've always wondered what it means."],
+      "8": ["Cora gives you a handmade bookmark.", "Cora: Pressed flowers from your farm. So you'll think of me while reading.", "Cora: I hope that's not too forward."]
+    },
+    "event_rewards": {"5": {"recipe": "hearty_pancakes"}}
+  },
+  "ivy": {
+    "name": "Ivy", "role": "Warden of Whisperwood", "romance": false, "birthday": ["spring", 12],
+    "look": {"skin": "#e0b890", "hair": "#3a8a3a", "shirt": "#4a6a3a"},
+    "loves": ["fairy_rose", "mushroom_risotto", "hazelnut"], "likes": ["leek", "mushroom", "kale"], "dislikes": ["coal", "copper_bar"],
+    "schedule": [[600, "whisperwood", 40, 17]],
+    "lines": {
+      "0": ["The forest remembers every footstep.", "Prove your bond with Wildlings, and the shrine will answer."],
+      "3": ["The forest feels calmer since you came.", "Tend your Leaf Wildlings well."],
+      "6": ["You walk the forest like you belong here.", "The trees whisper your name now."],
+      "9": ["You're always welcome in Whisperwood.", "The forest and I are grateful."]
+    },
+    "season": {"spring": "The forest wakes in spring.", "summer": "Summer is loud in the forest.", "fall": "The leaves are falling. A time for rest.", "winter": "The forest sleeps. Walk quietly."},
+    "events": {"2": ["Ivy: The forest spirits like you. So do I."], "5": ["Ivy: I became Warden at sixteen. It was lonely, until now."], "8": ["Ivy: Take this. A seed from the oldest tree in Whisperwood."]},
+    "trainer": {"warden": "whisperwood", "team": ["acornib", "mushlet", "mossbun", "bramblet"], "reward": 1000},
+    "event_rewards": {"8": {"fairy_rose_seeds": 5}}
+  },
+  "marina": {
+    "name": "Marina", "role": "Warden of Tidecove", "romance": true, "birthday": ["summer", 15],
+    "look": {"skin": "#c89070", "hair": "#40a0d0", "shirt": "#f0f0e0"},
+    "loves": ["coconut", "aquamarine", "melon"], "likes": ["seaweed", "blueberry", "fried_egg"], "dislikes": ["coal", "hot_pepper"],
+    "schedule": [[600, "tidecove", 40, 17]],
+    "lines": {
+      "0": ["The tides don't wait for anyone. Neither do I.", "Beat me, and the shrine of Tidecove will shine again."],
+      "3": ["You've got sea legs, farmer.", "Want to watch the sunset sometime?"],
+      "6": ["The ocean is calmer when you're here.", "I collected shells for you. Don't laugh."],
+      "9": ["Stay a while. The waves sound better with you here.", "I think I'm falling for a farmer. Who knew?"]
+    },
+    "season": {"spring": "Spring tides are the highest.", "summer": "Summer on the beach! The best!", "fall": "Fall storms bring rare shells.", "winter": "The winter sea is beautiful and dangerous."},
+    "events": {"2": ["Marina: You fight with your heart. I like that."], "5": ["Marina: My mother was Warden before me. She'd have liked you."], "8": ["Marina: Watch the sunset with me? ...Just us."]},
+    "trainer": {"warden": "tidecove", "team": ["shelldo", "splashpup", "bubbloo", "ripplefin", "brooklet"], "reward": 1500},
+    "event_rewards": {"5": {"aquamarine": 1}}
+  },
+  "ash": {
+    "name": "Ash", "role": "Warden of Cinder Ridge", "romance": false, "birthday": ["summer", 27],
+    "look": {"skin": "#a06040", "hair": "#e04020", "shirt": "#3a2a2a"},
+    "loves": ["spicy_curry", "hot_pepper", "ruby"], "likes": ["coal", "spice_berry", "corn"], "dislikes": ["frost_sorbet", "ice_lily"],
+    "schedule": [[600, "cinder_ridge", 40, 17]],
+    "lines": {
+      "0": ["Feel that heat? That's the ridge testing you.", "Only the strong earn the shrine's light."],
+      "3": ["You don't flinch from the heat. Respect.", "Ember Wildlings are loyal to the end."],
+      "6": ["Wanna spar? Just for fun?", "You're tougher than you look."],
+      "9": ["You're a true friend of the ridge.", "I'd walk through fire for you. Literally."]
+    },
+    "season": {"spring": "Even in spring, the ridge is hot.", "summer": "Summer here is unbearable. I love it.", "fall": "Fall winds carry the embers far.", "winter": "Snow melts before it touches the ridge."},
+    "events": {"2": ["Ash: You've got fire in you."], "5": ["Ash: I used to be afraid of fire. Now it's my strength."], "8": ["Ash: Here. A ruby from the heart of the ridge."]},
+    "trainer": {"warden": "cinder_ridge", "team": ["kilnmole", "cinderbug", "wickling", "dustail", "cindermane"], "reward": 2000},
+    "event_rewards": {"8": {"ruby": 1}}
+  },
+  "gideon": {
+    "name": "Gideon", "role": "Warden of Stonehollow", "romance": false, "birthday": ["fall", 7],
+    "look": {"skin": "#906040", "hair": "#5a5a5a", "shirt": "#8a7a5a"},
+    "loves": ["diamond", "emerald", "veggie_stew"], "likes": ["stone", "iron_bar", "potato"], "dislikes": ["tulip", "honey"],
+    "schedule": [[600, "stonehollow", 40, 17]],
+    "lines": {
+      "0": ["Patience. Like stone, I don't move easily.", "Show me endurance, farmer."],
+      "3": ["You're steady. Like bedrock.", "The canyon has many secrets underground."],
+      "6": ["I've told you more than I've told anyone in years.", "Stone remembers. So do I."],
+      "9": ["You're as solid as they come.", "My door is always open. Well, my cave."]
+    },
+    "season": {"spring": "Spring rains carve the canyon.", "summer": "The canyon bakes in summer.", "fall": "Fall is quiet here. Good.", "winter": "Ice cracks stone in winter. Even stone has limits."},
+    "events": {"2": ["Gideon: Hmph. You're not bad."], "5": ["Gideon: I lived in the city once. Too loud. Stone is honest."], "8": ["Gideon: An emerald. Found it the day I became Warden."]},
+    "trainer": {"warden": "stonehollow", "team": ["bouldron", "crystoad", "digsby", "shellfort", "mesacoyote"], "reward": 2500},
+    "event_rewards": {"8": {"emerald": 1}}
+  },
+  "kai": {
+    "name": "Kai", "role": "Warden of Galepeak", "romance": true, "birthday": ["spring", 21],
+    "look": {"skin": "#d8b090", "hair": "#f0f0f8", "shirt": "#60b0c0"},
+    "loves": ["wheat", "sunflower", "starfruit"], "likes": ["fluff", "corn", "honey"], "dislikes": ["stone", "clay"],
+    "schedule": [[600, "galepeak", 40, 17]],
+    "lines": {
+      "0": ["The wind up here can knock you flat. Hold on!", "Win, and you'll fly as high as the shrine."],
+      "3": ["You climbed all this way again? Ha! I like you.", "The wind tells me stories. Want to hear one?"],
+      "6": ["Flying with Galecrest is like being free.", "You make the heights feel less lonely."],
+      "9": ["Fly with me someday? I mean it.", "My heart races like a gale when you're around."]
+    },
+    "season": {"spring": "Spring winds are gentle and warm.", "summer": "Summer thermals go up for miles!", "fall": "Fall gusts are the strongest.", "winter": "Winter wind bites, but the view is worth it."},
+    "events": {"2": ["Kai: You've got guts climbing up here."], "5": ["Kai: I grew up on this peak. The wind raised me."], "8": ["Kai: I've never wanted to come down from the sky. Until you."]},
+    "trainer": {"warden": "galepeak", "team": ["zephyrkite", "fluffeather", "gustmoth", "chillchick", "flarewing", "galecrest"], "reward": 3000}
+  },
+  "volta": {
+    "name": "Volta", "role": "Warden of Sparkmarsh", "romance": false, "birthday": ["summer", 18],
+    "look": {"skin": "#e8c8a0", "hair": "#f0d020", "shirt": "#303040"},
+    "loves": ["spark_dust", "topaz", "radish"], "likes": ["iron_bar", "gold_bar", "blueberry"], "dislikes": ["seaweed", "milk"],
+    "schedule": [[600, "sparkmarsh", 40, 17]],
+    "lines": {
+      "0": ["Bzzt! You're just in time for a storm!", "Can you handle the charge, farmer?"],
+      "3": ["You don't scare easy. Shocking!", "I'm building a generator powered by Joltbeetles!"],
+      "6": ["You're electric, you know that?", "Want to see my latest invention?"],
+      "9": ["You light up my world. Literally, sometimes.", "Best lab partner ever."]
+    },
+    "season": {"spring": "Spring showers are good for charging!", "summer": "Summer storms! My favorite!", "fall": "Fall is invention season.", "winter": "Static electricity in winter is the best."},
+    "events": {"2": ["Volta: Zap! Oops. You okay?"], "5": ["Volta: My inventions never worked until I met my Voltick."], "8": ["Volta: Topaz! It conducts beautifully. For you."]},
+    "trainer": {"warden": "sparkmarsh", "team": ["joltbeetle", "thundermew", "zapfin", "lumibub", "eelectra", "stormlynx"], "reward": 3500},
+    "event_rewards": {"8": {"topaz": 2}}
+  },
+  "nils": {
+    "name": "Nils", "role": "Warden of Frostmere", "romance": false, "birthday": ["winter", 1],
+    "look": {"skin": "#f8e0d0", "hair": "#a0d0f0", "shirt": "#e0e8f0"},
+    "loves": ["frost_sorbet", "glacier_melon", "wool"], "likes": ["snow_yam", "ice_lily", "hazelnut"], "dislikes": ["hot_pepper", "spicy_curry"],
+    "schedule": [[600, "frostmere", 40, 17]],
+    "lines": {
+      "0": ["...Cold, isn't it? You'll get used to it.", "The lake's shrine has been frozen for decades."],
+      "3": ["You came back. In this weather.", "Snowpaca wool is the warmest thing in the world."],
+      "6": ["I don't talk much. But I like when you visit.", "The ice sings at night. Listen sometime."],
+      "9": ["You've thawed something in me.", "Stay for tea. I'll make it warm, just for you."]
+    },
+    "season": {"spring": "The lake thaws a little in spring.", "summer": "Summer is short here. Enjoy it.", "fall": "First frost in fall. It begins.", "winter": "This is my season."},
+    "events": {"2": ["Nils: ...Thanks for visiting."], "5": ["Nils: My family fished this lake for generations."], "8": ["Nils: Wool from my Snowpaca. Make something warm."]},
+    "trainer": {"warden": "frostmere", "team": ["snowpaca", "iciclaw", "shiverwisp", "blizzowl", "glacierox", "auroray"], "reward": 4000},
+    "event_rewards": {"8": {"wool": 5}}
+  },
+  "selene": {
+    "name": "Selene", "role": "Warden of Umbral Glade", "romance": false, "birthday": ["fall", 28],
+    "look": {"skin": "#d8c0e0", "hair": "#2a1a4a", "shirt": "#f0e0a0"},
+    "loves": ["moonbloom", "glow_tea", "star_shard"], "likes": ["amethyst", "grape", "blue_jazz"], "dislikes": ["coal", "potato"],
+    "schedule": [[600, "umbral_glade", 40, 17]],
+    "lines": {
+      "0": ["Light and shadow. Both live in every heart.", "The final shrine awaits those who've earned it."],
+      "3": ["You carry light with you, farmer.", "The glade shows each visitor something different."],
+      "6": ["I see the stars differently since we met.", "You've come so far."],
+      "9": ["You've brought balance back to the valley.", "Twilight is my favorite time. Like you, it's in between."]
+    },
+    "season": {"spring": "Spring twilight lasts the longest.", "summer": "Summer nights are bright here.", "fall": "Spirit's Eve is sacred in the glade.", "winter": "Winter stars are the clearest."},
+    "events": {"2": ["Selene: The glade likes you. That's rare."], "5": ["Selene: I was once lost here, as a child. Hollowisp led me out."], "8": ["Selene: A recipe for Glow Tea. It soothes the soul."]},
+    "trainer": {"warden": "umbral_glade", "team": ["nocturnyx", "solaria", "lanternoir", "starbloom", "duskmoth", "hollowisp"], "reward": 5000},
+    "event_rewards": {"8": {"recipe": "glow_tea"}}
+  }
+}

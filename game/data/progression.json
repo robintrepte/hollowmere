@@ -1,0 +1,100 @@
+{
+  "festivals": {
+    "egg_hunt":       {"name": "Egg Hunt",            "season": "spring", "day": 13, "kind": "egg_hunt",   "desc": "Find hidden eggs around the village before time runs out!", "reward": {"wildling_egg": 1, "money": 500}},
+    "bloom_dance":    {"name": "Bloom Dance",         "season": "spring", "day": 24, "kind": "social",     "desc": "Dance under the blossoms. Everyone's friendship grows.", "friendship": 60, "reward": {"flower_crown": 1}},
+    "lantern_night":  {"name": "Tide Lantern Night",  "season": "summer", "day": 11, "kind": "spawns",     "desc": "Glowing Wildlings gather at the shore tonight.", "spawn_bonus": ["lumibub", "bubbloo", "glimmer"], "reward": {"sweet_treat": 5}},
+    "summer_show":    {"name": "Summer Creature Show","season": "summer", "day": 28, "kind": "show",       "desc": "Show off your lead Wildling to the judges!", "reward": {"money": 2000, "deluxe_treat": 3}},
+    "harvest_fair":   {"name": "Harvest Fair",        "season": "fall",   "day": 16, "kind": "fair",       "desc": "Display your best goods. The most valuable display wins!", "reward": {"money": 1500, "quality_fertilizer": 10}},
+    "spirits_eve":    {"name": "Spirit's Eve",        "season": "fall",   "day": 27, "kind": "spawns",     "desc": "Shade Wildlings roam the village. Some are very rare.", "spawn_bonus": ["shadeling", "wickling", "hollowisp", "gustmoth"], "reward": {"great_charm": 5}},
+    "frost_festival": {"name": "Frost Festival",      "season": "winter", "day": 8,  "kind": "social",     "desc": "Warm drinks, snow sculptures, and good company.", "friendship": 60, "reward": {"frost_sorbet": 3}},
+    "battle_cup":     {"name": "Winter Battle Cup",   "season": "winter", "day": 25, "kind": "tournament", "desc": "Battle three village champions in a row!", "opponents": ["rowan", "juniper", "fern"], "reward": {"money": 5000, "ultra_charm": 3}}
+  },
+  "weekly_templates": [
+    {"id": "befriend_type", "text": "Befriend {n} {type} Wildlings", "stat": "befriend:{type}", "n": [2, 4], "reward_money": 800},
+    {"id": "ship_crops",    "text": "Ship {n} crops",                "stat": "ship:crop",        "n": [40, 120], "reward_money": 1000},
+    {"id": "win_battles",   "text": "Win {n} battles",               "stat": "win",              "n": [5, 15],   "reward_money": 900},
+    {"id": "hatch_eggs",    "text": "Hatch {n} eggs",                "stat": "hatch",            "n": [1, 3],    "reward_money": 1200},
+    {"id": "harvest",       "text": "Harvest {n} crops",             "stat": "harvest",          "n": [50, 150], "reward_money": 900},
+    {"id": "cook",          "text": "Cook {n} dishes",               "stat": "cook",             "n": [3, 8],    "reward_money": 700},
+    {"id": "mine_floors",   "text": "Reach {n} new mine floors",     "stat": "mine_floor",       "n": [3, 8],    "reward_money": 1100},
+    {"id": "gifts",         "text": "Give {n} gifts to villagers",   "stat": "gift",             "n": [5, 12],   "reward_money": 600},
+    {"id": "groom",         "text": "Groom Wildlings {n} times",     "stat": "groom",            "n": [5, 10],   "reward_money": 500}
+  ],
+  "board_requests": [
+    {"from": "mira",  "item": "parsnip",     "n": 5,  "season": "spring", "money": 300},
+    {"from": "theo",  "item": "potato",      "n": 5,  "season": "spring", "money": 450},
+    {"from": "lila",  "item": "tulip",       "n": 3,  "season": "spring", "money": 250},
+    {"from": "barley","item": "leek",        "n": 2,  "season": "spring", "money": 200},
+    {"from": "theo",  "item": "tomato",      "n": 5,  "season": "summer", "money": 450},
+    {"from": "pip",   "item": "blueberry",   "n": 10, "season": "summer", "money": 400},
+    {"from": "rowan", "item": "corn",        "n": 5,  "season": "summer", "money": 350},
+    {"from": "greta", "item": "copper_bar",  "n": 3,  "season": "",       "money": 400},
+    {"from": "bram",  "item": "wood",        "n": 50, "season": "",       "money": 300},
+    {"from": "fern",  "item": "quartz",      "n": 2,  "season": "",       "money": 250},
+    {"from": "theo",  "item": "pumpkin",     "n": 2,  "season": "fall",   "money": 900},
+    {"from": "mira",  "item": "cranberry",   "n": 10, "season": "fall",   "money": 900},
+    {"from": "barley","item": "mushroom",    "n": 4,  "season": "fall",   "money": 300},
+    {"from": "nils",  "item": "snow_yam",    "n": 5,  "season": "winter", "money": 700},
+    {"from": "cora",  "item": "frostberry",  "n": 5,  "season": "winter", "money": 450},
+    {"from": "juniper","item": "crystal_fruit","n": 1, "season": "",      "money": 400},
+    {"from": "bram",  "item": "hardwood",    "n": 10, "season": "",       "money": 700},
+    {"from": "greta", "item": "iron_bar",    "n": 3,  "season": "",       "money": 800},
+    {"from": "theo",  "item": "milk",        "n": 3,  "season": "",       "money": 600},
+    {"from": "lila",  "item": "honey",       "n": 3,  "season": "",       "money": 500}
+  ],
+  "dex_milestones": [
+    {"n": 10, "reward": {"sweet_treat": 10, "money": 1000}, "text": "10 Wildlings befriended!"},
+    {"n": 25, "reward": {"straw_hat": 1, "great_charm": 5}, "text": "25 Wildlings befriended!"},
+    {"n": 40, "reward": {"deluxe_treat": 5, "money": 5000}, "text": "40 Wildlings befriended!"},
+    {"n": 55, "reward": {"starry_charm": 1}, "text": "55 Wildlings befriended! You received the Starry Charm."},
+    {"n": 70, "reward": {"ultra_charm": 10, "money": 15000}, "text": "70 Wildlings befriended!"},
+    {"n": 85, "reward": {"star_charm": 1, "gold_sprinkler": 2}, "text": "85 Wildlings befriended!"},
+    {"n": 97, "reward": {"star_crown": 1, "money": 100000}, "text": "Wildling-dex complete! You are a true Hollowmere legend."}
+  ],
+  "shrine_rewards": {
+    "1": {"text": "The Whisperwood Shrine glows! Tidecove's path is open, and you learned new recipes.", "unlock_region": "tidecove", "items": {"sweet_treat": 5}},
+    "2": {"text": "The Tidecove Shrine shines! Cinder Ridge is open, and the old greenhouse can now be repaired.", "unlock_region": "cinder_ridge", "items": {"great_charm": 5}},
+    "3": {"text": "The Cinder Shrine blazes! Stonehollow is open. Quality Sprinklers and the Auto-Shipper are available.", "unlock_region": "stonehollow", "items": {"iron_bar": 5}},
+    "4": {"text": "The Stone Shrine rumbles! Galepeak is open. The Hilltop Terrace can be built.", "unlock_region": "galepeak", "items": {"deluxe_treat": 3}},
+    "5": {"text": "The Gale Shrine sings! Sparkmarsh is open. The Wildling Spa can be built.", "unlock_region": "sparkmarsh", "items": {"ultra_charm": 3}},
+    "6": {"text": "The Spark Shrine crackles! Frostmere is open. Gold Sprinklers can be crafted.", "unlock_region": "frostmere", "items": {"gold_bar": 5}},
+    "7": {"text": "The Frost Shrine gleams! The path to Umbral Glade appears.", "unlock_region": "umbral_glade", "items": {"max_potion": 3}},
+    "8": {"text": "All eight shrines are restored! The valley is whole again. Seasonal legends now roam the land, and the Deep Hollow goes ever deeper.", "unlock_region": "", "items": {"warden_cap": 1, "star_shard": 3}}
+  },
+  "farm_ranks": [
+    {"score": 0,      "name": "Sprout"},
+    {"score": 2000,   "name": "Seedling Farmer"},
+    {"score": 8000,   "name": "Green Thumb"},
+    {"score": 20000,  "name": "Valley Grower"},
+    {"score": 50000,  "name": "Wildling Rancher"},
+    {"score": 100000, "name": "Hollowmere Hero"},
+    {"score": 250000, "name": "Grove Keeper"},
+    {"score": 500000, "name": "Legend of the Valley"},
+    {"score": 1000000,"name": "Prestige I"},
+    {"score": 2500000,"name": "Prestige II"},
+    {"score": 5000000,"name": "Prestige III"}
+  ],
+  "backpacks": [
+    {"level": 0, "name": "Rucksack",      "w": 7,  "h": 4, "price": 0},
+    {"level": 1, "name": "Farmer's Pack", "w": 8,  "h": 5, "price": 2000},
+    {"level": 2, "name": "Explorer Pack", "w": 10, "h": 6, "price": 10000, "requires": "shrine:2"},
+    {"level": 3, "name": "Warden Pack",   "w": 12, "h": 7, "price": 30000, "requires": "shrine:6"}
+  ],
+  "farm_levels": [
+    {"level": 2,  "text": "Flower Beds and Picket Fences are now sold at Bram's.", "reward": {"money": 250}},
+    {"level": 3,  "text": "Plum saplings and Garden Gnomes are available!", "reward": {"basic_fertilizer": 10}},
+    {"level": 4,  "text": "Orange saplings and Birdbaths are available!", "reward": {"sweet_treat": 5}},
+    {"level": 5,  "text": "Pomegranate saplings and String Lights are available!", "reward": {"money": 1000}},
+    {"level": 6,  "text": "Snowpear saplings and Wildling Statues are available!", "reward": {"speed_gro": 10}},
+    {"level": 8,  "text": "The Wishing Well is available at Bram's!", "reward": {"great_charm": 5}},
+    {"level": 10, "text": "The Little Windmill is available at Bram's!", "reward": {"money": 5000}},
+    {"level": 15, "text": "Farm level 15! Your farm is famous across the valley.", "reward": {"deluxe_treat": 5, "money": 10000}},
+    {"level": 20, "text": "Farm level 20! A true master farmer.", "reward": {"star_shard": 2, "money": 25000}}
+  ],
+  "tool_upgrades": [
+    {"level": 1, "name": "Copper", "price": 2000,  "bar": "copper_bar", "n": 5},
+    {"level": 2, "name": "Iron",   "price": 5000,  "bar": "iron_bar",   "n": 5},
+    {"level": 3, "name": "Gold",   "price": 10000, "bar": "gold_bar",   "n": 5},
+    {"level": 4, "name": "Mystic", "price": 25000, "bar": "mystic_bar", "n": 5}
+  ]
+}

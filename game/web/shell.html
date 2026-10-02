@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+	<meta name="google-client-id" content="%GOOGLE_CLIENT_ID%">
+	<title>$GODOT_PROJECT_NAME</title>
+	<style>
+		html, body, #canvas { margin: 0; padding: 0; border: 0; }
+		body { color: #f3ead8; background-color: #1c2120; overflow: hidden; touch-action: none; font-family: "Trebuchet MS", sans-serif; }
+		#canvas { display: block; width: 100vw; height: 100vh; image-rendering: pixelated; }
+		#canvas:focus { outline: none; }
+		#status { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #1c2120; }
+		#status-logo { font-size: 42px; letter-spacing: 2px; color: #ffd36b; text-shadow: 3px 3px 0 #6a3e1e; margin-bottom: 18px; }
+		#status-sub { font-size: 14px; color: #b9c8a8; margin-bottom: 26px; }
+		#status-progress { width: 280px; height: 14px; appearance: none; border: 2px solid #6a3e1e; background: #2c3330; border-radius: 7px; overflow: hidden; }
+		#status-progress::-webkit-progress-bar { background: #2c3330; }
+		#status-progress::-webkit-progress-value { background: linear-gradient(90deg, #8fe36b, #ffd36b); }
+		#status-progress::-moz-progress-bar { background: linear-gradient(90deg, #8fe36b, #ffd36b); }
+		#status-notice { margin-top: 18px; max-width: 420px; text-align: center; line-height: 1.5; color: #ffb4a0; display: none; }
+		#gsi-holder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, 90px); display: none; z-index: 10; }
+	</style>
+	$GODOT_HEAD_INCLUDE
+</head>
+<body>
+	<canvas id="canvas">Your browser does not support the canvas tag.</canvas>
+	<noscript>Hollowmere needs JavaScript to run.</noscript>
+	<div id="status">
+		<div id="status-logo">Hollowmere</div>
+		<div id="status-sub">Waking up the Wildlings...</div>
+		<progress id="status-progress"></progress>
+		<div id="status-notice"></div>
+	</div>
+	<div id="gsi-holder"></div>
+
+	<script>
+		// Bridge used by the game (Net.gd) through JavaScriptBridge.
+		window.hollowmereGoogleToken = "";
+		window.hollowmereGoogleSignIn = function () {
+			const cid = document.querySelector('meta[name="google-client-id"]').content;
+			if (!cid || cid.startsWith("%")) { window.hollowmereGoogleError = "Google sign-in is not configured."; return; }
+			const go = () => {
+				google.accounts.id.initialize({ client_id: cid, callback: (r) => { window.hollowmereGoogleToken = r.credential; document.getElementById("gsi-holder").style.display = "none"; } });
+				const holder = document.getElementById("gsi-holder");
+				holder.style.display = "block";
+				google.accounts.id.renderButton(holder, { theme: "filled_black", size: "large", shape: "pill" });
+				google.accounts.id.prompt();
+			};
+			if (window.google && google.accounts) { go(); return; }
+			const s = document.createElement("script");
+			s.src = "https://accounts.google.com/gsi/client";
+			s.onload = go;
+			document.head.appendChild(s);
+		};
+		window.hollowmereHideGoogle = function () { document.getElementById("gsi-holder").style.display = "none"; };
+	</script>
+	<script src="$GODOT_URL"></script>
+	<script>
+		const GODOT_CONFIG = $GODOT_CONFIG;
+		const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+		const engine = new Engine(GODOT_CONFIG);
+
+		(function () {
+			const statusOverlay = document.getElementById('status');
+			const statusProgress = document.getElementById('status-progress');
+			const statusNotice = document.getElementById('status-notice');
+
+			function displayFailureNotice(err) {
+				console.error(err);
+				statusNotice.style.display = 'block';
+				statusNotice.textContent = (err instanceof Error ? err.message : String(err));
+				statusProgress.style.display = 'none';
+			}
+
+			const missing = Engine.getMissingFeatures({ threads: GODOT_THREADS_ENABLED });
+			if (missing.length !== 0) {
+				displayFailureNotice('Your browser is missing features needed to play: ' + missing.join(', ') + '. Try a recent Chrome, Firefox, Edge or Safari.');
+				return;
+			}
+			engine.startGame({
+				onProgress: function (current, total) {
+					if (current > 0 && total > 0) {
+						statusProgress.value = current;
+						statusProgress.max = total;
+					} else {
+						statusProgress.removeAttribute('value');
+						statusProgress.removeAttribute('max');
+					}
+				},
+			}).then(() => { statusOverlay.remove(); }, displayFailureNotice);
+		}());
+	</script>
+</body>
+</html>

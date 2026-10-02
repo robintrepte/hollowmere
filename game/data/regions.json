@@ -1,0 +1,98 @@
+{
+  "meadow": {
+    "name": "Hollow Meadow", "biome": "grass", "order": 0, "levels": [2, 7], "seed": 101, "music": "route",
+    "spawns": [
+      ["mossbun", 30], ["nibblet", 30], ["cluckle", 25], ["petalfly", 15, {"s": ["spring", "summer"]}],
+      ["pudgepig", 15], ["moocalf", 12], ["burrowpup", 12], ["breezlet", 8], ["voltick", 12, {"w": ["rain", "storm"]}],
+      ["gloomrat", 20, {"t": "night"}], ["shadeling", 6, {"t": "night"}], ["frostpip", 10, {"s": ["winter"]}], ["glimmer", 2]
+    ],
+    "forage": {"spring": ["leek", "daffodil", "wild_berry"], "summer": ["wild_berry", "spice_berry"], "fall": ["hazelnut", "mushroom", "wild_berry"], "winter": ["winter_root"]}
+  },
+  "whisperwood": {
+    "name": "Whisperwood", "biome": "forest", "order": 1, "levels": [6, 14], "seed": 202, "music": "forest", "type": "leaf",
+    "warden": "ivy", "guardian": "verdantis",
+    "spawns": [
+      ["acornib", 30], ["mossbun", 20], ["mushlet", 25], ["petalfly", 20], ["fluffeather", 12], ["shadeling", 15, {"t": "night"}],
+      ["gloomrat", 15, {"t": "night"}], ["wishmite", 4, {"t": "night"}], ["glimmer", 5], ["clovehare", 4], ["staticat", 6, {"w": ["storm"]}],
+      ["gustmoth", 8, {"t": "night", "s": ["fall"]}], ["sproutle", 3]
+    ],
+    "mine": {"name": "Rootdeep Hollow", "floors": 10, "ores": ["copper_ore", "stone", "coal", "quartz"], "spawns": [["pebblit", 30], ["burrowpup", 25], ["mushlet", 20], ["crystoad", 5]]},
+    "forage": {"spring": ["leek", "mushroom", "daffodil"], "summer": ["wild_berry", "mushroom"], "fall": ["hazelnut", "mushroom"], "winter": ["winter_root", "mushroom"]}
+  },
+  "tidecove": {
+    "name": "Tidecove", "biome": "beach", "order": 2, "levels": [12, 20], "seed": 303, "music": "beach", "type": "tide",
+    "warden": "marina", "guardian": "maelstride",
+    "spawns": [
+      ["ripplefin", 30], ["shelldo", 25], ["bubbloo", 20], ["splashpup", 25], ["snailmail", 15], ["cluckle", 10],
+      ["zapfin", 10, {"w": ["rain", "storm"]}], ["lumibub", 4, {"t": "night"}], ["wavelash", 3], ["puddlop", 3]
+    ],
+    "mine": {"name": "Coral Grotto", "floors": 10, "ores": ["copper_ore", "iron_ore", "stone", "aquamarine", "coal"], "spawns": [["shelldo", 30], ["crystoad", 15], ["snailmail", 20], ["zapfin", 10]]},
+    "forage": {"spring": ["seaweed", "coconut"], "summer": ["seaweed", "coconut"], "fall": ["seaweed", "coconut"], "winter": ["seaweed"]}
+  },
+  "cinder_ridge": {
+    "name": "Cinder Ridge", "biome": "volcanic", "order": 3, "levels": [18, 26], "seed": 404, "music": "volcano", "type": "ember",
+    "warden": "ash", "guardian": "pyrrhex",
+    "spawns": [
+      ["cinderbug", 30], ["kilnmole", 25], ["wickling", 15, {"t": "night"}], ["dustail", 20], ["pebblit", 15],
+      ["embercub", 3], ["flarewing", 4], ["staticat", 8]
+    ],
+    "mine": {"name": "Magma Vent", "floors": 10, "ores": ["iron_ore", "coal", "ruby", "topaz", "stone"], "spawns": [["kilnmole", 30], ["cinderbug", 20], ["pebblit", 20], ["wickling", 10]]},
+    "forage": {"spring": ["spice_berry"], "summer": ["spice_berry"], "fall": ["spice_berry"], "winter": ["spice_berry"]}
+  },
+  "stonehollow": {
+    "name": "Stonehollow Canyon", "biome": "canyon", "order": 4, "levels": [24, 32], "seed": 505, "music": "canyon", "type": "stone",
+    "warden": "gideon", "guardian": "terragorn",
+    "spawns": [
+      ["pebblit", 20], ["bouldron", 10], ["crystoad", 15], ["dustail", 25], ["burrowpup", 15], ["digsby", 8],
+      ["kilnmole", 10], ["snailmail", 10], ["mesacoyote", 4, {"t": "night"}]
+    ],
+    "mine": {"name": "The Deep Hollow", "floors": 0, "ores": ["iron_ore", "gold_ore", "coal", "amethyst", "emerald", "diamond", "mystic_ore"], "spawns": [["bouldron", 20], ["crystoad", 20], ["digsby", 15], ["mimicrate", 4], ["geodrake", 4], ["forgemole", 6]]},
+    "forage": {"spring": ["hazelnut"], "summer": ["spice_berry"], "fall": ["hazelnut"], "winter": ["winter_root"]}
+  },
+  "galepeak": {
+    "name": "Galepeak Heights", "biome": "cliffs", "order": 5, "levels": [30, 38], "seed": 606, "music": "peak", "type": "gale",
+    "warden": "kai", "guardian": "zephyros",
+    "spawns": [
+      ["breezlet", 25], ["zephyrkite", 15], ["fluffeather", 20], ["gustmoth", 15, {"t": "night"}], ["chillchick", 15],
+      ["cluckle", 10], ["petalfly", 10, {"s": ["spring", "summer"]}], ["cloudmoo", 5], ["duskmoth", 3, {"t": "night"}]
+    ],
+    "mine": {"name": "Windcarved Caves", "floors": 10, "ores": ["gold_ore", "iron_ore", "quartz", "topaz", "coal"], "spawns": [["chillchick", 20], ["pebblit", 20], ["gustmoth", 20], ["crystoad", 10]]},
+    "forage": {"spring": ["daffodil"], "summer": ["wild_berry"], "fall": ["hazelnut"], "winter": ["winter_root"]}
+  },
+  "sparkmarsh": {
+    "name": "Sparkmarsh", "biome": "marsh", "order": 6, "levels": [34, 42], "seed": 707, "music": "marsh", "type": "spark",
+    "warden": "volta", "guardian": "voltaris",
+    "spawns": [
+      ["voltick", 25], ["joltbeetle", 10], ["staticat", 20], ["thundermew", 6], ["zapfin", 20], ["bubbloo", 10],
+      ["mushlet", 10], ["gloomrat", 10, {"t": "night"}], ["eelectra", 4, {"w": ["storm"]}]
+    ],
+    "mine": {"name": "Conductor Caverns", "floors": 10, "ores": ["gold_ore", "iron_ore", "coal", "topaz", "emerald"], "spawns": [["voltick", 25], ["zapfin", 15], ["crystoad", 15], ["joltbeetle", 10]]},
+    "forage": {"spring": ["mushroom"], "summer": ["mushroom", "wild_berry"], "fall": ["mushroom"], "winter": ["mushroom"]}
+  },
+  "frostmere": {
+    "name": "Frostmere", "biome": "snow", "order": 7, "levels": [40, 48], "seed": 808, "music": "snow", "type": "frost",
+    "warden": "nils", "guardian": "glaciel",
+    "spawns": [
+      ["frostpip", 25], ["snowpaca", 8], ["iciclaw", 20], ["shiverwisp", 15, {"t": "night"}], ["chillchick", 20],
+      ["blizzowl", 5], ["snailmail", 8], ["auroray", 3, {"t": "night", "s": ["winter"]}], ["glacierox", 3]
+    ],
+    "mine": {"name": "Icebound Depths", "floors": 10, "ores": ["gold_ore", "mystic_ore", "aquamarine", "diamond", "coal"], "spawns": [["iciclaw", 25], ["shiverwisp", 15], ["crystoad", 15], ["glacierox", 5]]},
+    "forage": {"spring": ["winter_root", "crystal_fruit"], "summer": ["crystal_fruit"], "fall": ["winter_root"], "winter": ["crystal_fruit", "winter_root"]}
+  },
+  "umbral_glade": {
+    "name": "Umbral Glade", "biome": "twilight", "order": 8, "levels": [46, 56], "seed": 909, "music": "glade", "type": "shade",
+    "warden": "selene", "guardian": "eclipsar",
+    "spawns": [
+      ["shadeling", 15], ["umbrakit", 12], ["glimmer", 15], ["radiantelle", 10], ["wishmite", 12], ["duskmoth", 10],
+      ["lanternoir", 8], ["starbloom", 5], ["hollowisp", 2], ["nocturnyx", 3, {"t": "night"}], ["solaria", 3, {"t": "day"}]
+    ],
+    "mine": {"name": "Twilight Rift", "floors": 15, "ores": ["mystic_ore", "diamond", "star_shard", "amethyst", "gold_ore"], "spawns": [["umbrakit", 20], ["radiantelle", 20], ["lanternoir", 15], ["mimicrate", 8], ["hollowisp", 2]]},
+    "forage": {"spring": ["crystal_fruit", "mushroom"], "summer": ["crystal_fruit"], "fall": ["mushroom"], "winter": ["crystal_fruit"]}
+  },
+  "legends": {
+    "vernalis":  {"season": "spring", "region": "whisperwood", "level": 60},
+    "solstara":  {"season": "summer", "region": "cinder_ridge", "level": 60},
+    "harvestus": {"season": "fall",   "region": "meadow",       "level": 60},
+    "hibernox":  {"season": "winter", "region": "frostmere",    "level": 60}
+  }
+}

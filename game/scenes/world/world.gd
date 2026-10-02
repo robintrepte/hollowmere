@@ -1,0 +1,579 @@
+class_name World
+extends Node2D
+## Renders one map (ground, soil, water edges, y-sorted deco/objects/buildings/actors)
+## and answers spatial questions: collision, interactables, warps.
+
+const T := Tiles.TILE
+const DECO_SPRITES := {
+	24: "tree", 25: "pine", 26: "palm", 27: "deadtree", 28: "crystaltree", 29: "rock", 30: "boulder",
+	31: "weed", 32: "branch", 33: "stump", 34: "fence", 35: "cliff", 36: "cavewall", 37: "bush",
+	38: "iceblock", 39: "ore_copper", 40: "ladder", 41: "cave_entrance", 42: "ladder_up",
+}
+const FLAT_DECO := [40, 31]
+const TRELLIS := ["green_bean", "tomato", "grape", "hot_pepper", "snowpea", "cranberry"]
+const STALK := ["corn", "wheat", "sunflower", "amaranth"]
+const FLOWERS := ["tulip", "blue_jazz", "fairy_rose", "ice_lily", "moonbloom"]
+const BIG := ["melon", "pumpkin", "winter_squash", "glacier_melon"]
+const OBJECT_FOOTPRINT := {"fountain": Vector2i(2, 2), "wayshrine": Vector2i(1, 1), "board": Vector2i(1, 1), "show_ring": Vector2i(0, 0)}
+
+var map_id := ""
+var info: Dictionary = {}
+var grid: FarmGrid
+var season := "spring"
+
+var ground: TileMapLayer
+var soil_layer: TileMapLayer
+var edge_layer: TileMapLayer
+var decals: Node2D
+var ysort: Node2D
+var overlay: Node2D
+var cursor: TargetCursor
+var day_tint: CanvasModulate
+var weather: WeatherFx
+
+var _deco_nodes: Dictionary = {}     # key -> Sprite2D
+var _object_nodes: Dictionary = {}   # key -> Node2D (grid objects + crops)
+var _static_nodes: Array = []
+var blockers: Dictionary = {}        # Vector2i -> true
+var interactables: Dictionary = {}   # Vector2i -> Dictionary (authored map objects)
+var npcs: Dictionary = {}            # vid -> Npc
+var actors: Node2D
+var astar: AStarGrid2D
+
+func _ready() -> void:
+	y_sort_enabled = false
+	ground = TileMapLayer.new()
+	ground.z_index = -10
+	add_child(ground)
+	edge_layer = TileMapLayer.new()
+	edge_layer.z_index = -9
+	add_child(edge_layer)
+	soil_layer = TileMapLayer.new()
+	soil_layer.z_index = -8
+	add_child(soil_layer)
+	decals = Node2D.new()
+	decals.z_index = -7
+	add_child(decals)
+	ysort = Node2D.new()
+	ysort.y_sort_enabled = true
+	add_child(ysort)
+	actors = ysort
+	overlay = Node2D.new()
+	overlay.z_index = 50
+	add_child(overlay)
+	cursor = TargetCursor.new()
+	cursor.z_index = 40
+	add_child(cursor)
+	day_tint = CanvasModulate.new()
+	add_child(day_tint)
+	weather = WeatherFx.new()
+	add_child(weather)
+	EventBus.tile_changed.connect(_on_tile_changed)
+	EventBus.objects_changed.connect(_on_objects_changed)
+	EventBus.time_changed.connect(_on_time)
+	EventBus.popup.connect(_on_popup)
+	EventBus.weather_changed.connect(func(_w): _apply_weather())
+
+# --- Loading --------------------------------------------------------------------------
+
+func load_map(id: String) -> void:
+	map_id = id
+	info = GameState.map_info(id)
+	grid = info.grid
+	season = GameState.season() if info.get("seasonal", false) or info.get("region", "") != "" else "summer"
+	if info.get("indoor", false):
+		season = "summer"
+	GameState.spawn_forage(id)
+	for n in _deco_nodes.values():
+		n.queue_free()
+	for n in _object_nodes.values():
+		n.queue_free()
+	for n in _static_nodes:
+		n.queue_free()
+	for n in npcs.values():
+		n.queue_free()
+	_deco_nodes.clear()
+	_object_nodes.clear()
+	_static_nodes.clear()
+	npcs.clear()
+	blockers.clear()
+	interactables.clear()
+	for c in decals.get_children():
+		c.queue_free()
+	var ts := Art.tileset(season)
+	ground.tile_set = ts
+	soil_layer.tile_set = ts
+	edge_layer.tile_set = ts
+	ground.clear()
+	edge_layer.clear()
+	soil_layer.clear()
+	for y in grid.h:
+		for x in grid.w:
+			_draw_ground(Vector2i(x, y))
+			_draw_deco(Vector2i(x, y))
+	for k in grid.soil:
+		_draw_soil(Tiles.parse_key(k))
+	_build_static_objects()
+	for k in grid.objects:
+		_draw_object(Tiles.parse_key(k))
+	for k in grid.soil:
+		_draw_crop(Tiles.parse_key(k))
+	_build_astar()
+	_spawn_npcs()
+	_on_time(GameState.minute())
+	_apply_weather()
+
+func map_size_px() -> Vector2:
+	return Vector2(grid.w * T, grid.h * T)
+
+func _variant(p: Vector2i) -> int:
+	var hsh := (p.x * 73856093) ^ (p.y * 19349663)
+	var r := absi(hsh) % 10
+	return 0 if r < 4 else (1 if r < 7 else (2 if r < 9 else 3))
+
+func _draw_ground(p: Vector2i) -> void:
+	var gid := grid.get_ground(p)
+	if gid >= Art.SEASON_ROW_COUNT or gid < 0:
+		gid = 0
+	ground.set_cell(p, 0, Vector2i(_variant(p), gid))
+	if gid in Tiles.WATER_TILES:
+		var m := 0
+		var dirs := [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
+		for i in 4:
+			var n: Vector2i = p + dirs[i]
+			if grid.in_bounds(n) and not grid.get_ground(n) in Tiles.WATER_TILES and grid.get_ground(n) != Tiles.GROUND.bridge:
+				m |= 1 << i
+		if m:
+			edge_layer.set_cell(p, 2, Vector2i(m, 0))
+		else:
+			edge_layer.erase_cell(p)
+	else:
+		edge_layer.erase_cell(p)
+
+func _draw_soil(p: Vector2i) -> void:
+	if not grid.is_tilled(p):
+		soil_layer.erase_cell(p)
+		return
+	var m := 0
+	var dirs := [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
+	for i in 4:
+		if grid.is_tilled(p + dirs[i]):
+			m |= 1 << i
+	soil_layer.set_cell(p, 1, Vector2i(m, 1 if grid.soil_at(p).get("watered", false) else 0))
+
+func _deco_sprite_name(p: Vector2i, d: int) -> String:
+	var n: String = DECO_SPRITES.get(d, "")
+	if d == Tiles.DECO.ore:
+		var ore: String = info.get("ore_types", {}).get(Tiles.key(p), "copper_ore")
+		n = "ore_" + ore.replace("_ore", "")
+	return n
+
+func _draw_deco(p: Vector2i) -> void:
+	var k := Tiles.key(p)
+	if _deco_nodes.has(k):
+		_deco_nodes[k].queue_free()
+		_deco_nodes.erase(k)
+	var d := grid.get_deco(p)
+	if d <= 0:
+		return
+	var tex := Art.world(_deco_sprite_name(p, d))
+	if tex == null:
+		return
+	var s := Sprite2D.new()
+	s.texture = tex
+	s.centered = false
+	var sz := tex.get_size()
+	s.offset = Vector2(-sz.x / 2.0, -sz.y)
+	s.position = Vector2(p.x * T + T / 2.0, p.y * T + T)
+	if d in [24, 25, 37] and season != "summer":
+		s.modulate = {"spring": Color(1, 1, 1), "fall": Color(1.0, 0.78, 0.5), "winter": Color(0.86, 0.9, 1.0)}.get(season, Color.WHITE)
+	if d in FLAT_DECO:
+		s.position.y -= 1
+	if d == Tiles.DECO.ladder:
+		decals.add_child(s)
+	else:
+		ysort.add_child(s)
+	_deco_nodes[k] = s
+
+func _object_sprite_name(o: Dictionary) -> String:
+	if o.kind == "tree":
+		var td: Dictionary = Data.trees.get(o.tree, {})
+		var frac := float(o.age) / maxf(1.0, float(td.get("days", 20)))
+		if frac >= 1.0:
+			return "fruit_tree"
+		return ["tree_stage0", "tree_stage1", "tree_stage2"][clampi(int(frac * 3.0), 0, 2)]
+	return o.id
+
+func _draw_object(p: Vector2i) -> void:
+	var k := Tiles.key(p)
+	if _object_nodes.has("o" + k):
+		_object_nodes["o" + k].queue_free()
+		_object_nodes.erase("o" + k)
+	var o := grid.object_at(p)
+	if o.is_empty():
+		return
+	var node := Node2D.new()
+	node.position = Vector2(p.x * T + T / 2.0, p.y * T + T)
+	if o.kind == "forage":
+		var sh := Sprite2D.new()
+		sh.texture = Art.item(o.id)
+		sh.position = Vector2(0, -10)
+		node.add_child(sh)
+		var tw := node.create_tween().set_loops()
+		tw.tween_property(sh, "position:y", -12.0, 0.8).set_trans(Tween.TRANS_SINE)
+		tw.tween_property(sh, "position:y", -10.0, 0.8).set_trans(Tween.TRANS_SINE)
+	else:
+		var tex := Art.world(_object_sprite_name(o))
+		if tex == null:
+			tex = Art.item(o.id)
+		var s := Sprite2D.new()
+		s.texture = tex
+		s.centered = false
+		var sz := tex.get_size()
+		s.offset = Vector2(-sz.x / 2.0, -sz.y)
+		node.add_child(s)
+		if o.kind == "tree" and int(o.get("fruit", 0)) > 0:
+			var spots := [Vector2(-10, -40), Vector2(8, -46), Vector2(0, -30)]
+			for i in mini(3, int(o.fruit)):
+				var f := Sprite2D.new()
+				f.texture = Art.item(o.tree)
+				f.scale = Vector2(0.75, 0.75)
+				f.position = spots[i]
+				node.add_child(f)
+		if o.kind == "machine":
+			if Machines.is_ready(o, GameState.abs_minute()):
+				var bubble := _bubble(Art.item(o.output.get("id", "")))
+				bubble.position = Vector2(0, -sz.y - 6)
+				node.add_child(bubble)
+			elif Machines.is_busy(o):
+				var puff := CPUParticles2D.new()
+				puff.amount = 3
+				puff.lifetime = 1.4
+				puff.position = Vector2(0, -sz.y + 4)
+				puff.direction = Vector2(0, -1)
+				puff.initial_velocity_min = 6
+				puff.initial_velocity_max = 10
+				puff.gravity = Vector2.ZERO
+				puff.scale_amount_min = 1.5
+				puff.scale_amount_max = 2.5
+				puff.color = Color(1, 1, 1, 0.5)
+				node.add_child(puff)
+	ysort.add_child(node)
+	_object_nodes["o" + k] = node
+
+func _bubble(icon: Texture2D) -> Node2D:
+	var b := Node2D.new()
+	var bg := Panel.new()
+	bg.add_theme_stylebox_override("panel", UITheme.box(UITheme.CREAM, UITheme.OUTLINE, 1, 4, 0, false))
+	bg.size = Vector2(20, 20)
+	bg.position = Vector2(-10, -20)
+	b.add_child(bg)
+	var s := Sprite2D.new()
+	s.texture = icon
+	s.position = Vector2(0, -10)
+	b.add_child(s)
+	var tw := b.create_tween().set_loops()
+	tw.tween_property(b, "position:y", -2.0, 0.6).as_relative().set_trans(Tween.TRANS_SINE)
+	tw.tween_property(b, "position:y", 2.0, 0.6).as_relative().set_trans(Tween.TRANS_SINE)
+	return b
+
+func _crop_sprite(cid: String, stage: int) -> String:
+	if stage <= 0:
+		return "crop_stage0"
+	if cid in TRELLIS:
+		return "vine_stage1" if stage < 3 else "vine_stage3"
+	if cid in STALK:
+		return ["crop_stage1", "crop_stage2", "stalk_stage3"][mini(stage, 3) - 1]
+	if cid in FLOWERS and stage >= 2:
+		return "flower_stage2"
+	return ["crop_stage1", "crop_stage2", "crop_stage3"][mini(stage, 3) - 1]
+
+func _draw_crop(p: Vector2i) -> void:
+	var k := "c" + Tiles.key(p)
+	if _object_nodes.has(k):
+		_object_nodes[k].queue_free()
+		_object_nodes.erase(k)
+	var c := grid.crop_at(p)
+	if c.is_empty():
+		return
+	var stage := grid.crop_stage(p)
+	var node := Node2D.new()
+	node.position = Vector2(p.x * T + T / 2.0, p.y * T + T - 4)
+	var tex := Art.world(_crop_sprite(c.id, stage))
+	if tex:
+		var s := Sprite2D.new()
+		s.texture = tex
+		s.centered = false
+		s.offset = Vector2(-tex.get_size().x / 2.0, -tex.get_size().y)
+		if c.id in FLOWERS or c.id == "sunflower":
+			s.modulate = Color(0.95, 1.0, 0.95)
+		node.add_child(s)
+	if stage >= 4:
+		var fr := Sprite2D.new()
+		fr.texture = Art.item(c.id)
+		if c.id in BIG:
+			fr.scale = Vector2(1.5, 1.5)
+			fr.position = Vector2(0, -10)
+		elif c.id in STALK or c.id in TRELLIS:
+			fr.position = Vector2(4, -26)
+		else:
+			fr.position = Vector2(0, -16)
+		node.add_child(fr)
+		var tw := fr.create_tween().set_loops()
+		tw.tween_property(fr, "rotation", 0.06, 0.9).set_trans(Tween.TRANS_SINE)
+		tw.tween_property(fr, "rotation", -0.06, 0.9).set_trans(Tween.TRANS_SINE)
+	ysort.add_child(node)
+	_object_nodes[k] = node
+
+func _build_static_objects() -> void:
+	for o in info.get("objects", []):
+		var p := Vector2i(int(o.x), int(o.y))
+		match o.type:
+			"building":
+				_add_building(o)
+			"shipping_bin", "farm_chest", "sign", "board", "wayshrine", "stairs", "fountain":
+				var name: String = o.type
+				var tex := Art.world(name)
+				var fp: Vector2i = OBJECT_FOOTPRINT.get(name, Vector2i(1, 1))
+				if tex:
+					var s := Sprite2D.new()
+					s.texture = tex
+					s.centered = false
+					s.offset = Vector2(-tex.get_size().x / 2.0, -tex.get_size().y)
+					s.position = Vector2(p.x * T + fp.x * T / 2.0, (p.y + fp.y) * T)
+					if name == "stairs" and not GameState.is_open_requirement(o.get("requires", "")):
+						s.modulate = Color(0.5, 0.5, 0.5)
+					ysort.add_child(s)
+					_static_nodes.append(s)
+				for dx in fp.x:
+					for dy in fp.y:
+						if name != "stairs":
+							blockers[p + Vector2i(dx, dy)] = true
+						interactables[p + Vector2i(dx, dy)] = o
+			"show_ring":
+				var tex2 := Art.world("show_ring")
+				if tex2:
+					var s2 := Sprite2D.new()
+					s2.texture = tex2
+					s2.centered = false
+					s2.position = Vector2(p.x * T, p.y * T)
+					decals.add_child(s2)
+				interactables[p + Vector2i(2, 1)] = o
+	for c in info.get("shrines", []):
+		pass
+
+func _add_building(o: Dictionary) -> void:
+	var bid: String = o.id
+	var built: bool = o.get("requires", "") == "" or GameState.has_building(o.requires)
+	var ruined: bool = o.has("ruined_unless") and not GameState.has_building(o.ruined_unless)
+	var p := Vector2i(int(o.x), int(o.y))
+	var w := int(o.w)
+	var h := int(o.h)
+	if not built:
+		var sign := Sprite2D.new()
+		sign.texture = Art.world("sign")
+		sign.centered = false
+		sign.offset = Vector2(-16, -32)
+		sign.position = Vector2((p.x + w / 2.0) * T, (p.y + h) * T)
+		ysort.add_child(sign)
+		_static_nodes.append(sign)
+		var lot := {"type": "lot", "id": bid, "label": o.get("label", bid), "requires": o.requires}
+		interactables[Vector2i(p.x + w / 2, p.y + h - 1)] = lot
+		blockers[Vector2i(p.x + w / 2, p.y + h - 1)] = true
+		return
+	var tex := Art.building(bid + ("_ruined" if ruined else ""))
+	if tex:
+		var s := Sprite2D.new()
+		s.texture = tex
+		s.centered = false
+		s.offset = Vector2(-tex.get_size().x / 2.0, -tex.get_size().y)
+		s.position = Vector2((p.x + w / 2.0) * T, (p.y + h) * T)
+		ysort.add_child(s)
+		_static_nodes.append(s)
+	for dx in w:
+		for dy in h:
+			blockers[p + Vector2i(dx, dy)] = true
+	var door := o.duplicate()
+	if ruined:
+		door["action"] = "ruined"
+	for dx in range(maxi(0, w / 2 - 1), mini(w, w / 2 + 1)):
+		interactables[Vector2i(p.x + dx, p.y + h - 1)] = door
+
+# --- NPCs -------------------------------------------------------------------------------
+
+func _spawn_npcs() -> void:
+	for vid in Data.villagers:
+		var loc := Relationships.location(vid, GameState.minute(), GameState.world.weather)
+		if loc[0] != map_id:
+			continue
+		var n := Npc.new()
+		n.vid = vid
+		n.world = self
+		n.position = GameState.tile_center(Vector2i(loc[1], loc[2]))
+		ysort.add_child(n)
+		npcs[vid] = n
+
+func _update_npcs() -> void:
+	for vid in Data.villagers:
+		var loc := Relationships.location(vid, GameState.minute(), GameState.world.weather)
+		var here: bool = loc[0] == map_id
+		if here and not npcs.has(vid):
+			var n := Npc.new()
+			n.vid = vid
+			n.world = self
+			n.position = GameState.tile_center(_nearest_open(Vector2i(loc[1], loc[2])))
+			ysort.add_child(n)
+			npcs[vid] = n
+		elif not here and npcs.has(vid):
+			npcs[vid].queue_free()
+			npcs.erase(vid)
+		elif here:
+			npcs[vid].walk_to(Vector2i(loc[1], loc[2]))
+
+func npc_at(t: Vector2i) -> Npc:
+	for n in npcs.values():
+		if GameState.to_tile(n.position) == t or GameState.to_tile(n.position + Vector2(0, -16)) == t:
+			return n
+	return null
+
+# --- Pathing + collision ------------------------------------------------------------------
+
+func _build_astar() -> void:
+	astar = AStarGrid2D.new()
+	astar.region = Rect2i(0, 0, grid.w, grid.h)
+	astar.cell_size = Vector2(T, T)
+	astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
+	astar.update()
+	for y in grid.h:
+		for x in grid.w:
+			var p := Vector2i(x, y)
+			if is_tile_solid(p):
+				astar.set_point_solid(p, true)
+
+func path_between(a: Vector2i, b: Vector2i) -> Array:
+	if astar == null or not grid.in_bounds(a) or not grid.in_bounds(b):
+		return []
+	var target := _nearest_open(b)
+	if astar.is_point_solid(a):
+		a = _nearest_open(a)
+	return Array(astar.get_id_path(a, target))
+
+func _nearest_open(p: Vector2i) -> Vector2i:
+	if not is_tile_solid(p):
+		return p
+	for r in range(1, 4):
+		for dy in range(-r, r + 1):
+			for dx in range(-r, r + 1):
+				var q := p + Vector2i(dx, dy)
+				if grid.in_bounds(q) and not is_tile_solid(q):
+					return q
+	return p
+
+func is_tile_solid(t: Vector2i) -> bool:
+	if not grid.in_bounds(t):
+		return true
+	if blockers.has(t):
+		return true
+	var d := grid.get_deco(t)
+	if Tiles.blocks(grid.get_ground(t), d):
+		return true
+	var o := grid.object_at(t)
+	if not o.is_empty() and o.kind != "forage":
+		if o.kind == "tree":
+			var td: Dictionary = Data.trees.get(o.tree, {})
+			return float(o.age) >= float(td.get("days", 20)) / 3.0
+		return true
+	return false
+
+## Feet-box collision in world pixels.
+func is_solid_at(pos: Vector2, half: Vector2 = Vector2(6, 3)) -> bool:
+	for c in [pos + Vector2(-half.x, -half.y), pos + Vector2(half.x, -half.y), pos + Vector2(-half.x, half.y), pos + Vector2(half.x, half.y)]:
+		if is_tile_solid(GameState.to_tile(c)):
+			return true
+	return false
+
+func warp_at(t: Vector2i) -> Dictionary:
+	for wp in info.get("warps", []):
+		if t.x >= int(wp.x) and t.x < int(wp.x) + int(wp.get("w", 1)) and t.y >= int(wp.y) and t.y < int(wp.y) + int(wp.get("h", 1)):
+			return wp
+	return {}
+
+func interactable_at(t: Vector2i) -> Dictionary:
+	return interactables.get(t, {})
+
+# --- Refresh hooks ---------------------------------------------------------------------------
+
+func _on_tile_changed(m: String, t: Vector2i) -> void:
+	if m != map_id:
+		return
+	_draw_ground(t)
+	_draw_deco(t)
+	for d in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		_draw_soil(t + d)
+	_draw_crop(t)
+	_draw_object(t)
+	if astar:
+		astar.set_point_solid(t, is_tile_solid(t))
+
+func _on_objects_changed(m: String) -> void:
+	if m != map_id:
+		return
+	for k in _object_nodes.keys():
+		if k.begins_with("o"):
+			_object_nodes[k].queue_free()
+			_object_nodes.erase(k)
+	for k in grid.objects:
+		_draw_object(Tiles.parse_key(k))
+		if astar:
+			astar.set_point_solid(Tiles.parse_key(k), is_tile_solid(Tiles.parse_key(k)))
+
+func refresh_all() -> void:
+	if map_id != "":
+		var pl := get_tree().get_nodes_in_group("players")
+		load_map(map_id)
+		for p in pl:
+			if p.get_parent() != ysort:
+				p.reparent(ysort)
+
+func _on_time(minute: int) -> void:
+	if grid == null:
+		return
+	day_tint.color = sky_color(minute, info.get("indoor", false) or info.get("mine", false))
+	if minute % 30 == 0:
+		_update_npcs()
+	if minute % 60 == 0:
+		for k in grid.objects:
+			if grid.objects[k].kind == "machine":
+				_draw_object(Tiles.parse_key(k))
+
+static func sky_color(minute: int, indoor: bool) -> Color:
+	if indoor:
+		return Color(1, 0.97, 0.92)
+	var keys := [[360, Color(0.8, 0.82, 0.95)], [420, Color(1, 1, 1)], [1020, Color(1, 1, 1)], [1140, Color(1.0, 0.86, 0.72)],
+		[1230, Color(0.62, 0.6, 0.82)], [1320, Color(0.42, 0.45, 0.7)], [1560, Color(0.36, 0.38, 0.62)]]
+	for i in keys.size() - 1:
+		if minute >= keys[i][0] and minute < keys[i + 1][0]:
+			var f := float(minute - keys[i][0]) / float(keys[i + 1][0] - keys[i][0])
+			return (keys[i][1] as Color).lerp(keys[i + 1][1], f)
+	return keys[-1][1]
+
+func _apply_weather() -> void:
+	if info.get("indoor", false) or info.get("mine", false):
+		weather.set_kind("")
+	else:
+		weather.set_kind(GameState.world.get("weather", "sun"))
+
+func _on_popup(at: Vector2, text: String, col: Color) -> void:
+	if not is_inside_tree():
+		return
+	var l := UITheme.label(text, 9, col, true)
+	l.position = at + Vector2(-40, -36)
+	l.size = Vector2(80, 12)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.z_index = 60
+	overlay.add_child(l)
+	var tw := l.create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(l, "position:y", l.position.y - 22, 0.9).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(l, "modulate:a", 0.0, 0.4).set_delay(0.6)
+	tw.chain().tween_callback(l.queue_free)
