@@ -700,13 +700,24 @@ func _clear_cmd() -> void:
 		c.queue_free()
 	_cmd.columns = 2
 
-func _cmd_button(text: String, cb: Callable, col: Color = UITheme.WOOD) -> Button:
+func _cmd_button(text: String, cb: Callable, col: Color = UITheme.WOOD, two_line: bool = false) -> Button:
 	var b := UITheme.button(text, cb)
+	# Same footprint as Fight / Bag / Party / Run. Two-line move labels otherwise
+	# grow the bar and push the prompt past the bottom of the screen.
 	b.custom_minimum_size = Vector2(122, 30)
 	if col != UITheme.WOOD:
 		for st in ["normal", "hover", "pressed", "focus"]:
 			var sb := UITheme.box(col if st != "hover" else col.lightened(0.15), UITheme.OUTLINE, 2, 3, 4)
+			if two_line:
+				sb.content_margin_left = 4
+				sb.content_margin_right = 4
+				sb.content_margin_top = 1
+				sb.content_margin_bottom = 1
 			b.add_theme_stylebox_override(st, sb)
+	if two_line:
+		b.add_theme_font_size_override("font_size", UITheme.fs(8))
+		b.clip_text = true
+		b.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	_cmd.add_child(b)
 	return b
 
@@ -750,7 +761,7 @@ func _show_moves() -> void:
 	_clear_cmd()
 	var c := engine.active(0)
 	var first: Button = null
-	# The bar only fits two rows of buttons: 4 moves + Back need three columns.
+	# The bar only fits two rows at the command-button size. 4 moves + Back need three columns.
 	var wide := maxi(1, c.moves.size()) + 1 > 4
 	if wide:
 		_cmd.columns = 3
@@ -758,8 +769,7 @@ func _show_moves() -> void:
 		var m: Dictionary = Data.get_move(c.moves[i])
 		var label := tr("%s\n%s%s") % [tr(str(m.name)), Data.type_name(m.type), (tr(" · %d") % int(m.power)) if int(m.power) > 0 else tr(" · status")]
 		var idx := i
-		var b := _cmd_button(label, func(): _picked.emit({"k": "move", "i": idx}), Data.type_color(m.type).darkened(0.25))
-		b.add_theme_font_size_override("font_size", UITheme.fs(10))
+		var b := _cmd_button(label, func(): _picked.emit({"k": "move", "i": idx}), Data.type_color(m.type).darkened(0.25), true)
 		b.tooltip_text = tr(str(m.get("desc", "")))
 		var eff := Data.type_mult(m.type, engine.active(1).types()) if int(m.power) > 0 else 1.0
 		if eff > 1.0:
@@ -771,10 +781,6 @@ func _show_moves() -> void:
 	if c.moves.is_empty():
 		_cmd_button("Struggle", func(): _picked.emit({"k": "move", "i": 0}))
 	_cmd_button("Back", _show_main_menu)
-	if wide:
-		for b in _cmd.get_children():
-			if not b.is_queued_for_deletion():
-				b.custom_minimum_size.x = 100
 	if first:
 		first.call_deferred("grab_focus")
 
