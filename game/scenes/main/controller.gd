@@ -23,10 +23,11 @@ func setup(m: Node, u: UIRoot, w: World, p: Player) -> void:
 func _pdata() -> PlayerData:
 	return GameState.local_player()
 
-func _feedback(r: Dictionary) -> void:
+func _feedback(r: Dictionary, t: Vector2i) -> void:
 	if r.get("ok", false):
 		if r.get("sfx", "") != "":
 			Audio.sfx(r.sfx)
+			Juice.burst(world, GameState.tile_center(t) + Vector2(0, -4), r.sfx)
 	elif r.get("reason", "") != "":
 		EventBus.toast.emit(r.reason, "")
 		Audio.sfx("error")
@@ -34,7 +35,7 @@ func _feedback(r: Dictionary) -> void:
 func _act(action: String, args: Array) -> Dictionary:
 	var r := Coop.act(action, args)
 	if not r.get("pending", false):
-		_feedback(r)
+		_feedback(r, args[1] if args.size() > 1 and args[1] is Vector2i else player.target)
 	return r
 
 # --- Use (left click / C) -----------------------------------------------------------------
@@ -79,7 +80,7 @@ func _on_use(t: Vector2i) -> void:
 
 func _eat(e: Dictionary) -> void:
 	var it: Dictionary = Data.get_item(e.id)
-	var c: int = await ui.ask("Eat %s? (+%d energy)" % [Data.item_name(e.id, int(e.q)), int(it.get("energy", 0))], ["Eat", "No"])
+	var c: int = await ui.ask(tr("Eat %s? (+%d energy)") % [Data.item_name(e.id, int(e.q)), int(it.get("energy", 0))], ["Eat", "No"])
 	if c == 0:
 		_act("eat", [e.uid])
 
@@ -123,20 +124,20 @@ func _interact_object(t: Vector2i, o: Dictionary) -> bool:
 				_act("harvest_at", [world.map_id, t])
 			else:
 				var days := int(Data.trees.get(o.tree, {}).get("days", 0)) - int(o.age)
-				EventBus.toast.emit("This %s needs %d more days to mature." % [Data.item_name(o.id), days] if days > 0 else "No fruit yet. Fruit trees bear fruit in their season.", "")
+				EventBus.toast.emit(tr("This %s needs %d more days to mature.") % [Data.item_name(o.id), days] if days > 0 else "No fruit yet. Fruit trees bear fruit in their season.", "")
 			return true
 		"machine":
 			if Machines.is_ready(o, GameState.abs_minute()):
 				_act("harvest_at", [world.map_id, t])
 			elif Machines.is_busy(o):
 				var left := maxi(0, int(o.ready_at) - GameState.abs_minute())
-				EventBus.toast.emit("%s: %s ready in %s." % [Data.item_name(o.id), Data.item_name(o.output.get("id", "")), _dur(left)], "")
+				EventBus.toast.emit(tr("%s: %s ready in %s.") % [Data.item_name(o.id), Data.item_name(o.output.get("id", "")), _dur(left)], "")
 			else:
 				var e := _pdata().selected_entry()
 				if not e.is_empty():
 					_act("load_machine", [world.map_id, t, e.uid])
 				else:
-					EventBus.toast.emit("Hold an item and use it on the %s to load it." % Data.item_name(o.id), "")
+					EventBus.toast.emit(tr("Hold an item and use it on the %s to load it.") % Data.item_name(o.id), "")
 			return true
 		"chest":
 			_open_chest(t, o)
@@ -202,9 +203,9 @@ func _interact_static(io: Dictionary) -> void:
 			if GameState.is_open_requirement(io.get("requires", "")):
 				EventBus.map_change_requested.emit(io.to, Vector2i(int(io.tx), int(io.ty)))
 			else:
-				await ui.say(["It's blocked. (%s)" % Economy.req_text(io.get("requires", ""))])
+				await ui.say([tr("It's blocked. (%s)") % Economy.req_text(io.get("requires", ""))])
 		"lot":
-			await ui.say(["An empty lot for the %s. Robin at the Carpenter's can build it." % io.get("label", io.id).to_lower()])
+			await ui.say([tr("An empty lot for the %s. Robin at the Carpenter's can build it.") % io.get("label", io.id).to_lower()])
 		"building":
 			await _building(io)
 
@@ -218,7 +219,7 @@ func _building(io: Dictionary) -> void:
 		var open_m := Calendar.hhmm(int(hours[0]))
 		var close_m := Calendar.hhmm(int(hours[1]))
 		if m < open_m or m >= close_m:
-			await ui.say(["%s is closed. Open %s - %s." % [shop.get("name", sid), Calendar.time_string(open_m, Settings.twelve_hour), Calendar.time_string(close_m, Settings.twelve_hour)]])
+			await ui.say([tr("%s is closed. Open %s - %s.") % [shop.get("name", sid), Calendar.time_string(open_m, Settings.twelve_hour), Calendar.time_string(close_m, Settings.twelve_hour)]])
 			return
 		Audio.sfx("door")
 		ui.open(ShopPanel.new(sid))
@@ -238,7 +239,7 @@ func _building(io: Dictionary) -> void:
 			Audio.sfx("heal")
 			await ui.say(["Your Wildlings are rested and fully healed!"], "Wildling Center")
 		"museum":
-			await ui.say(["Wildlings recorded: %d / %d." % [Progression.owned_count(GameState.world.dex), Data.species.size()], "The more you befriend, the more the valley reveals."], "Museum")
+			await ui.say([tr("Wildlings recorded: %d / %d.") % [Progression.owned_count(GameState.world.dex), Data.species.size()], "The more you befriend, the more the valley reveals."], "Museum")
 		"greenhouse":
 			if GameState.map_info("greenhouse").is_empty():
 				await ui.say(["The greenhouse door is stuck."])
@@ -254,7 +255,7 @@ func _building(io: Dictionary) -> void:
 		"spa":
 			await ui.say(["The Wildling Spa. Tired workers rest twice as fast here."])
 		"ruined":
-			await ui.say(["The %s is in ruins. Maybe the village could help restore it..." % io.get("label", "building").to_lower()])
+			await ui.say([tr("The %s is in ruins. Maybe the village could help restore it...") % io.get("label", "building").to_lower()])
 		_:
 			await ui.say(["It's locked."])
 
@@ -269,8 +270,8 @@ func _pet(wc: WildCreature) -> void:
 	var key := "pet:" + c.uid
 	var flags: Dictionary = GameState.world.flags
 	if int(flags.get(key, -1)) == GameState.day():
-		wc.emote("♪")
-		EventBus.toast.emit("%s is enjoying the farm." % c.display_name(), "")
+		wc.emote("♥")
+		EventBus.toast.emit(tr("%s is enjoying the farm.") % c.display_name(), "")
 		return
 	flags[key] = GameState.day()
 	c.change_happiness(6)
@@ -278,16 +279,16 @@ func _pet(wc: WildCreature) -> void:
 	wc.emote("♥", 1.5)
 	Audio.sfx("heart")
 	var job := "resting" if c.job == "" else "working as a " + str(Data.job_info(c.job).get("job_name", "worker")).to_lower()
-	EventBus.toast.emit("You pet %s. It's %s." % [c.display_name(), job], "")
+	EventBus.toast.emit(tr("You pet %s. It's %s.") % [c.display_name(), job], "")
 
 func _offer_battle(vid: String) -> void:
-	var tr: Dictionary = Data.villagers.get(vid, {}).get("trainer", {})
-	if tr.has("warden"):
+	var trd: Dictionary = Data.villagers.get(vid, {}).get("trainer", {})
+	if trd.has("warden"):
 		busy = true
 		await adventure.warden_battle(vid)
 		busy = false
 		return
-	if tr.is_empty():
+	if trd.is_empty():
 		return
 	var p := _pdata()
 	var key := "battled:" + vid
@@ -295,7 +296,7 @@ func _offer_battle(vid: String) -> void:
 		return
 	var name := Data.villager_name(vid)
 	busy = true
-	var c: int = await ui.ask("%s: Up for a Wildling battle?" % name, ["Let's battle!", "Not now"], name, _portrait(vid))
+	var c: int = await ui.ask("Up for a Wildling battle?", ["Let's battle!", "Not now"], name, _portrait(vid))
 	busy = false
 	if c != 0:
 		return
@@ -305,7 +306,7 @@ func _offer_battle(vid: String) -> void:
 	EventBus.battle_requested.emit({
 		"kind": info.kind, "vid": vid, "team": info.team, "foe_name": name, "reward": info.reward,
 		"items": info.items, "ai": info.ai,
-		"lose_lines": ["%s: Wow, you're good! Rematch tomorrow?" % name],
+		"lose_lines": [tr("%s: Wow, you're good! Rematch tomorrow?") % name],
 	})
 	var res: Dictionary = await EventBus.battle_finished
 	if res.get("result", "") == "win":
@@ -339,7 +340,7 @@ func _talk(npc: Npc) -> void:
 	else:
 		var before := Relationships.hearts(st)
 		var line := Relationships.talk(vid, st, GameState.season(), GameState.rng)
-		await ui.say([line.replace("{name}", p.name).replace("{farm}", GameState.world.farm_name)], name, _portrait(vid))
+		await ui.say([tr(line).replace("{name}", p.name).replace("{farm}", GameState.world.farm_name)], name, _portrait(vid))
 		if Relationships.hearts(st) > before:
 			npc.show_heart_hint("+♥")
 			Audio.sfx("heart")
@@ -354,7 +355,7 @@ func _gift(npc: Npc, e: Dictionary) -> void:
 		return
 	var vid := npc.vid
 	busy = true
-	var c: int = await ui.ask("Give %s to %s?" % [Data.item_name(e.id, int(e.q)), Data.villager_name(vid)], ["Give", "Talk instead", "Cancel"])
+	var c: int = await ui.ask(tr("Give %s to %s?") % [Data.item_name(e.id, int(e.q)), Data.villager_name(vid)], ["Give", "Talk instead", "Cancel"])
 	busy = false
 	if c == 1:
 		await _talk(npc)

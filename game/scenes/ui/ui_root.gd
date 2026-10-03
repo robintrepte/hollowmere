@@ -27,6 +27,29 @@ func _ready() -> void:
 	dialogue = DialogueBox.new()
 	dialogue.visible = false
 	root.add_child(dialogue)
+	Settings.text_scale_changed.connect(func():
+		UITheme.reset()
+		root.theme = UITheme.theme())
+	Settings.input_device_changed.connect(func(pad: bool):
+		if pad and not stack.is_empty() and root.get_viewport().gui_get_focus_owner() == null:
+			focus_first(stack[-1]))
+
+## Gives keyboard/gamepad focus to the first focusable control inside `node`.
+static func focus_first(node: Node) -> bool:
+	if node is Control and node.focus_mode == Control.FOCUS_ALL and node.is_visible_in_tree():
+		node.grab_focus()
+		return true
+	for c in node.get_children():
+		if focus_first(c):
+			return true
+	return false
+
+func _focus_later(panel: Control) -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var owner := root.get_viewport().gui_get_focus_owner()
+	if is_instance_valid(panel) and panel in stack and (owner == null or not panel.is_ancestor_of(owner)):
+		focus_first(panel)
 
 func is_open() -> bool:
 	return not stack.is_empty() or dialogue.visible
@@ -39,6 +62,8 @@ func open(panel: Control, dimmed: bool = true) -> Control:
 	_pause(true)
 	if panel.has_signal("closed"):
 		panel.closed.connect(func(): close(panel), CONNECT_ONE_SHOT)
+	if Settings.using_pad:
+		_focus_later(panel)
 	Audio.sfx("open")
 	stack_changed.emit()
 	return panel
@@ -91,7 +116,8 @@ func ask(prompt: String, options: Array, speaker: String = "", portrait: Texture
 func _unhandled_input(event: InputEvent) -> void:
 	if dialogue.visible:
 		return
-	if event.is_action_pressed("menu") and not stack.is_empty():
+	var back: bool = event.is_action_pressed("menu") or (event is InputEventJoypadButton and event.is_action_pressed("ui_cancel"))
+	if back and not stack.is_empty():
 		var t: Control = stack[-1]
 		if not t.has_method("blocks_escape") or not t.blocks_escape():
 			close()

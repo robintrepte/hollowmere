@@ -20,9 +20,10 @@ func _ready() -> void:
 	await _wait(0.4)
 	await _shot("p01_coop_join")
 	main.ui.close_all()
+	var slot := SaveManager.first_free_slot()
 	main._start_new({"player_name": "Robin", "farm_name": "Duo", "starter": "sproutle", "seed": 77})
 	await _wait(1.0)
-	main.ui.dialogue.visible = false
+	await main.ui.dialogue.dismiss()
 	main.ui.close_all()
 	GameState.local_player().inventory.add("parsnip", 5)
 	var extra := Creature.create("embercub", 9, GameState.rng)
@@ -89,6 +90,8 @@ func _ready() -> void:
 	await _wait(0.5)
 	if OS.is_process_running(_bot):
 		OS.kill(_bot)
+	if slot >= 0:
+		SaveManager.delete_slot(slot)
 	print("COOP SMOKE DONE, %d failures" % failures)
 	get_tree().quit(1 if failures > 0 else 0)
 

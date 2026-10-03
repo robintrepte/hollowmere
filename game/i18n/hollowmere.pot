@@ -1,0 +1,6418 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: Hollowmere\n"
+
+#: scenes/ui/item_slot.gd:34
+#, c-format
+msgid "\n+%d energy"
+msgstr ""
+
+#: scenes/ui/item_slot.gd:32
+#, c-format
+msgid "\nSells for %dg"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:803
+#, c-format
+msgid "   (%d%%)"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:180
+#, c-format
+msgid "  Lv%d"
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:262
+#, c-format
+msgid "  x%d"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:322 scenes/ui/party_panel.gd:196
+#, c-format
+msgid "  ·  %d ribbon%s"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:112
+#, c-format
+msgid "  ·  energy %d"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:275
+#, c-format
+msgid " (%d ribbons)"
+msgstr ""
+
+#: scenes/main/main.gd:82
+#, c-format
+msgid " (%s)"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:275
+msgid " (1 ribbon)"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:131
+#, c-format
+msgid " / %d"
+msgstr ""
+
+#: scenes/ui/day_report.gd:87
+#, c-format
+msgid " and lost %dg"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:754
+#, c-format
+msgid " · %d"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:236
+#, c-format
+msgid "#%03d %s%s"
+msgstr ""
+
+#: scenes/ui/day_report.gd:68
+#, c-format
+msgid "%d %s"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:237 scenes/battle/battle_screen.gd:519 scenes/battle/battle_screen.gd:627 scenes/ui/craft_panel.gd:160
+#, c-format
+msgid "%d / %d"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:253
+#, c-format
+msgid "%d / %d  ·  Reward %dg"
+msgstr ""
+
+#: scenes/ui/day_report.gd:70
+#, c-format
+msgid "%d Wildlings are tired and need rest"
+msgstr ""
+
+#: scenes/ui/day_report.gd:85
+#, c-format
+msgid "%d crops withered with the season change."
+msgstr ""
+
+#: scenes/ui/party_panel.gd:236
+#, c-format
+msgid "%d more known move%s. Click a slot to swap."
+msgstr ""
+
+#: scenes/ui/day_report.gd:80
+#, c-format
+msgid "%d new egg%s in the farm chest!"
+msgstr ""
+
+#: scenes/ui/day_report.gd:48 scenes/ui/shop_panel.gd:117 scenes/ui/shop_panel.gd:193 scenes/ui/shop_panel.gd:217 ...
+#, c-format
+msgid "%dg"
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:270
+#, c-format
+msgid "%dx%d"
+msgstr ""
+
+#: scenes/ui/new_game_panel.gd:87
+#, c-format
+msgid "%s\n%s"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:754
+#, c-format
+msgid "%s\n%s%s"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:334
+#, c-format
+msgid "%s  %d%%"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:147
+#, c-format
+msgid "%s  %s%s"
+msgstr ""
+
+#: scenes/ui/hatchery_panel.gd:104
+#, c-format
+msgid "%s  (%s)"
+msgstr ""
+
+#: scenes/ui/trade_panel.gd:224
+#, c-format
+msgid "%s  Lv%d"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:835
+#, c-format
+msgid "%s  Lv%d   HP %d/%d%s"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:801 scenes/ui/shop_panel.gd:133
+#, c-format
+msgid "%s  x%d"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:322
+#, c-format
+msgid "%s  ·  %s%s"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:369
+#, c-format
+msgid "%s %d"
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:195 scenes/ui/shop_panel.gd:217
+#, c-format
+msgid "%s %d/%d"
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:214 scenes/ui/shop_panel.gd:221
+#, c-format
+msgid "%s %s"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:275
+#, c-format
+msgid "%s %s%s"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:291
+#, c-format
+msgid "%s (power %d)"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:131
+#, c-format
+msgid "%s B%d%s"
+msgstr ""
+
+#: scenes/ui/hud.gd:265
+#, c-format
+msgid "%s Lv%d"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:339
+#, c-format
+msgid "%s and %s are now a pair. Eggs will appear in the farm chest."
+msgstr ""
+
+#: scenes/main/main.gd:437
+#, c-format
+msgid "%s chain x%d! Starry odds x%.1f%s"
+msgstr ""
+
+#: scenes/main/main.gd:327
+#, c-format
+msgid "%s challenges you to a friendly battle! (Nothing is lost, win or lose.)"
+msgstr ""
+
+#: scenes/ui/day_report.gd:78
+#, c-format
+msgid "%s evolved into %s overnight!"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:487
+#, c-format
+msgid "%s evolved into %s!"
+msgstr ""
+
+#: scenes/main/controller.gd:222
+#, c-format
+msgid "%s is closed. Open %s - %s."
+msgstr ""
+
+#: scenes/main/controller.gd:274
+#, c-format
+msgid "%s is enjoying the farm."
+msgstr ""
+
+#: autoload/game_state.gd:865
+#, c-format
+msgid "%s is ready!"
+msgstr ""
+
+#: scenes/main/main.gd:405
+#, c-format
+msgid "%s joined %s!"
+msgstr ""
+
+#: autoload/coop.gd:99
+#, c-format
+msgid "%s joined your farm!"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:128
+#, c-format
+msgid "%s keeps watch here. Perhaps a battle would prove your bond with your Wildlings."
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:387
+#, c-format
+msgid "%s left the battle."
+msgstr ""
+
+#: autoload/net.gd:371
+#, c-format
+msgid "%s left the farm."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:147
+#, c-format
+msgid "%s lingers nearby. Perhaps it would join you, if you asked kindly with a charm."
+msgstr ""
+
+#: scenes/ui/party_panel.gd:269
+#, c-format
+msgid "%s moved to the farm."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:340
+#, c-format
+msgid "%s moves up to the %s class!"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:184
+#, c-format
+msgid "%s nature · %s"
+msgstr ""
+
+#: scenes/ui/trade_panel.gd:119
+#, c-format
+msgid "%s offers"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:333
+#, c-format
+msgid "%s scores %d: grooming %d, happiness %d, genes %d, level %d, flair %d."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:143
+#, c-format
+msgid "%s sinks back into the stones. Rest up and try again."
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:186
+#, c-format
+msgid "%s wants %d %s"
+msgstr ""
+
+#: scenes/main/main.gd:344
+#, c-format
+msgid "%s wants to trade with you."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:338
+#, c-format
+msgid "%s wins the %s class and earns a ribbon! (%d total)"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:359
+#, c-format
+msgid "%s won the friendly battle. Good match!"
+msgstr ""
+
+#: scenes/ui/day_report.gd:47 scenes/ui/trade_panel.gd:195
+#, c-format
+msgid "%s x%d"
+msgstr ""
+
+#: scenes/ui/day_report.gd:29
+#, c-format
+msgid "%s · %s"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:148
+#, c-format
+msgid "%s · %s\n%s"
+msgstr ""
+
+#: scenes/ui/title_screen.gd:137
+#, c-format
+msgid "%s · %s Farm\n%s · %dg"
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:220
+#, c-format
+msgid "%s → %s. Holds more water and soaks a wider area."
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:218
+#, c-format
+msgid "%s → %s. Works a wider area and breaks tougher debris."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:291
+#, c-format
+msgid "%s! %s"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:285
+#, c-format
+msgid "%s! %s Join in?"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:380
+#, c-format
+msgid "%s! Battle %s back to back. Your Wildlings are healed between rounds."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:300
+#, c-format
+msgid "%s! Enter %s? The judges score grooming, happiness, genes, level and a little flair."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:304
+#, c-format
+msgid "%s! Your most valuable goods go on display (you keep them). Variety helps!"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:156 scenes/ui/party_panel.gd:176
+#, c-format
+msgid "%s%s"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:107
+#, c-format
+msgid "%s%s  Lv%d"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:177
+#, c-format
+msgid "%s. %s"
+msgstr ""
+
+#: autoload/coop.gd:38 scenes/main/adventure_flow.gd:51
+#, c-format
+msgid "%s: %s"
+msgstr ""
+
+#: scenes/main/controller.gd:134
+#, c-format
+msgid "%s: %s ready in %s."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:107
+#, c-format
+msgid "%s: Good fight. Come back tomorrow if you want another go."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:81
+#, c-format
+msgid "%s: Not yet. Train with your Wildlings and come back tomorrow."
+msgstr ""
+
+#: scenes/main/controller.gd:309
+#, c-format
+msgid "%s: Wow, you're good! Rematch tomorrow?"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:112 scenes/ui/shop_panel.gd:96
+#, c-format
+msgid "%s:%d"
+msgstr ""
+
+#: scenes/ui/trade_panel.gd:49
+msgid "+ Item"
+msgstr ""
+
+#: scenes/ui/trade_panel.gd:50
+msgid "+ Wildling"
+msgstr ""
+
+#: scenes/ui/craft_panel.gd:147 scenes/ui/inventory_panel.gd:268
+#, c-format
+msgid "+%d energy"
+msgstr ""
+
+#: data/villagers.json
+msgid "...Cold, isn't it? You'll get used to it."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:88
+msgid "...You're the real thing."
+msgstr ""
+
+#: data/progression.json
+msgid "10 Wildlings befriended!"
+msgstr ""
+
+#: data/progression.json
+msgid "25 Wildlings befriended!"
+msgstr ""
+
+#: data/progression.json
+msgid "40 Wildlings befriended!"
+msgstr ""
+
+#: data/progression.json
+msgid "55 Wildlings befriended! You received the Starry Charm."
+msgstr ""
+
+#: data/progression.json
+msgid "70 Wildlings befriended!"
+msgstr ""
+
+#: data/progression.json
+msgid "85 Wildlings befriended!"
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:236
+#, c-format
+msgid "A %d x %d grid pack."
+msgstr ""
+
+#: data/items.json
+msgid "A 2x2 crate that holds a 5x5 grid of anything (except other containers)."
+msgstr ""
+
+#: data/villagers.json
+msgid "A Stone Wildling clears land faster than any shovel."
+msgstr ""
+
+#: data/items.json
+msgid "A bar of copper."
+msgstr ""
+
+#: data/items.json
+msgid "A bar of gold."
+msgstr ""
+
+#: data/items.json
+msgid "A bar of iron."
+msgstr ""
+
+#: data/moves.json
+msgid "A beam of pure darkness."
+msgstr ""
+
+#: data/moves.json
+msgid "A big yawn that may make the foe sleepy."
+msgstr ""
+
+#: data/moves.json
+msgid "A blade of air. High crit chance."
+msgstr ""
+
+#: data/moves.json
+msgid "A blast of sharp sand."
+msgstr ""
+
+#: data/creatures.json
+msgid "A bramble-coated pup that guards garden rows."
+msgstr ""
+
+#: data/items.json
+msgid "A bright bed of mixed flowers."
+msgstr ""
+
+#: data/items.json
+msgid "A brilliant green gem."
+msgstr ""
+
+#: data/creatures.json
+msgid "A candle flame that wandered off on its own."
+msgstr ""
+
+#: data/items.json
+msgid "A charm that calls to wild Wildlings."
+msgstr ""
+
+#: data/items.json
+msgid "A charming white fence."
+msgstr ""
+
+#: data/items.json
+msgid "A cheerful spring flower."
+msgstr ""
+
+#: data/items.json
+msgid "A cheerful windmill. Your farm's crown jewel."
+msgstr ""
+
+#: data/items.json
+msgid "A classic farmer's hat."
+msgstr ""
+
+#: data/moves.json
+msgid "A claw from the shadows. High crit chance."
+msgstr ""
+
+#: data/items.json
+msgid "A clear crystal."
+msgstr ""
+
+#: data/items.json
+msgid "A cozy spot to rest."
+msgstr ""
+
+#: scenes/ui/day_report.gd:83
+#, c-format
+msgid "A crow ate %d crop. A scarecrow would help!"
+msgstr ""
+
+#: data/items.json
+msgid "A crown of spring flowers."
+msgstr ""
+
+#: data/items.json
+msgid "A crunchy nut."
+msgstr ""
+
+#: data/moves.json
+msgid "A crushing wall of water."
+msgstr ""
+
+#: data/creatures.json
+msgid "A cub whose tail glows warmer when it's excited."
+msgstr ""
+
+#: data/moves.json
+msgid "A desperate attack."
+msgstr ""
+
+#: data/moves.json
+msgid "A fast wave that never misses."
+msgstr ""
+
+#: data/items.json
+msgid "A fiery red gem."
+msgstr ""
+
+#: data/creatures.json
+msgid "A fluffy bunny with soft moss for ears."
+msgstr ""
+
+#: data/moves.json
+msgid "A flurry of snow."
+msgstr ""
+
+#: data/moves.json
+msgid "A focused beam of sunlight."
+msgstr ""
+
+#: data/items.json
+msgid "A fragment of a fallen star."
+msgstr ""
+
+#: data/moves.json
+msgid "A freezing bite. May slow the foe."
+msgstr ""
+
+#: data/items.json
+msgid "A fresh egg from Cluckle."
+msgstr ""
+
+#: data/moves.json
+msgid "A full-body tackle."
+msgstr ""
+
+#: data/items.json
+msgid "A glittering fruit that grows in caves."
+msgstr ""
+
+#: data/items.json
+msgid "A golden gem."
+msgstr ""
+
+#: data/traits.json
+#, c-format
+msgid "A guardian's might. All damage taken is reduced by 15%."
+msgstr ""
+
+#: data/moves.json
+msgid "A headbutt. May daze."
+msgstr ""
+
+#: data/moves.json
+msgid "A hot bite. May burn."
+msgstr ""
+
+#: data/moves.json
+msgid "A howling blizzard. May lull the foe to sleep."
+msgstr ""
+
+#: data/items.json
+msgid "A legendary dessert. Wildlings adore it."
+msgstr ""
+
+#: data/creatures.json
+msgid "A master digger that can tunnel through solid rock."
+msgstr ""
+
+#: scenes/ui/new_game_panel.gd:36
+msgid "A new life in Hollowmere"
+msgstr ""
+
+#: data/items.json
+msgid "A padded carrier that holds four Wildling eggs."
+msgstr ""
+
+#: data/items.json
+msgid "A painted egg from the Egg Hunt. Hand them in at the Show Ring."
+msgstr ""
+
+#: data/creatures.json
+msgid "A playful pup that loves to shake water on everyone."
+msgstr ""
+
+#: data/items.json
+msgid "A plump forest mushroom."
+msgstr ""
+
+#: data/items.json
+msgid "A powerful charm."
+msgstr ""
+
+#: data/items.json
+msgid "A pretty decoration."
+msgstr ""
+
+#: data/creatures.json
+msgid "A puddle-shaped tadpole that loves rainy days."
+msgstr ""
+
+#: data/moves.json
+msgid "A puff of cinders. May burn."
+msgstr ""
+
+#: data/items.json
+msgid "A purple gem."
+msgstr ""
+
+#: scenes/ui/day_report.gd:92
+msgid "A quiet night. A fresh day awaits."
+msgstr ""
+
+#: data/items.json
+msgid "A rare delicacy dug up by Truffleboar."
+msgstr ""
+
+#: data/items.json
+msgid "A rare, flawless gem."
+msgstr ""
+
+#: data/moves.json
+msgid "A ray of rainbow light. May daze."
+msgstr ""
+
+#: data/moves.json
+msgid "A reckless all-out rush."
+msgstr ""
+
+#: data/moves.json
+msgid "A scorching wave of heat."
+msgstr ""
+
+#: data/items.json
+msgid "A sea-blue gem."
+msgstr ""
+
+#: data/items.json
+msgid "A shimmering bar of mystic metal."
+msgstr ""
+
+#: data/moves.json
+msgid "A shocking touch. May daze."
+msgstr ""
+
+#: data/creatures.json
+msgid "A sleek swimmer that can outrun waterfalls."
+msgstr ""
+
+#: data/creatures.json
+msgid "A sleepy sprout that naps in sunny soil."
+msgstr ""
+
+#: data/moves.json
+msgid "A small electric zap."
+msgstr ""
+
+#: data/creatures.json
+msgid "A snowflake spirit that giggles when it falls."
+msgstr ""
+
+#: data/items.json
+msgid "A softly glowing herbal tea."
+msgstr ""
+
+#: data/moves.json
+msgid "A sparkle of light."
+msgstr ""
+
+#: data/moves.json
+msgid "A spear of hail."
+msgstr ""
+
+#: data/creatures.json
+msgid "A speck of light that follows kind people."
+msgstr ""
+
+#: data/moves.json
+msgid "A spinning cyclone. May daze."
+msgstr ""
+
+#: data/items.json
+msgid "A starchy root dug from frozen soil."
+msgstr ""
+
+#: data/items.json
+msgid "A statue of a Sproutle. Very dignified."
+msgstr ""
+
+#: data/moves.json
+msgid "A storm of petals that tires the user."
+msgstr ""
+
+#: data/moves.json
+msgid "A strike from nowhere."
+msgstr ""
+
+#: data/moves.json
+msgid "A strike with thorny limbs."
+msgstr ""
+
+#: data/moves.json
+msgid "A strong bolt. May daze."
+msgstr ""
+
+#: data/items.json
+msgid "A stronger charm."
+msgstr ""
+
+#: data/items.json
+msgid "A sturdy case for gems, ore and bars."
+msgstr ""
+
+#: data/moves.json
+msgid "A sudden gust of wind."
+msgstr ""
+
+#: data/moves.json
+msgid "A swirling vortex. May soak the foe."
+msgstr ""
+
+#: data/items.json
+msgid "A tall stack with honey on top."
+msgstr ""
+
+#: data/items.json
+msgid "A tart berry found on bushes."
+msgstr ""
+
+#: data/items.json
+msgid "A tastier treat. Better befriending odds."
+msgstr ""
+
+#: data/items.json
+msgid "A tasty wild onion."
+msgstr ""
+
+#: data/creatures.json
+msgid "A tiny bird that rides warm air currents."
+msgstr ""
+
+#: data/items.json
+msgid "A tropical treat."
+msgstr ""
+
+#: data/items.json
+msgid "A warm, hearty stew."
+msgstr ""
+
+#: data/moves.json
+msgid "A wave of shadow."
+msgstr ""
+
+#: data/moves.json
+msgid "A wet jab."
+msgstr ""
+
+#: data/items.json
+msgid "A woven basket for crops, fruit, forage and produce."
+msgstr ""
+
+#: data/progression.json
+msgid "Above the Clouds"
+msgstr ""
+
+#: data/creatures.json
+msgid "Acornib"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:145
+msgid "Add email to this account"
+msgstr ""
+
+#: data/buildings.json
+msgid "Adds a kitchen to your farmhouse so you can cook."
+msgstr ""
+
+#: data/moves.json
+msgid "Aero Blade"
+msgstr ""
+
+#: data/villagers.json
+msgid "Ah, the new farmer. Your grandparent would be proud."
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:139 scenes/ui/trade_panel.gd:201
+msgid "All"
+msgstr ""
+
+#: data/progression.json
+msgid "All eight shrines are restored! The valley is whole again. Seasonal legends now roam the land, and the Deep Hollow goes ever deeper."
+msgstr ""
+
+#: scenes/main/main.gd:89
+msgid "All save slots are full. Delete a farm from the Load menu first."
+msgstr ""
+
+#: data/crops.json
+msgid "Amaranth"
+msgstr ""
+
+#: data/items.json
+msgid "Amethyst"
+msgstr ""
+
+#: data/creatures.json
+msgid "An ancient tree spirit. Birds nest in its branches."
+msgstr ""
+
+#: scenes/ui/day_report.gd:76
+#, c-format
+msgid "An egg hatched: %s%s!"
+msgstr ""
+
+#: data/moves.json
+msgid "An electrified tackle. The user takes recoil."
+msgstr ""
+
+#: scenes/main/controller.gd:208
+#, c-format
+msgid "An empty lot for the %s. Robin at the Carpenter's can build it."
+msgstr ""
+
+#: scenes/ui/hatchery_panel.gd:93
+msgid "An empty nest of warm straw."
+msgstr ""
+
+#: data/moves.json
+msgid "An explosion of light."
+msgstr ""
+
+#: data/items.json
+msgid "An icy, fruity treat."
+msgstr ""
+
+#: data/traits.json
+msgid "Ancient"
+msgstr ""
+
+#: data/trees.json
+msgid "Apple"
+msgstr ""
+
+#: data/moves.json
+msgid "Aqua Jet"
+msgstr ""
+
+#: data/items.json
+msgid "Aquamarine"
+msgstr ""
+
+#: data/crops.json
+msgid "Artichoke"
+msgstr ""
+
+#: data/villagers.json
+msgid "Ash"
+msgstr ""
+
+#: data/progression.json
+msgid "Ash runs hot. Bring Tide or Stone Wildlings."
+msgstr ""
+
+#: data/villagers.json
+msgid "Ash: Here. A ruby from the heart of the ridge."
+msgstr ""
+
+#: data/villagers.json
+msgid "Ash: I used to be afraid of fire. Now it's my strength."
+msgstr ""
+
+#: data/villagers.json
+msgid "Ash: You've got fire in you."
+msgstr ""
+
+#: scenes/ui/settings_panel.gd:39
+msgid "Audio"
+msgstr ""
+
+#: data/creatures.json
+msgid "Auroray"
+msgstr ""
+
+#: data/buildings.json
+msgid "Auto-Shipper"
+msgstr ""
+
+#: data/items.json
+msgid "Axe"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:175
+#, c-format
+msgid "B%d"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:823 scenes/battle/battle_screen.gd:843 scenes/ui/new_game_panel.gd:95 scenes/ui/title_screen.gd:149 ...
+msgid "Back"
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:70
+msgid "Backpack"
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:57
+msgid "Backpacks"
+msgstr ""
+
+#: data/villagers.json
+msgid "Barley gives you a dusty recipe book."
+msgstr ""
+
+#: data/villagers.json
+msgid "Barley is feeding a Gloomrat."
+msgstr ""
+
+#: data/villagers.json
+msgid "Barley tells you about the Great Storm."
+msgstr ""
+
+#: data/villagers.json
+msgid "Barley: Don't tell anyone. He's my friend."
+msgstr ""
+
+#: data/villagers.json
+msgid "Barley: Every Wildling deserves kindness. Even snack thieves."
+msgstr ""
+
+#: data/villagers.json
+msgid "Barley: I believe you can bring them back."
+msgstr ""
+
+#: data/villagers.json
+msgid "Barley: Make it for someone you love."
+msgstr ""
+
+#: data/villagers.json
+msgid "Barley: My late wife's pudding. Best in the valley."
+msgstr ""
+
+#: data/villagers.json
+msgid "Barley: The year the shrines went dark, the Guardians vanished."
+msgstr ""
+
+#: data/moves.json
+msgid "Bashes with a glowing halo."
+msgstr ""
+
+#: data/items.json
+msgid "Basic Fertilizer"
+msgstr ""
+
+#: data/items.json
+msgid "Basic Treat"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:213
+msgid "Battle"
+msgstr ""
+
+#: data/progression.json
+msgid "Battle three village champions in a row!"
+msgstr ""
+
+#: data/villagers.json
+msgid "Battling you is the most fun I've had all year."
+msgstr ""
+
+#: data/progression.json
+msgid "Beat Gideon in Stonehollow and wake the shrine."
+msgstr ""
+
+#: data/progression.json
+msgid "Beat Ivy in Whisperwood (north of the village), then wake its shrine."
+msgstr ""
+
+#: data/progression.json
+msgid "Beat Kai in Galepeak and wake the shrine."
+msgstr ""
+
+#: data/progression.json
+msgid "Beat Marina in Tidecove (east of the village) and wake its shrine."
+msgstr ""
+
+#: data/progression.json
+msgid "Beat Nils in Frostmere and wake the shrine."
+msgstr ""
+
+#: data/progression.json
+msgid "Beat Selene in Umbral Glade and wake the final shrine."
+msgstr ""
+
+#: data/progression.json
+msgid "Beat Volta in Sparkmarsh and wake the shrine."
+msgstr ""
+
+#: data/villagers.json
+msgid "Beat me, and the shrine of Tidecove will shine again."
+msgstr ""
+
+#: data/traits.json
+msgid "Bedrock"
+msgstr ""
+
+#: data/crops.json
+msgid "Beet"
+msgstr ""
+
+#: data/progression.json
+msgid "Befriend 3 Wildlings (walk into them in tall grass)."
+msgstr ""
+
+#: data/progression.json
+msgid "Befriend a few of them first. Tall grass in the Meadow, south of the village, is a fine place to start."
+msgstr ""
+
+#: data/progression.json
+msgid "Befriend {n} {type} Wildlings"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:212
+#, c-format
+msgid "Befriended %d · Seen %d · Total %d"
+msgstr ""
+
+#: scenes/main/main.gd:397
+#, c-format
+msgid "Befriended in %s at Lv%d"
+msgstr ""
+
+#: data/items.json
+msgid "Berry Tart"
+msgstr ""
+
+#: data/villagers.json
+msgid "Best client I've ever had. And friend."
+msgstr ""
+
+#: data/villagers.json
+msgid "Best lab partner ever."
+msgstr ""
+
+#: data/villagers.json
+msgid "Best neighbor I've ever had."
+msgstr ""
+
+#: data/buildings.json
+msgid "Big Den"
+msgstr ""
+
+#: data/buildings.json
+msgid "Big Hatchery"
+msgstr ""
+
+#: data/items.json
+msgid "Birdbath"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:164
+#, c-format
+msgid "Birthday: %s %d"
+msgstr ""
+
+#: data/villagers.json
+msgid "Blacksmith"
+msgstr ""
+
+#: data/creatures.json
+msgid "Blacksmiths prize it for its perfectly even heat."
+msgstr ""
+
+#: data/traits.json
+msgid "Blaze"
+msgstr ""
+
+#: data/creatures.json
+msgid "Blazeroar"
+msgstr ""
+
+#: data/moves.json
+msgid "Blizzard"
+msgstr ""
+
+#: data/creatures.json
+msgid "Blizzowl"
+msgstr ""
+
+#: data/progression.json
+msgid "Bloom Dance"
+msgstr ""
+
+#: data/creatures.json
+msgid "Bloomwing"
+msgstr ""
+
+#: data/crops.json
+msgid "Blue Jazz"
+msgstr ""
+
+#: data/crops.json
+msgid "Blueberry"
+msgstr ""
+
+#: data/moves.json
+msgid "Body Slam"
+msgstr ""
+
+#: data/crops.json
+msgid "Bok Choy"
+msgstr ""
+
+#: data/creatures.json
+msgid "Born from the longest day of summer."
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:244
+#, c-format
+msgid "Bought %d %s"
+msgstr ""
+
+#: data/moves.json
+msgid "Boulder Crash"
+msgstr ""
+
+#: data/creatures.json
+msgid "Bouldron"
+msgstr ""
+
+#: autoload/game_state.gd:254
+#, c-format
+msgid "Bounty complete: %s!"
+msgstr ""
+
+#: data/items.json
+msgid "Bouquet"
+msgstr ""
+
+#: data/villagers.json
+msgid "Bram"
+msgstr ""
+
+#: data/villagers.json
+msgid "Bram hands you a polished wooden key."
+msgstr ""
+
+#: data/villagers.json
+msgid "Bram is struggling with a heavy beam."
+msgstr ""
+
+#: data/villagers.json
+msgid "Bram shows you a tiny wooden Wildling figurine."
+msgstr ""
+
+#: data/shops.json
+msgid "Bram's Workshop"
+msgstr ""
+
+#: data/villagers.json
+msgid "Bram: And I'll give you a discount on your next building."
+msgstr ""
+
+#: data/villagers.json
+msgid "Bram: I carve one for every kid born in town."
+msgstr ""
+
+#: data/villagers.json
+msgid "Bram: Maybe I'll carve one for you someday."
+msgstr ""
+
+#: data/villagers.json
+msgid "Bram: Mind lending a hand? ... Thanks. You're stronger than you look."
+msgstr ""
+
+#: data/villagers.json
+msgid "Bram: Spare key to my workshop. Use any tools you like."
+msgstr ""
+
+#: data/villagers.json
+msgid "Bram: Take some wood. I cut too much anyway."
+msgstr ""
+
+#: data/creatures.json
+msgid "Bramblet"
+msgstr ""
+
+#: data/natures.json
+msgid "Brave"
+msgstr ""
+
+#: data/items.json
+msgid "Breaks rocks and ore."
+msgstr ""
+
+#: scenes/ui/party_panel.gd:304
+msgid "Breeding"
+msgstr ""
+
+#: data/villagers.json
+msgid "Breeding in the Den can pass on great genes."
+msgstr ""
+
+#: data/traits.json
+msgid "Breeding: much higher daily egg chance."
+msgstr ""
+
+#: data/traits.json
+msgid "Breeding: offspring are twice as likely to be Starry."
+msgstr ""
+
+#: data/creatures.json
+msgid "Breezlet"
+msgstr ""
+
+#: data/moves.json
+msgid "Brews a thunderstorm for 5 turns. Spark and Gale moves surge."
+msgstr ""
+
+#: data/villagers.json
+msgid "Bring ore, get bars. Bring bars, get better tools."
+msgstr ""
+
+#: data/types.json
+msgid "Brings luck and sometimes finds gems."
+msgstr ""
+
+#: data/creatures.json
+msgid "Brooklet"
+msgstr ""
+
+#: data/moves.json
+msgid "Bubble Burst"
+msgstr ""
+
+#: data/creatures.json
+msgid "Bubbloo"
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:53
+msgid "Build"
+msgstr ""
+
+#: data/buildings.json
+msgid "Builds stairs to a big new terrace above your farm."
+msgstr ""
+
+#: data/creatures.json
+msgid "Burrowpup"
+msgstr ""
+
+#: data/moves.json
+msgid "Bursting bubbles. May soak the foe."
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:50
+msgid "Buy"
+msgstr ""
+
+#: data/villagers.json
+msgid "Bzzt! You're just in time for a storm!"
+msgstr ""
+
+#: data/villagers.json
+msgid "Cafe Owner"
+msgstr ""
+
+#: data/moves.json
+msgid "Calls harsh sunlight for 5 turns. Ember moves grow stronger."
+msgstr ""
+
+#: data/villagers.json
+msgid "Can you handle the charge, farmer?"
+msgstr ""
+
+#: data/villagers.json
+msgid "Can you teach me to battle?"
+msgstr ""
+
+#: data/traits.json
+msgid "Can't be dazed."
+msgstr ""
+
+#: data/traits.json
+msgid "Can't be hit by critical hits."
+msgstr ""
+
+#: data/traits.json
+msgid "Can't fall asleep. Farm: happiness never drops."
+msgstr ""
+
+#: scenes/ui/party_panel.gd:346
+msgid "Cancel"
+msgstr ""
+
+#: scenes/ui/trade_panel.gd:68
+msgid "Cancel trade"
+msgstr ""
+
+#: data/villagers.json
+msgid "Carpenter"
+msgstr ""
+
+#: data/crops.json
+msgid "Cauliflower"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:218
+#, c-format
+msgid "Challenge sent to %s."
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:82
+#, c-format
+msgid "Chapter %d · %s"
+msgstr ""
+
+#: scenes/main/main.gd:82
+#, c-format
+msgid "Chapter complete: %s%s"
+msgstr ""
+
+#: data/moves.json
+msgid "Charge Up"
+msgstr ""
+
+#: data/moves.json
+msgid "Charges wrapped in fire."
+msgstr ""
+
+#: data/types.json
+msgid "Charmer"
+msgstr ""
+
+#: scenes/ui/title_screen.gd:155
+msgid "Checking the cloud..."
+msgstr ""
+
+#: data/trees.json
+msgid "Cherry"
+msgstr ""
+
+#: data/items.json
+msgid "Chest"
+msgstr ""
+
+#: data/creatures.json
+msgid "Chillchick"
+msgstr ""
+
+#: scenes/ui/new_game_panel.gd:75
+msgid "Choose your first Wildling partner"
+msgstr ""
+
+#: data/items.json
+msgid "Chops branches and stumps."
+msgstr ""
+
+#: data/moves.json
+msgid "Cinder Puff"
+msgstr ""
+
+#: data/regions.json
+msgid "Cinder Ridge"
+msgstr ""
+
+#: data/progression.json
+msgid "Cinder Ridge is too far to walk. Touch the wayshrine in the square: the old stones remember every road."
+msgstr ""
+
+#: data/creatures.json
+msgid "Cinderbug"
+msgstr ""
+
+#: data/creatures.json
+msgid "Cindermane"
+msgstr ""
+
+#: data/items.json
+msgid "Clay"
+msgstr ""
+
+#: scenes/ui/trade_panel.gd:51
+msgid "Clear"
+msgstr ""
+
+#: data/types.json
+msgid "Clears rocks and branches and gathers stone and wood."
+msgstr ""
+
+#: data/buildings.json
+msgid "Clears the fence to open up the southern field."
+msgstr ""
+
+#: data/natures.json
+msgid "Clever"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:202
+msgid "Climb back out of the cave?"
+msgstr ""
+
+#: data/moves.json
+msgid "Clips the foe with wings."
+msgstr ""
+
+#: scenes/ui/account_panel.gd:40 scenes/ui/coop_panel.gd:40 scenes/ui/craft_panel.gd:37 scenes/ui/hatchery_panel.gd:31 ...
+msgid "Close"
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:397
+#, c-format
+msgid "Close %s"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:228
+msgid "Close farm"
+msgstr ""
+
+#: data/items.json
+msgid "Cloud Fluff"
+msgstr ""
+
+#: scenes/ui/title_screen.gd:162
+msgid "Cloud backups are up to date."
+msgstr ""
+
+#: data/creatures.json
+msgid "Cloudmoo"
+msgstr ""
+
+#: data/creatures.json
+msgid "Clovehare"
+msgstr ""
+
+#: data/creatures.json
+msgid "Cluckle"
+msgstr ""
+
+#: data/items.json
+msgid "Cluckle Egg"
+msgstr ""
+
+#: scenes/ui/title_screen.gd:67
+msgid "Co-op"
+msgstr ""
+
+#: data/items.json
+msgid "Coal"
+msgstr ""
+
+#: data/moves.json
+msgid "Coats itself in ice. Raises Guard and Focus."
+msgstr ""
+
+#: data/items.json
+msgid "Coconut"
+msgstr ""
+
+#: data/villagers.json
+msgid "Come sit with an old man sometime. I have stories."
+msgstr ""
+
+#: data/regions.json
+msgid "Conductor Caverns"
+msgstr ""
+
+#: scenes/ui/title_screen.gd:57
+msgid "Continue"
+msgstr ""
+
+#: scenes/ui/settings_panel.gd:60
+msgid "Controls (click, then press a key)"
+msgstr ""
+
+#: scenes/ui/craft_panel.gd:166
+msgid "Cook"
+msgstr ""
+
+#: data/progression.json
+msgid "Cook {n} dishes"
+msgstr ""
+
+#: scenes/ui/craft_panel.gd:32
+msgid "Cooking"
+msgstr ""
+
+#: data/villagers.json
+msgid "Cooking for you is my favorite part of the day."
+msgstr ""
+
+#: data/items.json
+msgid "Cool wool from Frostpip and Snowpaca."
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:197
+msgid "Copied!"
+msgstr ""
+
+#: data/progression.json
+msgid "Copper"
+msgstr ""
+
+#: data/items.json
+msgid "Copper Bar"
+msgstr ""
+
+#: data/items.json
+msgid "Copper Ore"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:195
+msgid "Copy"
+msgstr ""
+
+#: data/villagers.json
+msgid "Cora"
+msgstr ""
+
+#: data/villagers.json
+msgid "Cora gives you a handmade bookmark."
+msgstr ""
+
+#: data/villagers.json
+msgid "Cora is sorting a mountain of letters."
+msgstr ""
+
+#: data/villagers.json
+msgid "Cora reads you a passage from an old book."
+msgstr ""
+
+#: data/villagers.json
+msgid "Cora: 'The Guardians sleep where the valley dreams.'"
+msgstr ""
+
+#: data/villagers.json
+msgid "Cora: I hope that's not too forward."
+msgstr ""
+
+#: data/villagers.json
+msgid "Cora: I've always wondered what it means."
+msgstr ""
+
+#: data/villagers.json
+msgid "Cora: Oh, one for you! Someone's been asking about you... Mira wants more parsnips."
+msgstr ""
+
+#: data/villagers.json
+msgid "Cora: Pressed flowers from your farm. So you'll think of me while reading."
+msgstr ""
+
+#: data/regions.json
+msgid "Coral Grotto"
+msgstr ""
+
+#: data/crops.json
+msgid "Corn"
+msgstr ""
+
+#: data/items.json
+msgid "Corn Chowder"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:169
+#, c-format
+msgid "Couldn't open port %d. Is another farm already open?"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:179
+msgid "Couldn't open the farm online. Try again in a moment."
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:136
+msgid "Couldn't reach that farm. Check the code and that the host is online."
+msgstr ""
+
+#: data/creatures.json
+msgid "Couriersnail"
+msgstr ""
+
+#: data/villagers.json
+msgid "Couriersnail delivers our mail. It's slow but never late."
+msgstr ""
+
+#: data/natures.json
+msgid "Cozy"
+msgstr ""
+
+#: data/moves.json
+msgid "Cozy Nap"
+msgstr ""
+
+#: data/items.json
+msgid "Cozy lights that glow at night."
+msgstr ""
+
+#: data/items.json
+msgid "Crackling dust from Voltick."
+msgstr ""
+
+#: data/crops.json
+msgid "Cranberry"
+msgstr ""
+
+#: data/items.json
+msgid "Cream Pudding"
+msgstr ""
+
+#: data/items.json
+msgid "Creamy and earthy."
+msgstr ""
+
+#: scenes/ui/account_panel.gd:95
+msgid "Create account"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:268
+msgid "Creature Show ladder · every Saturday at the Show Ring"
+msgstr ""
+
+#: data/traits.json
+msgid "Critical hit chance doubled. Farm: more rare finds."
+msgstr ""
+
+#: data/items.json
+#, c-format
+msgid "Crops grow 25% faster. Apply to tilled soil."
+msgstr ""
+
+#: data/moves.json
+msgid "Crushes with a block of ice."
+msgstr ""
+
+#: data/items.json
+msgid "Crystal Fruit"
+msgstr ""
+
+#: data/crops.json
+msgid "Crystal Root"
+msgstr ""
+
+#: data/creatures.json
+msgid "Crystals in its body shine with stored sunlight."
+msgstr ""
+
+#: data/creatures.json
+msgid "Crystoad"
+msgstr ""
+
+#: data/items.json
+msgid "Cures any status condition."
+msgstr ""
+
+#: data/items.json
+msgid "Cuts weeds and harvests crops."
+msgstr ""
+
+#: data/moves.json
+msgid "Cyclone"
+msgstr ""
+
+#: data/items.json
+msgid "Daffodil"
+msgstr ""
+
+#: data/progression.json
+msgid "Dance under the blossoms. Everyone's friendship grows."
+msgstr ""
+
+#: data/moves.json
+msgid "Dazzle"
+msgstr ""
+
+#: data/moves.json
+msgid "Dazzles the foe."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:172
+#, c-format
+msgid "Deepest: B%d of %d."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:172
+#, c-format
+msgid "Deepest: B%d. It has no bottom."
+msgstr ""
+
+#: scenes/ui/title_screen.gd:143
+msgid "Delete this farm forever?"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:193
+msgid "Deliver"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:197
+#, c-format
+msgid "Delivered! +%dg"
+msgstr ""
+
+#: data/buildings.json
+msgid "Deluxe Den"
+msgstr ""
+
+#: data/items.json
+msgid "Deluxe Treat"
+msgstr ""
+
+#: data/items.json
+msgid "Dense, valuable wood."
+msgstr ""
+
+#: data/items.json
+msgid "Diamond"
+msgstr ""
+
+#: data/villagers.json
+msgid "Did you know Wildlings level up from farm work too?"
+msgstr ""
+
+#: data/types.json
+msgid "Digger"
+msgstr ""
+
+#: data/creatures.json
+msgid "Digsby"
+msgstr ""
+
+#: scenes/ui/settings_panel.gd:47
+msgid "Display & accessibility"
+msgstr ""
+
+#: data/progression.json
+msgid "Display your best goods. The most valuable display wins!"
+msgstr ""
+
+#: data/moves.json
+msgid "Dives from the sky."
+msgstr ""
+
+#: scenes/ui/settings_panel.gd:30
+msgid "Done"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:190 scenes/ui/journal_panel.gd:255 scenes/ui/journal_panel.gd:267
+msgid "Done ✓"
+msgstr ""
+
+#: data/villagers.json
+msgid "Dr. Fern"
+msgstr ""
+
+#: data/villagers.json
+msgid "Dr. Fern says you have potential. We'll see."
+msgstr ""
+
+#: data/moves.json
+msgid "Drains energy to restore HP."
+msgstr ""
+
+#: data/moves.json
+msgid "Dread Gaze"
+msgstr ""
+
+#: data/natures.json
+msgid "Dreamy"
+msgstr ""
+
+#: data/moves.json
+msgid "Drench"
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:107
+msgid "Drop items here.\nThey sell overnight."
+msgstr ""
+
+#: data/creatures.json
+msgid "Duskmoth"
+msgstr ""
+
+#: data/creatures.json
+msgid "Duskrat"
+msgstr ""
+
+#: data/creatures.json
+msgid "Dustail"
+msgstr ""
+
+#: scenes/ui/hud.gd:112
+msgid "E"
+msgstr ""
+
+#: data/buildings.json
+msgid "Each night, the farm chest's contents are shipped automatically."
+msgstr ""
+
+#: data/villagers.json
+msgid "Each shrine has a Warden. Prove yourself to them."
+msgstr ""
+
+#: data/traits.json
+msgid "Easier to befriend. Farm: gains happiness faster."
+msgstr ""
+
+#: scenes/main/controller.gd:83
+#, c-format
+msgid "Eat %s? (+%d energy)"
+msgstr ""
+
+#: data/creatures.json
+msgid "Eclipsar"
+msgstr ""
+
+#: data/moves.json
+msgid "Eclipse Beam"
+msgstr ""
+
+#: data/creatures.json
+msgid "Eelectra"
+msgstr ""
+
+#: data/items.json
+msgid "Egg Carrier"
+msgstr ""
+
+#: data/progression.json
+msgid "Egg Hunt"
+msgstr ""
+
+#: data/crops.json
+msgid "Eggplant"
+msgstr ""
+
+#: scenes/ui/hatchery_panel.gd:98
+msgid "Eggs you have"
+msgstr ""
+
+#: scenes/main/main.gd:84
+msgid "Elder Barley has something to tell you."
+msgstr ""
+
+#: data/creatures.json
+msgid "Elderbough"
+msgstr ""
+
+#: data/types.json
+msgid "Ember"
+msgstr ""
+
+#: data/moves.json
+msgid "Ember Nip"
+msgstr ""
+
+#: data/villagers.json
+msgid "Ember Wildlings are loyal to the end."
+msgstr ""
+
+#: data/villagers.json
+msgid "Ember Wildlings make the best forge companions."
+msgstr ""
+
+#: data/traits.json
+msgid "Ember moves hit 1.5x harder below 1/3 HP. Farm: +1 Smelter power."
+msgstr ""
+
+#: data/creatures.json
+msgid "Embercub"
+msgstr ""
+
+#: data/progression.json
+msgid "Embers on the Ridge"
+msgstr ""
+
+#: data/items.json
+msgid "Emerald"
+msgstr ""
+
+#: data/moves.json
+msgid "Engulfs the foe in flames."
+msgstr ""
+
+#: data/moves.json
+msgid "Erupting roots. The user takes recoil."
+msgstr ""
+
+#: data/villagers.json
+msgid "Every Wildling you befriend helps my research. Keep your Wildling-dex updated!"
+msgstr ""
+
+#: data/villagers.json
+msgid "Every painting I make has a little bit of you in it now."
+msgstr ""
+
+#: data/progression.json
+msgid "Explorer Pack"
+msgstr ""
+
+#: data/crops.json
+msgid "Fairy Rose"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:67
+#, c-format
+msgid "Farm %d/%d"
+msgstr ""
+
+#: scenes/ui/hud.gd:221
+#, c-format
+msgid "Farm Lv %d"
+msgstr ""
+
+#: scenes/ui/hud.gd:73
+msgid "Farm Lv 1"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:190
+msgid "Farm code:"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:114
+msgid "Farm codes are 6 letters."
+msgstr ""
+
+#: scenes/ui/party_panel.gd:253
+#, c-format
+msgid "Farm job: %s. %s"
+msgstr ""
+
+#: scenes/ui/hud.gd:175
+#, c-format
+msgid "Farm level %d!"
+msgstr ""
+
+#: data/progression.json
+msgid "Farm level 15! Your farm is famous across the valley."
+msgstr ""
+
+#: data/progression.json
+msgid "Farm level 20! A true master farmer."
+msgstr ""
+
+#: data/traits.json
+msgid "Farm: +2 power at any job."
+msgstr ""
+
+#: data/traits.json
+msgid "Farm: crops it tends gain quality."
+msgstr ""
+
+#: data/traits.json
+msgid "Farm: gathers extra forage at any job."
+msgstr ""
+
+#: data/items.json
+msgid "Farmer's Lunch"
+msgstr ""
+
+#: data/progression.json
+msgid "Farmer's Pack"
+msgstr ""
+
+#: data/buildings.json
+msgid "Farmhouse Kitchen"
+msgstr ""
+
+#: data/villagers.json
+msgid "Farming's better with you around."
+msgstr ""
+
+#: data/moves.json
+msgid "Feather Dance"
+msgstr ""
+
+#: data/villagers.json
+msgid "Feel that heat? That's the ridge testing you."
+msgstr ""
+
+#: data/traits.json
+msgid "Feral"
+msgstr ""
+
+#: data/villagers.json
+msgid "Fern gives you a shimmering charm."
+msgstr ""
+
+#: data/villagers.json
+msgid "Fern is studying a sleeping Mossbun."
+msgstr ""
+
+#: data/villagers.json
+msgid "Fern shows you an ancient carving of eight creatures."
+msgstr ""
+
+#: data/villagers.json
+msgid "Fern: Here, take these charms for your research."
+msgstr ""
+
+#: data/villagers.json
+msgid "Fern: I can't think of anyone better to have it."
+msgstr ""
+
+#: data/villagers.json
+msgid "Fern: Restoring the shrines may wake them..."
+msgstr ""
+
+#: data/villagers.json
+msgid "Fern: Shh... Wildlings dream, you know. Look at its ears twitch."
+msgstr ""
+
+#: data/villagers.json
+msgid "Fern: The Grove Guardians. Legend says they kept this valley in balance."
+msgstr ""
+
+#: data/villagers.json
+msgid "Fern: This charm makes Starry Wildlings appear more often."
+msgstr ""
+
+#: data/items.json
+msgid "Festival Egg"
+msgstr ""
+
+#: data/items.json
+msgid "Few Wildlings can resist it."
+msgstr ""
+
+#: data/items.json
+msgid "Fiber"
+msgstr ""
+
+#: data/creatures.json
+msgid "Fields bloom wherever its wings pass."
+msgstr ""
+
+#: data/natures.json
+msgid "Fierce"
+msgstr ""
+
+#: data/progression.json
+msgid "Find a seasonal legend at its home shrine and befriend it."
+msgstr ""
+
+#: data/progression.json
+msgid "Find hidden eggs around the village before time runs out!"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:190
+msgid "Finish signing in with Google in the popup..."
+msgstr ""
+
+#: data/moves.json
+msgid "Fires sharp leaves."
+msgstr ""
+
+#: data/creatures.json
+msgid "Fishers know to wear rubber boots near it."
+msgstr ""
+
+#: data/traits.json
+msgid "Flame Body"
+msgstr ""
+
+#: data/moves.json
+msgid "Flame Rush"
+msgstr ""
+
+#: data/creatures.json
+msgid "Flarewing"
+msgstr ""
+
+#: data/items.json
+msgid "Flower Bed"
+msgstr ""
+
+#: data/progression.json
+msgid "Flower Beds and Picket Fences are now sold at Bram's."
+msgstr ""
+
+#: data/items.json
+msgid "Flower Crown"
+msgstr ""
+
+#: data/items.json
+msgid "Flower Pot"
+msgstr ""
+
+#: data/villagers.json
+msgid "Flowers are just paintings that grow."
+msgstr ""
+
+#: data/items.json
+msgid "Fluff shed by Fluffeather and Cloudmoo."
+msgstr ""
+
+#: data/creatures.json
+msgid "Fluffeather"
+msgstr ""
+
+#: data/items.json
+msgid "Fluffy cake glazed with honey."
+msgstr ""
+
+#: data/villagers.json
+msgid "Fly with me someday? I mean it."
+msgstr ""
+
+#: data/villagers.json
+msgid "Flying with Galecrest is like being free."
+msgstr ""
+
+#: data/items.json
+msgid "Forage Basket"
+msgstr ""
+
+#: data/traits.json
+msgid "Forager"
+msgstr ""
+
+#: data/creatures.json
+msgid "Forgemole"
+msgstr ""
+
+#: data/items.json
+msgid "Fresh and crunchy."
+msgstr ""
+
+#: data/items.json
+msgid "Fresh milk from Meadowmoo."
+msgstr ""
+
+#: data/items.json
+msgid "Fried Egg"
+msgstr ""
+
+#: data/types.json
+msgid "Frost"
+msgstr ""
+
+#: data/moves.json
+msgid "Frost Armor"
+msgstr ""
+
+#: data/moves.json
+msgid "Frost Bite"
+msgstr ""
+
+#: data/crops.json
+msgid "Frost Cabbage"
+msgstr ""
+
+#: data/progression.json
+msgid "Frost Festival"
+msgstr ""
+
+#: data/items.json
+msgid "Frost Sorbet"
+msgstr ""
+
+#: data/items.json
+msgid "Frost Wool"
+msgstr ""
+
+#: data/traits.json
+msgid "Frost moves hit 1.5x harder below 1/3 HP. Farm: +1 Preserver power."
+msgstr ""
+
+#: data/crops.json
+msgid "Frostberry"
+msgstr ""
+
+#: data/regions.json
+msgid "Frostmere"
+msgstr ""
+
+#: data/creatures.json
+msgid "Frostpip"
+msgstr ""
+
+#: data/items.json
+msgid "Fuel for a long day in the fields."
+msgstr ""
+
+#: data/items.json
+msgid "Fuel for furnaces."
+msgstr ""
+
+#: data/moves.json
+msgid "Fully heals, then sleeps for two turns."
+msgstr ""
+
+#: data/items.json
+msgid "Fully restores HP."
+msgstr ""
+
+#: data/creatures.json
+msgid "Fungloom"
+msgstr ""
+
+#: data/villagers.json
+msgid "Funny. I used to never stay anywhere long."
+msgstr ""
+
+#: data/items.json
+msgid "Furnace"
+msgstr ""
+
+#: data/types.json
+msgid "Gale"
+msgstr ""
+
+#: data/items.json
+msgid "Gale Wildlings love to splash in it."
+msgstr ""
+
+#: data/traits.json
+msgid "Gale moves hit 1.5x harder below 1/3 HP. Farm: +1 Pollinator power."
+msgstr ""
+
+#: data/creatures.json
+msgid "Galecrest"
+msgstr ""
+
+#: data/regions.json
+msgid "Galepeak Heights"
+msgstr ""
+
+#: data/progression.json
+msgid "Galepeak. Kai's Wildlings ride the wind. Spark and Stone will ground them."
+msgstr ""
+
+#: scenes/ui/settings_panel.gd:43
+msgid "Game"
+msgstr ""
+
+#: scenes/ui/pause_menu.gd:33
+msgid "Game saved."
+msgstr ""
+
+#: data/items.json
+msgid "Garden Gnome"
+msgstr ""
+
+#: data/items.json
+msgid "Garden Salad"
+msgstr ""
+
+#: data/crops.json
+msgid "Garlic"
+msgstr ""
+
+#: data/items.json
+msgid "Gem Case"
+msgstr ""
+
+#: data/creatures.json
+msgid "Gems grow on its back like warts."
+msgstr ""
+
+#: scenes/ui/party_panel.gd:214
+msgid "Gene "
+msgstr ""
+
+#: data/villagers.json
+msgid "General Store Owner"
+msgstr ""
+
+#: data/types.json
+msgid "Generator"
+msgstr ""
+
+#: data/natures.json
+msgid "Gentle"
+msgstr ""
+
+#: data/traits.json
+msgid "Gentle Soul"
+msgstr ""
+
+#: data/creatures.json
+msgid "Geodrake"
+msgstr ""
+
+#: data/villagers.json
+msgid "Gideon"
+msgstr ""
+
+#: data/progression.json
+msgid "Gideon of Stonehollow has never lost a battle he cared about. Make him care."
+msgstr ""
+
+#: data/villagers.json
+msgid "Gideon: An emerald. Found it the day I became Warden."
+msgstr ""
+
+#: data/villagers.json
+msgid "Gideon: Hmph. You're not bad."
+msgstr ""
+
+#: data/villagers.json
+msgid "Gideon: I lived in the city once. Too loud. Stone is honest."
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:172
+msgid "Gift ✓"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:165
+#, c-format
+msgid "Gifts this week %d/2"
+msgstr ""
+
+#: scenes/main/controller.gd:358
+#, c-format
+msgid "Give %s to %s?"
+msgstr ""
+
+#: data/items.json
+msgid "Give to a villager at 8 hearts to start dating."
+msgstr ""
+
+#: data/items.json
+msgid "Give to your partner at 10 hearts to propose."
+msgstr ""
+
+#: data/progression.json
+msgid "Give {n} gifts to villagers"
+msgstr ""
+
+#: data/creatures.json
+msgid "Glaciel"
+msgstr ""
+
+#: data/moves.json
+msgid "Glacier Crush"
+msgstr ""
+
+#: data/crops.json
+msgid "Glacier Melon"
+msgstr ""
+
+#: data/creatures.json
+msgid "Glacierox"
+msgstr ""
+
+#: data/creatures.json
+msgid "Glimmer"
+msgstr ""
+
+#: data/traits.json
+msgid "Glimmer Coat"
+msgstr ""
+
+#: data/creatures.json
+msgid "Gloomrat"
+msgstr ""
+
+#: data/types.json
+msgid "Glow"
+msgstr ""
+
+#: data/items.json
+msgid "Glow Tea"
+msgstr ""
+
+#: data/traits.json
+msgid "Glow moves hit 1.5x harder below 1/3 HP. Farm: +1 Charmer power."
+msgstr ""
+
+#: data/progression.json
+msgid "Glowing Wildlings gather at the shore tonight."
+msgstr ""
+
+#: data/items.json
+msgid "Glowing ore from the deepest caves."
+msgstr ""
+
+#: data/items.json
+msgid "Glows softly at night."
+msgstr ""
+
+#: data/progression.json
+msgid "Gold"
+msgstr ""
+
+#: data/items.json
+msgid "Gold Bar"
+msgstr ""
+
+#: data/items.json
+msgid "Gold Ore"
+msgstr ""
+
+#: data/items.json
+msgid "Gold Sprinkler"
+msgstr ""
+
+#: scenes/ui/day_report.gd:26
+msgid "Good morning!"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:202
+msgid "Google sign-in timed out."
+msgstr ""
+
+#: data/crops.json
+msgid "Grape"
+msgstr ""
+
+#: data/items.json
+msgid "Great Charm"
+msgstr ""
+
+#: data/items.json
+msgid "Greatly improves crop quality."
+msgstr ""
+
+#: data/crops.json
+msgid "Green Bean"
+msgstr ""
+
+#: data/progression.json data/traits.json
+msgid "Green Thumb"
+msgstr ""
+
+#: data/buildings.json
+msgid "Greenhouse"
+msgstr ""
+
+#: data/villagers.json
+msgid "Greta"
+msgstr ""
+
+#: data/villagers.json
+msgid "Greta hands you a gleaming gold bar."
+msgstr ""
+
+#: data/villagers.json
+msgid "Greta is hammering a glowing bar."
+msgstr ""
+
+#: data/villagers.json
+msgid "Greta shows you an old, notched hammer."
+msgstr ""
+
+#: data/shops.json
+msgid "Greta's Forge"
+msgstr ""
+
+#: data/villagers.json
+msgid "Greta: Don't make it weird. Just... thanks for visiting."
+msgstr ""
+
+#: data/villagers.json
+msgid "Greta: Metal doesn't care about your mood. Neither do Wildlings, if you rush them."
+msgstr ""
+
+#: data/villagers.json
+msgid "Greta: My mentor's hammer. She taught me patience."
+msgstr ""
+
+#: data/villagers.json
+msgid "Greta: Take some ore. Practice."
+msgstr ""
+
+#: data/villagers.json
+msgid "Greta: Watch. See how it rings? Means it's pure."
+msgstr ""
+
+#: data/moves.json
+msgid "Grit Blast"
+msgstr ""
+
+#: data/progression.json
+msgid "Groom Wildlings {n} times"
+msgstr ""
+
+#: data/items.json
+msgid "Groom your lead Wildling to raise its show score."
+msgstr ""
+
+#: scenes/ui/party_panel.gd:195
+#, c-format
+msgid "Grooming %d%%  ·  Show class %s%s"
+msgstr ""
+
+#: data/items.json
+msgid "Grooming Brush"
+msgstr ""
+
+#: data/progression.json
+msgid "Grove Keeper"
+msgstr ""
+
+#: data/progression.json
+msgid "Grow, ship, cook. Let the farm find its feet."
+msgstr ""
+
+#: data/types.json
+msgid "Grower"
+msgstr ""
+
+#: data/progression.json
+msgid "Growing Season"
+msgstr ""
+
+#: data/moves.json
+msgid "Growl"
+msgstr ""
+
+#: data/types.json
+msgid "Guardian"
+msgstr ""
+
+#: data/creatures.json
+msgid "Guardian of Cinder Ridge. Its heartbeat moves the magma."
+msgstr ""
+
+#: data/creatures.json
+msgid "Guardian of Frostmere. Its breath freezes waterfalls mid-fall."
+msgstr ""
+
+#: data/creatures.json
+msgid "Guardian of Galepeak. It is the wind that turns the seasons."
+msgstr ""
+
+#: data/creatures.json
+msgid "Guardian of Sparkmarsh. Its wings crackle with storms."
+msgstr ""
+
+#: data/creatures.json
+msgid "Guardian of Stonehollow. Mountains are its sleeping place."
+msgstr ""
+
+#: data/creatures.json
+msgid "Guardian of Tidecove. It calms the tides with a single cry."
+msgstr ""
+
+#: data/creatures.json
+msgid "Guardian of Umbral Glade. Day and night bow to it."
+msgstr ""
+
+#: data/creatures.json
+msgid "Guardian of Whisperwood. Forests grow in its footsteps."
+msgstr ""
+
+#: data/types.json
+msgid "Guards the farm at night against crows and pests."
+msgstr ""
+
+#: data/moves.json
+msgid "Gust"
+msgstr ""
+
+#: data/creatures.json
+msgid "Gustmoth"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:114
+#, c-format
+msgid "HP %d/%d%s"
+msgstr ""
+
+#: data/moves.json
+msgid "Hail Lance"
+msgstr ""
+
+#: data/moves.json
+msgid "Halo Bash"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:194
+msgid "Happiness "
+msgstr ""
+
+#: data/traits.json
+msgid "Hard Worker"
+msgstr ""
+
+#: data/items.json
+msgid "Hardwood"
+msgstr ""
+
+#: data/natures.json
+msgid "Hardy"
+msgstr ""
+
+#: data/progression.json
+msgid "Harvest Fair"
+msgstr ""
+
+#: data/progression.json
+msgid "Harvest {n} crops"
+msgstr ""
+
+#: data/types.json
+msgid "Harvester"
+msgstr ""
+
+#: data/types.json
+msgid "Harvests ripe crops into the farm chest."
+msgstr ""
+
+#: data/creatures.json
+msgid "Harvestus"
+msgstr ""
+
+#: data/natures.json
+msgid "Hasty"
+msgstr ""
+
+#: data/progression.json
+msgid "Hatch {n} eggs"
+msgstr ""
+
+#: data/buildings.json scenes/ui/hatchery_panel.gd:28
+msgid "Hatchery"
+msgstr ""
+
+#: scenes/ui/hatchery_panel.gd:84
+#, c-format
+msgid "Hatches %s"
+msgstr ""
+
+#: data/items.json
+msgid "Hay Bale"
+msgstr ""
+
+#: data/progression.json
+msgid "Hazel would be proud. Hollowmere is whole, and it's yours."
+msgstr ""
+
+#: data/items.json
+msgid "Hazelnut"
+msgstr ""
+
+#: data/items.json
+msgid "He watches the crops. Silently."
+msgstr ""
+
+#: data/moves.json
+msgid "Headbutt"
+msgstr ""
+
+#: data/traits.json
+msgid "Heals 1/16 HP each turn. Farm: recovers extra energy overnight."
+msgstr ""
+
+#: data/moves.json
+msgid "Heals half its HP."
+msgstr ""
+
+#: data/items.json
+msgid "Hearty Pancakes"
+msgstr ""
+
+#: data/moves.json
+msgid "Heat Haze"
+msgstr ""
+
+#: data/moves.json
+msgid "Heat Wave"
+msgstr ""
+
+#: data/items.json
+msgid "Heirloom Charm"
+msgstr ""
+
+#: data/types.json
+msgid "Helps crops grow faster overnight."
+msgstr ""
+
+#: data/items.json
+msgid "Herbal Salve"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:201
+#, c-format
+msgid "Here now (%d)"
+msgstr ""
+
+#: data/creatures.json
+msgid "Hibernox"
+msgstr ""
+
+#: data/buildings.json
+msgid "Hilltop Terrace"
+msgstr ""
+
+#: data/villagers.json
+msgid "Hmph. Another farmer."
+msgstr ""
+
+#: data/items.json
+msgid "Hoe"
+msgstr ""
+
+#: scenes/main/controller.gd:140
+#, c-format
+msgid "Hold an item and use it on the %s to load it."
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:272
+#, c-format
+msgid "Holds %dx%d%s"
+msgstr ""
+
+#: data/items.json
+msgid "Holds treats, charms, salves and food."
+msgstr ""
+
+#: data/regions.json
+msgid "Hollow Meadow"
+msgstr ""
+
+#: data/items.json
+msgid "Hollow Pendant"
+msgstr ""
+
+#: data/creatures.json
+msgid "Hollowisp"
+msgstr ""
+
+#: data/progression.json
+msgid "Hollowmere Hero"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:27
+msgid "Hollowmere account"
+msgstr ""
+
+#: data/villagers.json
+msgid "Hollowmere is livelier since you came."
+msgstr ""
+
+#: data/progression.json
+msgid "Home"
+msgstr ""
+
+#: data/items.json
+msgid "Honey"
+msgstr ""
+
+#: data/items.json
+msgid "Honey Cake"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:161
+msgid "Hosting online needs a free account."
+msgstr ""
+
+#: data/crops.json
+msgid "Hot Pepper"
+msgstr ""
+
+#: data/items.json
+msgid "Hot enough to make an Embercub sweat."
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:78
+msgid "Hotbar  (hover an item + press 1-0, or drop it here)"
+msgstr ""
+
+#: data/moves.json
+msgid "Hyper Rush"
+msgstr ""
+
+#: data/villagers.json
+msgid "I carved this bench myself. Took three weeks."
+msgstr ""
+
+#: data/villagers.json
+msgid "I collected shells for you. Don't laugh."
+msgstr ""
+
+#: data/villagers.json
+msgid "I come by on Fridays and Sundays."
+msgstr ""
+
+#: data/villagers.json
+msgid "I don't talk much. But I like when you visit."
+msgstr ""
+
+#: data/villagers.json
+msgid "I don't want a rival anymore. I want you around."
+msgstr ""
+
+#: data/villagers.json
+msgid "I forged my first sword at age nine. Terrible sword."
+msgstr ""
+
+#: data/villagers.json
+msgid "I found a book about Wildling breeding. Want to borrow it?"
+msgstr ""
+
+#: data/villagers.json
+msgid "I found a shiny rock! It's mine though."
+msgstr ""
+
+#: data/villagers.json
+msgid "I kept something special aside for you."
+msgstr ""
+
+#: data/villagers.json
+msgid "I named the cafe after a Sproutle that slept on my doorstep."
+msgstr ""
+
+#: data/villagers.json
+msgid "I painted your Wildlings last night. Don't laugh!"
+msgstr ""
+
+#: data/villagers.json
+msgid "I saved the freshest seeds for you this morning."
+msgstr ""
+
+#: data/villagers.json
+msgid "I saved you a slice of honey cake."
+msgstr ""
+
+#: data/villagers.json
+msgid "I see the stars differently since we met."
+msgstr ""
+
+#: data/villagers.json
+msgid "I suspect there are Wildlings that only appear in certain seasons..."
+msgstr ""
+
+#: data/villagers.json
+msgid "I think I'm falling for a farmer. Who knew?"
+msgstr ""
+
+#: data/villagers.json
+msgid "I'd cook for you every day if you let me."
+msgstr ""
+
+#: data/villagers.json
+msgid "I'd forge anything for you. Within reason."
+msgstr ""
+
+#: data/villagers.json
+msgid "I'd rather read with you than alone."
+msgstr ""
+
+#: data/villagers.json
+msgid "I'd walk through fire for you. Literally."
+msgstr ""
+
+#: data/villagers.json
+msgid "I'm building a generator powered by Joltbeetles!"
+msgstr ""
+
+#: data/villagers.json
+msgid "I'm gonna be a Warden when I grow up!"
+msgstr ""
+
+#: data/villagers.json
+msgid "I'm trying to paint Glimmer's glow. It's impossible!"
+msgstr ""
+
+#: data/villagers.json
+msgid "I'm writing a paper on Glow Wildlings. Want to help?"
+msgstr ""
+
+#: data/villagers.json
+msgid "I've started a scrapbook of the valley. You're in it a lot."
+msgstr ""
+
+#: data/villagers.json
+msgid "I've told you more than I've told anyone in years."
+msgstr ""
+
+#: data/villagers.json
+msgid "I've traveled to seven valleys. This one's the nicest."
+msgstr ""
+
+#: data/crops.json
+msgid "Ice Lily"
+msgstr ""
+
+#: data/moves.json
+msgid "Ice Shard"
+msgstr ""
+
+#: data/regions.json
+msgid "Icebound Depths"
+msgstr ""
+
+#: data/creatures.json
+msgid "Iciclaw"
+msgstr ""
+
+#: data/villagers.json
+msgid "If you ever want to learn woodworking, my door's open."
+msgstr ""
+
+#: data/items.json
+msgid "Improves crop quality. Apply to tilled soil."
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:310
+#, c-format
+msgid "In the bin: %dg"
+msgstr ""
+
+#: scenes/ui/hatchery_panel.gd:107
+msgid "Incubate"
+msgstr ""
+
+#: data/buildings.json
+msgid "Incubates up to 2 eggs at a time."
+msgstr ""
+
+#: data/buildings.json
+msgid "Incubates up to 4 eggs, and they hatch a day sooner."
+msgstr ""
+
+#: data/moves.json
+msgid "Inferno"
+msgstr ""
+
+#: scenes/ui/craft_panel.gd:150
+msgid "Ingredients"
+msgstr ""
+
+#: data/traits.json
+msgid "Intimidate"
+msgstr ""
+
+#: data/progression.json
+msgid "Iron"
+msgstr ""
+
+#: data/items.json
+msgid "Iron Bar"
+msgstr ""
+
+#: data/items.json
+msgid "Iron Ore"
+msgstr ""
+
+#: data/traits.json
+msgid "Iron Will"
+msgstr ""
+
+#: data/villagers.json
+msgid "Is that a Wildling? Can I pet it?!"
+msgstr ""
+
+#: data/creatures.json
+msgid "It appears on the first warm morning of spring."
+msgstr ""
+
+#: data/creatures.json
+msgid "It blesses fields that were tended with love."
+msgstr ""
+
+#: data/creatures.json
+msgid "It blows shimmering bubbles that float for hours."
+msgstr ""
+
+#: data/creatures.json
+msgid "It buries itself in soil and pretends to be an acorn."
+msgstr ""
+
+#: data/creatures.json
+msgid "It carries letters in its shell. Slowly."
+msgstr ""
+
+#: data/creatures.json
+msgid "It dances on the wind like a kite."
+msgstr ""
+
+#: data/creatures.json
+msgid "It digs holes everywhere, sometimes finding treasure."
+msgstr ""
+
+#: data/creatures.json
+msgid "It digs warm tunnels under volcanoes."
+msgstr ""
+
+#: data/creatures.json
+msgid "It disguises itself as a treasure chest deep in caves."
+msgstr ""
+
+#: data/creatures.json
+msgid "It eats pebbles and grows a little every day."
+msgstr ""
+
+#: data/creatures.json
+msgid "It follows anyone carrying fresh grass."
+msgstr ""
+
+#: data/creatures.json
+msgid "It glows faintly in damp, dark places."
+msgstr ""
+
+#: data/creatures.json
+msgid "It guards sleeping villages from nightmares."
+msgstr ""
+
+#: data/creatures.json
+msgid "It guides lost travelers home, if they're polite."
+msgstr ""
+
+#: data/creatures.json
+msgid "It has never lost a letter in a hundred years."
+msgstr ""
+
+#: data/creatures.json
+msgid "It hides in its shell when it's shy, which is often."
+msgstr ""
+
+#: data/creatures.json
+msgid "It hides in your shadow and copies your moves."
+msgstr ""
+
+#: data/creatures.json
+msgid "It hums like a babbling brook when it's happy."
+msgstr ""
+
+#: data/creatures.json
+msgid "It is said to arrive with the first thunderclap."
+msgstr ""
+
+#: data/creatures.json
+msgid "It keeps perfect time and is never late."
+msgstr ""
+
+#: data/creatures.json
+msgid "It kicks up dust clouds to hide when it's nervous."
+msgstr ""
+
+#: data/creatures.json
+msgid "It lights up the marsh like a living lantern."
+msgstr ""
+
+#: data/creatures.json
+msgid "It loves rolling in fresh snow."
+msgstr ""
+
+#: data/creatures.json
+msgid "It nibbles on everything, including your boots."
+msgstr ""
+
+#: data/creatures.json
+msgid "It puffs up into a snowball to keep warm."
+msgstr ""
+
+#: data/creatures.json
+msgid "It rides rainclouds and waters entire valleys."
+msgstr ""
+
+#: data/creatures.json
+msgid "It rides the waves to fetch sticks from far out at sea."
+msgstr ""
+
+#: data/creatures.json
+msgid "It rolls downhill for fun, then naps at the bottom."
+msgstr ""
+
+#: data/creatures.json
+msgid "It scatters glowing embers like fireflies."
+msgstr ""
+
+#: data/creatures.json
+msgid "It sharpens its claws on icebergs."
+msgstr ""
+
+#: data/creatures.json
+msgid "It sips nectar and leaves trails of pollen."
+msgstr ""
+
+#: data/creatures.json
+msgid "It skips across ponds like a stone."
+msgstr ""
+
+#: data/creatures.json
+msgid "It sleeps all year and wakes only in deep winter."
+msgstr ""
+
+#: data/creatures.json
+msgid "It sneaks snacks from pantries at night."
+msgstr ""
+
+#: data/creatures.json
+msgid "It sniffs out snacks buried under leaves."
+msgstr ""
+
+#: data/creatures.json
+msgid "It stores static from rubbing against wool."
+msgstr ""
+
+#: data/creatures.json
+msgid "It twirls through sunbeams like a dancer."
+msgstr ""
+
+#: data/creatures.json
+msgid "It wakes the whole farm at dawn, every day."
+msgstr ""
+
+#: scenes/main/controller.gd:206
+#, c-format
+msgid "It's blocked. (%s)"
+msgstr ""
+
+#: data/creatures.json
+msgid "It's drawn to lanterns on windy nights."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:213
+msgid "It's empty."
+msgstr ""
+
+#: scenes/main/controller.gd:260
+msgid "It's locked."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:318
+msgid "It's the weekly Creature Show! The judges score grooming, happiness, genes, level and a little flair."
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:794
+msgid "Items stay in the bag during friendly battles."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its antlers sprout new leaves each spring."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its eyes glow like two tiny moons."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its four-leaf ears are said to bring good luck."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its fur stands on end when a storm is coming."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its geode scales split light into rainbows."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its glowing back keeps it warm on cold nights."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its glowing bubbles light the sea at night."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its horns are made of glacier ice older than the valley."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its howl echoes off canyon walls for minutes."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its icy wool never melts, even in summer."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its milk tastes faintly of wildflowers."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its petals open only under falling stars."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its roar can be heard across three valleys."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its silent wings bring sudden snowfall."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its smoldering mane keeps the farmhouse cozy in winter."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its snout can find a truffle under a foot of snow."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its spores make anyone nearby feel drowsy."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its squeak can be heard three fields away."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its thorny mane can shelter a whole field from storms."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its wingbeats can turn a windmill from a mile away."
+msgstr ""
+
+#: data/creatures.json
+msgid "Its wool is softer than any cloud."
+msgstr ""
+
+#: data/villagers.json
+msgid "Ivy"
+msgstr ""
+
+#: data/progression.json
+msgid "Ivy keeps watch over the Whisperwood Shrine, north of the village. Battle her, then lay your hand on the stones."
+msgstr ""
+
+#: data/villagers.json
+msgid "Ivy: I became Warden at sixteen. It was lonely, until now."
+msgstr ""
+
+#: data/villagers.json
+msgid "Ivy: Take this. A seed from the oldest tree in Whisperwood."
+msgstr ""
+
+#: data/villagers.json
+msgid "Ivy: The forest spirits like you. So do I."
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:98
+msgid "Join"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:108
+msgid "Join LAN"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:277
+msgid "Join party"
+msgstr ""
+
+#: data/creatures.json
+msgid "Joltbeetle"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:369
+#, c-format
+msgid "Judges' score: %d. %s"
+msgstr ""
+
+#: data/villagers.json
+msgid "Juniper"
+msgstr ""
+
+#: data/villagers.json
+msgid "Juniper is scribbling in a notebook."
+msgstr ""
+
+#: data/villagers.json
+msgid "Juniper looks nervous."
+msgstr ""
+
+#: data/villagers.json
+msgid "Juniper shows you a rare Starry feather."
+msgstr ""
+
+#: data/villagers.json
+msgid "Juniper: Fine. I'll study YOU then."
+msgstr ""
+
+#: data/villagers.json
+msgid "Juniper: I found it when I was a kid. It's why I became a researcher."
+msgstr ""
+
+#: data/villagers.json
+msgid "Juniper: I'm not great at this... but I like being around you."
+msgstr ""
+
+#: data/villagers.json
+msgid "Juniper: I've never shown anyone before."
+msgstr ""
+
+#: data/villagers.json
+msgid "Juniper: Not as rivals. As something more."
+msgstr ""
+
+#: data/villagers.json
+msgid "Juniper: Your Wildlings are healthier than mine. How?!"
+msgstr ""
+
+#: data/villagers.json
+msgid "Kai"
+msgstr ""
+
+#: data/villagers.json
+msgid "Kai: I grew up on this peak. The wind raised me."
+msgstr ""
+
+#: data/villagers.json
+msgid "Kai: I've never wanted to come down from the sky. Until you."
+msgstr ""
+
+#: data/villagers.json
+msgid "Kai: You've got guts climbing up here."
+msgstr ""
+
+#: data/crops.json
+msgid "Kale"
+msgstr ""
+
+#: data/items.json
+msgid "Keep in your bag to pass a parent's Nature to Den eggs."
+msgstr ""
+
+#: data/items.json
+msgid "Keeps all your tools in a tidy 5x2 grid."
+msgstr ""
+
+#: data/items.json
+msgid "Keeps crows away from nearby crops."
+msgstr ""
+
+#: data/items.json
+msgid "Keg"
+msgstr ""
+
+#: data/creatures.json
+msgid "Kilnmole"
+msgstr ""
+
+#: data/moves.json
+msgid "Kindle"
+msgstr ""
+
+#: data/progression.json
+msgid "Kindred"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:399
+#, c-format
+msgid "Knocked out in round %d. The crowd cheers anyway! You can try again today."
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:127
+msgid "Knocking on the farm gate..."
+msgstr ""
+
+#: data/buildings.json
+msgid "Lakeside Plot"
+msgstr ""
+
+#: data/creatures.json
+msgid "Lanternoir"
+msgstr ""
+
+#: data/progression.json
+msgid "Lanterns on the Water"
+msgstr ""
+
+#: data/creatures.json
+msgid "Leader of a very polite gang of snack thieves."
+msgstr ""
+
+#: data/types.json
+msgid "Leaf"
+msgstr ""
+
+#: data/moves.json
+msgid "Leaf Dart"
+msgstr ""
+
+#: data/traits.json
+msgid "Leaf moves hit 1.5x harder below 1/3 HP. Farm: +1 Grower power."
+msgstr ""
+
+#: autoload/game_state.gd:221
+#, c-format
+msgid "Learned recipe: %s"
+msgstr ""
+
+#: data/items.json
+msgid "Leek"
+msgstr ""
+
+#: data/progression.json
+msgid "Legend of the Valley"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:136
+msgid "Legends of the seasons: "
+msgstr ""
+
+#: scenes/ui/day_report.gd:93
+msgid "Let's go!"
+msgstr ""
+
+#: data/villagers.json
+msgid "Librarian and Postmistress"
+msgstr ""
+
+#: data/villagers.json
+msgid "Light and shadow. Both live in every heart."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:133
+#, c-format
+msgid "Light pours into the cracks... %s, guardian of the shrine, awakens!"
+msgstr ""
+
+#: data/villagers.json
+msgid "Lila"
+msgstr ""
+
+#: data/villagers.json
+msgid "Lila hands you a small canvas."
+msgstr ""
+
+#: data/villagers.json
+msgid "Lila is painting a Petalfly on a flower."
+msgstr ""
+
+#: data/villagers.json
+msgid "Lila shows you a gallery of tiny paintings."
+msgstr ""
+
+#: data/villagers.json
+msgid "Lila: I hope you like it... I painted it for you."
+msgstr ""
+
+#: data/villagers.json
+msgid "Lila: I want to paint every one in the valley someday."
+msgstr ""
+
+#: data/villagers.json
+msgid "Lila: It's you and your Wildlings, on the farm at sunset."
+msgstr ""
+
+#: data/villagers.json
+msgid "Lila: Shh! It's almost perfect... There! Oh, it flew away."
+msgstr ""
+
+#: data/villagers.json
+msgid "Lila: Take these seeds. Plant something pretty for me."
+msgstr ""
+
+#: data/villagers.json
+msgid "Lila: These are all the Wildlings I've ever met."
+msgstr ""
+
+#: data/creatures.json
+msgid "Little Ripplefin take shelter inside its shell."
+msgstr ""
+
+#: data/items.json
+msgid "Little Windmill"
+msgstr ""
+
+#: data/natures.json
+msgid "Lively"
+msgstr ""
+
+#: scenes/ui/title_screen.gd:64
+msgid "Load"
+msgstr ""
+
+#: scenes/ui/title_screen.gd:130
+msgid "Load a farm"
+msgstr ""
+
+#: data/villagers.json
+msgid "Long ago, Wildlings and people farmed side by side."
+msgstr ""
+
+#: data/moves.json
+msgid "Lowers the foe's Power and Focus."
+msgstr ""
+
+#: data/traits.json
+msgid "Lowers the foe's Power when it enters battle."
+msgstr ""
+
+#: data/moves.json
+msgid "Lowers the foe's Power."
+msgstr ""
+
+#: data/traits.json
+msgid "Lucky"
+msgstr ""
+
+#: data/moves.json
+msgid "Lull"
+msgstr ""
+
+#: data/creatures.json
+msgid "Lumibub"
+msgstr ""
+
+#: data/items.json
+msgid "Lure Charm"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:221
+#, c-format
+msgid "Lv%d"
+msgstr ""
+
+#: scenes/ui/craft_panel.gd:185
+#, c-format
+msgid "Made %d %s"
+msgstr ""
+
+#: data/creatures.json
+msgid "Maelstride"
+msgstr ""
+
+#: data/regions.json
+msgid "Magma Vent"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:262
+msgid "Make lead"
+msgstr ""
+
+#: data/villagers.json
+msgid "Marina"
+msgstr ""
+
+#: data/progression.json
+msgid "Marina has guarded Tidecove since she was a girl. She fights like the tide: patient, then all at once."
+msgstr ""
+
+#: data/villagers.json
+msgid "Marina: My mother was Warden before me. She'd have liked you."
+msgstr ""
+
+#: data/villagers.json
+msgid "Marina: Watch the sunset with me? ...Just us."
+msgstr ""
+
+#: data/villagers.json
+msgid "Marina: You fight with your heart. I like that."
+msgstr ""
+
+#: data/items.json
+msgid "Max Salve"
+msgstr ""
+
+#: data/villagers.json
+msgid "Maybe I'll stop traveling someday. If someone gave me a reason."
+msgstr ""
+
+#: data/items.json
+msgid "Meadow Milk"
+msgstr ""
+
+#: data/creatures.json
+msgid "Meadowmoo"
+msgstr ""
+
+#: data/crops.json
+msgid "Melon"
+msgstr ""
+
+#: data/creatures.json
+msgid "Mesacoyote"
+msgstr ""
+
+#: data/creatures.json
+msgid "Mimicrate"
+msgstr ""
+
+#: data/villagers.json
+msgid "Mira"
+msgstr ""
+
+#: data/villagers.json
+msgid "Mira hands you a hand-written recipe card."
+msgstr ""
+
+#: data/villagers.json
+msgid "Mira is counting seed packets."
+msgstr ""
+
+#: data/villagers.json
+msgid "Mira shows you an old photo of the store."
+msgstr ""
+
+#: data/shops.json
+msgid "Mira's General Store"
+msgstr ""
+
+#: data/villagers.json
+msgid "Mira: Grandma's berry tart. I've never shared it with anyone."
+msgstr ""
+
+#: data/villagers.json
+msgid "Mira: Here, take these. A thank-you for being such a good customer."
+msgstr ""
+
+#: data/villagers.json
+msgid "Mira: I think she'd want you to have it."
+msgstr ""
+
+#: data/villagers.json
+msgid "Mira: My grandmother founded this place with one bag of seeds."
+msgstr ""
+
+#: data/villagers.json
+msgid "Mira: Oh! You startled me. Inventory day..."
+msgstr ""
+
+#: data/villagers.json
+msgid "Mira: She always said a valley grows as much as its people do."
+msgstr ""
+
+#: data/moves.json
+msgid "Mist Veil"
+msgstr ""
+
+#: data/creatures.json
+msgid "Monolux"
+msgstr ""
+
+#: data/creatures.json
+msgid "Moocalf"
+msgstr ""
+
+#: data/crops.json
+msgid "Moonbloom"
+msgstr ""
+
+#: data/moves.json
+msgid "Moonlight"
+msgstr ""
+
+#: data/creatures.json
+msgid "Mossbun"
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:360
+#, c-format
+msgid "Move to %s"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:219
+msgid "Moves"
+msgstr ""
+
+#: data/creatures.json
+msgid "Mushlet"
+msgstr ""
+
+#: data/items.json
+msgid "Mushroom"
+msgstr ""
+
+#: data/items.json
+msgid "Mushroom Risotto"
+msgstr ""
+
+#: data/villagers.json
+msgid "My Nibblet likes you!"
+msgstr ""
+
+#: data/villagers.json
+msgid "My door is always open. Well, my cave."
+msgstr ""
+
+#: data/villagers.json
+msgid "My grandmother ran this store. She'd have liked you."
+msgstr ""
+
+#: data/villagers.json
+msgid "My grandpa taught me farming and battling. Same thing, really."
+msgstr ""
+
+#: data/villagers.json
+msgid "My heart races like a gale when you're around."
+msgstr ""
+
+#: data/progression.json
+msgid "Mystic"
+msgstr ""
+
+#: data/items.json
+msgid "Mystic Bar"
+msgstr ""
+
+#: data/items.json
+msgid "Mystic Ore"
+msgstr ""
+
+#: data/villagers.json
+msgid "Need something built? Bring wood and coin."
+msgstr ""
+
+#: data/villagers.json
+msgid "Neighbor Farmer and Rival"
+msgstr ""
+
+#: data/items.json
+msgid "Never fails. Extremely rare."
+msgstr ""
+
+#: scenes/ui/title_screen.gd:60
+msgid "New Farm"
+msgstr ""
+
+#: data/progression.json
+msgid "New Roots"
+msgstr ""
+
+#: data/villagers.json
+msgid "New farmers always buy too few parsnips. Just saying."
+msgstr ""
+
+#: scenes/ui/title_screen.gd:164
+msgid "Newer in the cloud"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:277
+#, c-format
+msgid "Next festival: %s on %s %d."
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:219
+#, c-format
+msgid "Next reward at %d befriended"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:279
+#, c-format
+msgid "Next show: %s"
+msgstr ""
+
+#: data/creatures.json
+msgid "Nibblet"
+msgstr ""
+
+#: data/moves.json
+msgid "Night Shade"
+msgstr ""
+
+#: data/traits.json
+msgid "Nightfall"
+msgstr ""
+
+#: data/villagers.json
+msgid "Nils"
+msgstr ""
+
+#: data/progression.json
+msgid "Nils of Frostmere speaks rarely and battles even more rarely. Ember will warm him up."
+msgstr ""
+
+#: data/villagers.json
+msgid "Nils: ...Thanks for visiting."
+msgstr ""
+
+#: data/villagers.json
+msgid "Nils: My family fished this lake for generations."
+msgstr ""
+
+#: data/villagers.json
+msgid "Nils: Wool from my Snowpaca. Make something warm."
+msgstr ""
+
+#: scenes/ui/party_panel.gd:77
+msgid "No Wildlings live on the farm yet.\nMove some here from your party."
+msgstr ""
+
+#: scenes/ui/party_panel.gd:321
+#, c-format
+msgid "No compatible partner in the Den. Egg groups: %s."
+msgstr ""
+
+#: scenes/ui/hatchery_panel.gd:96
+msgid "No eggs to add. Pair Wildlings in the Den and eggs appear in the farm chest."
+msgstr ""
+
+#: scenes/ui/title_screen.gd:132
+msgid "No farms yet."
+msgstr ""
+
+#: scenes/ui/craft_panel.gd:124
+msgid "No recipes yet."
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:178
+msgid "No requests pinned up right now."
+msgstr ""
+
+#: data/creatures.json
+msgid "Nocturnyx"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:796
+msgid "Nothing useful to use here."
+msgstr ""
+
+#: data/items.json
+msgid "Nuts and berries for the road."
+msgstr ""
+
+#: data/creatures.json
+msgid "Oakhorn"
+msgstr ""
+
+#: data/items.json
+msgid "Offer to a weakened wild Wildling to befriend it."
+msgstr ""
+
+#: data/villagers.json
+msgid "Oh, hello! Mind the paint, it's still wet."
+msgstr ""
+
+#: data/villagers.json
+msgid "Okay, you're not bad. Rematch soon?"
+msgstr ""
+
+#: data/villagers.json
+msgid "Old Barley"
+msgstr ""
+
+#: data/creatures.json
+msgid "On clear winter nights it paints the sky with light."
+msgstr ""
+
+#: data/creatures.json
+msgid "One Joltbeetle can light a farmhouse for a week."
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:103
+msgid "Online play needs a free account."
+msgstr ""
+
+#: scenes/ui/pause_menu.gd:35
+msgid "Only the host can save in co-op."
+msgstr ""
+
+#: data/villagers.json
+msgid "Only the strong earn the shrine's light."
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:165
+msgid "Open farm on LAN"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:158
+msgid "Open farm online"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:175
+msgid "Opening the farm gate..."
+msgstr ""
+
+#: data/buildings.json
+msgid "Opens up the lakeside land in the southeast."
+msgstr ""
+
+#: data/trees.json
+msgid "Orange"
+msgstr ""
+
+#: data/progression.json
+msgid "Orange saplings and Birdbaths are available!"
+msgstr ""
+
+#: data/villagers.json
+msgid "Our special today is whatever's fresh from your farm."
+msgstr ""
+
+#: data/traits.json
+msgid "Overcharge"
+msgstr ""
+
+#: data/traits.json
+msgid "Overgrow"
+msgstr ""
+
+#: data/moves.json
+msgid "Overgrowth"
+msgstr ""
+
+#: autoload/game_state.gd:231
+#, c-format
+msgid "Pack full: %d %s sent to the farm chest."
+msgstr ""
+
+#: data/villagers.json
+msgid "Painter and Florist"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:324
+msgid "Pair for eggs..."
+msgstr ""
+
+#: scenes/ui/party_panel.gd:309
+#, c-format
+msgid "Paired with %s · %d%% egg chance each night"
+msgstr ""
+
+#: data/crops.json
+msgid "Parsnip"
+msgstr ""
+
+#: data/villagers.json
+msgid "Partners in research. And... maybe more?"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:67
+#, c-format
+msgid "Party %d/%d"
+msgstr ""
+
+#: data/villagers.json
+msgid "Patience. Like stone, I don't move easily."
+msgstr ""
+
+#: scenes/ui/pause_menu.gd:26
+msgid "Paused"
+msgstr ""
+
+#: data/trees.json
+msgid "Peach"
+msgstr ""
+
+#: data/moves.json
+msgid "Pebble Toss"
+msgstr ""
+
+#: data/creatures.json
+msgid "Pebblit"
+msgstr ""
+
+#: data/moves.json
+msgid "Pelts the foe with hard seeds."
+msgstr ""
+
+#: data/traits.json
+msgid "Permafrost"
+msgstr ""
+
+#: data/moves.json
+msgid "Petal Storm"
+msgstr ""
+
+#: data/creatures.json
+msgid "Petalfly"
+msgstr ""
+
+#: data/moves.json
+msgid "Phantom Strike"
+msgstr ""
+
+#: data/moves.json
+msgid "Photosynth"
+msgstr ""
+
+#: data/traits.json
+msgid "Physical attackers may become dazed."
+msgstr ""
+
+#: data/traits.json
+msgid "Physical attackers may get burned."
+msgstr ""
+
+#: scenes/ui/account_panel.gd:97
+msgid "Pick a farmer name first."
+msgstr ""
+
+#: data/items.json
+msgid "Pickaxe"
+msgstr ""
+
+#: data/items.json
+msgid "Picket Fence"
+msgstr ""
+
+#: data/villagers.json
+msgid "Pip"
+msgstr ""
+
+#: data/villagers.json
+msgid "Pip gives you a shiny rock."
+msgstr ""
+
+#: data/villagers.json
+msgid "Pip is chasing a Nibblet."
+msgstr ""
+
+#: data/villagers.json
+msgid "Pip shows you a drawing."
+msgstr ""
+
+#: data/villagers.json
+msgid "Pip: Come back! ...It never listens to me."
+msgstr ""
+
+#: data/villagers.json
+msgid "Pip: How do you get Wildlings to like you? Treats? Ooh!"
+msgstr ""
+
+#: data/villagers.json
+msgid "Pip: My best one. You can have it. You earned it!"
+msgstr ""
+
+#: data/villagers.json
+msgid "Pip: That's you and me as Wardens! I'm the tall one."
+msgstr ""
+
+#: data/items.json
+msgid "Place it in the Hatchery. Something is moving inside!"
+msgstr ""
+
+#: data/items.json
+msgid "Plant fiber from weeds."
+msgstr ""
+
+#: scenes/ui/account_panel.gd:101
+msgid "Play as guest"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:31 scenes/ui/pause_menu.gd:38
+msgid "Play together"
+msgstr ""
+
+#: data/trees.json
+msgid "Plum"
+msgstr ""
+
+#: data/progression.json
+msgid "Plum saplings and Garden Gnomes are available!"
+msgstr ""
+
+#: data/types.json
+msgid "Pollinator"
+msgstr ""
+
+#: data/trees.json
+msgid "Pomegranate"
+msgstr ""
+
+#: data/progression.json
+msgid "Pomegranate saplings and String Lights are available!"
+msgstr ""
+
+#: data/crops.json
+msgid "Potato"
+msgstr ""
+
+#: data/types.json
+msgid "Preserver"
+msgstr ""
+
+#: data/items.json
+msgid "Preserves Jar"
+msgstr ""
+
+#: data/types.json
+msgid "Preserves crops in the farm chest and protects crops from season change."
+msgstr ""
+
+#: data/progression.json
+msgid "Prestige I"
+msgstr ""
+
+#: data/progression.json
+msgid "Prestige II"
+msgstr ""
+
+#: data/progression.json
+msgid "Prestige III"
+msgstr ""
+
+#: data/moves.json
+msgid "Prism Ray"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:344
+#, c-format
+msgid "Prize: %dg."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:115 scenes/main/adventure_flow.gd:373 scenes/main/adventure_flow.gd:406
+#, c-format
+msgid "Prize: %s."
+msgstr ""
+
+#: data/traits.json
+msgid "Prolific"
+msgstr ""
+
+#: data/items.json
+msgid "Proof that you beat all eight Wardens."
+msgstr ""
+
+#: data/villagers.json
+msgid "Prove your bond with Wildlings, and the shrine will answer."
+msgstr ""
+
+#: data/creatures.json
+msgid "Puddlop"
+msgstr ""
+
+#: data/creatures.json
+msgid "Pudgepig"
+msgstr ""
+
+#: data/crops.json
+msgid "Pumpkin"
+msgstr ""
+
+#: data/items.json
+msgid "Pumpkin Soup"
+msgstr ""
+
+#: data/moves.json
+msgid "Puts the foe to sleep."
+msgstr ""
+
+#: data/creatures.json
+msgid "Pyrrhex"
+msgstr ""
+
+#: data/moves.json
+msgid "Quake"
+msgstr ""
+
+#: data/items.json
+msgid "Quality Fertilizer"
+msgstr ""
+
+#: data/items.json
+msgid "Quality Sprinkler"
+msgstr ""
+
+#: data/items.json
+msgid "Quartz"
+msgstr ""
+
+#: data/moves.json
+msgid "Quick Paw"
+msgstr ""
+
+#: data/villagers.json
+msgid "Quiet mornings here are my favorite."
+msgstr ""
+
+#: scenes/ui/title_screen.gd:74
+msgid "Quit"
+msgstr ""
+
+#: scenes/ui/pause_menu.gd:47
+msgid "Quit game"
+msgstr ""
+
+#: scenes/ui/pause_menu.gd:42
+msgid "Quit to title"
+msgstr ""
+
+#: data/traits.json
+msgid "Radiance"
+msgstr ""
+
+#: data/moves.json
+msgid "Radiant Burst"
+msgstr ""
+
+#: data/creatures.json
+msgid "Radiantelle"
+msgstr ""
+
+#: data/crops.json
+msgid "Radish"
+msgstr ""
+
+#: data/moves.json
+msgid "Rain Song"
+msgstr ""
+
+#: data/moves.json
+msgid "Raises Power and Speed."
+msgstr ""
+
+#: data/types.json
+msgid "Raises crop quality and gathers forage."
+msgstr ""
+
+#: data/villagers.json
+msgid "Rare goods from far away. Fair prices. Mostly."
+msgstr ""
+
+#: data/progression.json
+msgid "Reach 3 hearts with 4 villagers."
+msgstr ""
+
+#: data/progression.json
+msgid "Reach Farm Level 3 (harvest, ship, befriend and build)."
+msgstr ""
+
+#: data/progression.json
+msgid "Reach {n} new mine floors"
+msgstr ""
+
+#: scenes/ui/trade_panel.gd:66
+msgid "Ready"
+msgstr ""
+
+#: data/crops.json
+msgid "Red Cabbage"
+msgstr ""
+
+#: data/traits.json
+msgid "Regrowth"
+msgstr ""
+
+#: data/items.json
+msgid "Remedy"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:140
+msgid "Rename"
+msgstr ""
+
+#: data/buildings.json
+msgid "Repairs the old greenhouse. Crops grow there in any season."
+msgstr ""
+
+#: scenes/ui/settings_panel.gd:72
+msgid "Reset controls"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:68
+msgid "Rest your Wildlings. I'll be here tomorrow."
+msgstr ""
+
+#: data/items.json
+msgid "Restores 30 HP."
+msgstr ""
+
+#: data/items.json
+msgid "Restores 80 HP."
+msgstr ""
+
+#: scenes/ui/pause_menu.gd:29
+msgid "Resume"
+msgstr ""
+
+#: data/items.json
+msgid "Revive Seed"
+msgstr ""
+
+#: data/items.json
+msgid "Revives a fainted Wildling with half HP."
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:188
+#, c-format
+msgid "Reward %dg + friendship  ·  You have %d"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:265
+#, c-format
+msgid "Reward: %s"
+msgstr ""
+
+#: data/crops.json
+msgid "Rhubarb"
+msgstr ""
+
+#: data/creatures.json
+msgid "Ripplefin"
+msgstr ""
+
+#: data/moves.json
+msgid "Rock Slide"
+msgstr ""
+
+#: data/moves.json
+msgid "Rocks tumble onto the foe. May daze."
+msgstr ""
+
+#: data/moves.json
+msgid "Rolls in like a boulder. The user takes recoil."
+msgstr ""
+
+#: data/moves.json
+msgid "Rolls in thick fog for 5 turns. Attacks miss more often."
+msgstr ""
+
+#: data/buildings.json
+msgid "Room for 16 working Wildlings."
+msgstr ""
+
+#: data/buildings.json
+msgid "Room for 8 working Wildlings."
+msgstr ""
+
+#: data/creatures.json
+msgid "Roostrum"
+msgstr ""
+
+#: data/moves.json
+msgid "Root Bind"
+msgstr ""
+
+#: data/regions.json
+msgid "Rootdeep Hollow"
+msgstr ""
+
+#: data/moves.json
+msgid "Roots the foe in place, draining it each turn."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:391
+#, c-format
+msgid "Round %d: %s steps into the ring!"
+msgstr ""
+
+#: data/villagers.json
+msgid "Rowan"
+msgstr ""
+
+#: data/villagers.json
+msgid "Rowan hands you a wildflower."
+msgstr ""
+
+#: data/villagers.json
+msgid "Rowan is leaning on a fence, looking at your farm."
+msgstr ""
+
+#: data/villagers.json
+msgid "Rowan is sitting by the river."
+msgstr ""
+
+#: data/villagers.json
+msgid "Rowan: ...Thanks for listening."
+msgstr ""
+
+#: data/villagers.json
+msgid "Rowan: Grandpa used to bring me here. He passed last winter."
+msgstr ""
+
+#: data/villagers.json
+msgid "Rowan: Here. Some of my best corn seeds."
+msgstr ""
+
+#: data/villagers.json
+msgid "Rowan: Not dumb? Okay. Good."
+msgstr ""
+
+#: data/villagers.json
+msgid "Rowan: Saw this and thought of you. That's... dumb, right?"
+msgstr ""
+
+#: data/villagers.json
+msgid "Rowan: You've done more with this place in weeks than anyone in years."
+msgstr ""
+
+#: data/items.json
+msgid "Ruby"
+msgstr ""
+
+#: data/progression.json
+msgid "Rucksack"
+msgstr ""
+
+#: data/types.json
+msgid "Runs the machines: refills them from the farm chest, collects the goods and speeds them up."
+msgstr ""
+
+#: data/items.json
+msgid "Rustic farm decor."
+msgstr ""
+
+#: data/villagers.json
+msgid "Sable"
+msgstr ""
+
+#: data/villagers.json
+msgid "Sable hands you a worn map."
+msgstr ""
+
+#: data/villagers.json
+msgid "Sable is polishing a strange gem."
+msgstr ""
+
+#: data/villagers.json
+msgid "Sable stares at the stars."
+msgstr ""
+
+#: data/shops.json
+msgid "Sable's Traveling Cart"
+msgstr ""
+
+#: data/villagers.json
+msgid "Sable: Every place I've been. Maybe I don't need any new ones."
+msgstr ""
+
+#: data/villagers.json
+msgid "Sable: From the far north. Want it? I'll trade for a smile."
+msgstr ""
+
+#: data/villagers.json
+msgid "Sable: Hollowmere feels... different."
+msgstr ""
+
+#: data/villagers.json
+msgid "Sable: I never had a home. Just roads."
+msgstr ""
+
+#: data/villagers.json
+msgid "Sable: Maybe I just need one place. And one person."
+msgstr ""
+
+#: data/items.json
+msgid "Sap"
+msgstr ""
+
+#: data/moves.json
+msgid "Sap Drain"
+msgstr ""
+
+#: scenes/ui/pause_menu.gd:31
+msgid "Save game"
+msgstr ""
+
+#: data/items.json
+msgid "Scarecrow"
+msgstr ""
+
+#: data/items.json
+msgid "Scythe"
+msgstr ""
+
+#: data/items.json
+msgid "Seaweed"
+msgstr ""
+
+#: data/items.json
+msgid "Seed Maker"
+msgstr ""
+
+#: data/items.json
+msgid "Seed Pouch"
+msgstr ""
+
+#: data/moves.json
+msgid "Seed Volley"
+msgstr ""
+
+#: data/progression.json
+msgid "Seedling Farmer"
+msgstr ""
+
+#: data/creatures.json
+msgid "Seeing one at dusk means a wish will come true."
+msgstr ""
+
+#: data/villagers.json
+msgid "Selene"
+msgstr ""
+
+#: data/progression.json
+msgid "Selene was Hazel's dearest friend. Go gently, and win."
+msgstr ""
+
+#: data/villagers.json
+msgid "Selene: A recipe for Glow Tea. It soothes the soul."
+msgstr ""
+
+#: data/villagers.json
+msgid "Selene: I was once lost here, as a child. Hollowisp led me out."
+msgstr ""
+
+#: data/villagers.json
+msgid "Selene: The glade likes you. That's rare."
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:51
+msgid "Sell"
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:137
+#, c-format
+msgid "Sell 1 (%dg)"
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:266
+#, c-format
+msgid "Sells %dg"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:225
+msgid "Send"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:267
+msgid "Send to farm"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:110
+msgid "Server"
+msgstr ""
+
+#: scenes/ui/pause_menu.gd:41 scenes/ui/settings_panel.gd:27 scenes/ui/title_screen.gd:72
+msgid "Settings"
+msgstr ""
+
+#: data/types.json
+msgid "Shade"
+msgstr ""
+
+#: data/progression.json
+msgid "Shade Wildlings roam the village. Some are very rare."
+msgstr ""
+
+#: data/traits.json
+msgid "Shade moves hit 1.5x harder below 1/3 HP. Farm: +1 Guardian power."
+msgstr ""
+
+#: data/creatures.json
+msgid "Shadeling"
+msgstr ""
+
+#: data/moves.json
+msgid "Shadow Claw"
+msgstr ""
+
+#: data/moves.json
+msgid "Shakes the ground violently."
+msgstr ""
+
+#: data/moves.json
+msgid "Sharply lowers the foe's Guard."
+msgstr ""
+
+#: data/moves.json
+msgid "Sharply lowers the foe's Power."
+msgstr ""
+
+#: data/moves.json
+msgid "Sharply lowers the foe's Speed."
+msgstr ""
+
+#: data/moves.json
+msgid "Sharply raises Focus."
+msgstr ""
+
+#: data/moves.json
+msgid "Sharply raises Guard."
+msgstr ""
+
+#: data/moves.json
+msgid "Sharply raises Speed."
+msgstr ""
+
+#: data/creatures.json
+msgid "Shelldo"
+msgstr ""
+
+#: data/creatures.json
+msgid "Shellfort"
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:66
+msgid "Shift-click to buy 5 · Prices rise with quality when selling"
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:358
+#, c-format
+msgid "Ship (%dg)"
+msgstr ""
+
+#: data/progression.json
+msgid "Ship {n} crops"
+msgstr ""
+
+#: scenes/ui/day_report.gd:41
+msgid "Shipped"
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:98
+msgid "Shipping Bin"
+msgstr ""
+
+#: data/creatures.json
+msgid "Shiverwisp"
+msgstr ""
+
+#: data/moves.json
+msgid "Shock Wave"
+msgstr ""
+
+#: data/villagers.json
+msgid "Show me endurance, farmer."
+msgstr ""
+
+#: data/progression.json
+msgid "Show off your lead Wildling to the judges!"
+msgstr ""
+
+#: data/moves.json
+msgid "Shroud"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:94 scenes/ui/coop_panel.gd:104 scenes/ui/coop_panel.gd:162
+msgid "Sign in"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:103
+msgid "Sign in with Google"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:156
+msgid "Sign out"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:131
+#, c-format
+msgid "Signed in as %s%s"
+msgstr ""
+
+#: data/items.json
+msgid "Silky milk pudding."
+msgstr ""
+
+#: data/items.json
+msgid "Simple and satisfying."
+msgstr ""
+
+#: data/moves.json
+msgid "Sings up a rain shower for 5 turns. Tide moves grow stronger."
+msgstr ""
+
+#: data/moves.json
+msgid "Sky Dive"
+msgstr ""
+
+#: data/moves.json
+msgid "Slams into the foe like a wave."
+msgstr ""
+
+#: data/moves.json
+msgid "Slams with its whole body."
+msgstr ""
+
+#: data/items.json
+msgid "Small outside, roomy inside. Holds seeds and saplings, which go into it automatically."
+msgstr ""
+
+#: data/items.json
+msgid "Smelt into copper bars."
+msgstr ""
+
+#: data/items.json
+msgid "Smelt into gold bars."
+msgstr ""
+
+#: data/items.json
+msgid "Smelt into iron bars."
+msgstr ""
+
+#: data/types.json
+msgid "Smelter"
+msgstr ""
+
+#: data/types.json
+msgid "Smelts ore from the farm chest and burns weeds."
+msgstr ""
+
+#: data/items.json
+msgid "Smelts ore into bars. Needs coal."
+msgstr ""
+
+#: data/moves.json
+msgid "Smoke Screen"
+msgstr ""
+
+#: data/items.json
+msgid "Smooth and comforting."
+msgstr ""
+
+#: data/creatures.json
+msgid "Snailmail"
+msgstr ""
+
+#: data/moves.json
+msgid "Snow Flurry"
+msgstr ""
+
+#: data/crops.json
+msgid "Snow Yam"
+msgstr ""
+
+#: data/moves.json
+msgid "Snowfall"
+msgstr ""
+
+#: data/creatures.json
+msgid "Snowpaca"
+msgstr ""
+
+#: data/villagers.json
+msgid "Snowpaca wool is the warmest thing in the world."
+msgstr ""
+
+#: data/crops.json
+msgid "Snowpea"
+msgstr ""
+
+#: data/trees.json
+msgid "Snowpear"
+msgstr ""
+
+#: data/progression.json
+msgid "Snowpear saplings and Wildling Statues are available!"
+msgstr ""
+
+#: data/creatures.json
+msgid "So fluffy it sometimes floats away by accident."
+msgstr ""
+
+#: data/progression.json
+msgid "So you're Hazel's grandchild! Welcome to Hollowmere."
+msgstr ""
+
+#: data/villagers.json
+msgid "So you're the new farmer. My corn's taller than yours."
+msgstr ""
+
+#: data/moves.json
+msgid "Soaks the foe, slowing it."
+msgstr ""
+
+#: data/moves.json
+msgid "Soaks up light to heal half its HP."
+msgstr ""
+
+#: data/items.json
+msgid "Soft earth for pottery."
+msgstr ""
+
+#: data/creatures.json
+msgid "Solaria"
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:81
+msgid "Sold out for today."
+msgstr ""
+
+#: data/creatures.json
+msgid "Solstara"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:149
+#, c-format
+msgid "Something ancient is near. The air smells of %s."
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:74
+msgid "Sort"
+msgstr ""
+
+#: data/buildings.json
+msgid "South Field"
+msgstr ""
+
+#: data/types.json
+msgid "Spark"
+msgstr ""
+
+#: data/items.json
+msgid "Spark Dust"
+msgstr ""
+
+#: data/traits.json
+msgid "Spark moves hit 1.5x harder below 1/3 HP. Farm: +1 Generator power."
+msgstr ""
+
+#: data/regions.json
+msgid "Sparkmarsh"
+msgstr ""
+
+#: data/creatures.json
+msgid "Sparks fly from its whiskers when it purrs."
+msgstr ""
+
+#: data/traits.json
+#, c-format
+msgid "Speed is 20% higher. Farm: jobs cost less energy."
+msgstr ""
+
+#: data/items.json
+msgid "Speed-Gro"
+msgstr ""
+
+#: data/progression.json
+msgid "Spend time with folk. Gifts, a kind word, a hand with the Village Board."
+msgstr ""
+
+#: data/items.json
+msgid "Spice Berry"
+msgstr ""
+
+#: data/items.json
+msgid "Spicy Curry"
+msgstr ""
+
+#: data/items.json
+msgid "Spicy and sweet."
+msgstr ""
+
+#: data/progression.json
+msgid "Spirit's Eve"
+msgstr ""
+
+#: data/moves.json
+msgid "Splash Jab"
+msgstr ""
+
+#: data/creatures.json
+msgid "Splashpup"
+msgstr ""
+
+#: data/items.json
+msgid "Sprinkler"
+msgstr ""
+
+#: data/progression.json
+msgid "Sprout"
+msgstr ""
+
+#: data/creatures.json
+msgid "Sproutle"
+msgstr ""
+
+#: data/creatures.json
+msgid "Squeakster"
+msgstr ""
+
+#: data/items.json
+msgid "Star Charm"
+msgstr ""
+
+#: data/items.json
+msgid "Star Crown"
+msgstr ""
+
+#: data/items.json
+msgid "Star Shard"
+msgstr ""
+
+#: data/trees.json
+msgid "Starapple"
+msgstr ""
+
+#: data/creatures.json
+msgid "Starbloom"
+msgstr ""
+
+#: data/crops.json
+msgid "Starfruit"
+msgstr ""
+
+#: data/items.json
+msgid "Starfruit Parfait"
+msgstr ""
+
+#: data/items.json
+msgid "Starry Charm"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:286
+#, c-format
+msgid "Starry chain: %s x%d"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:287
+#, c-format
+msgid "Starry odds x%.1f. Battle a different species and the chain resets."
+msgstr ""
+
+#: scenes/ui/new_game_panel.gd:96
+msgid "Start farming!"
+msgstr ""
+
+#: data/moves.json
+msgid "Static Field"
+msgstr ""
+
+#: data/moves.json
+msgid "Static Jolt"
+msgstr ""
+
+#: data/traits.json
+msgid "Static Skin"
+msgstr ""
+
+#: data/creatures.json
+msgid "Staticat"
+msgstr ""
+
+#: data/villagers.json
+msgid "Stay a while. The waves sound better with you here."
+msgstr ""
+
+#: data/villagers.json
+msgid "Stay for tea. I'll make it warm, just for you."
+msgstr ""
+
+#: data/natures.json
+msgid "Steady"
+msgstr ""
+
+#: data/items.json
+msgid "Sticky tree sap."
+msgstr ""
+
+#: data/moves.json
+msgid "Stokes its inner fire, sharply raising Power."
+msgstr ""
+
+#: data/items.json data/types.json
+msgid "Stone"
+msgstr ""
+
+#: data/items.json
+msgid "Stone Lantern"
+msgstr ""
+
+#: data/moves.json
+msgid "Stone Wall"
+msgstr ""
+
+#: data/traits.json
+msgid "Stone moves hit 1.5x harder below 1/3 HP. Farm: +1 Digger power."
+msgstr ""
+
+#: data/villagers.json
+msgid "Stone remembers. So do I."
+msgstr ""
+
+#: data/regions.json
+msgid "Stonehollow Canyon"
+msgstr ""
+
+#: data/items.json
+msgid "Storage Crate"
+msgstr ""
+
+#: data/items.json
+msgid "Stores 30 stacks of items."
+msgstr ""
+
+#: data/moves.json
+msgid "Storm Call"
+msgstr ""
+
+#: data/progression.json
+msgid "Storm in the Marsh"
+msgstr ""
+
+#: data/creatures.json
+msgid "Stormlynx"
+msgstr ""
+
+#: data/items.json
+msgid "Straw Hat"
+msgstr ""
+
+#: data/crops.json
+msgid "Strawberry"
+msgstr ""
+
+#: data/moves.json
+msgid "Strikes first with a jet of water."
+msgstr ""
+
+#: data/moves.json
+msgid "Strikes first with an icicle."
+msgstr ""
+
+#: data/moves.json
+msgid "Strikes first."
+msgstr ""
+
+#: data/items.json
+msgid "String Lights"
+msgstr ""
+
+#: data/moves.json
+msgid "Struggle"
+msgstr ""
+
+#: data/natures.json data/traits.json
+msgid "Sturdy"
+msgstr ""
+
+#: data/items.json
+msgid "Sturdy building material."
+msgstr ""
+
+#: scenes/ui/new_game_panel.gd:63
+msgid "Style"
+msgstr ""
+
+#: data/progression.json
+msgid "Summer Creature Show"
+msgstr ""
+
+#: data/moves.json
+msgid "Summons snow for 5 turns. Chills all but Frost types."
+msgstr ""
+
+#: data/moves.json
+msgid "Sunbeam"
+msgstr ""
+
+#: data/crops.json
+msgid "Sunflower"
+msgstr ""
+
+#: data/traits.json
+msgid "Sunny"
+msgstr ""
+
+#: data/items.json
+msgid "Super Salve"
+msgstr ""
+
+#: data/creatures.json
+msgid "Surfhound"
+msgstr ""
+
+#: data/traits.json
+msgid "Survives a knockout hit with 1 HP when at full HP."
+msgstr ""
+
+#: scenes/ui/party_panel.gd:238
+msgid "Swap in:"
+msgstr ""
+
+#: data/items.json
+msgid "Sweet Treat"
+msgstr ""
+
+#: data/items.json
+msgid "Sweet and tart."
+msgstr ""
+
+#: data/items.json
+msgid "Sweet honey from Petalfly."
+msgstr ""
+
+#: data/traits.json
+msgid "Swift"
+msgstr ""
+
+#: data/moves.json
+msgid "Tackle"
+msgstr ""
+
+#: data/moves.json
+msgid "Tailwind"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:171
+msgid "Talked ✓"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:175
+msgid "Talking to the server..."
+msgstr ""
+
+#: data/villagers.json
+msgid "Tend your Leaf Wildlings well."
+msgstr ""
+
+#: data/creatures.json
+msgid "Terragorn"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:281
+#, c-format
+msgid "Thanks for joining the %s! See you next year."
+msgstr ""
+
+#: data/villagers.json
+msgid "That old farm of yours has good bones."
+msgstr ""
+
+#: scenes/main/main.gd:109
+msgid "That save couldn't be loaded."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:145
+#, c-format
+msgid "The %s Shrine glows warmly."
+msgstr ""
+
+#: scenes/main/controller.gd:258
+#, c-format
+msgid "The %s is in ruins. Maybe the village could help restore it..."
+msgstr ""
+
+#: data/progression.json
+msgid "The Cinder Shrine blazes! Stonehollow is open. Quality Sprinklers and the Auto-Shipper are available."
+msgstr ""
+
+#: data/regions.json
+msgid "The Deep Hollow"
+msgstr ""
+
+#: data/progression.json
+msgid "The Deep Hollow under Stonehollow has no bottom, they say. And the other legends still roam..."
+msgstr ""
+
+#: data/progression.json
+msgid "The Deep Stones"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:273
+msgid "The Den is full, or this is your last party member."
+msgstr ""
+
+#: data/progression.json
+msgid "The Frost Shrine gleams! The path to Umbral Glade appears."
+msgstr ""
+
+#: data/progression.json
+msgid "The Frozen Mere"
+msgstr ""
+
+#: data/progression.json
+msgid "The Gale Shrine sings! Sparkmarsh is open. The Wildling Spa can be built."
+msgstr ""
+
+#: data/villagers.json
+msgid "The Grove Shrines have been dark for many years."
+msgstr ""
+
+#: scenes/ui/hatchery_panel.gd:63
+msgid "The Hatchery needs rebuilding before it can warm eggs.\nAsk at the Carpenter's."
+msgstr ""
+
+#: data/progression.json
+msgid "The Little Windmill is available at Bram's!"
+msgstr ""
+
+#: data/shops.json
+msgid "The Sleepy Sprout Cafe"
+msgstr ""
+
+#: data/progression.json
+msgid "The Spark Shrine crackles! Frostmere is open. Gold Sprinklers can be crafted."
+msgstr ""
+
+#: data/progression.json
+msgid "The Stone Shrine rumbles! Galepeak is open. The Hilltop Terrace can be built."
+msgstr ""
+
+#: data/progression.json
+msgid "The Tidecove Shrine shines! Cinder Ridge is open, and the old greenhouse can now be repaired."
+msgstr ""
+
+#: data/progression.json
+msgid "The Turning Seasons"
+msgstr ""
+
+#: data/progression.json
+msgid "The Twilight Glade"
+msgstr ""
+
+#: data/progression.json
+msgid "The Whispering Wood"
+msgstr ""
+
+#: data/progression.json
+msgid "The Whisperwood Shrine glows! Tidecove's path is open, and you learned new recipes."
+msgstr ""
+
+#: scenes/main/controller.gd:256
+msgid "The Wildling Spa. Tired workers rest twice as fast here."
+msgstr ""
+
+#: data/villagers.json
+msgid "The Wildlings around your farm seem happier lately."
+msgstr ""
+
+#: data/progression.json
+msgid "The Wishing Well is available at Bram's!"
+msgstr ""
+
+#: data/villagers.json
+msgid "The canyon has many secrets underground."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:193
+#, c-format
+msgid "The cave mouth can now take you straight to B%d."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:222
+msgid "The chest snaps open... and bites! It's a Mimicrate!"
+msgstr ""
+
+#: scenes/main/controller.gd:197
+msgid "The coin sparkles as it sinks. You feel a little luckier today."
+msgstr ""
+
+#: data/villagers.json
+msgid "The final shrine awaits those who've earned it."
+msgstr ""
+
+#: data/villagers.json
+msgid "The forest and I are grateful."
+msgstr ""
+
+#: data/villagers.json
+msgid "The forest feels calmer since you came."
+msgstr ""
+
+#: data/villagers.json
+msgid "The forest remembers every footstep."
+msgstr ""
+
+#: scenes/main/controller.gd:199
+msgid "The fountain burbles happily."
+msgstr ""
+
+#: data/villagers.json
+msgid "The glade shows each visitor something different."
+msgstr ""
+
+#: scenes/main/controller.gd:245
+msgid "The greenhouse door is stuck."
+msgstr ""
+
+#: data/villagers.json
+msgid "The ice sings at night. Listen sometime."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:316
+msgid "The judges are packing up. Come back next Saturday!"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:363
+#, c-format
+msgid "The judges give your Wildling %d points. The others scored %s."
+msgstr ""
+
+#: data/villagers.json
+msgid "The lake's shrine has been frozen for decades."
+msgstr ""
+
+#: data/progression.json
+msgid "The last shrine. Umbral Glade only appears to those the other seven trust."
+msgstr ""
+
+#: data/creatures.json
+msgid "The mischievous spirit of the valley. Few have seen it twice."
+msgstr ""
+
+#: data/villagers.json
+msgid "The museum takes donations of gems and rare items."
+msgstr ""
+
+#: data/villagers.json
+msgid "The ocean is calmer when you're here."
+msgstr ""
+
+#: data/progression.json
+msgid "The old songs say four great Wildlings walk the seasons: one each in spring, summer, fall and winter. They come to the shrines of their home lands."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:335
+#, c-format
+msgid "The other %s entrants scored %s."
+msgstr ""
+
+#: data/creatures.json
+msgid "The patterns on its wings look like a starry sky."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:128
+msgid "The shrine is cold and dark. Its orb is cracked through."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:72
+msgid "The shrine only answers someone their Wildlings trust. Show me."
+msgstr ""
+
+#: data/progression.json
+msgid "The shrines answer to more than strength. Hazel knew every name in this village."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:130
+msgid "The stones hum under your hand. Wake the shrine?"
+msgstr ""
+
+#: data/villagers.json
+msgid "The tides don't wait for anyone. Neither do I."
+msgstr ""
+
+#: data/villagers.json
+msgid "The trees whisper your name now."
+msgstr ""
+
+#: data/progression.json
+msgid "The valley breathes again. Can you feel it?"
+msgstr ""
+
+#: data/villagers.json
+msgid "The valley chose you, I think."
+msgstr ""
+
+#: data/villagers.json
+msgid "The valley is waking up. Can you feel it?"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:99
+#, c-format
+msgid "The valley is whole again, but I've kept training. Rematch? My team is around level %d now."
+msgstr ""
+
+#: data/progression.json
+msgid "The valley is yours. Dig deeper in the Deep Hollow, chase the other legends, and fill the Wildling dex."
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:97
+#, c-format
+msgid "The valley · %d / %d shrines awake"
+msgstr ""
+
+#: data/progression.json
+msgid "The valley's eight shrines went dark the winter she passed. Since then the Wildlings keep to the woods."
+msgstr ""
+
+#: scenes/main/main.gd:223
+#, c-format
+msgid "The way is blocked. (%s)"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:244
+msgid "The wayshrine hums. Its stones remember every road you've opened."
+msgstr ""
+
+#: data/villagers.json
+msgid "The wind tells me stories. Want to hear one?"
+msgstr ""
+
+#: data/villagers.json
+msgid "The wind up here can knock you flat. Hold on!"
+msgstr ""
+
+#: data/villagers.json
+msgid "Theo"
+msgstr ""
+
+#: data/villagers.json
+msgid "Theo is cleaning up after closing time."
+msgstr ""
+
+#: data/villagers.json
+msgid "Theo is experimenting with a new recipe."
+msgstr ""
+
+#: data/villagers.json
+msgid "Theo sets two cups of tea on the table."
+msgstr ""
+
+#: data/villagers.json
+msgid "Theo: ...I really like spending time with you, you know."
+msgstr ""
+
+#: data/villagers.json
+msgid "Theo: But here, people actually talk to each other. I love that."
+msgstr ""
+
+#: data/villagers.json
+msgid "Theo: I closed early tonight. For us."
+msgstr ""
+
+#: data/villagers.json
+msgid "Theo: I opened this place because my parents had a cafe in the city."
+msgstr ""
+
+#: data/villagers.json
+msgid "Theo: Try this. Honest opinion... You like it? I'll call it Veggie Stew."
+msgstr ""
+
+#: data/traits.json
+msgid "Thick Hide"
+msgstr ""
+
+#: data/items.json
+msgid "Thick and sweet."
+msgstr ""
+
+#: scenes/main/controller.gd:127
+#, c-format
+msgid "This %s needs %d more days to mature."
+msgstr ""
+
+#: scenes/ui/party_panel.gd:318
+msgid "This Wildling can't have eggs."
+msgstr ""
+
+#: data/moves.json
+msgid "Thorn Strike"
+msgstr ""
+
+#: data/creatures.json
+msgid "Thornwarden"
+msgstr ""
+
+#: data/moves.json
+msgid "Throws small stones."
+msgstr ""
+
+#: data/moves.json
+msgid "Thunderbolt"
+msgstr ""
+
+#: data/creatures.json
+msgid "Thundermew"
+msgstr ""
+
+#: data/moves.json
+msgid "Tidal Slam"
+msgstr ""
+
+#: data/types.json
+msgid "Tide"
+msgstr ""
+
+#: data/progression.json
+msgid "Tide Lantern Night"
+msgstr ""
+
+#: data/traits.json
+msgid "Tide moves hit 1.5x harder below 1/3 HP. Farm: +1 Waterer power."
+msgstr ""
+
+#: data/regions.json
+msgid "Tidecove"
+msgstr ""
+
+#: data/progression.json
+msgid "Tidecove's path is open now. But a Warden won't respect a farmer with an empty field."
+msgstr ""
+
+#: data/items.json
+msgid "Tills soil for planting."
+msgstr ""
+
+#: scenes/ui/hud.gd:200
+#, c-format
+msgid "Today: %s at the Show Ring"
+msgstr ""
+
+#: scenes/ui/day_report.gd:90
+#, c-format
+msgid "Today: %s in the village!"
+msgstr ""
+
+#: data/crops.json
+msgid "Tomato"
+msgstr ""
+
+#: data/items.json
+msgid "Tool Belt"
+msgstr ""
+
+#: data/items.json
+msgid "Topaz"
+msgstr ""
+
+#: data/traits.json
+msgid "Torrent"
+msgstr ""
+
+#: data/creatures.json
+msgid "Torrentide"
+msgstr ""
+
+#: scenes/main/controller.gd:192
+msgid "Toss a coin into the fountain? (10g)"
+msgstr ""
+
+#: data/items.json
+msgid "Toss a coin, make a wish. Adds a little luck every day."
+msgstr ""
+
+#: scenes/ui/day_report.gd:52
+#, c-format
+msgid "Total: %dg"
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:210 scenes/ui/trade_panel.gd:37
+msgid "Trade"
+msgstr ""
+
+#: scenes/ui/trade_panel.gd:107
+msgid "Trade complete!"
+msgstr ""
+
+#: data/items.json
+msgid "Trail Mix"
+msgstr ""
+
+#: data/progression.json
+msgid "Travel by wayshrine to Cinder Ridge. Beat Ash and wake the shrine."
+msgstr ""
+
+#: data/villagers.json
+msgid "Traveling Merchant"
+msgstr ""
+
+#: data/items.json
+msgid "Treat Tin"
+msgstr ""
+
+#: data/items.json
+msgid "Triples the chance of meeting Starry Wildlings."
+msgstr ""
+
+#: data/items.json
+msgid "Truffle"
+msgstr ""
+
+#: data/creatures.json
+msgid "Truffleboar"
+msgstr ""
+
+#: data/moves.json
+msgid "Tsunami"
+msgstr ""
+
+#: data/crops.json
+msgid "Tulip"
+msgstr ""
+
+#: data/items.json
+msgid "Turns a crop into 2 seeds."
+msgstr ""
+
+#: data/items.json
+msgid "Turns crops into jam."
+msgstr ""
+
+#: data/items.json
+msgid "Turns fruit and veggies into juice."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:291
+#, c-format
+msgid "Twelve painted eggs are hidden around the village. Bring back at least %d for the grand prize."
+msgstr ""
+
+#: data/regions.json
+msgid "Twilight Rift"
+msgstr ""
+
+#: data/villagers.json
+msgid "Twilight is my favorite time. Like you, it's in between."
+msgstr ""
+
+#: data/moves.json
+msgid "Twinkle"
+msgstr ""
+
+#: data/items.json
+msgid "Ultra Charm"
+msgstr ""
+
+#: data/creatures.json
+msgid "Umbrakit"
+msgstr ""
+
+#: data/regions.json
+msgid "Umbral Glade"
+msgstr ""
+
+#: scenes/main/main.gd:180
+#, c-format
+msgid "Unknown map %s"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:311
+msgid "Unpair"
+msgstr ""
+
+#: scenes/main/controller.gd:299
+msgid "Up for a Wildling battle?"
+msgstr ""
+
+#: data/traits.json
+msgid "Updraft"
+msgstr ""
+
+#: scenes/ui/shop_panel.gd:55
+msgid "Upgrade tools"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:155
+msgid "Upload all farms now"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:121
+msgid "Use"
+msgstr ""
+
+#: data/items.json
+msgid "Useful for crafting."
+msgstr ""
+
+#: scenes/ui/craft_panel.gd:36
+msgid "Using your pack + farm chest   "
+msgstr ""
+
+#: data/progression.json
+msgid "Valley Grower"
+msgstr ""
+
+#: data/items.json
+msgid "Veggie Stew"
+msgstr ""
+
+#: data/creatures.json
+msgid "Verdantis"
+msgstr ""
+
+#: data/creatures.json
+msgid "Vernalis"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:175
+msgid "Village Board · new requests every Monday"
+msgstr ""
+
+#: data/villagers.json
+msgid "Village Elder"
+msgstr ""
+
+#: data/villagers.json
+msgid "Village Kid"
+msgstr ""
+
+#: data/moves.json
+msgid "Vine Lash"
+msgstr ""
+
+#: data/moves.json
+msgid "Volt Tackle"
+msgstr ""
+
+#: data/villagers.json
+msgid "Volta"
+msgstr ""
+
+#: data/progression.json
+msgid "Volta lives for thunderstorms. Bring Stone, and an umbrella."
+msgstr ""
+
+#: data/villagers.json
+msgid "Volta: My inventions never worked until I met my Voltick."
+msgstr ""
+
+#: data/villagers.json
+msgid "Volta: Topaz! It conducts beautifully. For you."
+msgstr ""
+
+#: data/villagers.json
+msgid "Volta: Zap! Oops. You okay?"
+msgstr ""
+
+#: data/creatures.json
+msgid "Voltaris"
+msgstr ""
+
+#: data/creatures.json
+msgid "Voltick"
+msgstr ""
+
+#: scenes/ui/trade_panel.gd:123
+#, c-format
+msgid "Waiting for %s to accept..."
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:398 scenes/battle/battle_screen.gd:411 scenes/battle/battle_screen.gd:435 scenes/battle/battle_screen.gd:439
+#, c-format
+msgid "Waiting for %s..."
+msgstr ""
+
+#: autoload/coop.gd:245 autoload/coop.gd:249
+#, c-format
+msgid "Waiting for others to go to bed (%d/%d)"
+msgstr ""
+
+#: data/villagers.json
+msgid "Wanna battle? Loser buys lunch."
+msgstr ""
+
+#: data/villagers.json
+msgid "Wanna spar? Just for fun?"
+msgstr ""
+
+#: data/villagers.json
+msgid "Want to plant something together sometime?"
+msgstr ""
+
+#: data/villagers.json
+msgid "Want to see my latest invention?"
+msgstr ""
+
+#: data/villagers.json
+msgid "Want to watch the sunset sometime?"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:127
+#, c-format
+msgid "Warden %s awaits"
+msgstr ""
+
+#: data/items.json
+msgid "Warden Cap"
+msgstr ""
+
+#: data/progression.json
+msgid "Warden Pack"
+msgstr ""
+
+#: data/villagers.json
+msgid "Warden of Cinder Ridge"
+msgstr ""
+
+#: data/villagers.json
+msgid "Warden of Frostmere"
+msgstr ""
+
+#: data/villagers.json
+msgid "Warden of Galepeak"
+msgstr ""
+
+#: data/villagers.json
+msgid "Warden of Sparkmarsh"
+msgstr ""
+
+#: data/villagers.json
+msgid "Warden of Stonehollow"
+msgstr ""
+
+#: data/villagers.json
+msgid "Warden of Tidecove"
+msgstr ""
+
+#: data/villagers.json
+msgid "Warden of Umbral Glade"
+msgstr ""
+
+#: data/villagers.json
+msgid "Warden of Whisperwood"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:289
+#, c-format
+msgid "Warden rematches · one per Warden each week · teams around Lv%d"
+msgstr ""
+
+#: data/progression.json
+msgid "Warm drinks, snow sculptures, and good company."
+msgstr ""
+
+#: scenes/ui/hatchery_panel.gd:67
+#, c-format
+msgid "Warming %d / %d"
+msgstr ""
+
+#: data/items.json
+msgid "Washed up on the shore."
+msgstr ""
+
+#: data/types.json
+msgid "Waterer"
+msgstr ""
+
+#: data/items.json
+msgid "Watering Can"
+msgstr ""
+
+#: data/items.json
+msgid "Waters a 5x5 area every morning."
+msgstr ""
+
+#: data/items.json
+msgid "Waters crops. Refill at water."
+msgstr ""
+
+#: data/types.json
+msgid "Waters planted crops every morning."
+msgstr ""
+
+#: data/items.json
+msgid "Waters the 4 adjacent tiles every morning."
+msgstr ""
+
+#: data/items.json
+msgid "Waters the 8 surrounding tiles every morning."
+msgstr ""
+
+#: data/creatures.json
+msgid "Wavelash"
+msgstr ""
+
+#: autoload/game_state.gd:210
+#, c-format
+msgid "Weekly challenge complete: %s (+%dg)"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:240
+msgid "Weekly challenges · reset every Monday"
+msgstr ""
+
+#: scenes/main/controller.gd:230
+msgid "Welcome home. What would you like to do?"
+msgstr ""
+
+#: data/villagers.json
+msgid "Welcome to Hollowmere! Seeds are in the back."
+msgstr ""
+
+#: data/villagers.json
+msgid "Welcome to the Sleepy Sprout! Take a seat anywhere."
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:721
+#, c-format
+msgid "What will %s do?"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:478
+#, c-format
+msgid "What? %s is evolving!"
+msgstr ""
+
+#: data/crops.json
+msgid "Wheat"
+msgstr ""
+
+#: data/villagers.json
+msgid "When I'm a Warden, you can be my first challenger!"
+msgstr ""
+
+#: data/villagers.json
+msgid "Whenever I see you walk in, the whole cafe feels warmer."
+msgstr ""
+
+#: data/creatures.json
+msgid "Wherever it rests, crops grow toward it."
+msgstr ""
+
+#: data/moves.json
+msgid "Whips the foe with a vine."
+msgstr ""
+
+#: data/moves.json
+msgid "Whirlpool"
+msgstr ""
+
+#: data/regions.json
+msgid "Whisperwood"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:324
+msgid "Who will you show?"
+msgstr ""
+
+#: data/creatures.json
+msgid "Wickling"
+msgstr ""
+
+#: data/types.json
+msgid "Wild"
+msgstr ""
+
+#: data/items.json
+msgid "Wild Berry"
+msgstr ""
+
+#: data/traits.json
+msgid "Wild moves hit 1.5x harder below 1/3 HP. Farm: +1 Harvester power."
+msgstr ""
+
+#: data/shops.json
+msgid "Wildling Center"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:258
+msgid "Wildling Center bounty"
+msgstr ""
+
+#: data/items.json
+msgid "Wildling Egg"
+msgstr ""
+
+#: data/progression.json
+msgid "Wildling Rancher"
+msgstr ""
+
+#: data/villagers.json
+msgid "Wildling Researcher"
+msgstr ""
+
+#: data/villagers.json
+msgid "Wildling Researcher and Rival"
+msgstr ""
+
+#: data/buildings.json
+msgid "Wildling Spa"
+msgstr ""
+
+#: data/items.json
+msgid "Wildling Statue"
+msgstr ""
+
+#: data/progression.json
+msgid "Wildling-dex complete! You are a true Hollowmere legend."
+msgstr ""
+
+#: data/villagers.json
+msgid "Wildlings love food from the farm. Use it when befriending."
+msgstr ""
+
+#: scenes/main/controller.gd:242
+#, c-format
+msgid "Wildlings recorded: %d / %d."
+msgstr ""
+
+#: data/villagers.json
+msgid "Will you sit for a portrait someday?"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:319
+msgid "Win at your Wildling's rank to earn a ribbon and move up: Novice, Bronze, Silver, Gold, then Master."
+msgstr ""
+
+#: data/progression.json
+msgid "Win {n} battles"
+msgstr ""
+
+#: data/villagers.json
+msgid "Win, and you'll fly as high as the shrine."
+msgstr ""
+
+#: data/regions.json
+msgid "Windcarved Caves"
+msgstr ""
+
+#: data/moves.json
+msgid "Wing Clip"
+msgstr ""
+
+#: data/progression.json
+msgid "Winter Battle Cup"
+msgstr ""
+
+#: data/items.json
+msgid "Winter Root"
+msgstr ""
+
+#: data/crops.json
+msgid "Winter Squash"
+msgstr ""
+
+#: data/crops.json
+msgid "Wintergreen"
+msgstr ""
+
+#: data/items.json
+msgid "Wishing Well"
+msgstr ""
+
+#: data/creatures.json
+msgid "Wishmite"
+msgstr ""
+
+#: data/villagers.json
+msgid "Without you, the Grove Shrines would still be dark."
+msgstr ""
+
+#: data/items.json
+msgid "Wood"
+msgstr ""
+
+#: data/items.json
+msgid "Wooden Bench"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:117
+#, c-format
+msgid "Word spreads. Every Warden is training harder: their teams now reach level %d."
+msgstr ""
+
+#: data/buildings.json
+msgid "Working Wildlings fully recover energy every night and gain happiness."
+msgstr ""
+
+#: data/items.json
+msgid "Worn by those who completed the Wildling-dex."
+msgstr ""
+
+#: scenes/ui/title_screen.gd:142
+msgid "X"
+msgstr ""
+
+#: data/crops.json
+msgid "Yam"
+msgstr ""
+
+#: data/moves.json
+msgid "Yawn"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:461
+#, c-format
+msgid "You beat %s!"
+msgstr ""
+
+#: data/villagers.json
+msgid "You came back. In this weather."
+msgstr ""
+
+#: data/villagers.json
+msgid "You carry light with you, farmer."
+msgstr ""
+
+#: data/villagers.json
+msgid "You climbed all this way again? Ha! I like you."
+msgstr ""
+
+#: data/villagers.json
+msgid "You don't flinch from the heat. Respect."
+msgstr ""
+
+#: data/villagers.json
+msgid "You don't scare easy. Shocking!"
+msgstr ""
+
+#: data/villagers.json
+msgid "You ever just watch the crops grow? Me neither. Ha."
+msgstr ""
+
+#: data/villagers.json
+msgid "You feel like family now. Don't tell anyone I gave you a discount."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:293
+#, c-format
+msgid "You found %d egg%s. Hand %s in?"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:467
+#, c-format
+msgid "You got %dg for winning."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:360
+#, c-format
+msgid "You handed in %d egg%s!%s"
+msgstr ""
+
+#: data/progression.json
+msgid "You have a way with them. Hazel did too."
+msgstr ""
+
+#: data/villagers.json
+msgid "You have an eye for quality."
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:470
+msgid "You hurry back home to rest."
+msgstr ""
+
+#: data/villagers.json
+msgid "You know a lot more about Wildlings than you let on."
+msgstr ""
+
+#: data/villagers.json
+msgid "You light up my world. Literally, sometimes."
+msgstr ""
+
+#: data/villagers.json
+msgid "You make the heights feel less lonely."
+msgstr ""
+
+#: data/villagers.json
+msgid "You make the valley more colorful."
+msgstr ""
+
+#: scenes/ui/trade_panel.gd:232
+msgid "You need to keep at least one Wildling with you."
+msgstr ""
+
+#: scenes/ui/day_report.gd:87
+#, c-format
+msgid "You passed out from exhaustion%s."
+msgstr ""
+
+#: scenes/main/controller.gd:282
+#, c-format
+msgid "You pet %s. It's %s."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:364 scenes/main/adventure_flow.gd:370
+#, c-format
+msgid "You placed %s!"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:342
+#, c-format
+msgid "You placed %s. Grooming and a happy Wildling go a long way. Try again next Saturday!"
+msgstr ""
+
+#: data/villagers.json
+msgid "You remind me of myself, long ago. Only far better at farming."
+msgstr ""
+
+#: data/villagers.json
+msgid "You walk the forest like you belong here."
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:406
+#, c-format
+msgid "You won the %s! The whole village chants your name."
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:357
+msgid "You won the friendly battle!"
+msgstr ""
+
+#: data/villagers.json
+msgid "You're a true friend of the ridge."
+msgstr ""
+
+#: data/villagers.json
+msgid "You're alright, farmer."
+msgstr ""
+
+#: data/villagers.json
+msgid "You're always welcome in Whisperwood."
+msgstr ""
+
+#: data/villagers.json
+msgid "You're as solid as they come."
+msgstr ""
+
+#: data/villagers.json
+msgid "You're becoming a regular! I like that."
+msgstr ""
+
+#: data/villagers.json
+msgid "You're electric, you know that?"
+msgstr ""
+
+#: autoload/game_state.gd:358
+msgid "You're exhausted... you pass out."
+msgstr ""
+
+#: data/villagers.json
+msgid "You're my best friend. Don't tell Nibblet."
+msgstr ""
+
+#: data/villagers.json
+msgid "You're steady. Like bedrock."
+msgstr ""
+
+#: data/villagers.json
+msgid "You're the coolest grown-up in town."
+msgstr ""
+
+#: data/villagers.json
+msgid "You're the new farmer? Bet my Wildlings could beat yours."
+msgstr ""
+
+#: data/villagers.json
+msgid "You're the only one who listens to my metal stories."
+msgstr ""
+
+#: data/villagers.json
+msgid "You're the reason I keep coming back."
+msgstr ""
+
+#: autoload/game_state.gd:504
+msgid "You're too tired. Eat something or go to bed."
+msgstr ""
+
+#: data/villagers.json
+msgid "You're tougher than you look."
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:199
+#, c-format
+msgid "You're visiting %s's farm."
+msgstr ""
+
+#: data/villagers.json
+msgid "You've brought balance back to the valley."
+msgstr ""
+
+#: data/villagers.json
+msgid "You've come so far."
+msgstr ""
+
+#: data/villagers.json
+msgid "You've done more for Wildling science than anyone."
+msgstr ""
+
+#: data/villagers.json
+msgid "You've filled more pages of my life than any book."
+msgstr ""
+
+#: data/villagers.json
+msgid "You've got a builder's eye, you know."
+msgstr ""
+
+#: data/villagers.json
+msgid "You've got sea legs, farmer."
+msgstr ""
+
+#: data/villagers.json
+msgid "You've thawed something in me."
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:469
+msgid "Your Wildlings are all worn out..."
+msgstr ""
+
+#: data/villagers.json
+msgid "Your Wildlings are remarkably healthy. You treat them well."
+msgstr ""
+
+#: scenes/main/controller.gd:240
+msgid "Your Wildlings are rested and fully healed!"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:25 scenes/main/main.gd:373
+msgid "Your Wildlings are too tired to battle. Rest at home or the Wildling Center."
+msgstr ""
+
+#: scenes/ui/coop_panel.gd:215
+msgid "Your Wildlings need a rest first."
+msgstr ""
+
+#: scenes/ui/day_report.gd:72
+msgid "Your Wildlings worked overnight"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:367
+#, c-format
+msgid "Your display: %s."
+msgstr ""
+
+#: data/villagers.json
+msgid "Your farm would make a lovely painting."
+msgstr ""
+
+#: data/villagers.json
+msgid "Your farm's coming along. Not bad, neighbor."
+msgstr ""
+
+#: data/villagers.json
+msgid "Your fences are holding up nicely."
+msgstr ""
+
+#: data/villagers.json
+msgid "Your mail arrives every morning, rain or shine."
+msgstr ""
+
+#: data/villagers.json
+msgid "Your pickaxe swings are getting cleaner."
+msgstr ""
+
+#: data/villagers.json
+msgid "Your veggies make the best stew. Seriously."
+msgstr ""
+
+#: data/moves.json
+msgid "Zap"
+msgstr ""
+
+#: data/creatures.json
+msgid "Zapfin"
+msgstr ""
+
+#: data/creatures.json
+msgid "Zephyrkite"
+msgstr ""
+
+#: data/creatures.json
+msgid "Zephyros"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:147
+#, c-format
+msgid "[%s] "
+msgstr ""
+
+#: scenes/ui/hud.gd:290 scenes/ui/inventory_panel.gd:334
+#, c-format
+msgid "hotbar_%d"
+msgstr ""
+
+#: scenes/ui/hatchery_panel.gd:84
+#, c-format
+msgid "in %d days"
+msgstr ""
+
+#: scenes/main/adventure_flow.gd:189
+#, c-format
+msgid "mine:%s:%d"
+msgstr ""
+
+#: scenes/ui/title_screen.gd:75
+#, c-format
+msgid "v%s"
+msgstr ""
+
+#: scenes/ui/party_panel.gd:147
+#, c-format
+msgid "· %d"
+msgstr ""
+
+#: scenes/ui/title_screen.gd:97
+#, c-format
+msgid "● %s"
+msgstr ""
+
+#: scenes/ui/title_screen.gd:169
+#, c-format
+msgid "● %s · %s Farm\n%s · %dg"
+msgstr ""

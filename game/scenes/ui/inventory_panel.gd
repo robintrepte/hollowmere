@@ -33,6 +33,10 @@ var _ship_total: Label
 var _menu: PopupMenu
 var _menu_entry: Dictionary = {}
 var _menu_inv: Inventory
+var _menu_at := Vector2.ZERO
+
+const MOUSE_HELP := "Drag to move · R rotate · Right-click for actions · Shift-click quick move · Esc close"
+const PAD_HELP := "D-pad move · A pick up / drop · X actions · B rotate · Start close"
 
 func _init(p: PlayerData = null, other_inv: Inventory = null, title: String = "", m: String = "pack") -> void:
 	player = p
@@ -118,7 +122,7 @@ func _ready() -> void:
 	info.add_child(iv)
 	_info_name = UITheme.label("", 11, UITheme.WOOD_DK)
 	iv.add_child(_info_name)
-	_info_desc = UITheme.label("Drag to move · R rotate · Right-click for actions · Shift-click quick move · Esc close", 9, UITheme.INK)
+	_info_desc = UITheme.label(PAD_HELP if Settings.using_pad else MOUSE_HELP, 9, UITheme.INK)
 	_info_desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_info_desc.custom_minimum_size = Vector2(420, 0)
 	iv.add_child(_info_desc)
@@ -135,6 +139,8 @@ func _ready() -> void:
 	_refresh_hotbar()
 	await get_tree().process_frame
 	_center()
+	if Settings.using_pad:
+		_pack_view.grab_focus()
 
 func _center() -> void:
 	var s := get_combined_minimum_size()
@@ -183,6 +189,7 @@ func _on_cell(view: GridView, cell: Vector2i, button: int, shift: bool) -> void:
 		if held_uid != "":
 			_cancel_held()
 		elif not e.is_empty():
+			_menu_at = view.cell_screen_pos(cell) if Settings.using_pad else get_viewport().get_mouse_position()
 			_open_menu(view.inv, e)
 
 func _pick(inv: Inventory, e: Dictionary, cell: Vector2i) -> void:
@@ -249,20 +256,20 @@ func _on_hover(view: GridView, e: Dictionary) -> void:
 	_hover_inv = view.inv
 	if e.is_empty():
 		_info_name.text = ""
-		_info_desc.text = "Drag to move · R rotate · Right-click for actions · Shift-click quick move · Esc close"
+		_info_desc.text = PAD_HELP if Settings.using_pad else MOUSE_HELP
 		return
 	var it: Dictionary = Data.get_item(e.id)
-	_info_name.text = Data.item_name(e.id, int(e.get("q", 0))) + ("  x%d" % int(e.n) if int(e.n) > 1 else "")
-	var bits: Array = [str(it.get("desc", ""))]
+	_info_name.text = Data.item_name(e.id, int(e.get("q", 0))) + (tr("  x%d") % int(e.n) if int(e.n) > 1 else "")
+	var bits: Array = [Data.item_desc(e.id)]
 	var price := Data.sell_price(e.id, int(e.get("q", 0)))
 	if price > 0:
-		bits.append("Sells %dg" % price)
+		bits.append(tr("Sells %dg") % price)
 	if float(it.get("energy", 0)) > 0:
-		bits.append("+%d energy" % int(it.energy))
+		bits.append(tr("+%d energy") % int(it.energy))
 	var sz: Vector2i = Data.item_size(e.id)
-	bits.append("%dx%d" % [sz.x, sz.y])
+	bits.append(tr("%dx%d") % [sz.x, sz.y])
 	if e.has("inv"):
-		bits.append("Holds %dx%d%s" % [e.inv.w, e.inv.h, (" (" + ", ".join(e.inv.filter) + ")") if not e.inv.filter.is_empty() else ""])
+		bits.append(tr("Holds %dx%d%s") % [e.inv.w, e.inv.h, (" (" + ", ".join(e.inv.filter) + ")") if not e.inv.filter.is_empty() else ""])
 	_info_desc.text = " · ".join(bits.filter(func(b): return b != ""))
 
 func _on_hotbar_input(ev: InputEvent, i: int) -> void:
@@ -300,25 +307,31 @@ func _refresh_ship() -> void:
 	var total := 0
 	for s in GameState.world.get("shipping", []):
 		total += Data.sell_price(s.id, int(s.q)) * int(s.n)
-	_ship_total.text = "In the bin: %dg" % total
+	_ship_total.text = tr("In the bin: %dg") % total
+
+func rotate_held_or_hovered() -> void:
+	if held_uid != "":
+		var sz := held_size()
+		held_rot = not held_rot
+		held_grab = Vector2i(clampi(held_grab.y, 0, sz.y - 1), clampi(held_grab.x, 0, sz.x - 1))
+		Audio.sfx("tick", 0.0)
+		for v in [_pack_view, _other_view, _container_view]:
+			if v:
+				v.queue_redraw()
+	elif not _hover.is_empty() and _hover_inv:
+		if _hover_inv.rotate(_hover.uid):
+			Audio.sfx("tick", 0.0)
+			_changed()
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if not event.pressed:
 		return
 	if event.is_action_pressed("rotate_item"):
-		if held_uid != "":
-			var sz := held_size()
-			held_rot = not held_rot
-			held_grab = Vector2i(clampi(held_grab.y, 0, sz.y - 1), clampi(held_grab.x, 0, sz.x - 1))
-			Audio.sfx("tick", 0.0)
-		elif not _hover.is_empty() and _hover_inv:
-			if _hover_inv.rotate(_hover.uid):
-				Audio.sfx("tick", 0.0)
-				_changed()
+		rotate_held_or_hovered()
 		get_viewport().set_input_as_handled()
 		return
 	for i in PlayerData.HOTBAR_SIZE:
-		if event.is_action_pressed("hotbar_%d" % i) and not _hover.is_empty():
+		if event.is_action_pressed(tr("hotbar_%d") % i) and not _hover.is_empty():
 			var f := player.inventory.find(_hover.uid)
 			if not f.is_empty():
 				player.bind_hotbar(i, f.entry)
@@ -342,16 +355,16 @@ func _open_menu(inv: Inventory, e: Dictionary) -> void:
 		_menu.add_item("Split half", 3)
 		_menu.add_item("Split one", 4)
 	if mode == "ship" and Data.sell_price(e.id, 0) > 0 and inv != other:
-		_menu.add_item("Ship (%dg)" % (Data.sell_price(e.id, int(e.q)) * int(e.n)), 5)
+		_menu.add_item(tr("Ship (%dg)") % (Data.sell_price(e.id, int(e.q)) * int(e.n)), 5)
 	if other != null:
-		_menu.add_item("Move to %s" % ("Backpack" if inv == other else other_title), 6)
+		_menu.add_item(tr("Move to %s") % ("Backpack" if inv == other else other_title), 6)
 	if inv == player.inventory or player.inventory.find(e.uid).size() > 0:
 		_menu.add_item("Bind to next hotbar slot", 7)
 	if not it.get("cat", "") in ["tool", "key"]:
 		_menu.add_separator()
 		_menu.add_item("Trash", 9)
 	_menu.reset_size()
-	_menu.popup(Rect2i(Vector2i(get_viewport().get_mouse_position()), Vector2i.ZERO))
+	_menu.popup(Rect2i(Vector2i(_menu_at), Vector2i.ZERO))
 
 func _on_menu(id: int) -> void:
 	var e := _menu_entry
@@ -381,7 +394,7 @@ func _open_container(e: Dictionary) -> void:
 	_container_box.add_child(UITheme.label(Data.item_name(e.id), 11, UITheme.WOOD_DK))
 	_container_view = _make_view(e.inv)
 	_container_box.add_child(_container_view)
-	_container_box.add_child(UITheme.button("Close %s" % Data.item_name(e.id), _close_container))
+	_container_box.add_child(UITheme.button(tr("Close %s") % Data.item_name(e.id), _close_container))
 	await get_tree().process_frame
 	_center()
 
@@ -420,7 +433,7 @@ func _process(_d: float) -> void:
 		_ghost.queue_redraw()
 
 func _draw_ghost() -> void:
-	if held_uid == "":
+	if held_uid == "" or Settings.using_pad:
 		return
 	var f := held_from.find(held_uid) if held_from else {}
 	if f.is_empty():

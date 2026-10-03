@@ -1,7 +1,11 @@
 extends Node
 ## User settings and the input map (registered at runtime so it can be rebound).
 
+signal text_scale_changed
+signal input_device_changed(pad: bool)
+
 const PATH := "user://settings.cfg"
+const TEXT_SCALES := [1.0, 1.2, 1.4]
 
 const DEFAULT_KEYS := {
 	"move_up": [KEY_W, KEY_UP],
@@ -60,6 +64,10 @@ var server_key: String = default_server("key", "hollowmere_dev")
 var server_ssl: bool = default_server("ssl", false)
 var cloud_saves: bool = true
 var custom_keys: Dictionary = {}       ## action -> [keycodes]
+var using_pad := false                 ## last input came from a gamepad (not saved)
+var locale: String = ""                ## "" follows the system language
+
+const I18N_DIR := "res://i18n"
 
 ## Server address baked into the build (project setting hollowmere/server/*, with .release overrides).
 static func default_server(key: String, fallback: Variant) -> Variant:
@@ -72,7 +80,26 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	load_settings()
 	register_inputs()
+	load_translations()
 	apply()
+
+## Registers every gettext catalog (<locale>.po) shipped in res://i18n.
+func load_translations() -> void:
+	if not DirAccess.dir_exists_absolute(I18N_DIR):
+		return
+	for f in ResourceLoader.list_directory(I18N_DIR):
+		if f.ends_with(".po"):
+			var t: Translation = load(I18N_DIR.path_join(f))
+			if t:
+				TranslationServer.add_translation(t)
+
+## Locales the player can pick: English plus every shipped catalog.
+func available_locales() -> Array:
+	var out: Array = ["en"]
+	for l in TranslationServer.get_loaded_locales():
+		if not l in out:
+			out.append(l)
+	return out
 
 func register_inputs() -> void:
 	for action in DEFAULT_KEYS:
@@ -107,6 +134,22 @@ func register_inputs() -> void:
 			ev2.physical_keycode = KEY_1 + i if i < 9 else KEY_0
 			InputMap.action_add_event(a, ev2)
 
+func _input(event: InputEvent) -> void:
+	var pad: bool = event is InputEventJoypadButton or (event is InputEventJoypadMotion and absf(event.axis_value) > 0.5)
+	var kbm: bool = event is InputEventKey or event is InputEventMouseButton or (event is InputEventMouseMotion and event.relative.length() > 2.0)
+	if pad and not using_pad:
+		using_pad = true
+		input_device_changed.emit(true)
+	elif kbm and using_pad:
+		using_pad = false
+		input_device_changed.emit(false)
+
+func set_text_scale(v: float) -> void:
+	if is_equal_approx(v, text_scale):
+		return
+	text_scale = v
+	text_scale_changed.emit()
+
 func rebind(action: String, keycode: int) -> void:
 	custom_keys[action] = [keycode]
 	register_inputs()
@@ -124,6 +167,7 @@ func key_name(action: String) -> String:
 	return "?"
 
 func apply() -> void:
+	TranslationServer.set_locale(locale if locale != "" else OS.get_locale_language())
 	_set_bus("Master", master_volume)
 	_set_bus("Music", music_volume)
 	_set_bus("SFX", sfx_volume)
@@ -150,14 +194,14 @@ func load_settings() -> void:
 	if cfg.load(PATH) != OK:
 		return
 	for k in ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "colorblind", "screen_shake",
-			"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves", "custom_keys"]:
+			"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves", "custom_keys", "locale"]:
 		if cfg.has_section_key("settings", k):
 			set(k, cfg.get_value("settings", k))
 
 func save_settings() -> void:
 	var cfg := ConfigFile.new()
 	for k in ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "colorblind", "screen_shake",
-			"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves", "custom_keys"]:
+			"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves", "custom_keys", "locale"]:
 		## Only a server the player changed is pinned, so builds can move to a new address.
 		if k.begins_with("server_") and get(k) == default_server(k.trim_prefix("server_"), get(k)):
 			continue

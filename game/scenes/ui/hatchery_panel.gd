@@ -64,7 +64,7 @@ func _refresh() -> void:
 		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_body.add_child(l)
 		return
-	_body.add_child(UITheme.label("Warming %d / %d" % [GameState.world.hatchery.size(), cap], 10, UITheme.WOOD))
+	_body.add_child(UITheme.label(tr("Warming %d / %d") % [GameState.world.hatchery.size(), cap], 10, UITheme.WOOD))
 	for i in cap:
 		var row := PanelContainer.new()
 		row.add_theme_stylebox_override("panel", UITheme.box(UITheme.PARCHMENT_DK, Color("#b09060"), 1, 3, 4, false))
@@ -81,7 +81,7 @@ func _refresh() -> void:
 			v.add_theme_constant_override("separation", 1)
 			h.add_child(v)
 			var days := int(slot.days)
-			v.add_child(UITheme.label("Hatches %s" % ("tomorrow!" if days <= 1 else "in %d days" % days), 10, UITheme.INK))
+			v.add_child(UITheme.label(tr("Hatches %s") % ("tomorrow!" if days <= 1 else tr("in %d days") % days), 10, UITheme.INK))
 			v.add_child(UITheme.label(egg_hint(egg), 8, UITheme.MUTED))
 			var bar := ProgressBar.new()
 			bar.show_percentage = false
@@ -101,7 +101,7 @@ func _refresh() -> void:
 		_body.add_child(row2)
 		row2.add_child(UITheme.icon_rect(Art.item("wildling_egg"), 20))
 		var meta: Dictionary = e.entry.get("meta", {})
-		var l2 := UITheme.label("%s  (%s)" % [egg_hint(meta.get("egg", {})), e.from], 9, UITheme.INK)
+		var l2 := UITheme.label(tr("%s  (%s)") % [egg_hint(meta.get("egg", {})), e.from], 9, UITheme.INK)
 		l2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row2.add_child(l2)
 		var b := UITheme.button("Incubate", func():

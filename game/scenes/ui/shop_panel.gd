@@ -93,7 +93,7 @@ func _refresh() -> void:
 		for e in p.inventory.all_entries():
 			if Data.sell_price(e.id, int(e.q)) <= 0 or Data.get_item(e.id).get("cat", "") in ["tool", "key", "container"]:
 				continue
-			var key: String = "%s:%d" % [e.id, int(e.q)]
+			var key: String = tr("%s:%d") % [e.id, int(e.q)]
 			if seen.has(key):
 				continue
 			seen[key] = true
@@ -114,7 +114,7 @@ func _row(id: String, price: int, locked: bool, req: String, buying: bool) -> Co
 	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	d.custom_minimum_size = Vector2(180, 0)
 	nv.add_child(d)
-	var b := UITheme.button("%dg" % price)
+	var b := UITheme.button(tr("%dg") % price)
 	b.disabled = locked or GameState.money() < price
 	b.gui_input.connect(func(ev):
 		if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT and not b.disabled:
@@ -130,11 +130,11 @@ func _sell_row(e: Dictionary) -> Control:
 	var h := HBoxContainer.new()
 	pc.add_child(h)
 	h.add_child(UITheme.icon_rect(Art.item(e.id), 32))
-	var n := UITheme.label("%s  x%d" % [Data.item_name(e.id, int(e.q)), int(e.n)], 10)
+	var n := UITheme.label(tr("%s  x%d") % [Data.item_name(e.id, int(e.q)), int(e.n)], 10)
 	n.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	h.add_child(n)
 	var price := Data.sell_price(e.id, int(e.q))
-	h.add_child(UITheme.button("Sell 1 (%dg)" % price, func(): _sell(e.uid, 1)))
+	h.add_child(UITheme.button(tr("Sell 1 (%dg)") % price, func(): _sell(e.uid, 1)))
 	if int(e.n) > 1:
 		h.add_child(UITheme.button("All", func(): _sell(e.uid, -1)))
 	return pc
@@ -190,9 +190,9 @@ func _build_list() -> void:
 		var req_ok := Economy.meets(b.requires, GameState.ctx())
 		if not req_ok and not built and b.requires != "" and Data.buildings.has(b.requires) and not GameState.has_building(b.requires):
 			continue
-		var costs: Array = [["%dg" % int(b.price), GameState.money() >= int(b.price)]]
+		var costs: Array = [[tr("%dg") % int(b.price), GameState.money() >= int(b.price)]]
 		for k in b.materials:
-			costs.append(["%s %d/%d" % [Data.item_name(k), Economy.count_in(srcs, k), int(b.materials[k])], Economy.count_in(srcs, k) >= int(b.materials[k])])
+			costs.append([tr("%s %d/%d") % [Data.item_name(k), Economy.count_in(srcs, k), int(b.materials[k])], Economy.count_in(srcs, k) >= int(b.materials[k])])
 		if not req_ok:
 			costs.append([Economy.req_text(b.requires), false])
 		var chk := Economy.building_ok(id, GameState.ctx(), GameState.money(), srcs)
@@ -211,14 +211,14 @@ func _upgrade_list() -> void:
 		var spec := Economy.upgrade_spec(lvl + 1)
 		var cur_name: String = "Basic" if lvl == 0 else str(Economy.upgrade_spec(lvl).get("name", ""))
 		if spec.is_empty():
-			_list.add_child(_offer(Art.item(tool), "%s %s" % [cur_name, Data.item_name(tool)], "Fully upgraded.", [], "", false, func(): pass, "Max ✓"))
+			_list.add_child(_offer(Art.item(tool), tr("%s %s") % [cur_name, Data.item_name(tool)], "Fully upgraded.", [], "", false, func(): pass, "Max ✓"))
 			continue
 		var have := Economy.count_in(srcs, spec.bar)
-		var costs: Array = [["%dg" % int(spec.price), GameState.money() >= int(spec.price)], ["%s %d/%d" % [Data.item_name(spec.bar), have, int(spec.n)], have >= int(spec.n)]]
-		var desc := "%s → %s. Works a wider area and breaks tougher debris." % [cur_name, spec.name]
+		var costs: Array = [[tr("%dg") % int(spec.price), GameState.money() >= int(spec.price)], [tr("%s %d/%d") % [Data.item_name(spec.bar), have, int(spec.n)], have >= int(spec.n)]]
+		var desc := tr("%s → %s. Works a wider area and breaks tougher debris.") % [cur_name, spec.name]
 		if tool == "watering_can":
-			desc = "%s → %s. Holds more water and soaks a wider area." % [cur_name, spec.name]
-		_list.add_child(_offer(Art.item(tool), "%s %s" % [spec.name, Data.item_name(tool)], desc, costs, "Upgrade",
+			desc = tr("%s → %s. Holds more water and soaks a wider area.") % [cur_name, spec.name]
+		_list.add_child(_offer(Art.item(tool), tr("%s %s") % [spec.name, Data.item_name(tool)], desc, costs, "Upgrade",
 			GameState.money() >= int(spec.price) and have >= int(spec.n), func(): _act("upgrade_tool", [tool])))
 
 func _backpack_list() -> void:
@@ -229,11 +229,11 @@ func _backpack_list() -> void:
 			continue
 		var owned := p.backpack_level >= lvl
 		var req: String = bp.get("requires", "")
-		var costs: Array = [["%dg" % int(bp.price), GameState.money() >= int(bp.price)]]
+		var costs: Array = [[tr("%dg") % int(bp.price), GameState.money() >= int(bp.price)]]
 		if req != "" and not GameState.is_open_requirement(req):
 			costs.append([Economy.req_text(req), false])
 		var next := lvl == p.backpack_level + 1
-		_list.add_child(_offer(Art.item("_backpack"), bp.name, "A %d x %d grid pack." % [int(bp.w), int(bp.h)], costs, "Buy",
+		_list.add_child(_offer(Art.item("_backpack"), bp.name, tr("A %d x %d grid pack.") % [int(bp.w), int(bp.h)], costs, "Buy",
 			next and GameState.money() >= int(bp.price) and (req == "" or GameState.is_open_requirement(req)),
 			func(): _act("buy_backpack", [lvl]), "Owned ✓" if owned else ""))
 
@@ -241,7 +241,7 @@ func _buy(id: String, n: int) -> void:
 	var r: Dictionary = Coop.act("buy", [shop_id, id, n])
 	if r.ok:
 		Audio.sfx("coin")
-		EventBus.toast.emit("Bought %d %s" % [n, Data.item_name(id)], "")
+		EventBus.toast.emit(tr("Bought %d %s") % [n, Data.item_name(id)], "")
 	elif r.reason != "":
 		Audio.sfx("error")
 		EventBus.toast.emit(r.reason, "")

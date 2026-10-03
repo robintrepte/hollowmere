@@ -214,7 +214,7 @@ func job_info(job_id: String) -> Dictionary:
 	return {}
 
 func type_name(t: String) -> String:
-	return types[t].name if types.has(t) else t.capitalize()
+	return tr(types[t].name) if types.has(t) else t.capitalize()
 
 # --- Crops & items -----------------------------------------------------------
 
@@ -308,8 +308,11 @@ func item_name(id: String, quality: int = 0) -> String:
 	if it.is_empty():
 		return id
 	if quality > 0:
-		return "%s %s" % [QUALITY_NAMES[quality], it.name]
-	return it.name
+		return "%s %s" % [tr(QUALITY_NAMES[quality]), tr(it.name)]
+	return tr(it.name)
+
+func item_desc(id: String) -> String:
+	return tr(str(get_item(id).get("desc", "")))
 
 func sell_price(id: String, quality: int = 0) -> int:
 	var it := get_item(id)
@@ -355,9 +358,9 @@ func get_map(id: String) -> Dictionary:
 
 func region_name(id: String) -> String:
 	if regions.has(id):
-		return regions[id].name
+		return tr(regions[id].name)
 	var m := get_map(id)
-	return m.get("name", id.capitalize())
+	return tr(m.get("name", id.capitalize()))
 
 func region_by_order(order: int) -> String:
 	for id in region_order:

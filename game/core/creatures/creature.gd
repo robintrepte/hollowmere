@@ -29,6 +29,8 @@ var job: String = ""
 var owner: String = ""
 var met: String = ""
 var starry_lineage: int = 0
+var show_rank: int = 0
+var ribbons: int = 0
 
 static func make_uid(rng: RandomNumberGenerator) -> String:
 	return "%08x%08x" % [rng.randi(), rng.randi()]
@@ -252,6 +254,7 @@ func to_dict() -> Dictionary:
 		"learned": learned.duplicate(), "hp": hp, "status": status, "status_turns": status_turns,
 		"starry": starry, "morph": morph, "happiness": happiness, "energy": energy, "grooming": grooming,
 		"job": job, "owner": owner, "met": met, "starry_lineage": starry_lineage,
+		"show_rank": show_rank, "ribbons": ribbons,
 	}
 
 static func from_dict(d: Dictionary) -> Creature:
@@ -284,6 +287,8 @@ static func from_dict(d: Dictionary) -> Creature:
 	c.owner = d.get("owner", "")
 	c.met = d.get("met", "")
 	c.starry_lineage = int(d.get("starry_lineage", 0))
+	c.show_rank = int(d.get("show_rank", 0))
+	c.ribbons = int(d.get("ribbons", 0))
 	return c
 
 func clone() -> Creature:

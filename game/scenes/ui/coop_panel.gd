@@ -74,7 +74,7 @@ func _edit(parent: Control, text: String, placeholder: String) -> LineEdit:
 	var e := LineEdit.new()
 	e.text = text
 	e.placeholder_text = placeholder
-	e.add_theme_font_size_override("font_size", 10)
+	e.add_theme_font_size_override("font_size", UITheme.fs(10))
 	e.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	parent.add_child(e)
 	return e
@@ -166,7 +166,7 @@ func _host_view() -> void:
 			if Net.host_lan():
 				_rebuild()
 			else:
-				_say("Couldn't open port %d. Is another farm already open?" % Net.ENET_PORT)))
+				_say(tr("Couldn't open port %d. Is another farm already open?") % Net.ENET_PORT)))
 
 func _host_online() -> void:
 	if _busy:
@@ -196,9 +196,9 @@ func _session_view() -> void:
 			DisplayServer.clipboard_set(code_text)
 			_say("Copied!", true)))
 	else:
-		_hint("You're visiting %s's farm." % _host_name(), UITheme.INK)
+		_hint(tr("You're visiting %s's farm.") % _host_name(), UITheme.INK)
 	var players := Coop.online_players()
-	_heading("Here now (%d)" % (players.size() + 1))
+	_heading(tr("Here now (%d)") % (players.size() + 1))
 	if players.is_empty():
 		_hint("Waiting for friends to join...")
 	for pl: Dictionary in players:
@@ -215,7 +215,7 @@ func _session_view() -> void:
 				_say("Your Wildlings need a rest first.")
 				return
 			Coop.challenge(pid)
-			_say("Challenge sent to %s." % pl.name, true)))
+			_say(tr("Challenge sent to %s.") % pl.name, true)))
 	var rc := _row()
 	var chat := _edit(rc, "", "Say something...")
 	chat.max_length = 200

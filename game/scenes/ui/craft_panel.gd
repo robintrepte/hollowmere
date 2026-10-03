@@ -144,7 +144,7 @@ func _show_detail() -> void:
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	info.add_child(desc)
 	if int(it.get("energy", 0)) > 0 and not locked:
-		info.add_child(UITheme.label("+%d energy" % int(it.energy), 9, UITheme.LEAF.darkened(0.3)))
+		info.add_child(UITheme.label(tr("+%d energy") % int(it.energy), 9, UITheme.LEAF.darkened(0.3)))
 	if locked:
 		return
 	_detail.add_child(UITheme.label("Ingredients", 10, UITheme.WOOD))
@@ -157,7 +157,7 @@ func _show_detail() -> void:
 		var nl := UITheme.label(Data.item_name(k), 9, UITheme.INK)
 		nl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(nl)
-		row.add_child(UITheme.label("%d / %d" % [have, need], 9, UITheme.LEAF.darkened(0.3) if have >= need else Color("#b04040")))
+		row.add_child(UITheme.label(tr("%d / %d") % [have, need], 9, UITheme.LEAF.darkened(0.3) if have >= need else Color("#b04040")))
 		_detail.add_child(row)
 	var acts := HBoxContainer.new()
 	acts.add_theme_constant_override("separation", 4)
@@ -182,6 +182,6 @@ func _make(n: int) -> void:
 		made += 1
 	if made > 0:
 		Audio.sfx("chest")
-		EventBus.toast.emit("Made %d %s" % [made, Data.item_name(_sel)], "")
+		EventBus.toast.emit(tr("Made %d %s") % [made, Data.item_name(_sel)], "")
 	await get_tree().process_frame
 	_refresh()

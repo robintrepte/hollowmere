@@ -51,7 +51,17 @@ func _ready() -> void:
 	Net.coop_ended.connect(_on_coop_ended)
 	EventBus.battle_requested.connect(_on_battle_requested)
 	EventBus.story_advanced.connect(_on_story_advanced)
+	Settings.text_scale_changed.connect(_rebuild_hud)
 	show_title()
+
+func _rebuild_hud() -> void:
+	if hud == null:
+		return
+	var vis := hud.visible
+	hud.queue_free()
+	hud = Hud.new()
+	add_child(hud)
+	hud.visible = vis
 
 # --- Title ------------------------------------------------------------------------------
 
@@ -69,7 +79,7 @@ func show_title() -> void:
 func _on_story_advanced(ch: Dictionary) -> void:
 	Audio.sfx("levelup")
 	var rw: Dictionary = ch.get("reward", {})
-	EventBus.toast.emit("Chapter complete: %s%s" % [ch.title, (" (%s)" % AdventureFlow.loot_text(rw)) if not rw.is_empty() else ""], "star")
+	EventBus.toast.emit(tr("Chapter complete: %s%s") % [ch.title, (tr(" (%s)") % AdventureFlow.loot_text(rw)) if not rw.is_empty() else ""], "star")
 	if not Adventure.chapter(GameState.world).is_empty():
 		EventBus.toast.emit("Elder Barley has something to tell you.", "book")
 
@@ -167,7 +177,7 @@ func _leave_game() -> void:
 func _go_to(map_id: String, pos: Vector2) -> void:
 	var pd := GameState.local_player()
 	if GameState.map_info(map_id).is_empty():
-		push_warning("Unknown map %s" % map_id)
+		push_warning(tr("Unknown map %s") % map_id)
 		map_id = "farm"
 		var sp: Array = Data.get_map("farm").spawn
 		pos = GameState.tile_center(Vector2i(int(sp[0]), int(sp[1])))
@@ -210,7 +220,7 @@ func _on_map_change(map_id: String, tile: Vector2i) -> void:
 
 func _on_warp(w: Dictionary) -> void:
 	if not GameState.is_open_requirement(w.get("requires", "")):
-		EventBus.toast.emit("The way is blocked. (%s)" % Economy.req_text(w.requires), "")
+		EventBus.toast.emit(tr("The way is blocked. (%s)") % Economy.req_text(w.requires), "")
 		player.position -= player.facing * 10.0
 		return
 	_on_map_change(w.to, Vector2i(int(w.tx), int(w.ty)))
@@ -296,7 +306,7 @@ func _open_chat() -> void:
 	var e := LineEdit.new()
 	e.placeholder_text = "Say something (Enter to send, Esc to cancel)"
 	e.max_length = 200
-	e.add_theme_font_size_override("font_size", 10)
+	e.add_theme_font_size_override("font_size", UITheme.fs(10))
 	bar.add_child(e)
 	e.text_submitted.connect(func(t: String):
 		Coop.send_chat(t)
@@ -314,7 +324,7 @@ func _on_pvp_challenge(from_pid: String, from_name: String) -> void:
 		Coop.decline_challenge(from_pid)
 		return
 	Audio.sfx("encounter")
-	var c: int = await ui.ask("%s challenges you to a friendly battle! (Nothing is lost, win or lose.)" % from_name, ["Battle!", "Not now"])
+	var c: int = await ui.ask(tr("%s challenges you to a friendly battle! (Nothing is lost, win or lose.)") % from_name, ["Battle!", "Not now"])
 	if c == 0 and not _busy():
 		Coop.accept_challenge(from_pid)
 	else:
@@ -331,7 +341,7 @@ func _on_trade_invited(tid: int, from_name: String) -> void:
 	if _busy():
 		Coop.trade_op("cancel", {"tid": tid})
 		return
-	var c: int = await ui.ask("%s wants to trade with you." % from_name, ["Let's trade", "No thanks"])
+	var c: int = await ui.ask(tr("%s wants to trade with you.") % from_name, ["Let's trade", "No thanks"])
 	Coop.trade_op("join" if c == 0 else "cancel", {"tid": tid})
 
 func _on_trade_state(s: Dictionary) -> void:
@@ -384,7 +394,7 @@ func _on_battle_requested(s: Dictionary) -> void:
 	match res.result:
 		"befriend":
 			var c2: Creature = res.befriended
-			c2.met = "Befriended in %s at Lv%d" % [world.info.get("name", world.map_id), c2.level]
+			c2.met = tr("Befriended in %s at Lv%d") % [world.info.get("name", world.map_id), c2.level]
 			c2.heal_full()
 			var where := "party" if pd.party.size() < PlayerData.PARTY_MAX else "den"
 			if Net.is_authority():
@@ -392,7 +402,7 @@ func _on_battle_requested(s: Dictionary) -> void:
 				GameState.bump_stat("befriend")
 			else:
 				Coop.act("befriend_act", [JSON.stringify(c2.to_dict())])
-			after.append("%s joined %s!" % [c2.display_name(), {"party": "your party", "den": "the farm Den", "sanctuary": "the Sanctuary"}[where]])
+			after.append(tr("%s joined %s!") % [c2.display_name(), {"party": "your party", "den": "the farm Den", "sanctuary": "the Sanctuary"}[where]])
 			if node:
 				world.remove_creature(node)
 			for rid in Data.regions:
@@ -420,12 +430,20 @@ func _on_battle_requested(s: Dictionary) -> void:
 				var sp: Array = Data.get_map("farm").spawn
 				_go_to("farm", GameState.tile_center(Vector2i(int(sp[0]), int(sp[1]))))
 				GameState.advance_minutes(120)
+	if s.kind == "wild" and res.result in ["befriend", "win"] and not s.get("boss", false):
+		var cr: Dictionary = await Coop.act_async("chain_act", [s.species])
+		var n := int(cr.get("chain", {}).get("n", 0))
+		if n in [Endless.CHAIN_LURE, 10, 20, 30, Endless.CHAIN_CAP]:
+			EventBus.toast.emit(tr("%s chain x%d! Starry odds x%.1f%s") % [Data.species[s.species].name, n,
+				Endless.chain_mult(cr.chain, s.species), " and more of them are about." if n == Endless.CHAIN_LURE else ""], "star")
 	if _redraw_after_battle:
 		_redraw_after_battle = false
 		world.refresh_all()
 	Audio.music(world.info.get("music", "farm"))
 	EventBus.party_changed.emit()
 	await _fade_to(0.0, 0.3)
+	if res.result == "befriend":
+		Juice.burst(world, player.position + Vector2(0, -18), "befriend")
 	if not after.is_empty():
 		Audio.sfx("befriend")
 		await ui.say(after)

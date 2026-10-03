@@ -84,7 +84,7 @@ func _ready() -> void:
 		b.custom_minimum_size = Vector2(110, 0)
 		b.icon = Art.creature(sid, true)
 		b.expand_icon = false
-		b.text = "%s\n%s" % [sp.get("name", sid), "/".join(sp.get("types", [])).capitalize()]
+		b.text = tr("%s\n%s") % [sp.get("name", sid), "/".join(sp.get("types", [])).capitalize()]
 		b.pressed.connect(func(): _pick_starter(sid))
 		st.add_child(b)
 		_starter_btns[sid] = b
@@ -107,7 +107,7 @@ func _field(parent: Control, label: String, placeholder: String) -> LineEdit:
 	e.placeholder_text = placeholder
 	e.max_length = 16
 	e.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	e.add_theme_font_size_override("font_size", 10)
+	e.add_theme_font_size_override("font_size", UITheme.fs(10))
 	h.add_child(e)
 	return e
 

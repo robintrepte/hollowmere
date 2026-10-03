@@ -67,7 +67,7 @@ func _field(placeholder: String, secret := false) -> LineEdit:
 	var e := LineEdit.new()
 	e.placeholder_text = placeholder
 	e.secret = secret
-	e.add_theme_font_size_override("font_size", 10)
+	e.add_theme_font_size_override("font_size", UITheme.fs(10))
 	e.custom_minimum_size = Vector2(0, 20)
 	_body.add_child(e)
 	return e
@@ -109,14 +109,14 @@ func _server_row() -> void:
 	var r := _row()
 	r.add_child(UITheme.label("Server", 8, UITheme.MUTED))
 	var host := LineEdit.new()
-	host.text = "%s:%d" % [Settings.server_host, Settings.server_port]
-	host.add_theme_font_size_override("font_size", 8)
+	host.text = tr("%s:%d") % [Settings.server_host, Settings.server_port]
+	host.add_theme_font_size_override("font_size", UITheme.fs(8))
 	host.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	r.add_child(host)
 	var ssl := CheckBox.new()
 	ssl.text = "TLS"
 	ssl.button_pressed = Settings.server_ssl
-	ssl.add_theme_font_size_override("font_size", 8)
+	ssl.add_theme_font_size_override("font_size", UITheme.fs(8))
 	r.add_child(ssl)
 	r.add_child(UITheme.button("Use", func():
 		var parts := host.text.strip_edges().split(":")
@@ -128,13 +128,13 @@ func _server_row() -> void:
 		_check_server()))
 
 func _signed_in() -> void:
-	var who := UITheme.label("Signed in as %s%s" % [Net.display_name, "  (guest)" if Net.is_guest else ""], 11, UITheme.INK)
+	var who := UITheme.label(tr("Signed in as %s%s") % [Net.display_name, "  (guest)" if Net.is_guest else ""], 11, UITheme.INK)
 	_body.add_child(who)
 	var r := _row()
 	var nm := LineEdit.new()
 	nm.text = Net.display_name
 	nm.max_length = 20
-	nm.add_theme_font_size_override("font_size", 10)
+	nm.add_theme_font_size_override("font_size", UITheme.fs(10))
 	nm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	r.add_child(nm)
 	r.add_child(UITheme.button("Rename", func(): _run(func(): return await Net.set_display_name(nm.text.strip_edges()), "Name saved.")))
@@ -146,7 +146,7 @@ func _signed_in() -> void:
 	var cloud := CheckBox.new()
 	cloud.text = "Back up farms to the cloud when saving"
 	cloud.button_pressed = Settings.cloud_saves
-	cloud.add_theme_font_size_override("font_size", 9)
+	cloud.add_theme_font_size_override("font_size", UITheme.fs(9))
 	cloud.toggled.connect(func(on: bool):
 		Settings.cloud_saves = on
 		Settings.save_settings())

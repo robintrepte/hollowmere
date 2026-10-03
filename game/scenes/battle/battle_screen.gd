@@ -218,7 +218,7 @@ func _refresh_box(side: int, animate_hp: bool = false) -> void:
 	var c := engine.active(side)
 	var b: Dictionary = _me_box if side == 0 else _foe_box
 	b.name.text = ("★ " if c.starry else "") + c.display_name()
-	b.lvl.text = "Lv%d" % c.level
+	b.lvl.text = tr("Lv%d") % c.level
 	var team: Array = engine.sides[side].team
 	var pips := ""
 	if team.size() > 1:
@@ -234,7 +234,7 @@ func _refresh_box(side: int, animate_hp: bool = false) -> void:
 		_hp_shown[side] = frac
 		_set_hp_bar(side, frac)
 	if side == 0:
-		b.nums.text = "%d / %d" % [c.hp, c.max_hp()]
+		b.nums.text = tr("%d / %d") % [c.hp, c.max_hp()]
 		var lo := Creature.xp_for_level(c.level)
 		var hi := Creature.xp_for_level(c.level + 1)
 		b.xp.value = clampf(float(c.xp - lo) / float(maxi(1, hi - lo)), 0.0, 1.0)
@@ -356,7 +356,7 @@ func _run_pvp() -> Dictionary:
 		"win":
 			await _say("You won the friendly battle!")
 		"lose":
-			await _say("%s won the friendly battle. Good match!" % setup.name)
+			await _say(tr("%s won the friendly battle. Good match!") % setup.name)
 	return {"result": "pvp_" + engine.result, "befriended": null, "foe_species": ""}
 
 func _send(msg: Dictionary) -> void:
@@ -384,7 +384,7 @@ func _next_remote(op: String = "") -> Dictionary:
 func _opponent_left() -> void:
 	if engine.result == "":
 		engine.result = "win"
-	await _say("%s left the battle." % setup.name)
+	await _say(tr("%s left the battle.") % setup.name)
 
 func _host_step(ev: Array) -> void:
 	_send({"op": "ev", "ev": BattleEngine.mirror_events(ev), "st": engine.snapshot()})
@@ -395,7 +395,7 @@ func _host_pvp() -> void:
 	while not engine.is_over():
 		if engine.needs_switch(1):
 			_send({"op": "force"})
-			_msg.text = "Waiting for %s..." % setup.name
+			_msg.text = tr("Waiting for %s...") % setup.name
 			var f := await _next_remote("force")
 			if f.op == "left":
 				await _opponent_left()
@@ -408,7 +408,7 @@ func _host_pvp() -> void:
 			continue
 		_send({"op": "turn"})
 		var a0: Dictionary = await _choose_action()
-		_msg.text = "Waiting for %s..." % setup.name
+		_msg.text = tr("Waiting for %s...") % setup.name
 		var m := await _next_remote("act")
 		if m.op == "left":
 			await _opponent_left()
@@ -432,11 +432,11 @@ func _guest_pvp() -> void:
 			"force":
 				var idx: int = await _choose_party(true)
 				_send({"op": "force", "i": idx})
-				_msg.text = "Waiting for %s..." % setup.name
+				_msg.text = tr("Waiting for %s...") % setup.name
 			"turn":
 				var a: Dictionary = await _choose_action()
 				_send({"op": "act", "a": a})
-				_msg.text = "Waiting for %s..." % setup.name
+				_msg.text = tr("Waiting for %s...") % setup.name
 
 ## Keeps the display-only engine in step while mirrored events play.
 func _apply_event_state(e: Dictionary) -> void:
@@ -458,13 +458,13 @@ func _after_battle() -> void:
 		"win":
 			if setup.get("kind", "wild") != "wild":
 				var reward := int(setup.get("reward", 0))
-				await _say("You beat %s!" % setup.get("foe_name", "the trainer"))
+				await _say(tr("You beat %s!") % setup.get("foe_name", "the trainer"))
 				for l in setup.get("lose_lines", []):
 					await _say(l)
 				if reward > 0:
 					GameState.earn(reward)
 					Audio.sfx("coin")
-					await _say("You got %dg for winning." % reward)
+					await _say(tr("You got %dg for winning.") % reward)
 		"lose":
 			await _say("Your Wildlings are all worn out...")
 			await _say("You hurry back home to rest.")
@@ -475,7 +475,7 @@ func _after_battle() -> void:
 			_me_spr.texture = Art.creature(c.species_id)
 			_me_spr.visible = true
 			_me_spr.position = ME_POS
-			await _say("What? %s is evolving!" % before)
+			await _say(tr("What? %s is evolving!") % before)
 			for i in 6:
 				_me_spr.modulate = Color(3, 3, 3) if i % 2 == 0 else Color.WHITE
 				await get_tree().create_timer(0.18 - i * 0.02).timeout
@@ -484,7 +484,7 @@ func _after_battle() -> void:
 			_me_spr.modulate = Color.WHITE
 			Audio.sfx("levelup")
 			await _flash_screen(1)
-			await _say("%s evolved into %s!" % [before, Data.get_species(c.species_id).name])
+			await _say(tr("%s evolved into %s!") % [before, Data.get_species(c.species_id).name])
 			GameState.dex_mark(c.species_id, true, c.starry)
 	EventBus.party_changed.emit()
 
@@ -516,7 +516,7 @@ func _play(events: Array) -> void:
 			"heal":
 				Audio.sfx("heal")
 				if int(e.side) == 0:
-					_me_box.nums.text = "%d / %d" % [int(e.hp), int(e.max)]
+					_me_box.nums.text = tr("%d / %d") % [int(e.hp), int(e.max)]
 				await _tween_hp(int(e.side), float(e.hp) / float(maxi(1, int(e.max))))
 			"stat":
 				Audio.sfx("sparkle" if int(e.n) > 0 else "miss")
@@ -580,6 +580,20 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			_advance.emit()
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("ui_cancel"):
+		var back := _back_button(self)
+		if back:
+			back.pressed.emit()
+			get_viewport().set_input_as_handled()
+
+func _back_button(n: Node) -> Button:
+	if n is Button and n.text == "Back" and n.is_visible_in_tree():
+		return n
+	for c in n.get_children():
+		var b := _back_button(c)
+		if b:
+			return b
+	return null
 
 func _lunge(side: int, cat: String) -> void:
 	var s := _sprite(side)
@@ -610,7 +624,7 @@ func _hit(side: int, e: Dictionary) -> void:
 		await get_tree().create_timer(0.05).timeout
 	s.position = home
 	if side == 0:
-		_me_box.nums.text = "%d / %d" % [int(e.hp), int(e.max)]
+		_me_box.nums.text = tr("%d / %d") % [int(e.hp), int(e.max)]
 	await _tween_hp(side, float(e.hp) / float(maxi(1, int(e.max))))
 
 func _shake_root() -> void:
@@ -704,7 +718,7 @@ func _choose_action() -> Dictionary:
 func _show_main_menu() -> void:
 	_clear_cmd()
 	_cmd.visible = true
-	_msg.text = "What will %s do?" % engine.active(0).display_name()
+	_msg.text = tr("What will %s do?") % engine.active(0).display_name()
 	_msg.visible_characters = -1
 	var f := _cmd_button("Fight", _show_moves)
 	_cmd_button("Bag", _show_bag)
@@ -737,11 +751,11 @@ func _show_moves() -> void:
 	var first: Button = null
 	for i in c.moves.size():
 		var m: Dictionary = Data.get_move(c.moves[i])
-		var label := "%s\n%s%s" % [m.name, Data.type_name(m.type), (" · %d" % int(m.power)) if int(m.power) > 0 else " · status"]
+		var label := tr("%s\n%s%s") % [m.name, Data.type_name(m.type), (tr(" · %d") % int(m.power)) if int(m.power) > 0 else " · status"]
 		var idx := i
 		var b := _cmd_button(label, func(): _picked.emit({"k": "move", "i": idx}), Data.type_color(m.type).darkened(0.25))
-		b.add_theme_font_size_override("font_size", 10)
-		b.tooltip_text = m.get("desc", "")
+		b.add_theme_font_size_override("font_size", UITheme.fs(10))
+		b.tooltip_text = tr(str(m.get("desc", "")))
 		var eff := Data.type_mult(m.type, engine.active(1).types()) if int(m.power) > 0 else 1.0
 		if eff > 1.0:
 			b.text += " ▲"
@@ -784,9 +798,9 @@ func _show_bag() -> void:
 		var row := HBoxContainer.new()
 		v.add_child(row)
 		row.add_child(UITheme.icon_rect(Art.item(it.id), 16))
-		var text := "%s  x%d" % [Data.item_name(it.id), int(it.n)]
+		var text := tr("%s  x%d") % [Data.item_name(it.id), int(it.n)]
 		if it.befriend:
-			text += "   (%d%%)" % roundi(engine.befriend_chance(it.id) * 100.0)
+			text += tr("   (%d%%)") % roundi(engine.befriend_chance(it.id) * 100.0)
 		var id: String = it.id
 		var b := UITheme.button(text, func():
 			_close_overlay()
@@ -818,7 +832,7 @@ func _choose_party(forced: bool) -> int:
 		var row := HBoxContainer.new()
 		v.add_child(row)
 		row.add_child(UITheme.icon_rect(Art.creature(c.species_id, true), 32))
-		var b := UITheme.button("%s  Lv%d   HP %d/%d%s" % [c.display_name(), c.level, c.hp, c.max_hp(), "  (out)" if i == engine.sides[0].active else ""], func():
+		var b := UITheme.button(tr("%s  Lv%d   HP %d/%d%s") % [c.display_name(), c.level, c.hp, c.max_hp(), "  (out)" if i == engine.sides[0].active else ""], func():
 			result[0] = i
 			_advance.emit())
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT

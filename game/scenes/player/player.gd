@@ -73,6 +73,8 @@ func _physics_process(delta: float) -> void:
 		if _step_t > 0.32:
 			_step_t = 0.0
 			Audio.sfx("step", 0.15)
+			if speed == RUN_SPEED and world and not world.info.get("indoor", false):
+				Juice.burst(get_parent(), position + Vector2(0, -1), "dust")
 	doll.facing = facing
 	doll.moving = moving
 	var p := GameState.player(pid)

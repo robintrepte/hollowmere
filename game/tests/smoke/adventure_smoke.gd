@@ -19,7 +19,7 @@ func _ready() -> void:
 	var slot := SaveManager.first_free_slot()
 	main._start_new({"player_name": "Robin", "farm_name": "Smoke", "starter": "sproutle", "seed": 4242})
 	await _wait(1.0)
-	main.ui.dialogue.visible = false
+	await main.ui.dialogue.dismiss()
 	main.ui.close_all()
 	main.player.locked = false
 	var pd := GameState.local_player()
@@ -145,12 +145,12 @@ func _go(map_id: String, t: Vector2i) -> void:
 
 ## Runs a flow while answering its dialogue and fighting its battles. Takes one screenshot
 ## when a line containing `shot_on` appears.
-func _flow(fn: Callable, answers: Array, shot_on: String = "", shot_name: String = "") -> void:
+func _flow(fn: Callable, answers: Array, shot_on: String = "", shot_name: String = "", limit: float = 90.0) -> void:
 	_flow_done = false
 	_run(fn)
 	Engine.time_scale = 4.0
 	var t0 := Time.get_ticks_msec()
-	while not _flow_done and (Time.get_ticks_msec() - t0) / 1000.0 < 90.0:
+	while not _flow_done and (Time.get_ticks_msec() - t0) / 1000.0 < limit:
 		await get_tree().process_frame
 		var b: BattleScreen = main.battle
 		if b:
@@ -159,7 +159,13 @@ func _flow(fn: Callable, answers: Array, shot_on: String = "", shot_name: String
 				if main.battle == b and b._cmd.visible:
 					b._picked.emit({"k": "move", "i": 0})
 			elif is_instance_valid(b._overlay):
-				b._advance.emit()
+				var pick := _first_option(b._overlay)
+				if pick:
+					await get_tree().create_timer(0.05).timeout
+					if is_instance_valid(pick):
+						pick.pressed.emit()
+				else:
+					b._advance.emit()
 			continue
 		var d: DialogueBox = main.ui.dialogue
 		if not d.visible:
@@ -178,10 +184,21 @@ func _flow(fn: Callable, answers: Array, shot_on: String = "", shot_name: String
 			d._advance()
 		await get_tree().create_timer(0.05).timeout
 	Engine.time_scale = 1.0
+	if not _flow_done:
+		var d: DialogueBox = main.ui.dialogue
+		print("  stuck: battle=%s dialogue=%s typing=%s choices=%d text=%s ui_open=%s" % [main.battle != null, d.visible, d._typing, d._choice_buttons.size(), d._text.text.left(80), main.ui.is_open()])
+		await _shot("stuck_" + (shot_name if shot_name != "" else str(Time.get_ticks_msec())))
 	if shot_on != "":
 		_check(false, "never saw a line containing '%s'" % shot_on)
 	_check(_flow_done, "flow finished")
 	main.player.locked = false
+
+## First enabled choice in a battle menu (e.g. the forced switch after a faint).
+func _first_option(n: Node) -> Button:
+	for c in n.find_children("*", "Button", true, false):
+		if not c.disabled and c.is_visible_in_tree() and c.text != "Back":
+			return c
+	return null
 
 func _run(fn: Callable) -> void:
 	await fn.call()

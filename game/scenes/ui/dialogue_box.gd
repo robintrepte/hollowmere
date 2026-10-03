@@ -4,6 +4,7 @@ extends Control
 
 signal advanced
 signal chosen(index: int)
+signal closed
 
 const CPS := 55.0
 
@@ -16,6 +17,17 @@ var _arrow: Label
 var _typing := false
 var _t := 0.0
 var _choice_buttons: Array = []
+var busy := false
+
+## Hides the box and drops any conversation still waiting on it.
+func dismiss() -> void:
+	while busy:
+		if not _choice_buttons.is_empty():
+			chosen.emit(-1)
+		else:
+			_typing = false
+			advanced.emit()
+		await get_tree().process_frame
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -52,11 +64,12 @@ func _ready() -> void:
 	row.add_child(tcol)
 	_text = RichTextLabel.new()
 	_text.bbcode_enabled = true
+	_text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	_text.fit_content = false
 	_text.scroll_active = false
 	_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_text.add_theme_font_size_override("normal_font_size", 11)
+	_text.add_theme_font_size_override("normal_font_size", UITheme.fs(11))
 	tcol.add_child(_text)
 	_choices = VBoxContainer.new()
 	_choices.add_theme_constant_override("separation", 2)
@@ -70,8 +83,14 @@ func _ready() -> void:
 	_arrow.offset_top = -22
 	add_child(_arrow)
 
+## Conversations queue: a second run (e.g. a co-op invite mid-chat) waits for the first to close.
 func run(lines: Array, speaker: String, portrait: Texture2D, choices: Array) -> int:
+	while busy:
+		await closed
+	busy = true
 	visible = true
+	_text.add_theme_font_size_override("normal_font_size", UITheme.fs(11))
+	_name.add_theme_font_size_override("font_size", UITheme.fs(10))
 	_name.text = speaker
 	_name.get_parent().visible = speaker != ""
 	_portrait.texture = portrait
@@ -87,10 +106,12 @@ func run(lines: Array, speaker: String, portrait: Texture2D, choices: Array) -> 
 			await advanced
 	visible = false
 	_clear_choices()
+	busy = false
+	closed.emit()
 	return result
 
 func _show_line(s: String) -> void:
-	_text.text = s
+	_text.text = tr(s)
 	_text.visible_characters = 0
 	_typing = true
 	_t = 0.0

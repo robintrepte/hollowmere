@@ -72,14 +72,14 @@ func _ready() -> void:
 	_menu.add_child(UITheme.button("Settings", func(): ui.open(SettingsPanel.new())))
 	if OS.get_name() != "Web":
 		_menu.add_child(UITheme.button("Quit", func(): get_tree().quit()))
-	var ver := UITheme.label("v%s" % ProjectSettings.get_setting("application/config/version"), 8, UITheme.CREAM, true)
+	var ver := UITheme.label(tr("v%s") % ProjectSettings.get_setting("application/config/version"), 8, UITheme.CREAM, true)
 	ver.anchor_top = 1
 	ver.anchor_bottom = 1
 	ver.offset_left = 6
 	ver.offset_top = -14
 	add_child(ver)
 	_account = UITheme.button("", func(): ui.open(AccountPanel.new()))
-	_account.add_theme_font_size_override("font_size", 9)
+	_account.add_theme_font_size_override("font_size", UITheme.fs(9))
 	_account.anchor_left = 1
 	_account.anchor_right = 1
 	_account.offset_left = -6
@@ -94,7 +94,7 @@ func _ready() -> void:
 	Audio.music("title")
 
 func _on_session(signed_in: bool) -> void:
-	_account.text = ("● %s" % Net.display_name) if signed_in else "Sign in"
+	_account.text = (tr("● %s") % Net.display_name) if signed_in else "Sign in"
 	if signed_in:
 		_load_btn.disabled = false
 
@@ -134,7 +134,7 @@ func _open_load() -> void:
 		var s := int(m.slot)
 		var h := HBoxContainer.new()
 		v.add_child(h)
-		var txt := "%s · %s Farm\n%s · %dg" % [m.get("player", "?"), m.get("farm", "?"), Calendar.date_string(int(m.get("day", 0))), int(m.get("money", 0))]
+		var txt := tr("%s · %s Farm\n%s · %dg") % [m.get("player", "?"), m.get("farm", "?"), Calendar.date_string(int(m.get("day", 0))), int(m.get("money", 0))]
 		var b := UITheme.button(txt, func(): ui.close(p); load_requested.emit(int(s)))
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -166,7 +166,7 @@ func _fill_cloud(box: VBoxContainer, p: Control) -> void:
 		var m: Dictionary = c.meta
 		var s := int(c.slot)
 		var payload: Dictionary = c.payload
-		var txt := "● %s · %s Farm\n%s · %dg" % [m.get("player", "?"), m.get("farm", "?"), Calendar.date_string(int(m.get("day", 0))), int(m.get("money", 0))]
+		var txt := tr("● %s · %s Farm\n%s · %dg") % [m.get("player", "?"), m.get("farm", "?"), Calendar.date_string(int(m.get("day", 0))), int(m.get("money", 0))]
 		var b := UITheme.button(txt, func():
 			if SaveManager.install_payload(s, payload):
 				ui.close(p)

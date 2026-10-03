@@ -43,6 +43,64 @@ static func is_busy(obj: Dictionary) -> bool:
 static func remaining(obj: Dictionary, now_abs: int) -> int:
 	return maxi(0, int(obj.get("ready_at", 0)) - now_abs)
 
+## Spark workers run the machine line overnight: finished goods go into the farm chest, then idle
+## machines are refilled from it with whatever earns the most. Seed makers are left to the player
+## because they eat crops at a loss. `slots` = machines the workers can service.
+static func automate(grids: Array, chest: Inventory, now_abs: int, slots: int, rep: Dictionary) -> void:
+	for g in grids:
+		for k in g.objects:
+			if slots <= 0:
+				return
+			var o: Dictionary = g.objects[k]
+			if o.kind != "machine" or o.id == "seed_maker":
+				continue
+			var served := false
+			if is_ready(o, now_abs):
+				var out: Dictionary = o.output
+				if chest.add(out.id, int(out.n), int(out.q)) > 0:
+					continue
+				rep.items[out.id] = int(rep.items.get(out.id, 0)) + int(out.n)
+				rep.machines_collected = int(rep.get("machines_collected", 0)) + 1
+				o.output = {}
+				o.input = ""
+				served = true
+			if not is_busy(o):
+				var pick := best_input(o.id, chest)
+				if not pick.is_empty():
+					var need := int(pick.consume[pick.id])
+					if int(chest.find(pick.uid).entry.n) >= need:
+						chest.take(pick.uid, need)
+					else:
+						chest.remove(pick.id, need)
+					for c in pick.consume:
+						if c != pick.id:
+							chest.remove(c, int(pick.consume[c]))
+					o.input = pick.id
+					o.output = pick.output
+					o.ready_at = now_abs + int(pick.time)
+					rep.machines_loaded = int(rep.get("machines_loaded", 0)) + 1
+					served = true
+			if served:
+				slots -= 1
+
+## The chest entry that gains the most value in this machine, with can_load's result merged in.
+static func best_input(machine_id: String, chest: Inventory) -> Dictionary:
+	var best := {}
+	var best_gain := 0
+	for e in chest.all_entries():
+		var chk := can_load(machine_id, e.id, int(e.q), chest)
+		if not chk.ok:
+			continue
+		var gain := Data.sell_price(chk.output.id, int(chk.output.q)) * int(chk.output.n)
+		for c in chk.consume:
+			gain -= Data.sell_price(c, int(e.q) if c == e.id else 0) * int(chk.consume[c])
+		if gain > best_gain:
+			best_gain = gain
+			chk.uid = e.uid
+			chk.id = e.id
+			best = chk
+	return best
+
 static func apply_power(grids: Array, minutes: int) -> void:
 	if minutes <= 0:
 		return

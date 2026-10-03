@@ -79,7 +79,7 @@ func _story() -> void:
 		var col := VBoxContainer.new()
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		h.add_child(col)
-		col.add_child(UITheme.label("Chapter %d · %s" % [int(w.quest) + 1, ch.title], 10, UITheme.INK))
+		col.add_child(UITheme.label(tr("Chapter %d · %s") % [int(w.quest) + 1, ch.title], 10, UITheme.INK))
 		col.add_child(_wrap(Adventure.tracker(w, player), 8, UITheme.WOOD))
 		if not ch.goal.is_empty() and w.flags.get("story_seen:" + str(ch.id), false):
 			var pr := Adventure.goal_progress(ch.goal, Adventure.story_facts(w, player))
@@ -94,7 +94,7 @@ func _story() -> void:
 		done.append(str(Adventure.chapters()[i].title))
 	if not done.is_empty():
 		_body.add_child(_wrap("Finished: " + " · ".join(done), 8, UITheme.MUTED))
-	_body.add_child(UITheme.label("The valley · %d / %d shrines awake" % [w.shrines.size(), Adventure.SHRINE_COUNT], 9, UITheme.WOOD))
+	_body.add_child(UITheme.label(tr("The valley · %d / %d shrines awake") % [w.shrines.size(), Adventure.SHRINE_COUNT], 9, UITheme.WOOD))
 	var grid := GridContainer.new()
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 4)
@@ -124,11 +124,11 @@ func _story() -> void:
 		rc.add_child(UITheme.label(Data.region_name(rid) if open else "???", 9, UITheme.INK))
 		var status := "Locked"
 		if open:
-			status = {"dark": "Warden %s awaits" % Data.villager_name(str(r.warden)), "ready": "Shrine ready to wake", "restored": "Shrine awake ✓"}[state]
+			status = {"dark": tr("Warden %s awaits") % Data.villager_name(str(r.warden)), "ready": "Shrine ready to wake", "restored": "Shrine awake ✓"}[state]
 		rc.add_child(UITheme.label(status, 8, UITheme.LEAF.darkened(0.3) if state == "restored" else UITheme.MUTED))
 		if open and r.has("mine"):
 			var total := Adventure.mine_floors(rid)
-			rc.add_child(UITheme.label("%s B%d%s" % [r.mine.name, Adventure.deepest(w, rid), (" / %d" % total) if total > 0 else ""], 8, UITheme.MUTED))
+			rc.add_child(UITheme.label(tr("%s B%d%s") % [r.mine.name, Adventure.deepest(w, rid), (tr(" / %d") % total) if total > 0 else ""], 8, UITheme.MUTED))
 	if w.shrines.size() >= Adventure.SHRINE_COUNT:
 		var names: Array = []
 		for lid in Data.legends:
@@ -153,7 +153,7 @@ func _people() -> void:
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		col.add_theme_constant_override("separation", 0)
 		h.add_child(col)
-		var name_line := "%s%s" % [v.name, "  ♥ dating" if st.get("dating", false) else ("  ♥ married" if st.get("married", false) else "")]
+		var name_line := tr("%s%s") % [v.name, "  ♥ dating" if st.get("dating", false) else ("  ♥ married" if st.get("married", false) else "")]
 		col.add_child(UITheme.label(name_line, 10, UITheme.INK))
 		var hearts := Relationships.hearts(st)
 		var cap := Relationships.MAX_HEARTS if not v.get("romance", false) or st.get("dating", false) else Relationships.MAX_HEARTS_FRIEND
@@ -161,8 +161,8 @@ func _people() -> void:
 		var bits: Array = []
 		var bd: Array = v.get("birthday", [])
 		if bd.size() == 2:
-			bits.append("Birthday: %s %d" % [str(bd[0]).capitalize(), int(bd[1])])
-		bits.append("Gifts this week %d/2" % int(st.gifts_week))
+			bits.append(tr("Birthday: %s %d") % [str(bd[0]).capitalize(), int(bd[1])])
+		bits.append(tr("Gifts this week %d/2") % int(st.gifts_week))
 		if v.get("romance", false):
 			bits.append("Romanceable")
 		col.add_child(UITheme.label("  ·  ".join(bits), 8, UITheme.MUTED))
@@ -183,9 +183,9 @@ func _board() -> void:
 		var col := VBoxContainer.new()
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		h.add_child(col)
-		col.add_child(UITheme.label("%s wants %d %s" % [Data.villager_name(b.get("from", "")), int(b.n), Data.item_name(b.item)], 10, UITheme.INK))
+		col.add_child(UITheme.label(tr("%s wants %d %s") % [Data.villager_name(b.get("from", "")), int(b.n), Data.item_name(b.item)], 10, UITheme.INK))
 		var have := player.inventory.count(b.item)
-		col.add_child(UITheme.label("Reward %dg + friendship  ·  You have %d" % [int(b.money), have], 8, UITheme.MUTED))
+		col.add_child(UITheme.label(tr("Reward %dg + friendship  ·  You have %d") % [int(b.money), have], 8, UITheme.MUTED))
 		if b.get("done", false):
 			h.add_child(UITheme.label("Done ✓", 9, UITheme.LEAF.darkened(0.3)))
 		else:
@@ -194,7 +194,7 @@ func _board() -> void:
 				var r: Dictionary = Coop.act("deliver_board", [idx])
 				if r.ok:
 					Audio.sfx("coin")
-					EventBus.toast.emit("Delivered! +%dg" % int(b.money), "")
+					EventBus.toast.emit(tr("Delivered! +%dg") % int(b.money), "")
 				elif r.reason != "":
 					EventBus.toast.emit(r.reason, "")
 				await get_tree().process_frame
@@ -209,14 +209,14 @@ func _dex() -> void:
 	for k in dex:
 		if dex[k].seen:
 			seen += 1
-	_body.add_child(UITheme.label("Befriended %d · Seen %d · Total %d" % [owned, seen, Data.species_order.size()], 10, UITheme.WOOD))
+	_body.add_child(UITheme.label(tr("Befriended %d · Seen %d · Total %d") % [owned, seen, Data.species_order.size()], 10, UITheme.WOOD))
 	var next_m := {}
 	for m in Data.progression.dex_milestones:
 		if owned < int(m.n):
 			next_m = m
 			break
 	if not next_m.is_empty():
-		_body.add_child(UITheme.label("Next reward at %d befriended" % int(next_m.n), 8, UITheme.MUTED))
+		_body.add_child(UITheme.label(tr("Next reward at %d befriended") % int(next_m.n), 8, UITheme.MUTED))
 	var grid := GridContainer.new()
 	grid.columns = 12
 	grid.add_theme_constant_override("h_separation", 2)
@@ -233,7 +233,7 @@ func _dex() -> void:
 		elif not e.get("owned", false):
 			ic.modulate = Color(0.1, 0.1, 0.15, 0.7)
 		cell.add_child(ic)
-		cell.tooltip_text = "#%03d %s%s" % [i + 1, Data.species[sid].name if e.get("seen", false) else "???", "  ★" if e.get("starry", false) else ""]
+		cell.tooltip_text = tr("#%03d %s%s") % [i + 1, Data.species[sid].name if e.get("seen", false) else "???", "  ★" if e.get("starry", false) else ""]
 		grid.add_child(cell)
 
 func _weekly() -> void:
@@ -250,6 +250,47 @@ func _weekly() -> void:
 		bar.max_value = maxi(1, int(c.n))
 		bar.value = int(c.progress)
 		col.add_child(bar)
-		col.add_child(UITheme.label("%d / %d  ·  Reward %dg" % [int(c.progress), int(c.n), int(c.reward_money)], 8, UITheme.MUTED))
+		col.add_child(UITheme.label(tr("%d / %d  ·  Reward %dg") % [int(c.progress), int(c.n), int(c.reward_money)], 8, UITheme.MUTED))
 		if c.done:
 			h.add_child(UITheme.label("Done ✓", 9, UITheme.LEAF.darkened(0.3)))
+	var b := GameState.bounty()
+	if not b.is_empty():
+		_body.add_child(UITheme.label("Wildling Center bounty", 9, UITheme.MUTED))
+		var bh := _card()
+		bh.add_child(UITheme.icon_rect(Art.creature(b.species, true), 32))
+		var bc := VBoxContainer.new()
+		bc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		bh.add_child(bc)
+		bc.add_child(_wrap(Endless.bounty_text(b), 10, UITheme.INK))
+		bc.add_child(UITheme.label(tr("Reward: %s") % AdventureFlow.loot_text(b.reward), 8, UITheme.MUTED))
+		if b.done:
+			bh.add_child(UITheme.label("Done ✓", 9, UITheme.LEAF.darkened(0.3)))
+	_body.add_child(UITheme.label("Creature Show ladder · every Saturday at the Show Ring", 9, UITheme.MUTED))
+	var sh := _card()
+	var sc := VBoxContainer.new()
+	sc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sh.add_child(sc)
+	var ranks: Array = []
+	for c in player.party:
+		ranks.append(tr("%s %s%s") % [c.display_name(), Endless.rank_name(c.show_rank), (tr(" (%d ribbons)") % c.ribbons if c.ribbons > 1 else tr(" (1 ribbon)")) if c.ribbons > 0 else ""])
+	sc.add_child(_wrap(", ".join(ranks), 9, UITheme.INK))
+	var nxt := GameState.day() if Endless.show_open(GameState.day()) else Endless.next_show(GameState.day())
+	if nxt >= 0:
+		sc.add_child(UITheme.label(tr("Next show: %s") % ("today!" if nxt == GameState.day() else Calendar.date_string(nxt)), 8, UITheme.MUTED))
+	var ch := GameState.chain_of(player.id)
+	if not ch.is_empty() and int(ch.n) >= 2:
+		var chh := _card()
+		chh.add_child(UITheme.icon_rect(Art.creature(ch.species, true), 32))
+		var cc := VBoxContainer.new()
+		chh.add_child(cc)
+		cc.add_child(UITheme.label(tr("Starry chain: %s x%d") % [Data.species[ch.species].name, int(ch.n)], 10, UITheme.INK))
+		cc.add_child(UITheme.label(tr("Starry odds x%.1f. Battle a different species and the chain resets.") % Endless.chain_mult(ch, ch.species), 8, UITheme.MUTED))
+	if Endless.rematch_open(GameState.world):
+		_body.add_child(UITheme.label(tr("Warden rematches · one per Warden each week · teams around Lv%d") % Endless.rematch_level(Endless.rematch_tier(GameState.world)), 9, UITheme.MUTED))
+		var left: Array = []
+		for rid in Data.region_order:
+			var w := Adventure.warden_of(rid)
+			if w != "" and GameState.rematch_ready(player.id, w):
+				left.append(Data.villager_name(w))
+		var rh := _card()
+		rh.add_child(_wrap("Still waiting for you: " + ", ".join(left) if not left.is_empty() else "You've beaten every Warden this week!", 9, UITheme.INK))

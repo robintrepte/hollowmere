@@ -21,6 +21,7 @@ var _lead_name: Label
 var _hotbar_name: Label
 var _name_t := 0.0
 var _quest: Label
+var _lv_panel: PanelContainer
 
 func _ready() -> void:
 	layer = 10
@@ -65,6 +66,7 @@ func _ready() -> void:
 	lv.position = Vector2(6, 6)
 	lv.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(lv)
+	_lv_panel = lv
 	var lvv := VBoxContainer.new()
 	lvv.add_theme_constant_override("separation", 1)
 	lv.add_child(lvv)
@@ -161,13 +163,18 @@ func _ready() -> void:
 
 	EventBus.time_changed.connect(func(_m): _refresh_clock())
 	EventBus.day_started.connect(func(_d, _r): _refresh_all())
-	EventBus.money_changed.connect(func(_m, _d): pass)
+	EventBus.money_changed.connect(func(_m, d: int):
+		if d > 0:
+			Juice.pop(_money))
 	EventBus.energy_changed.connect(func(_e, _mx): _refresh_energy())
 	EventBus.inventory_changed.connect(_refresh_hotbar)
 	EventBus.hotbar_changed.connect(_refresh_hotbar)
 	EventBus.party_changed.connect(_refresh_lead)
 	EventBus.toast.connect(toast)
-	EventBus.farm_level_up.connect(func(lv2, _i): toast("Farm level %d!" % lv2, "star"); _refresh_level())
+	EventBus.farm_level_up.connect(func(lv2, _i):
+		toast(tr("Farm level %d!") % lv2, "star")
+		_refresh_level()
+		Juice.burst(self, _lv_panel.position + Vector2(_lv_panel.size.x / 2.0, _lv_panel.size.y), "levelup"))
 	EventBus.weather_changed.connect(func(_w): _refresh_clock())
 	EventBus.quest_updated.connect(_refresh_quest)
 	EventBus.story_advanced.connect(func(_c): _refresh_quest())
@@ -190,7 +197,9 @@ func _refresh_quest() -> void:
 	var bits: Array = []
 	var fest := Adventure.festival_today(GameState.day())
 	if not fest.is_empty():
-		bits.append("Today: %s at the Show Ring" % fest.name)
+		bits.append(tr("Today: %s at the Show Ring") % fest.name)
+	elif Endless.show_open(GameState.day()):
+		bits.append("Today: Creature Show at the Show Ring")
 	var t := Adventure.tracker(GameState.world, GameState.local_player())
 	if t != "":
 		bits.append("» " + t)
@@ -209,7 +218,7 @@ func _refresh_level() -> void:
 	if not GameState.started:
 		return
 	var f: Dictionary = GameState.world.farm
-	_level.text = "Farm Lv %d" % int(f.level)
+	_level.text = tr("Farm Lv %d") % int(f.level)
 	var need := Progression.farm_xp_for(int(f.level))
 	_xp.max_value = need
 	_xp.value = int(f.xp)
@@ -253,7 +262,7 @@ func _refresh_lead() -> void:
 		return
 	var c: Creature = p.party[0]
 	_lead_icon.texture = Art.creature(c.species_id, true)
-	_lead_name.text = "%s Lv%d" % [c.display_name(), c.level]
+	_lead_name.text = tr("%s Lv%d") % [c.display_name(), c.level]
 	_lead_hp.visible = true
 	_lead_hp.max_value = c.max_hp()
 	_lead_hp.value = c.hp
@@ -278,7 +287,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if p == null:
 		return
 	for i in PlayerData.HOTBAR_SIZE:
-		if event.is_action_pressed("hotbar_%d" % i):
+		if event.is_action_pressed(tr("hotbar_%d") % i):
 			select_slot(i)
 			get_viewport().set_input_as_handled()
 			return
@@ -290,6 +299,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func _process(delta: float) -> void:
+	_toasts.position.y = _lv_panel.position.y + _lv_panel.size.y + 6
 	var target := float(GameState.money()) if GameState.started else 0.0
 	if absf(_money_shown - target) > 0.5:
 		_money_shown = lerpf(_money_shown, target, minf(1.0, delta * 8.0))

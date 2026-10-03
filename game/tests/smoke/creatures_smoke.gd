@@ -21,7 +21,7 @@ func _ready() -> void:
 	var slot := SaveManager.first_free_slot()
 	main._start_new({"player_name": "Robin", "farm_name": "Smoke", "starter": "puddlop", "seed": 777})
 	await _wait(1.0)
-	main.ui.dialogue.visible = false
+	await main.ui.dialogue.dismiss()
 	main.ui.close_all()
 	var pd := GameState.local_player()
 	pd.inventory.add("lure_charm", 5)
@@ -59,7 +59,7 @@ func _ready() -> void:
 	await _until(func(): return main.ui.dialogue.visible, 5.0)
 	await _shot("c04_befriended")
 	main.ui.dialogue._advance()
-	main.ui.dialogue.visible = false
+	await main.ui.dialogue.dismiss()
 	main.ui.close_all()
 	_check(pd.party.size() + GameState.ranch.size() >= 2, "befriended a Wildling (party %d, den %d)" % [pd.party.size(), GameState.ranch.size()])
 	# 3. Tide watering job: send the starter Puddlop (Tide) to the Den and give it the water job

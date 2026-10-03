@@ -48,7 +48,15 @@ func _ready() -> void:
 	if OS.get_name() != "Web":
 		_check(body, "Fullscreen", Settings.fullscreen, func(on): Settings.fullscreen = on; Settings.apply())
 	_check(body, "Screen shake", Settings.screen_shake, func(on): Settings.screen_shake = on)
-	_check(body, "Colorblind-friendly type markers", Settings.colorblind, func(on): Settings.colorblind = on)
+	var locs := Settings.available_locales()
+	if locs.size() > 1:
+		var names: Array = ["System"] + locs.map(func(l): return TranslationServer.get_locale_name(l))
+		_choice(body, "Language", names, 0 if Settings.locale == "" else locs.find(Settings.locale) + 1, func(i: int):
+			Settings.locale = "" if i == 0 else locs[i - 1]
+			Settings.apply())
+	_choice(body, "Text size", ["Normal", "Large", "Larger"], Settings.TEXT_SCALES.find(Settings.text_scale), func(i: int):
+		Settings.set_text_scale(Settings.TEXT_SCALES[i]))
+	_check(body, "Colorblind mode (type names on moves, quality pips)", Settings.colorblind, func(on): Settings.colorblind = on)
 	body.add_child(UITheme.label("Controls (click, then press a key)", 11, UITheme.WOOD))
 	for a in REBINDABLE:
 		var h := HBoxContainer.new()
@@ -81,11 +89,26 @@ func _slider(parent: Control, text: String, value: float, cb: Callable) -> void:
 	s.value_changed.connect(cb)
 	h.add_child(s)
 
+func _choice(parent: Control, text: String, options: Array, selected: int, cb: Callable) -> void:
+	var h := HBoxContainer.new()
+	parent.add_child(h)
+	var l := UITheme.label(text, 9)
+	l.custom_minimum_size = Vector2(130, 0)
+	h.add_child(l)
+	var ob := OptionButton.new()
+	ob.add_theme_font_size_override("font_size", UITheme.fs(9))
+	for o in options:
+		ob.add_item(str(o))
+	ob.select(maxi(0, selected))
+	ob.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ob.item_selected.connect(cb)
+	h.add_child(ob)
+
 func _check(parent: Control, text: String, value: bool, cb: Callable) -> void:
 	var c := CheckBox.new()
 	c.text = text
 	c.button_pressed = value
-	c.add_theme_font_size_override("font_size", 9)
+	c.add_theme_font_size_override("font_size", UITheme.fs(9))
 	c.toggled.connect(cb)
 	parent.add_child(c)
 

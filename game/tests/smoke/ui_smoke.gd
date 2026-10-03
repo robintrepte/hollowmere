@@ -17,7 +17,7 @@ func _ready() -> void:
 	var slot := SaveManager.first_free_slot()
 	main._start_new({"player_name": "Robin", "farm_name": "Smoke", "starter": "sproutle", "seed": 99})
 	await _wait(1.0)
-	main.ui.dialogue.visible = false
+	await main.ui.dialogue.dismiss()
 	main.ui.close_all()
 	var pd := GameState.local_player()
 	pd.inventory.add("fiber", 6)

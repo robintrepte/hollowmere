@@ -23,7 +23,7 @@ func _ready() -> void:
 		"look": {"skin": "#f0c8a0", "hair": "#c87838", "shirt": "#d07050", "pants": "#3a3a5a", "style": 2}})
 	await _wait(1.2)
 	await _shot("02_intro")
-	main.ui.dialogue.visible = false
+	await main.ui.dialogue.dismiss()
 	main.ui.close_all()
 	main.player.locked = false
 	await _wait(0.4)

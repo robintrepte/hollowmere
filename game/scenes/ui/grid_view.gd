@@ -26,6 +26,7 @@ func setup(i: Inventory, owner_panel: Node) -> void:
 	size = custom_minimum_size
 	size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	focus_mode = Control.FOCUS_ALL
 	if not inv.changed.is_connected(queue_redraw):
 		inv.changed.connect(queue_redraw)
 	queue_redraw()
@@ -33,24 +34,65 @@ func setup(i: Inventory, owner_panel: Node) -> void:
 func cell_at(local_pos: Vector2) -> Vector2i:
 	return Vector2i(floori((local_pos.x - 1) / CELL), floori((local_pos.y - 1) / CELL))
 
+## Screen position of a cell's top-right corner (where a gamepad's action menu opens).
+func cell_screen_pos(c: Vector2i) -> Vector2:
+	return get_global_transform_with_canvas() * Vector2(1 + (c.x + 1) * CELL, 1 + c.y * CELL)
+
+func _set_hover(c: Vector2i) -> void:
+	if c == hover_cell:
+		return
+	hover_cell = c
+	hover_changed.emit(self, inv.entry_at(c.x, c.y) if c.x >= 0 else {})
+	queue_redraw()
+
+const PAD_DIRS := {"ui_left": [Vector2i(-1, 0), SIDE_LEFT], "ui_right": [Vector2i(1, 0), SIDE_RIGHT],
+	"ui_up": [Vector2i(0, -1), SIDE_TOP], "ui_down": [Vector2i(0, 1), SIDE_BOTTOM]}
+
 func _gui_input(event: InputEvent) -> void:
 	if inv == null:
 		return
 	if event is InputEventMouseMotion:
-		var c := cell_at(event.position)
-		if c != hover_cell:
-			hover_cell = c
-			hover_changed.emit(self, inv.entry_at(c.x, c.y))
-			queue_redraw()
+		_set_hover(cell_at(event.position))
 	elif event is InputEventMouseButton and event.pressed:
 		cell_pressed.emit(self, cell_at(event.position), event.button_index, event.shift_pressed)
 		accept_event()
+	elif has_focus():
+		_pad_input(event)
+
+## Keyboard/gamepad cursor: arrows or d-pad move (and hop to the next grid at an edge),
+## accept picks up / drops, X (use_tool) opens the actions menu, rotate_item rotates.
+func _pad_input(event: InputEvent) -> void:
+	var c := hover_cell if hover_cell.x >= 0 else Vector2i.ZERO
+	for a in PAD_DIRS:
+		if event.is_action_pressed(a, true):
+			var n: Vector2i = c + PAD_DIRS[a][0]
+			if n.x < 0 or n.y < 0 or n.x >= inv.w or n.y >= inv.h:
+				var next := find_valid_focus_neighbor(PAD_DIRS[a][1])
+				if next:
+					next.grab_focus()
+			else:
+				_set_hover(n)
+			accept_event()
+			return
+	if event.is_action_pressed("ui_accept"):
+		cell_pressed.emit(self, c, MOUSE_BUTTON_LEFT, false)
+	elif event.is_action_pressed("use_tool"):
+		cell_pressed.emit(self, c, MOUSE_BUTTON_RIGHT, false)
+	elif event.is_action_pressed("rotate_item") and panel and panel.has_method("rotate_held_or_hovered"):
+		panel.rotate_held_or_hovered()
+	else:
+		return
+	accept_event()
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_MOUSE_EXIT:
-		hover_cell = Vector2i(-1, -1)
-		hover_changed.emit(self, {})
+	if what == NOTIFICATION_MOUSE_EXIT and not has_focus():
+		_set_hover(Vector2i(-1, -1))
+	elif what == NOTIFICATION_FOCUS_ENTER:
+		if hover_cell.x < 0:
+			_set_hover(Vector2i.ZERO)
 		queue_redraw()
+	elif what == NOTIFICATION_FOCUS_EXIT:
+		_set_hover(Vector2i(-1, -1))
 
 func _process(_d: float) -> void:
 	if panel and panel.get("held_uid") != "":
@@ -89,6 +131,8 @@ func _draw() -> void:
 		if not e2.is_empty():
 			var sz2 := Inventory.entry_size(e2)
 			draw_rect(Rect2(1 + int(e2.x) * CELL, 1 + int(e2.y) * CELL, sz2.x * CELL - 1, sz2.y * CELL - 1), Color(1, 1, 1, 0.9), false, 1.0)
+	if has_focus() and hover_cell.x >= 0:
+		draw_rect(Rect2(1 + hover_cell.x * CELL, 1 + hover_cell.y * CELL, CELL - 1, CELL - 1), Color("#ffd447"), false, 2.0)
 
 static func draw_item(ci: CanvasItem, e: Dictionary, r: Rect2, alpha: float = 1.0) -> void:
 	var tex := Art.item(e.id)
@@ -114,9 +158,7 @@ static func draw_item(ci: CanvasItem, e: Dictionary, r: Rect2, alpha: float = 1.
 		ci.draw_string(f, p, t, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, UITheme.CREAM)
 	var q := int(e.get("q", 0))
 	if q > 0:
-		var sp := r.position + Vector2(2, r.size.y - 6)
-		ci.draw_rect(Rect2(sp, Vector2(5, 5)), UITheme.OUTLINE)
-		ci.draw_rect(Rect2(sp + Vector2(1, 1), Vector2(3, 3)), ItemSlot.QUALITY_COLORS[clampi(q, 0, 3)])
+		ItemSlot.draw_quality(ci, r.position + Vector2(2, r.size.y - 6), q)
 	if e.has("inv"):
 		var used: int = e.inv.used_cells()
 		var cap: int = e.inv.w * e.inv.h

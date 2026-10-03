@@ -26,6 +26,8 @@ jobs:
         run: godot --headless --path game res://tests/check_scripts.tscn
       - name: Unit tests
         run: godot --headless --path game -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json -gjunit_xml_file=res://../test-results.xml
+      - name: Translation template is current
+        run: python3 tools/content/extract_strings.py --check
       - name: Balance simulation
         run: godot --headless --path game res://tests/sim/balance_sim.tscn -- --days=112
       - name: Start Nakama

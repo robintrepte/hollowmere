@@ -515,15 +515,19 @@ func _spawn_creatures() -> void:
 			levels = [5 + sh * 4, 10 + sh * 5]
 	if not spawns.is_empty() or not bonus.is_empty():
 		var starry_mult := 3.0 if GameState._anyone_has("starry_charm") else 1.0
+		var chain := GameState.chain_of(Net.local_id())
+		var lure := Endless.chain_lures(chain, spawns)
 		for i in 7:
 			var sid := MapBuilder.pick_spawn(spawns, GameState.season(), GameState.world.weather, night, rng, bonus)
+			if lure and rng.randf() < 0.35:
+				sid = chain.species
 			if sid == "" or not Data.species.has(sid):
 				continue
 			var t := _random_open_tile(rng, true)
 			if t.x < 0:
 				continue
 			var lvl := Trainers.wild_level(levels, rng, night)
-			var starry := rng.randf() * float(Creature.STARRY_ODDS) / starry_mult < 1.0
+			var starry := rng.randf() * float(Creature.STARRY_ODDS) / (starry_mult * Endless.chain_mult(chain, sid)) < 1.0
 			_add_creature(sid, lvl, starry, t, null)
 	var region: String = info.get("region", "")
 	if region != "" and not info.get("mine", false):

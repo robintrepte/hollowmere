@@ -64,7 +64,7 @@ func _creatures() -> Array:
 func _refresh() -> void:
 	for c in _tabs.get_children():
 		c.queue_free()
-	for t in [["party", "Party %d/%d" % [player.party.size(), PlayerData.PARTY_MAX]], ["farm", "Farm %d/%d" % [GameState.ranch.size(), GameState.den_capacity()]]]:
+	for t in [["party", tr("Party %d/%d") % [player.party.size(), PlayerData.PARTY_MAX]], ["farm", tr("Farm %d/%d") % [GameState.ranch.size(), GameState.den_capacity()]]]:
 		var b := UITheme.button(t[1], func(): tab = t[0]; _sel = null; _refresh())
 		b.disabled = tab == t[0]
 		_tabs.add_child(b)
@@ -104,14 +104,14 @@ func _row(c: Creature) -> Control:
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.add_theme_constant_override("separation", 0)
 	h.add_child(v)
-	var nl := UITheme.label("%s%s  Lv%d" % ["★ " if c.starry else "", c.display_name(), c.level], 10, UITheme.WOOD_DK)
+	var nl := UITheme.label(tr("%s%s  Lv%d") % ["★ " if c.starry else "", c.display_name(), c.level], 10, UITheme.WOOD_DK)
 	nl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(nl)
 	var sub := ""
 	if tab == "farm":
-		sub = ("Job: " + Data.job_info(c.job).get("job_name", "Worker") if c.job != "" else "Resting") + "  ·  energy %d" % c.energy
+		sub = ("Job: " + Data.job_info(c.job).get("job_name", "Worker") if c.job != "" else "Resting") + tr("  ·  energy %d") % c.energy
 	else:
-		sub = "HP %d/%d%s" % [c.hp, c.max_hp(), "  ·  fainted" if c.is_fainted() else ""]
+		sub = tr("HP %d/%d%s") % [c.hp, c.max_hp(), "  ·  fainted" if c.is_fainted() else ""]
 	var sl := UITheme.label(sub, 8, UITheme.MUTED)
 	sl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(sl)
@@ -134,7 +134,7 @@ func _move_chip(mid: String, picked: bool, on_press: Callable) -> Button:
 	var b := Button.new()
 	b.custom_minimum_size = Vector2(140, 16)
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	b.add_theme_font_size_override("font_size", 9)
+	b.add_theme_font_size_override("font_size", UITheme.fs(9))
 	b.add_theme_color_override("font_color", UITheme.INK)
 	b.add_theme_color_override("font_hover_color", UITheme.INK)
 	b.add_theme_color_override("font_pressed_color", UITheme.INK)
@@ -144,8 +144,8 @@ func _move_chip(mid: String, picked: bool, on_press: Callable) -> Button:
 		var m: Dictionary = Data.get_move(mid)
 		base = Data.type_color(m.type).lightened(0.35)
 		edge = Data.type_color(m.type).darkened(0.3)
-		b.text = "%s  %s" % [m.name, ("· %d" % int(m.power)) if int(m.power) > 0 else "· status"]
-		b.tooltip_text = "%s · %s\n%s" % [Data.type_name(m.type), "Physical" if m.cat == "phys" else "Special" if m.cat == "spec" else "Status", m.get("desc", "")]
+		b.text = tr("%s  %s%s") % [m.name, tr("[%s] ") % Data.type_name(m.type) if Settings.colorblind else "", (tr("· %d") % int(m.power)) if int(m.power) > 0 else "· status"]
+		b.tooltip_text = tr("%s · %s\n%s") % [Data.type_name(m.type), "Physical" if m.cat == "phys" else "Special" if m.cat == "spec" else "Status", m.get("desc", "")]
 	else:
 		b.text = "+ empty slot"
 	var normal := UITheme.box(base, Color("#ffd447") if picked else edge, 2 if picked else 1, 3, 3, false)
@@ -173,15 +173,15 @@ func _show_detail() -> void:
 	var info := VBoxContainer.new()
 	info.add_theme_constant_override("separation", 2)
 	top.add_child(info)
-	info.add_child(UITheme.label("%s%s" % ["★ Starry " if c.starry else "", c.display_name()], 13, UITheme.WOOD_DK))
+	info.add_child(UITheme.label(tr("%s%s") % ["★ Starry " if c.starry else "", c.display_name()], 13, UITheme.WOOD_DK))
 	var types := HBoxContainer.new()
 	for t in c.types():
 		types.add_child(_chip(Data.type_name(t), Data.type_color(t)))
-	types.add_child(UITheme.label("  Lv%d" % c.level, 10))
+	types.add_child(UITheme.label(tr("  Lv%d") % c.level, 10))
 	info.add_child(types)
 	var nat: Dictionary = Data.natures.get(c.nature, {})
-	var tr: Dictionary = Data.traits.get(c.trait_id, {})
-	info.add_child(UITheme.label("%s nature · %s" % [str(nat.get("name", c.nature)).capitalize(), tr.get("name", c.trait_id)], 9, UITheme.INK))
+	var trd: Dictionary = Data.traits.get(c.trait_id, {})
+	info.add_child(UITheme.label(tr("%s nature · %s") % [str(nat.get("name", c.nature)).capitalize(), trd.get("name", c.trait_id)], 9, UITheme.INK))
 	var lo := Creature.xp_for_level(c.level)
 	var hi := Creature.xp_for_level(c.level + 1)
 	var xp := ProgressBar.new()
@@ -192,8 +192,10 @@ func _show_detail() -> void:
 	info.add_child(xp)
 	var hearts := int(c.happiness / 51)
 	info.add_child(UITheme.label("Happiness " + "♥".repeat(hearts) + "♡".repeat(5 - hearts), 9, UITheme.HEART))
-	if tr.has("desc"):
-		var td := UITheme.label(tr.desc, 8, UITheme.MUTED)
+	info.add_child(UITheme.label(tr("Grooming %d%%  ·  Show class %s%s") % [c.grooming, Endless.rank_name(c.show_rank),
+		tr("  ·  %d ribbon%s") % [c.ribbons, "" if c.ribbons == 1 else "s"] if c.ribbons > 0 else ""], 8, UITheme.MUTED))
+	if trd.has("desc"):
+		var td := UITheme.label(trd.desc, 8, UITheme.MUTED)
 		td.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_detail.add_child(td)
 	# Stats
@@ -231,7 +233,7 @@ func _show_detail() -> void:
 			_show_detail()))
 	if not spare.is_empty():
 		if _swap_slot < 0:
-			_detail.add_child(UITheme.label("%d more known move%s. Click a slot to swap." % [spare.size(), "" if spare.size() == 1 else "s"], 8, UITheme.MUTED))
+			_detail.add_child(UITheme.label(tr("%d more known move%s. Click a slot to swap.") % [spare.size(), "" if spare.size() == 1 else "s"], 8, UITheme.MUTED))
 		else:
 			_detail.add_child(UITheme.label("Swap in:", 9, UITheme.WOOD))
 			var sg := GridContainer.new()
@@ -248,7 +250,7 @@ func _show_detail() -> void:
 					_show_detail()))
 	# Farm job
 	var job_t: Dictionary = Data.job_info(c.job_type())
-	_detail.add_child(UITheme.label("Farm job: %s. %s" % [job_t.job_name, job_t.job_desc], 9, UITheme.LEAF.darkened(0.35)))
+	_detail.add_child(UITheme.label(tr("Farm job: %s. %s") % [job_t.job_name, job_t.job_desc], 9, UITheme.LEAF.darkened(0.35)))
 	# Actions
 	var acts := HFlowContainer.new()
 	acts.add_theme_constant_override("h_separation", 4)
@@ -264,7 +266,7 @@ func _show_detail() -> void:
 				_refresh()))
 		var send := UITheme.button("Send to farm", func():
 			if Coop.act("move_creature_act", [c.uid, "den"]).ok:
-				EventBus.toast.emit("%s moved to the farm." % c.display_name(), "")
+				EventBus.toast.emit(tr("%s moved to the farm.") % c.display_name(), "")
 				_sel = null
 				_refresh()
 			else:
@@ -279,14 +281,14 @@ func _show_detail() -> void:
 		join.disabled = player.party.size() >= PlayerData.PARTY_MAX
 		acts.add_child(join)
 		var jobs := OptionButton.new()
-		jobs.add_theme_font_size_override("font_size", 9)
+		jobs.add_theme_font_size_override("font_size", UITheme.fs(9))
 		jobs.add_item("Rest (no job)")
 		jobs.set_item_metadata(0, "")
 		var sel_i := 0
 		for t in c.types():
 			var jid: String = Data.types[t].job
 			if c.can_do_job(jid):
-				jobs.add_item("%s (power %d)" % [Data.types[t].job_name, c.job_power(jid)])
+				jobs.add_item(tr("%s (power %d)") % [Data.types[t].job_name, c.job_power(jid)])
 				jobs.set_item_metadata(jobs.item_count - 1, jid)
 				if c.job == jid:
 					sel_i = jobs.item_count - 1
@@ -304,7 +306,7 @@ func _breeding_section(c: Creature) -> void:
 	if mate:
 		var row := HBoxContainer.new()
 		row.add_child(UITheme.icon_rect(Art.creature(mate.species_id, true), 24))
-		row.add_child(UITheme.label("Paired with %s · %d%% egg chance each night" % [mate.display_name(), int(Breeding.egg_chance(c, mate) * 100.0)], 9, UITheme.INK))
+		row.add_child(UITheme.label(tr("Paired with %s · %d%% egg chance each night") % [mate.display_name(), int(Breeding.egg_chance(c, mate) * 100.0)], 9, UITheme.INK))
 		_detail.add_child(row)
 		_detail.add_child(UITheme.button("Unpair", func():
 			Coop.act("clear_pair_act", [c.uid])
@@ -316,7 +318,7 @@ func _breeding_section(c: Creature) -> void:
 		_detail.add_child(UITheme.label("This Wildling can't have eggs.", 8, UITheme.MUTED))
 		return
 	if options.is_empty():
-		_detail.add_child(UITheme.label("No compatible partner in the Den. Egg groups: %s." % ", ".join(c.species().egg), 8, UITheme.MUTED))
+		_detail.add_child(UITheme.label(tr("No compatible partner in the Den. Egg groups: %s.") % ", ".join(c.species().egg), 8, UITheme.MUTED))
 		return
 	if not _picking_mate:
 		_detail.add_child(UITheme.button("Pair for eggs...", func():
@@ -329,12 +331,12 @@ func _breeding_section(c: Creature) -> void:
 	_detail.add_child(flow)
 	for o in options:
 		var b: Creature = o.creature
-		var btn := UITheme.button("%s  %d%%" % [b.display_name(), int(o.chance * 100.0)], func():
+		var btn := UITheme.button(tr("%s  %d%%") % [b.display_name(), int(o.chance * 100.0)], func():
 			var res: Dictionary = Coop.act("set_pair_act", [c.uid, b.uid])
 			_picking_mate = false
 			if res.ok:
 				Audio.sfx("gift")
-				EventBus.toast.emit("%s and %s are now a pair. Eggs will appear in the farm chest." % [c.display_name(), b.display_name()], "")
+				EventBus.toast.emit(tr("%s and %s are now a pair. Eggs will appear in the farm chest.") % [c.display_name(), b.display_name()], "")
 			else:
 				EventBus.toast.emit(res.reason, "")
 			_show_detail())

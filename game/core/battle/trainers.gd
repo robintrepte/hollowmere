@@ -37,6 +37,25 @@ static func team_for(vid: String, shrines_done: int, lead_level: int, rng: Rando
 		"ai": 2 if tr.has("warden") else 1,
 	}
 
+## Post-game Warden team: the full roster topped up with the region's guardian, at rematch level.
+static func rematch_team(vid: String, tier: int, rng: RandomNumberGenerator) -> Dictionary:
+	var tr: Dictionary = Data.villagers.get(vid, {}).get("trainer", {})
+	if not tr.has("warden"):
+		return {}
+	var roster: Array = tr.team.duplicate()
+	var guardian := Adventure.guardian_of(tr.warden)
+	if roster.size() < 6 and Data.species.has(guardian):
+		roster.append(guardian)
+	var top := Endless.rematch_level(tier)
+	var team: Array = []
+	for i in roster.size():
+		var lvl := maxi(2, top - (roster.size() - 1 - i))
+		team.append(_make(Data.form_at_level(roster[i], lvl), lvl, rng, mini(Creature.MAX_GENE, 10 + tier)))
+	return {
+		"name": Data.villager_name(vid), "kind": "warden", "team": team, "reward": 0,
+		"warden": tr.warden, "items": {"super_potion": 3, "remedy": 2}, "ai": 2,
+	}
+
 static func _make(species: String, lvl: int, rng: RandomNumberGenerator, min_gene: int) -> Creature:
 	var c := Creature.create(species, lvl, rng, {"min_gene": min_gene})
 	c.owner = "npc"

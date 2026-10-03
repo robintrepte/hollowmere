@@ -25,7 +25,7 @@ static func run(workers: Array, ctx: Dictionary) -> Dictionary:
 	var grids: Array = ctx.grids
 	var rep := {
 		"watered": 0, "grown": 0, "cleared": 0, "smelted": 0, "pollinated": 0, "preserved": 0,
-		"harvested": 0, "powered": 0, "guarded": false, "luck": 0.0, "frost_protect": 0,
+		"harvested": 0, "powered": 0, "machine_slots": 0, "machines_loaded": 0, "machines_collected": 0, "guarded": false, "luck": 0.0, "frost_protect": 0,
 		"items": {}, "produce": {}, "workers": 0, "tired": 0, "overflow": {},
 	}
 	# Order matters: harvest first (frees ripe crops), then water/grow.
@@ -164,6 +164,7 @@ static func _do_job(job: String, c: Creature, power: int, grids: Array, chest: I
 				n7 -= 1
 		"power":
 			rep.powered += power * 60
+			rep.machine_slots += power * 2
 		"guard":
 			rep.guarded = true
 		"luck":

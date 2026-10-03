@@ -116,11 +116,11 @@ func _on_state(s: Dictionary) -> void:
 
 func _render() -> void:
 	var other_name: String = str(state.get("b_name" if str(state.get("a", "")) == _me() else "a_name", "Friend"))
-	_their_title.text = "%s offers" % other_name
+	_their_title.text = tr("%s offers") % other_name
 	var views: Dictionary = state.get("views", {})
 	_fill(_mine, views.get(_me(), []), "Nothing yet. Add items or Wildlings.")
 	var waiting := str(state.get("status", "")) == "invite"
-	_fill(_theirs, views.get(_other(), []), ("Waiting for %s to accept..." % other_name) if waiting else "Nothing yet.")
+	_fill(_theirs, views.get(_other(), []), (tr("Waiting for %s to accept...") % other_name) if waiting else "Nothing yet.")
 	var they_ok := bool(state.get("ok", {}).get(_other(), false))
 	_their_ready.text = "✓ Ready" if they_ok else ""
 	_my_ready.text = "✓ Ready" if _am_ready() else ""
@@ -192,7 +192,7 @@ func _pick_item() -> void:
 		var h := HBoxContainer.new()
 		list.add_child(h)
 		h.add_child(UITheme.icon_rect(Art.item(str(e.id)), 16))
-		var l := UITheme.label("%s x%d" % [Data.item_name(str(e.id)), left], 9, UITheme.INK)
+		var l := UITheme.label(tr("%s x%d") % [Data.item_name(str(e.id)), left], 9, UITheme.INK)
 		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		h.add_child(l)
 		var uid: String = e.uid
@@ -221,7 +221,7 @@ func _pick_creature() -> void:
 		list.add_child(h)
 		h.add_child(UITheme.icon_rect(Art.creature(c.species_id, true), 24))
 		var uid := c.uid
-		var b := UITheme.button("%s  Lv%d" % [c.display_name(), c.level], func():
+		var b := UITheme.button(tr("%s  Lv%d") % [c.display_name(), c.level], func():
 			_offer.append({"kind": "creature", "uid": uid})
 			_close_picker()
 			_push())

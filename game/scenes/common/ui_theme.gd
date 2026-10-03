@@ -19,11 +19,26 @@ const MUTED := Color("#8a7a6a")
 static var _theme: Theme
 static var _font: FontVariation
 
+## A font size scaled by the player's text size setting.
+static func fs(size: int) -> int:
+	return int(round(size * Settings.text_scale))
+
+## Drops the cached theme so the next theme() call picks up a new text size.
+static func reset() -> void:
+	_theme = null
+
 static func font() -> Font:
 	if _font == null:
 		_font = FontVariation.new()
 		_font.base_font = load("res://assets/fonts/Tiny5.ttf")
+		_font.fallbacks = [symbols()]
 	return _font
+
+## Hearts, stars and checkmarks Tiny5 lacks. Browsers have no system fallback fonts.
+static func symbols() -> Font:
+	var f: FontFile = load("res://assets/fonts/SymbolsFallback.ttf")
+	f.antialiasing = TextServer.FONT_ANTIALIASING_NONE
+	return f
 
 static func box(bg: Color, border: Color = OUTLINE, bw: int = 2, radius: int = 3, pad: int = 6, shadow: bool = true) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
@@ -58,7 +73,7 @@ static func theme() -> Theme:
 		return _theme
 	var t := Theme.new()
 	t.default_font = font()
-	t.default_font_size = 10
+	t.default_font_size = fs(10)
 	t.set_color("font_color", "Label", INK)
 	t.set_color("font_shadow_color", "Label", Color(0, 0, 0, 0))
 	t.set_stylebox("panel", "Panel", parchment())
@@ -85,7 +100,7 @@ static func theme() -> Theme:
 	t.set_color("font_pressed_color", "Button", PARCHMENT_DK)
 	t.set_color("font_disabled_color", "Button", Color("#d8ccb8"))
 	t.set_color("font_focus_color", "Button", Color.WHITE)
-	t.set_font_size("font_size", "Button", 10)
+	t.set_font_size("font_size", "Button", fs(10))
 	var le := box(CREAM, Color("#7a5a3a"), 2, 2, 4, false)
 	t.set_stylebox("normal", "LineEdit", le)
 	var lef := le.duplicate()
@@ -103,7 +118,7 @@ static func theme() -> Theme:
 	t.set_stylebox("grabber_area_highlight", "HSlider", box(COIN, Color("#7a5a3a"), 1, 2, 2, false))
 	t.set_stylebox("panel", "TooltipPanel", box(Color("#2e2228"), COIN, 1, 2, 4, false))
 	t.set_color("font_color", "TooltipLabel", CREAM)
-	t.set_font_size("font_size", "TooltipLabel", 9)
+	t.set_font_size("font_size", "TooltipLabel", fs(9))
 	t.set_color("font_color", "CheckBox", INK)
 	t.set_color("font_hover_color", "CheckBox", INK)
 	t.set_color("font_pressed_color", "CheckBox", INK)
@@ -122,10 +137,11 @@ static func theme() -> Theme:
 	t.set_color("font_hover_color", "PopupMenu", WOOD_DK)
 	t.set_stylebox("hover", "PopupMenu", box(PARCHMENT_DK, Color(0, 0, 0, 0), 0, 2, 2, false))
 	t.set_color("default_color", "RichTextLabel", INK)
-	t.set_font_size("normal_font_size", "RichTextLabel", 10)
-	t.set_font_size("bold_font_size", "RichTextLabel", 10)
+	t.set_font_size("normal_font_size", "RichTextLabel", fs(10))
+	t.set_font_size("bold_font_size", "RichTextLabel", fs(10))
 	var bold := FontVariation.new()
 	bold.base_font = load("res://assets/fonts/Tiny5.ttf")
+	bold.fallbacks = [symbols()]
 	bold.variation_embolden = 0.6
 	t.set_font("bold_font", "RichTextLabel", bold)
 	var sc := box(Color(0, 0, 0, 0.12), Color(0, 0, 0, 0), 0, 2, 0, false)
@@ -139,7 +155,8 @@ static func theme() -> Theme:
 static func label(text: String, size: int = 10, col: Color = INK, outline: bool = false) -> Label:
 	var l := Label.new()
 	l.text = text
-	l.add_theme_font_size_override("font_size", size)
+	l.add_theme_font_override("font", font())
+	l.add_theme_font_size_override("font_size", fs(size))
 	l.add_theme_color_override("font_color", col)
 	if outline:
 		l.add_theme_color_override("font_outline_color", OUTLINE)

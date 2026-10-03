@@ -39,6 +39,7 @@ func new_game(opts: Dictionary) -> void:
 		"board": [], "board_week": -1, "stats": {"earned": 0}, "farm": {"level": 1, "xp": 0}, "mine_depth": {},
 		"flags": {}, "quest": 0, "legends": [], "festival_done": [], "hatchery": [], "shipping": [],
 		"pairs": [], "luck": 0.0, "created": Time.get_unix_time_from_system(), "played": 0.0,
+		"chains": {}, "bounty": {}, "bounty_week": -1,
 	}
 	grids.clear()
 	_map_cache.clear()
@@ -245,6 +246,12 @@ func add_creature(p: PlayerData, c: Creature) -> String:
 			grant(m.reward, p)
 			EventBus.toast.emit(m.text, "dex")
 	EventBus.creature_befriended.emit(c)
+	var b := bounty()
+	if Endless.bounty_met(b, c):
+		b.done = true
+		grant(b.reward, p)
+		bump_stat("bounty")
+		EventBus.toast.emit("Bounty complete: %s!" % Endless.bounty_text(b), "star")
 	if p.party.size() < PlayerData.PARTY_MAX:
 		p.party.append(c)
 		EventBus.party_changed.emit()
@@ -387,6 +394,7 @@ func end_day(passed_out: bool = false) -> Dictionary:
 	FarmJobs.rest(ranch, has_building("wildling_spa"))
 	report.jobs = job_rep
 	Machines.apply_power(farm_grids(), int(job_rep.powered))
+	Machines.automate(farm_grids(), farm_chest, (day() + 1) * 1440 + Calendar.DAY_START, int(job_rep.machine_slots), job_rep)
 	# Farm work XP can push Wildlings to evolve; they do it overnight in the Den.
 	report["evolved"] = []
 	for c: Creature in ranch:
@@ -464,6 +472,7 @@ func end_day(passed_out: bool = false) -> Dictionary:
 		world.weekly_week = wk
 		world.board = Progression.board_for(day(), int(world.seed))
 		world.board_week = wk
+	bounty()
 	for k in world.flags.keys():
 		if str(k).begins_with("chest:"):
 			world.flags.erase(k)
@@ -1124,6 +1133,80 @@ func festival_act(pid: String, op: String) -> Dictionary:
 	world.festival_done.append(Adventure.festival_key(day(), fest.id, pid))
 	grant(reward, p)
 	r["reward"] = reward
+	r.sfx = "levelup"
+	EventBus.inventory_changed.emit()
+	return r
+
+# --- Endless goals ------------------------------------------------------------------------
+
+## This week's Wildling Center bounty, rolled once per week from the regions open at the time.
+func bounty() -> Dictionary:
+	var wk := Calendar.week_number(day())
+	if int(world.get("bounty_week", -1)) != wk:
+		world.bounty = Endless.bounty_for(wk, int(world.seed), world.regions, world.dex)
+		world.bounty_week = wk
+	return world.bounty
+
+func chain_of(pid: String) -> Dictionary:
+	return world.get("chains", {}).get(pid, {})
+
+func chain_act(pid: String, species: String) -> Dictionary:
+	if not Data.species.has(species):
+		return _res(false)
+	if not world.has("chains"):
+		world.chains = {}
+	var ch := Endless.chain_after(chain_of(pid), species)
+	world.chains[pid] = ch
+	var r := _res(true)
+	r["chain"] = ch
+	return r
+
+## Weekly Creature Show (Saturdays without a festival): one entry per player per show.
+func show_act(pid: String, uid: String) -> Dictionary:
+	var p := player(pid)
+	if p == null or not Endless.show_open(day()):
+		return _res(false, "The weekly Creature Show is held on Saturdays.")
+	if int(world.flags.get("show:" + pid, -1)) == day():
+		return _res(false, "You've already shown a Wildling today. Come back next Saturday!")
+	var c := find_creature(uid)
+	if c == null or not c in p.party:
+		return _res(false, "Bring the Wildling along in your party.")
+	var srng := RandomNumberGenerator.new()
+	srng.seed = hash([int(world.seed), day(), pid, "show"])
+	var res := Endless.judge(c, srng)
+	Endless.award(c, res)
+	world.flags["show:" + pid] = day()
+	add_money(int(res.prize))
+	bump_stat("show")
+	if int(res.place) == 1:
+		bump_stat("show_win")
+	var r := _res(true)
+	r.merge(res)
+	r["name"] = c.display_name()
+	r["new_rank"] = c.show_rank
+	r["ribbons"] = c.ribbons
+	r.sfx = "levelup" if int(res.place) == 1 else "coin"
+	EventBus.party_changed.emit()
+	return r
+
+func rematch_ready(pid: String, vid: String) -> bool:
+	return Endless.rematch_open(world) and int(world.flags.get("rematch:%s:%s" % [vid, pid], -1)) != Calendar.week_number(day())
+
+## A post-game Warden rematch was won: weekly reward, and every few wins the Wardens get stronger.
+func rematch_won_act(pid: String, vid: String) -> Dictionary:
+	if not Data.villagers.get(vid, {}).get("trainer", {}).has("warden"):
+		return _res(false)
+	if not rematch_ready(pid, vid):
+		return _res(false, "%s only takes one rematch a week." % Data.villager_name(vid))
+	world.flags["rematch:%s:%s" % [vid, pid]] = Calendar.week_number(day())
+	var tier := Endless.rematch_tier(world)
+	var reward := Endless.rematch_reward(vid, tier)
+	grant(reward, player(pid))
+	bump_stat("rematch")
+	var r := _res(true)
+	r["reward"] = reward
+	r["tier_up"] = Endless.rematch_tier(world) > tier
+	r["level"] = Endless.rematch_level(Endless.rematch_tier(world))
 	r.sfx = "levelup"
 	EventBus.inventory_changed.emit()
 	return r

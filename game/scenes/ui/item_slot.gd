@@ -26,13 +26,24 @@ func _tooltip() -> String:
 	var it: Dictionary = Data.get_item(item_id)
 	var s := Data.item_name(item_id, quality)
 	if it.has("desc"):
-		s += "\n" + str(it.desc)
+		s += "\n" + Data.item_desc(item_id)
 	var price := Data.sell_price(item_id, quality)
 	if price > 0:
-		s += "\nSells for %dg" % price
+		s += tr("\nSells for %dg") % price
 	if float(it.get("energy", 0)) > 0:
-		s += "\n+%d energy" % int(it.energy)
+		s += tr("\n+%d energy") % int(it.energy)
 	return s
+
+static func quality_pips(q: int) -> int:
+	return clampi(q, 1, 3) if Settings.colorblind else 1
+
+## Quality marker: a silver/gold/iridium square, or one pip per quality level in colorblind mode.
+static func draw_quality(ci: CanvasItem, at: Vector2, q: int) -> void:
+	var c: Color = QUALITY_COLORS[clampi(q, 0, 3)]
+	for i in quality_pips(q):
+		var p := at + Vector2(i * 5, 0)
+		ci.draw_rect(Rect2(p, Vector2(5, 5)), UITheme.OUTLINE)
+		ci.draw_rect(Rect2(p + Vector2(1, 1), Vector2(3, 3)), c)
 
 func _draw() -> void:
 	var r := Rect2(Vector2.ZERO, size)
@@ -53,10 +64,7 @@ func _draw() -> void:
 				draw_string(f, p + o, t, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, UITheme.OUTLINE)
 			draw_string(f, p, t, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, UITheme.CREAM)
 		if quality > 0:
-			var c: Color = QUALITY_COLORS[clampi(quality, 0, 3)]
-			var sp := Vector2(3, size.y - 4)
-			draw_rect(Rect2(sp + Vector2(-1, -4), Vector2(5, 5)), UITheme.OUTLINE)
-			draw_rect(Rect2(sp + Vector2(0, -3), Vector2(3, 3)), c)
+			draw_quality(self, Vector2(2, size.y - 8), quality)
 	if bar >= 0.0:
 		draw_rect(Rect2(3, size.y - 5, size.x - 6, 3), Color(0, 0, 0, 0.5))
 		draw_rect(Rect2(3, size.y - 5, (size.x - 6) * clampf(bar, 0, 1), 3), Color("#7ac8ff"))

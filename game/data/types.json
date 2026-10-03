@@ -6,7 +6,7 @@
     "ember": {"name": "Ember", "abbr": "EM", "color": "#e8642c", "job": "smelt",     "job_name": "Smelter",   "job_desc": "Smelts ore from the farm chest and burns weeds."},
     "stone": {"name": "Stone", "abbr": "ST", "color": "#a08060", "job": "clear",     "job_name": "Digger",    "job_desc": "Clears rocks and branches and gathers stone and wood."},
     "gale":  {"name": "Gale",  "abbr": "GL", "color": "#9fd8d0", "job": "pollinate", "job_name": "Pollinator","job_desc": "Raises crop quality and gathers forage."},
-    "spark": {"name": "Spark", "abbr": "SP", "color": "#f2cf3a", "job": "power",     "job_name": "Generator", "job_desc": "Powers machines so they finish faster."},
+    "spark": {"name": "Spark", "abbr": "SP", "color": "#f2cf3a", "job": "power",     "job_name": "Generator", "job_desc": "Runs the machines: refills them from the farm chest, collects the goods and speeds them up."},
     "frost": {"name": "Frost", "abbr": "FR", "color": "#a8e0f8", "job": "preserve",  "job_name": "Preserver", "job_desc": "Preserves crops in the farm chest and protects crops from season change."},
     "shade": {"name": "Shade", "abbr": "SH", "color": "#6a4a8c", "job": "guard",     "job_name": "Guardian",  "job_desc": "Guards the farm at night against crows and pests."},
     "glow":  {"name": "Glow",  "abbr": "GW", "color": "#f8e8a0", "job": "luck",      "job_name": "Charmer",   "job_desc": "Brings luck and sometimes finds gems."},
