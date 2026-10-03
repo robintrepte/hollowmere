@@ -256,3 +256,13 @@ func test_shop_purchase_does_not_stack_rows_or_repeat() -> void:
 	sp._buy("parsnip_seeds", 1)
 	assert_eq(GameState.money(), before - Data.buy_price("parsnip_seeds"), "a second click during the purchase is ignored")
 	sp.free()
+
+func test_sixth_toast_does_not_stall() -> void:
+	GameState.new_game({"seed": 3, "player_name": "Shop", "farm_name": "T", "starter": "sproutle"})
+	var hud := Hud.new()
+	add_child(hud)
+	for i in 8:
+		hud.toast("Bought %d Green Bean Seeds" % i)
+	assert_eq(hud._toasts.get_child_count(), 5, "only the latest toasts stay on screen")
+	assert_eq(hud._toasts.get_child(4).get_child(0).text, "Bought 7 Green Bean Seeds")
+	hud.free()

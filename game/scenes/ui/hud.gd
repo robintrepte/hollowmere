@@ -346,8 +346,12 @@ func toast(text: String, _icon: String = "") -> void:
 	l.custom_minimum_size = Vector2(200, 0)
 	pc.add_child(l)
 	_toasts.add_child(pc)
+	# queue_free leaves the node in the tree until the frame ends, so a while on
+	# get_child_count would spin forever once a sixth toast arrives.
 	while _toasts.get_child_count() > 5:
-		_toasts.get_child(0).queue_free()
+		var old := _toasts.get_child(0)
+		_toasts.remove_child(old)
+		old.free()
 	pc.modulate.a = 0
 	var tw := pc.create_tween()
 	tw.tween_property(pc, "modulate:a", 1.0, 0.2)
