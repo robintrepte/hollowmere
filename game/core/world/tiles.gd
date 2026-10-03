@@ -51,6 +51,15 @@ static func blocks(ground: int, deco: int) -> bool:
 static func atlas_coords(id: int) -> Vector2i:
 	return Vector2i(id % ATLAS_COLS, int(id / ATLAS_COLS))
 
+## Neighbor bitmask in soil-tile order: north=1, east=2, south=4, west=8.
+static func neighbor_mask(origin: Vector2i, linked: Callable) -> int:
+	var mask := 0
+	var dirs := [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
+	for i in 4:
+		if linked.call(origin + dirs[i]):
+			mask |= 1 << i
+	return mask
+
 static func key(p: Vector2i) -> String:
 	return "%d,%d" % [p.x, p.y]
 

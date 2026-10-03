@@ -193,6 +193,8 @@ func _deco_sprite_name(p: Vector2i, d: int) -> String:
 	if d == Tiles.DECO.ore:
 		var ore: String = info.get("ore_types", {}).get(Tiles.key(p), "copper_ore")
 		n = "ore_" + ore.replace("_ore", "")
+	elif d == Tiles.DECO.fence:
+		n = "fence_%d" % _link_mask(p, "fence")
 	return n
 
 func _draw_deco(p: Vector2i) -> void:
@@ -222,14 +224,27 @@ func _draw_deco(p: Vector2i) -> void:
 		ysort.add_child(s)
 	_deco_nodes[k] = s
 
-func _object_sprite_name(o: Dictionary) -> String:
+func _object_sprite_name(o: Dictionary, p: Vector2i) -> String:
 	if o.kind == "tree":
 		var td: Dictionary = Data.trees.get(o.tree, {})
 		var frac := float(o.age) / maxf(1.0, float(td.get("days", 20)))
 		if frac >= 1.0:
 			return "fruit_tree"
 		return ["tree_stage0", "tree_stage1", "tree_stage2"][clampi(int(frac * 3.0), 0, 2)]
+	if o.id == "picket_fence":
+		return "picket_%d" % _link_mask(p, "picket_fence")
 	return o.id
+
+## Fence and picket pieces are numbered by Tiles.neighbor_mask (N=1 E=2 S=4 W=8).
+func _link_mask(p: Vector2i, kind: String) -> int:
+	return Tiles.neighbor_mask(p, _is_link.bind(kind))
+
+func _is_link(n: Vector2i, kind: String) -> bool:
+	if not grid.in_bounds(n):
+		return false
+	if kind == "fence":
+		return grid.get_deco(n) == Tiles.DECO.fence
+	return str(grid.object_at(n).get("id", "")) == kind
 
 func _draw_object(p: Vector2i) -> void:
 	var k := Tiles.key(p)
@@ -250,7 +265,7 @@ func _draw_object(p: Vector2i) -> void:
 		tw.tween_property(sh, "position:y", -12.0, 0.8).set_trans(Tween.TRANS_SINE)
 		tw.tween_property(sh, "position:y", -10.0, 0.8).set_trans(Tween.TRANS_SINE)
 	else:
-		var tex := Art.world(_object_sprite_name(o))
+		var tex := Art.world(_object_sprite_name(o, p))
 		if tex == null:
 			tex = Art.item(o.id)
 		var s := Sprite2D.new()
@@ -722,6 +737,10 @@ func _on_tile_changed(m: String, t: Vector2i) -> void:
 		if grid.in_bounds(t + d):
 			_draw_ground(t + d)
 	_draw_deco(t)
+	for dir in NEIGHBORS:
+		var n: Vector2i = t + dir
+		if grid.in_bounds(n) and grid.get_deco(n) == Tiles.DECO.fence:
+			_draw_deco(n)
 	for d in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 		_draw_soil(t + d)
 	_draw_crop(t)

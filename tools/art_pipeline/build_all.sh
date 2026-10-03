@@ -27,6 +27,9 @@ while read -r f _url names; do
   [ "$f" = adventure.png ] && extra=(--drop-small 0.05)
   $P sprites "$RAW/world/$f" "$names" game/assets/world ${extra[@]+"${extra[@]}"}
 done < tools/art_pipeline/world_sheets.txt
+# Sign and fences are drawn square to the camera. Fence tiles connect on every side,
+# so the isometric copies cut from the sheets are replaced here.
+$PY tools/art_pipeline/fences.py game/assets/world
 
 while read -r n w _url; do
   $P single "$RAW/buildings/$n.png" "game/assets/buildings/$n.png" --w $((w * 32)) --colors 40

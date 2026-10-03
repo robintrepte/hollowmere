@@ -178,3 +178,21 @@ func test_world_actions() -> void:
 	assert_true(GameState.use_item(pid, "farm", t, seeds.uid).ok)
 	assert_true(GameState.use_tool(pid, "farm", t, "watering_can").ok)
 	assert_eq(p.inventory.count("parsnip_seeds"), 14)
+
+func test_fence_neighbor_mask_matches_sprite_bits() -> void:
+	# Art in tools/art_pipeline/fences.py is numbered N=1 E=2 S=4 W=8.
+	var east_and_south := func(q: Vector2i) -> bool: return q == Vector2i(1, 0) or q == Vector2i(0, 1)
+	assert_eq(Tiles.neighbor_mask(Vector2i.ZERO, east_and_south), 6)
+	var cross := func(_q: Vector2i) -> bool: return true
+	assert_eq(Tiles.neighbor_mask(Vector2i(3, 3), cross), 15)
+	var none := func(_q: Vector2i) -> bool: return false
+	assert_eq(Tiles.neighbor_mask(Vector2i(1, 1), none), 0)
+	var w := World.new()
+	var g := FarmGrid.new()
+	g.setup(5, 5)
+	w.grid = g
+	g.set_deco(Vector2i(2, 1), Tiles.DECO.fence)
+	g.set_deco(Vector2i(3, 2), Tiles.DECO.fence)
+	g.set_deco(Vector2i(2, 2), Tiles.DECO.fence)
+	assert_eq(w._link_mask(Vector2i(2, 2), "fence"), 1 | 2, "north and east fences select the corner piece")
+	w.free()
