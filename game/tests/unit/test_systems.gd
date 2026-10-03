@@ -2,9 +2,19 @@ extends GutTest
 ## Breeding, economy, relationships, progression, calendar, maps, save roundtrip.
 
 var rng := RandomNumberGenerator.new()
+var _autosave_slot := -1
 
 func before_each() -> void:
 	rng.seed = 55
+
+func after_each() -> void:
+	SaveManager.live = false
+	SaveManager.set_quiet(false)
+	if _autosave_slot >= 0:
+		if SaveManager.current_slot == _autosave_slot:
+			SaveManager.current_slot = -1
+		SaveManager.delete_slot(_autosave_slot)
+		_autosave_slot = -1
 
 func test_breeding_compatibility_and_egg() -> void:
 	var a := Creature.create("sproutle", 20, rng)
@@ -266,3 +276,20 @@ func test_sixth_toast_does_not_stall() -> void:
 	assert_eq(hud._toasts.get_child_count(), 5, "only the latest toasts stay on screen")
 	assert_eq(hud._toasts.get_child(4).get_child(0).text, "Bought 7 Green Bean Seeds")
 	hud.free()
+
+func test_purchase_is_written_straight_away() -> void:
+	_autosave_slot = 99
+	GameState.new_game({"seed": 3, "player_name": "Save", "farm_name": "T", "starter": "sproutle"})
+	SaveManager.current_slot = _autosave_slot
+	SaveManager.live = true
+	var before := GameState.money()
+	var bought: Dictionary = GameState.buy(GameState.local_player().id, "general_store", "parsnip_seeds", 1)
+	assert_true(bought.ok)
+	var saved := SaveManager.read_payload(_autosave_slot)
+	assert_eq(int(saved.state.world.money), GameState.money())
+	assert_ne(int(saved.state.world.money), before, "the purchase is already on disk")
+	SaveManager.set_quiet(true)
+	GameState.add_money(40)
+	var during: Dictionary = SaveManager.read_payload(_autosave_slot)
+	assert_eq(int(during.state.world.money), GameState.money() - 40, "overnight bookkeeping does not store a half-finished change")
+	SaveManager.set_quiet(false)

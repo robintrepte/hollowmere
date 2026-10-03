@@ -64,9 +64,9 @@ func _on_view_resized() -> void:
 	if camera != null and world != null:
 		_setup_camera()
 
-## Phones and mobile browsers kill backgrounded games without warning, so save when we lose focus.
+## A crash, a frozen window, or a phone killing a backgrounded app should not drop the last minute.
 func _notification(what: int) -> void:
-	if what in [NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT] and TouchControls.active:
+	if what in [NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT]:
 		if player != null and not _transitioning and Net.mode != "client":
 			SaveManager.autosave()
 
@@ -84,6 +84,7 @@ func _rebuild_hud() -> void:
 func show_title() -> void:
 	GameClock.running = false
 	GameClock.clear_pauses()
+	SaveManager.live = false
 	ui.close_all()
 	_leave_game()
 	title = TitleScreen.new(ui)
@@ -179,6 +180,7 @@ func _enter_game() -> void:
 	controller = Controller.new()
 	add_child(controller)
 	controller.setup(self, ui, world, player)
+	SaveManager.live = true
 	player.warp_entered.connect(_on_warp)
 	_go_to(pd.map_id, pd.pos)
 	camera.reset_smoothing()

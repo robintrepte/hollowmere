@@ -3,11 +3,63 @@ extends Node
 
 const DIR := "user://saves"
 const MAX_SLOTS := 6
+## Farming edits can arrive in a burst; write them shortly after, not on every tile.
+const SOON := 1.0
+## Position updates every frame and has no signal of its own.
+const HEARTBEAT := 10.0
 
 var current_slot: int = -1
+## True only while a farm is on screen. Tests and the title screen stay quiet.
+var live := false
+var _quiet := false
+var _dirty := false
+var _soon := 0.0
+var _heartbeat := 0.0
+var _writing := false
 
 func _ready() -> void:
 	DirAccess.make_dir_recursive_absolute(DIR)
+	EventBus.inventory_changed.connect(checkpoint)
+	EventBus.money_changed.connect(func(_m, _d): checkpoint())
+	EventBus.party_changed.connect(checkpoint)
+	EventBus.quest_updated.connect(checkpoint)
+	EventBus.map_changed.connect(func(_id): checkpoint())
+	EventBus.battle_finished.connect(func(_r): checkpoint())
+	EventBus.story_advanced.connect(func(_c): checkpoint())
+	EventBus.creature_befriended.connect(func(_c): checkpoint())
+	EventBus.egg_hatched.connect(func(_c): checkpoint())
+	EventBus.shrine_restored.connect(func(_r): checkpoint())
+	EventBus.tile_changed.connect(func(_map, _t): touch())
+	EventBus.objects_changed.connect(func(_map): touch())
+
+func _process(delta: float) -> void:
+	if not live or _quiet:
+		return
+	_heartbeat += delta
+	if _dirty:
+		_soon += delta
+	if (_dirty and _soon >= SOON) or _heartbeat >= HEARTBEAT:
+		checkpoint()
+
+## Holds writes across an overnight resolution so a crash cannot store a half-finished day.
+func set_quiet(on: bool) -> void:
+	_quiet = on
+
+## Marks a small edit (a watered tile, a placed object) to be written within a second.
+func touch() -> void:
+	if live and not _quiet:
+		_dirty = true
+
+## Writes the current slot now. Local only; the nightly save and the pause menu still upload.
+func checkpoint() -> void:
+	if _writing or not live or _quiet or current_slot < 0 or not GameState.started:
+		return
+	_dirty = false
+	_soon = 0.0
+	_heartbeat = 0.0
+	_writing = true
+	save_game(current_slot, false)
+	_writing = false
 
 func slot_path(slot: int) -> String:
 	return "%s/slot_%d.json" % [DIR, slot]
@@ -47,7 +99,7 @@ func make_payload() -> Dictionary:
 		"state": GameState.to_dict(),
 	}
 
-func save_game(slot: int = -1) -> bool:
+func save_game(slot: int = -1, upload: bool = true) -> bool:
 	if slot < 0:
 		slot = current_slot
 	if slot < 0 or not GameState.started:
@@ -67,7 +119,7 @@ func save_game(slot: int = -1) -> bool:
 		DirAccess.copy_absolute(path, path + ".bak")
 	DirAccess.rename_absolute(tmp, path)
 	current_slot = slot
-	if Settings.cloud_saves and Net.has_session():
+	if upload and Settings.cloud_saves and Net.has_session():
 		Net.cloud_save(slot, payload)
 	return true
 

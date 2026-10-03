@@ -372,6 +372,7 @@ func abs_minute() -> int:
 
 ## Ends the day: shipping, jobs, growth, eggs, weather. Returns the morning report.
 func end_day(passed_out: bool = false) -> Dictionary:
+	SaveManager.set_quiet(true)
 	EventBus.day_ending.emit()
 	var report := {"shipped": [], "ship_total": 0, "jobs": {}, "farm": {}, "hatched": [], "eggs": 0, "passed_out": passed_out}
 	var nrng := RandomNumberGenerator.new()
@@ -495,6 +496,7 @@ func end_day(passed_out: bool = false) -> Dictionary:
 	EventBus.day_started.emit(day(), report)
 	EventBus.weather_changed.emit(world.weather)
 	EventBus.time_changed.emit(minute())
+	SaveManager.set_quiet(false)
 	SaveManager.autosave()
 	return report
 
