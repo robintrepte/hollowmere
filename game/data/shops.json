@@ -1,6 +1,6 @@
 {
   "general_store": {
-    "name": "Mira's General Store", "owner": "mira", "open": [900, 1800],
+    "name": "Mira's General Store", "owner": "mira", "open": [600, 2300],
     "stock": [
       {"id": "@season_seeds"},
       {"id": "@saplings"},
@@ -12,7 +12,7 @@
     "backpacks": true
   },
   "wildling_center": {
-    "name": "Wildling Center", "owner": "fern", "open": [800, 2000],
+    "name": "Wildling Center", "owner": "fern", "open": [600, 2400],
     "stock": [
       {"id": "lure_charm"}, {"id": "great_charm", "requires": "shrine:2"}, {"id": "ultra_charm", "requires": "shrine:5"},
       {"id": "potion"}, {"id": "super_potion", "requires": "shrine:3"}, {"id": "max_potion", "requires": "shrine:6"},
@@ -23,7 +23,7 @@
     ]
   },
   "blacksmith": {
-    "name": "Greta's Forge", "owner": "greta", "open": [900, 1700],
+    "name": "Greta's Forge", "owner": "greta", "open": [600, 2200],
     "stock": [
       {"id": "coal", "price": 150}, {"id": "copper_ore", "price": 75}, {"id": "iron_ore", "price": 150, "requires": "shrine:2"},
       {"id": "gold_ore", "price": 400, "requires": "shrine:4"}, {"id": "gem_case", "requires": "shrine:1"}
@@ -31,7 +31,7 @@
     "upgrades": true
   },
   "carpenter": {
-    "name": "Bram's Workshop", "owner": "bram", "open": [900, 1700],
+    "name": "Bram's Workshop", "owner": "bram", "open": [600, 2200],
     "stock": [
       {"id": "wood", "price": 10}, {"id": "stone", "price": 20}, {"id": "hardwood", "price": 120, "requires": "shrine:3"}, {"id": "clay", "price": 60},
       {"id": "tool_belt"}, {"id": "storage_crate", "requires": "level:4"},
@@ -42,14 +42,14 @@
     "buildings": true
   },
   "cafe": {
-    "name": "The Sleepy Sprout Cafe", "owner": "theo", "open": [1000, 2400],
+    "name": "The Sleepy Sprout Cafe", "owner": "theo", "open": [800, 2600],
     "stock": [
       {"id": "fried_egg", "price": 100}, {"id": "garden_salad", "price": 220}, {"id": "veggie_stew", "price": 350},
       {"id": "honey_cake", "price": 500}, {"id": "glow_tea", "price": 320}, {"id": "farmer_lunch", "price": 300}
     ]
   },
   "traveler": {
-    "name": "Sable's Traveling Cart", "owner": "sable", "open": [800, 2000], "days": [4, 6],
+    "name": "Sable's Traveling Cart", "owner": "sable", "open": [600, 2300], "days": [4, 6],
     "random": 6,
     "pool": [
       {"id": "star_shard", "price": 2000}, {"id": "deluxe_treat", "price": 400}, {"id": "ultra_charm", "price": 900},
