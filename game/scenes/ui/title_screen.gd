@@ -34,6 +34,7 @@ var _scene := 0
 var _scene_t := 0.0
 var _load_btn: Button
 var _account: Button
+var _legal: HBoxContainer
 var _t := 0.0
 
 func _init(u: UIRoot = null) -> void:
@@ -68,8 +69,9 @@ func _ready() -> void:
 	panel.anchor_bottom = 1
 	panel.offset_left = -70
 	panel.offset_right = 70
-	panel.offset_top = -20
-	panel.offset_bottom = -20
+	panel.offset_top = -22
+	panel.offset_bottom = -22
+	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	add_child(panel)
 	_menu = VBoxContainer.new()
@@ -77,10 +79,12 @@ func _ready() -> void:
 	panel.add_child(_menu)
 	_menu.minimum_size_changed.connect(func(): panel.set_deferred("offset_top", panel.offset_bottom))
 	_fill_menu()
+	_build_legal()
 	Settings.locale_changed.connect(_fill_menu)
 	Settings.text_scale_changed.connect(func():
 		UITheme.reset()
-		theme = UITheme.theme())
+		theme = UITheme.theme()
+		_style_legal())
 	var ver := UITheme.label(tr("v%s") % ProjectSettings.get_setting("application/config/version"), 8, UITheme.CREAM, true)
 	ver.anchor_top = 1
 	ver.anchor_bottom = 1
@@ -124,16 +128,61 @@ func _fill_menu() -> void:
 		else:
 			ui.open(AccountPanel.new())))
 	_menu.add_child(UITheme.button("Settings", func(): ui.open(SettingsPanel.new())))
-	var legal := HBoxContainer.new()
-	legal.alignment = BoxContainer.ALIGNMENT_CENTER
-	legal.add_theme_constant_override("separation", 6)
-	legal.add_child(UITheme.button("Privacy policy", func(): _open_page("privacy")))
-	legal.add_child(UITheme.button("Terms", func(): _open_page("terms")))
-	_menu.add_child(legal)
 	if OS.get_name() != "Web":
 		_menu.add_child(UITheme.button("Quit", func(): get_tree().quit()))
+	_style_legal()
 	if is_instance_valid(_account):
 		_on_session(Net.has_session())
+
+## Privacy and terms sit under the menu as quiet text links, so long
+## translations never widen the button stack.
+func _build_legal() -> void:
+	_legal = HBoxContainer.new()
+	_legal.alignment = BoxContainer.ALIGNMENT_CENTER
+	_legal.add_theme_constant_override("separation", 6)
+	_legal.anchor_left = 0.5
+	_legal.anchor_right = 0.5
+	_legal.anchor_top = 1.0
+	_legal.anchor_bottom = 1.0
+	_legal.offset_top = -2
+	_legal.offset_bottom = -2
+	_legal.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_legal.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	_legal.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_legal)
+	_legal.add_child(_text_link("Privacy policy", "privacy"))
+	var dot := UITheme.label("·", 8, UITheme.CREAM, true)
+	dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_legal.add_child(dot)
+	_legal.add_child(_text_link("Terms", "terms"))
+	_style_legal()
+
+func _text_link(text: String, page: String) -> LinkButton:
+	var b := LinkButton.new()
+	b.set_meta("src", text)
+	b.focus_mode = Control.FOCUS_ALL
+	b.pressed.connect(func():
+		Audio.sfx("ui")
+		_open_page(page))
+	return b
+
+func _style_legal() -> void:
+	if not is_instance_valid(_legal):
+		return
+	for c in _legal.get_children():
+		if c is LinkButton:
+			c.text = tr(str(c.get_meta("src")))
+			c.underline = LinkButton.UNDERLINE_MODE_ON_HOVER
+			c.add_theme_font_override("font", UITheme.font())
+			c.add_theme_font_size_override("font_size", UITheme.fs(8))
+			c.add_theme_color_override("font_color", Color(1, 0.96, 0.88, 0.9))
+			c.add_theme_color_override("font_hover_color", Color.WHITE)
+			c.add_theme_color_override("font_pressed_color", UITheme.PARCHMENT)
+			c.add_theme_color_override("font_focus_color", Color.WHITE)
+			c.add_theme_color_override("font_outline_color", UITheme.OUTLINE)
+			c.add_theme_constant_override("outline_size", 3)
+		elif c is Label:
+			c.add_theme_font_size_override("font_size", UITheme.fs(8))
 
 func _open_page(page: String) -> void:
 	var url := "https://hollowmere.tretu.de/" + page
