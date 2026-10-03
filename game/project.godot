@@ -8,6 +8,13 @@
 
 config_version=5
 
+[audio]
+
+; Sample playback (the web default) goes silent once a second bus is added.
+; See https://github.com/godotengine/godot/issues/119026
+general/default_playback_type.web=0
+driver/output_latency.web=80
+
 [application]
 
 config/name="Hollowmere"

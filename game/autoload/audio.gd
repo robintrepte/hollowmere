@@ -74,12 +74,14 @@ func _ready() -> void:
 	for i in POOL:
 		var p := AudioStreamPlayer.new()
 		p.bus = "SFX"
+		_use_stream(p)
 		add_child(p)
 		_players.append(p)
 	_music_a = AudioStreamPlayer.new()
 	_music_b = AudioStreamPlayer.new()
 	for m in [_music_a, _music_b]:
 		m.bus = "Music"
+		_use_stream(m)
 		add_child(m)
 
 ## Tabbing away, alt-tab, or backgrounding the app silences music. The stream keeps
@@ -95,6 +97,12 @@ func _set_away(away: bool) -> void:
 		return
 	_away = away
 	apply_music_mute()
+
+## Web exports default to Sample playback. That path disconnects Master from the
+## speakers as soon as Music and SFX exist, so Chrome (and every other browser)
+## stays silent. Stream uses Godot's mixer instead.
+func _use_stream(player: AudioStreamPlayer) -> void:
+	player.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
 
 ## Re-applies the Music bus mute from the volume slider, plus background mute.
 func apply_music_mute() -> void:
