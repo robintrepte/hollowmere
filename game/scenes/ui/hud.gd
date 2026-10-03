@@ -1,6 +1,6 @@
 class_name Hud
 extends CanvasLayer
-## Day ribbon (sun arc, date, weather, time) up top; energy, hotbar and coins docked along the bottom;
+## Day ribbon (sun arc, date, weather, time) top right; energy, hotbar and coins docked along the bottom;
 ## farm level, party lead and quest tracker top left; toasts below them.
 
 const SLOT := 34
@@ -32,13 +32,15 @@ func _ready() -> void:
 	root.theme = UITheme.theme()
 	add_child(root)
 
-	# Day ribbon (top center)
+	# Day ribbon (top right)
 	var day := PanelContainer.new()
 	day.add_theme_stylebox_override("panel", _pill(4))
-	day.anchor_left = 0.5
-	day.anchor_right = 0.5
-	day.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	day.offset_top = 5
+	day.anchor_left = 1
+	day.anchor_right = 1
+	day.offset_left = -6
+	day.offset_right = -6
+	day.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	day.offset_top = 6
 	day.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(day)
 	var drow := HBoxContainer.new()
