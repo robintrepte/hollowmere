@@ -4,9 +4,6 @@ extends CanvasLayer
 ## farm level, party lead and quest tracker top left; toasts below them.
 
 const SLOT := 34
-const PILL := Color(0.14, 0.1, 0.13, 0.86)
-const PILL_EDGE := Color("#c9a24a")
-const SOFT := Color("#d8c8a8")
 
 var _date: Label
 var _time: Label
@@ -54,11 +51,11 @@ func _ready() -> void:
 	var dcol := VBoxContainer.new()
 	dcol.add_theme_constant_override("separation", 0)
 	drow.add_child(dcol)
-	_date = UITheme.label("", 9, UITheme.CREAM)
+	_date = UITheme.label("", 9)
 	dcol.add_child(_date)
-	_weather = UITheme.label("", 8, SOFT)
+	_weather = UITheme.label("", 8, UITheme.MUTED)
 	dcol.add_child(_weather)
-	_time = UITheme.label("", 14, UITheme.COIN)
+	_time = UITheme.label("", 14, UITheme.WOOD_DK)
 	_time.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	drow.add_child(_time)
 
@@ -75,7 +72,7 @@ func _ready() -> void:
 	var lrow := HBoxContainer.new()
 	lrow.add_theme_constant_override("separation", 4)
 	lvv.add_child(lrow)
-	_level = UITheme.label("Farm Lv 1", 9, UITheme.COIN)
+	_level = UITheme.label("Farm Lv 1", 9)
 	lrow.add_child(_level)
 	_xp = _bar(UITheme.COIN)
 	_xp.custom_minimum_size = Vector2(60, 4)
@@ -89,12 +86,12 @@ func _ready() -> void:
 	lcol.add_theme_constant_override("separation", 2)
 	lcol.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	lead.add_child(lcol)
-	_lead_name = UITheme.label("", 8, UITheme.CREAM)
+	_lead_name = UITheme.label("", 8)
 	lcol.add_child(_lead_name)
 	_lead_hp = _bar(UITheme.LEAF)
 	_lead_hp.custom_minimum_size = Vector2(56, 4)
 	lcol.add_child(_lead_hp)
-	_quest = UITheme.label("", 8, SOFT)
+	_quest = UITheme.label("", 8, UITheme.WOOD)
 	_quest.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_quest.custom_minimum_size = Vector2(150, 0)
 	lvv.add_child(_quest)
@@ -115,11 +112,11 @@ func _ready() -> void:
 	mrow.add_theme_constant_override("separation", 3)
 	co.add_child(mrow)
 	mrow.add_child(UITheme.icon_rect(Art.item("_coin"), 16))
-	_money = UITheme.label("0", 12, UITheme.COIN)
+	_money = UITheme.label("0", 12, UITheme.WOOD_DK)
 	mrow.add_child(_money)
 
 	var hb := PanelContainer.new()
-	hb.add_theme_stylebox_override("panel", _pill(3))
+	hb.add_theme_stylebox_override("panel", UITheme.wood(3))
 	hb.anchor_left = 0.5
 	hb.anchor_right = 0.5
 	hb.anchor_top = 1
@@ -179,14 +176,13 @@ func _ready() -> void:
 	_refresh_all()
 
 func _pill(pad: int) -> StyleBoxFlat:
-	var s := UITheme.box(PILL, PILL_EDGE, 1, 6, pad)
-	s.border_width_bottom = 2
+	var s := UITheme.parchment(pad)
+	s.set_corner_radius_all(6)
 	return s
 
 func _bar(fill: Color) -> ProgressBar:
 	var b := ProgressBar.new()
 	b.show_percentage = false
-	b.add_theme_stylebox_override("background", UITheme.box(Color(1, 1, 1, 0.14), Color(0, 0, 0, 0), 0, 1, 0, false))
 	b.add_theme_stylebox_override("fill", UITheme.box(fill, Color(0, 0, 0, 0), 0, 1, 0, false))
 	return b
 
@@ -368,15 +364,15 @@ class DayDial extends Control:
 		var t := clampf(float(minute - Calendar.DAY_START) / float(Calendar.DAY_END - Calendar.DAY_START), 0.0, 1.0)
 		var a := PI + t * PI
 		var night := Calendar.is_night(minute)
-		draw_line(Vector2(0, c.y + 1), Vector2(size.x, c.y + 1), Color(1, 1, 1, 0.35))
-		draw_arc(c, r, PI, TAU, 20, Color(1, 1, 1, 0.2), 1.0)
-		draw_arc(c, r, PI, a, 20, Color("#8a9ad8") if night else Color("#e8b040"), 2.0)
+		draw_line(Vector2(0, c.y + 1), Vector2(size.x, c.y + 1), UITheme.PARCHMENT_DK.darkened(0.25))
+		draw_arc(c, r, PI, TAU, 20, UITheme.PARCHMENT_DK.darkened(0.1), 1.0)
+		draw_arc(c, r, PI, a, 20, Color("#5a68a8") if night else Color("#e09a30"), 2.0)
 		var p := c + Vector2(cos(a), sin(a)) * r
+		draw_circle(p, 4.0, UITheme.OUTLINE)
 		if night:
-			draw_circle(p, 3.0, Color("#e4ecff"))
-			draw_circle(p + Vector2(1.5, -1), 2.2, PILL)
+			draw_circle(p, 3.0, Color("#eef2ff"))
+			draw_circle(p + Vector2(1.5, -1), 2.2, UITheme.PARCHMENT)
 		else:
-			draw_circle(p, 4.5, Color(1, 0.85, 0.3, 0.3))
 			draw_circle(p, 3.0, UITheme.COIN)
 
 
@@ -391,7 +387,7 @@ class EnergyPips extends Control:
 		var fill := Color("#e07050") if low else UITheme.ENERGY
 		for i in PIPS:
 			var r := Rect2(i * (w + 2.0), 0, w, size.y)
-			draw_rect(r, Color(1, 1, 1, 0.14))
+			draw_rect(r, Color("#c8b088"))
 			var f := clampf(frac * PIPS - i, 0.0, 1.0)
 			if f > 0.0:
 				var fw := maxf(1.0, roundf(w * f))
