@@ -7,6 +7,7 @@ const WANDER_SPEED := 26.0
 const CHASE_SPEED := 62.0
 const TOUCH_DIST := 14.0
 const NOTICE_DIST := 84.0
+const BODY_GAP := 20.0
 
 var species := ""
 var level := 1
@@ -75,6 +76,8 @@ func _ready() -> void:
 func stun(seconds: float) -> void:
 	_stun = seconds
 	_chasing = 0.0
+	_target = position
+	_wait = maxf(_wait, seconds)
 
 func emote(text: String, seconds: float = 1.2) -> void:
 	_emote.text = text
@@ -103,7 +106,7 @@ func _process(delta: float) -> void:
 	var d := INF
 	if pl and not pet:
 		d = pl.position.distance_to(position)
-		if d < TOUCH_DIST and not pl.locked and not UIRoot.blocking:
+		if d < TOUCH_DIST and not pl.locked and pl.encounter_grace <= 0.0 and not UIRoot.blocking:
 			_stun = 0.5
 			var setup := {"kind": "wild", "species": species, "level": level, "starry": starry, "node": self}
 			if boss:
@@ -112,10 +115,14 @@ func _process(delta: float) -> void:
 			EventBus.battle_requested.emit(setup)
 			return
 		_notice_cd -= delta
-		if _curious and d < NOTICE_DIST and _chasing <= 0.0 and _notice_cd <= 0.0:
+		if _curious and d < NOTICE_DIST and _chasing <= 0.0 and _notice_cd <= 0.0 and pl.encounter_grace <= 0.0 and not pl.locked:
 			_chasing = 2.5
 			_notice_cd = 7.0
 			emote("!")
+		if (pl.locked or pl.encounter_grace > 0.0) and _chasing > 0.0:
+			_chasing = 0.0
+			_target = position
+			_wait = 1.5
 	if _chasing > 0.0 and pl:
 		_chasing -= delta
 		_target = pl.position
@@ -139,6 +146,7 @@ func _process(delta: float) -> void:
 				_stuck = 0.0
 				_working = false
 				_target = position
+	_separate()
 	# Hop while moving, gentle breathing while idle
 	if moving:
 		sprite.position.y = -absf(sin(_t * 12.0)) * 3.0
@@ -206,6 +214,25 @@ func _pick_target() -> void:
 			_wait = _rng.randf_range(1.0, 3.5)
 			return
 	_wait = 1.0
+
+## Keep a pile of Wildlings from standing on the same pixel and all touching the farmer at once.
+func _separate() -> void:
+	if world == null or world.grid == null:
+		return
+	for raw in world.creatures:
+		var other := raw as Node2D
+		if other == null or other == self or not is_instance_valid(other):
+			continue
+		var gap: Vector2 = position - other.position
+		var dist: float = gap.length()
+		if dist >= BODY_GAP:
+			continue
+		var push := Vector2.RIGHT * BODY_GAP
+		if dist >= 0.01:
+			push = gap.normalized() * (BODY_GAP - dist) * 0.35
+		var dest: Vector2 = position + push
+		if not world.is_solid_at(dest, Vector2(6, 3)):
+			position = dest
 
 func _step(dist: float) -> bool:
 	var dir := (_target - position)

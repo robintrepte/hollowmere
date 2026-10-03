@@ -1,6 +1,10 @@
 extends Node
 ## Root: title <-> game flow, map transitions, sleeping, camera, menus and remote players.
 
+const WILD_FLEE_STUN := 4.0
+const WILD_FLEE_PUSH := 36.0
+const WILD_FLEE_GRACE := 2.2
+
 const INTRO := [
 	"Dear {name},\nGrandma Hazel's old farm in Hollowmere is yours now. It's overgrown, but the soil is good.",
 	"The Wildlings of the valley have always helped this farm. Treat them kindly, and they'll stay.",
@@ -392,8 +396,8 @@ func _on_battle_requested(s: Dictionary) -> void:
 	var node: WildCreature = s.get("node")
 	if not pd.has_usable_party():
 		EventBus.toast.emit("Your Wildlings are too tired to battle. Rest at home or the Wildling Center.", "")
-		if node:
-			node.stun(3.0)
+		_break_wild_contact()
+		player.encounter_grace = WILD_FLEE_GRACE
 		return
 	if s.kind == "wild":
 		var c := Creature.create(s.species, int(s.level), GameState.rng, {"starry": s.get("starry", false)})
@@ -443,8 +447,7 @@ func _on_battle_requested(s: Dictionary) -> void:
 			if s.kind != "wild":
 				pd.stat_add("trainer_wins")
 		"run":
-			if node:
-				node.stun(3.0)
+			_break_wild_contact()
 		"lose":
 			pd.heal_party()
 			if not s.get("friendly", false):
@@ -468,9 +471,33 @@ func _on_battle_requested(s: Dictionary) -> void:
 	if not after.is_empty():
 		Audio.sfx("befriend")
 		await ui.say(after)
+	if res.result == "run":
+		player.encounter_grace = WILD_FLEE_GRACE
 	player.locked = false
 	GameClock.resume("battle")
 	EventBus.battle_finished.emit(res)
+
+## Fleeing one Wildling must not drop you into the next one standing on the same spot.
+func _break_wild_contact() -> void:
+	if world == null or player == null:
+		return
+	var i := 0
+	for raw in world.creatures:
+		var w := raw as WildCreature
+		if w == null or not is_instance_valid(w) or w.pet:
+			continue
+		if w.position.distance_to(player.position) > WildCreature.NOTICE_DIST + 16.0:
+			continue
+		w.stun(WILD_FLEE_STUN)
+		w._notice_cd = 8.0
+		var away: Vector2 = w.position - player.position
+		if away.length() < 8.0:
+			away = Vector2.RIGHT.rotated(float(i) * 1.25)
+		var dest: Vector2 = player.position + away.normalized() * WILD_FLEE_PUSH
+		if world.grid != null and not world.is_solid_at(dest, Vector2(6, 3)):
+			w.position = dest
+			w._target = dest
+		i += 1
 
 # --- Co-op remote players ---------------------------------------------------------------
 

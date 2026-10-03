@@ -597,6 +597,13 @@ func _spawn_creatures() -> void:
 		if spawns.is_empty():
 			var sh: int = GameState.world.shrines.size()
 			levels = [5 + sh * 4, 10 + sh * 5]
+	var taken: Array[Vector2i] = []
+	var region: String = info.get("region", "")
+	if region != "" and not info.get("mine", false):
+		if Adventure.guardian_free(GameState.world, region) and Data.species.has(Adventure.guardian_of(region)):
+			taken.append(Vector2i(39, 20))
+		if Adventure.legend_here(GameState.world, region, GameState.season()) != "":
+			taken.append(Vector2i(38, 15))
 	if not spawns.is_empty() or not bonus.is_empty():
 		var starry_mult := 3.0 if GameState._anyone_has("starry_charm") else 1.0
 		var chain := GameState.chain_of(Net.local_id())
@@ -607,13 +614,13 @@ func _spawn_creatures() -> void:
 				sid = chain.species
 			if sid == "" or not Data.species.has(sid):
 				continue
-			var t := _random_open_tile(rng, true)
+			var t := _random_open_tile(rng, true, Vector2i(-1, -1), taken)
 			if t.x < 0:
 				continue
+			taken.append(t)
 			var lvl := Trainers.wild_level(levels, rng, night)
 			var starry := rng.randf() * float(Creature.STARRY_ODDS) / (starry_mult * Endless.chain_mult(chain, sid)) < 1.0
 			_add_creature(sid, lvl, starry, t, null)
-	var region: String = info.get("region", "")
 	if region != "" and not info.get("mine", false):
 		if Adventure.guardian_free(GameState.world, region) and Data.species.has(Adventure.guardian_of(region)):
 			_add_creature(Adventure.guardian_of(region), Adventure.guardian_level(region), false, Vector2i(39, 20), null, true)
@@ -626,8 +633,9 @@ func _spawn_creatures() -> void:
 			if o.get("id", "") == "den":
 				den = Vector2i(int(o.x) + int(o.w) / 2, int(o.y) + int(o.h) + 3)
 		for c in GameState.ranch.slice(0, 30):
-			var t2 := _random_open_tile(rng, false, den)
+			var t2 := _random_open_tile(rng, false, den, taken)
 			if t2.x >= 0:
+				taken.append(t2)
 				_add_creature(c.species_id, c.level, c.starry, t2, c)
 
 func _add_creature(sid: String, lvl: int, starry: bool, t: Vector2i, c: Creature, boss: bool = false) -> WildCreature:
@@ -644,7 +652,7 @@ func _add_creature(sid: String, lvl: int, starry: bool, t: Vector2i, c: Creature
 	creatures.append(w)
 	return w
 
-func _random_open_tile(rng: RandomNumberGenerator, prefer_grass: bool, near := Vector2i(-1, -1)) -> Vector2i:
+func _random_open_tile(rng: RandomNumberGenerator, prefer_grass: bool, near := Vector2i(-1, -1), avoid: Array = []) -> Vector2i:
 	var sp: Array = info.get("spawn", [1, 1])
 	var spawn_t := Vector2i(int(sp[0]), int(sp[1]))
 	for i in 80:
@@ -653,7 +661,7 @@ func _random_open_tile(rng: RandomNumberGenerator, prefer_grass: bool, near := V
 			t = Vector2i(clampi(near.x + rng.randi_range(-6, 6), 1, grid.w - 2), clampi(near.y + rng.randi_range(-3, 3), 1, grid.h - 2))
 		elif t.distance_to(spawn_t) < 6.0:
 			continue
-		if is_tile_solid(t) or not warp_at(t).is_empty() or interactables.has(t):
+		if t in avoid or is_tile_solid(t) or not warp_at(t).is_empty() or interactables.has(t):
 			continue
 		if prefer_grass and i < 40 and grid.get_ground(t) != Tiles.GROUND.tallgrass:
 			continue

@@ -20,6 +20,8 @@ var facing := Vector2.DOWN
 var moving := false
 var running := false
 var locked := false
+## After fleeing a wild battle, touching a Wildling does not start another until this runs out.
+var encounter_grace := 0.0
 var target := Vector2i.ZERO
 var _talk_tile := Vector2i.ZERO
 var _name_label: Label
@@ -73,6 +75,7 @@ func _physics_process(delta: float) -> void:
 		doll.running = running
 		return
 	_warp_cooldown = maxf(0.0, _warp_cooldown - delta)
+	encounter_grace = maxf(0.0, encounter_grace - delta)
 	var dir := Vector2.ZERO
 	if not locked and not UIRoot.blocking and not doll.is_swinging():
 		dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
