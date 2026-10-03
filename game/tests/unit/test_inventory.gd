@@ -48,6 +48,20 @@ func test_container_filter_and_no_nesting() -> void:
 	assert_false(pouch.inv.accepts("copper_ore"))
 	assert_false(pouch.inv.accepts("seed_pouch"))
 
+func test_container_moves_inside_its_own_grid() -> void:
+	var inv := Inventory.new(4, 2)
+	assert_eq(inv.add("seed_pouch", 1), 0)
+	inv.add("parsnip_seeds", 4)
+	var pouch: Dictionary = inv.first_of("seed_pouch")
+	var uid: String = pouch.uid
+	assert_eq(pouch.inv.count("parsnip_seeds"), 4)
+	assert_true(inv.move_from(inv, uid, 3, 1, false), "a bag can move to another slot")
+	var moved: Dictionary = inv.first_of("seed_pouch")
+	assert_eq(Vector2i(int(moved.x), int(moved.y)), Vector2i(3, 1))
+	assert_eq(moved.uid, uid)
+	assert_eq(moved.inv.count("parsnip_seeds"), 4, "contents stay with the bag")
+	assert_false(moved.inv.move_from(inv, uid, 0, 0, false), "a bag cannot be dropped inside itself")
+
 func test_move_and_merge() -> void:
 	var a := Inventory.new(4, 4)
 	var b := Inventory.new(4, 4)

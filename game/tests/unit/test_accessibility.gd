@@ -85,7 +85,7 @@ func test_grid_view_cursor_moves_and_picks_with_a_pad() -> void:
 	add_child_autofree(v)
 	add_child_autofree(panel)
 	var picked: Array = []
-	v.cell_pressed.connect(func(_v, cell: Vector2i, button: int, _s): picked.append([cell, button]))
+	v.cell_pressed.connect(func(_v, cell: Vector2i, button: int, _s, _double): picked.append([cell, button]))
 	v.grab_focus()
 	assert_eq(v.hover_cell, Vector2i.ZERO)
 	var right := InputEventAction.new()

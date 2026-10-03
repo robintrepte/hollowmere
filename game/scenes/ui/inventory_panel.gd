@@ -35,9 +35,9 @@ var _menu_entry: Dictionary = {}
 var _menu_inv: Inventory
 var _menu_at := Vector2.ZERO
 
-const MOUSE_HELP := "Drag to move · R rotate · Right-click for actions · Shift-click quick move · Esc close"
+const MOUSE_HELP := "Drag to move · Double-click a bag to open · R rotate · Right-click for actions · Shift-click quick move · Esc close"
 const PAD_HELP := "D-pad move · A pick up / drop · X actions · B rotate · Start close"
-const TOUCH_HELP := "Tap to pick up, tap again to place · Hold an item for actions · Rotate turns it · X closes"
+const TOUCH_HELP := "Tap to pick up, tap again to place · Double-tap a bag to open · Hold an item for actions · Rotate turns it · X closes"
 
 func _init(p: PlayerData = null, other_inv: Inventory = null, title: String = "", m: String = "pack") -> void:
 	player = p
@@ -182,8 +182,13 @@ func can_drop(view: GridView, origin: Vector2i) -> bool:
 
 # --- Input ---------------------------------------------------------------------------------
 
-func _on_cell(view: GridView, cell: Vector2i, button: int, shift: bool) -> void:
+func _on_cell(view: GridView, cell: Vector2i, button: int, shift: bool, double: bool = false) -> void:
 	var e := view.inv.entry_at(cell.x, cell.y)
+	if button == MOUSE_BUTTON_LEFT and double and not e.is_empty() and e.has("inv") and (held_uid == "" or held_uid == e.uid):
+		if held_uid != "":
+			_cancel_held()
+		_open_container(e)
+		return
 	if button == MOUSE_BUTTON_LEFT:
 		if held_uid != "":
 			_drop(view, cell)
@@ -274,6 +279,7 @@ func _on_hover(view: GridView, e: Dictionary) -> void:
 	bits.append(tr("%dx%d") % [sz.x, sz.y])
 	if e.has("inv"):
 		bits.append(tr("Holds %dx%d%s") % [e.inv.w, e.inv.h, (" (" + ", ".join(e.inv.filter) + ")") if not e.inv.filter.is_empty() else ""])
+		bits.append(tr("Double-click to open"))
 	_info_desc.text = " · ".join(bits.filter(func(b): return b != ""))
 
 func _on_hotbar_input(ev: InputEvent, i: int) -> void:

@@ -297,7 +297,9 @@ func move_from(src: Inventory, uid: String, x: int, y: int, r: bool) -> bool:
 	var owner: Inventory = f.inv
 	if not accepts(e.id):
 		return false
-	if e.has("inv") and _contains_inv(e.inv):
+	# A bag can move around the grid it already sits in. Block only a drop into
+	# that bag, or into something packed inside it.
+	if e.has("inv") and e.inv._contains_inv(self):
 		return false
 	var target := entry_at(x, y)
 	if not target.is_empty() and target.uid != uid:

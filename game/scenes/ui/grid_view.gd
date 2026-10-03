@@ -3,7 +3,7 @@ extends Control
 ## Draws an Inventory as a Tarkov-style grid. Items span WxH cells and can be rotated.
 ## The owning InventoryPanel handles drag state; this view reports hover + clicks.
 
-signal cell_pressed(view: GridView, cell: Vector2i, button: int, shift: bool)
+signal cell_pressed(view: GridView, cell: Vector2i, button: int, shift: bool, double: bool)
 signal hover_changed(view: GridView, entry: Dictionary)
 
 const CELL := 26
@@ -55,7 +55,10 @@ func _gui_input(event: InputEvent) -> void:
 		_set_hover(cell_at(event.position))
 	elif event is InputEventMouseButton and event.pressed:
 		_set_hover(cell_at(event.position))
-		cell_pressed.emit(self, cell_at(event.position), event.button_index, event.shift_pressed)
+		var double_click := false
+		if event is InputEventMouseButton:
+			double_click = (event as InputEventMouseButton).double_click
+		cell_pressed.emit(self, cell_at(event.position), event.button_index, event.shift_pressed, double_click)
 		accept_event()
 	elif has_focus():
 		_pad_input(event)
@@ -76,9 +79,9 @@ func _pad_input(event: InputEvent) -> void:
 			accept_event()
 			return
 	if event.is_action_pressed("ui_accept"):
-		cell_pressed.emit(self, c, MOUSE_BUTTON_LEFT, false)
+		cell_pressed.emit(self, c, MOUSE_BUTTON_LEFT, false, false)
 	elif event.is_action_pressed("use_tool"):
-		cell_pressed.emit(self, c, MOUSE_BUTTON_RIGHT, false)
+		cell_pressed.emit(self, c, MOUSE_BUTTON_RIGHT, false, false)
 	elif event.is_action_pressed("rotate_item") and panel and panel.has_method("rotate_held_or_hovered"):
 		panel.rotate_held_or_hovered()
 	else:
@@ -111,11 +114,12 @@ func _draw() -> void:
 	for e in inv.entries:
 		var sz := Inventory.entry_size(e)
 		var r := Rect2(1 + int(e.x) * CELL, 1 + int(e.y) * CELL, sz.x * CELL - 1, sz.y * CELL - 1)
-		var cat: String = Data.get_item(e.id).get("cat", "")
-		var tint: Color = CAT_TINT.get(cat, Color("#e8d4a8"))
 		var is_held: bool = e.uid == held
-		draw_rect(r, tint.darkened(0.05) if not is_held else tint.darkened(0.35))
-		draw_rect(r, Color("#7a5a3a"), false, 1.0)
+		if not e.has("inv"):
+			var cat: String = Data.get_item(e.id).get("cat", "")
+			var tint: Color = CAT_TINT.get(cat, Color("#e8d4a8"))
+			draw_rect(r, tint.darkened(0.05) if not is_held else tint.darkened(0.35))
+			draw_rect(r, Color("#7a5a3a"), false, 1.0)
 		if e.uid == highlight_uid:
 			draw_rect(r.grow(-1), Color("#ffd447"), false, 2.0)
 		draw_item(self, e, r, 0.4 if is_held else 1.0)
@@ -135,14 +139,28 @@ func _draw() -> void:
 	if has_focus() and hover_cell.x >= 0:
 		draw_rect(Rect2(1 + hover_cell.x * CELL, 1 + hover_cell.y * CELL, CELL - 1, CELL - 1), Color("#ffd447"), false, 2.0)
 
+static func draw_container_plate(ci: CanvasItem, r: Rect2, alpha: float) -> void:
+	ci.draw_rect(r, Color(Color("#8d5a32"), alpha))
+	ci.draw_rect(r, Color(Color("#f0c14a"), alpha), false, 2.0)
+	var pocket := Rect2(r.position + Vector2(3, 5), r.size - Vector2(6, 8))
+	if pocket.size.x > 2.0 and pocket.size.y > 2.0:
+		ci.draw_rect(pocket, Color(Color("#c4894a"), alpha))
+		ci.draw_rect(pocket, Color(Color("#5c3218"), alpha), false, 1.0)
+	ci.draw_rect(Rect2(r.position + Vector2(2, 2), Vector2(r.size.x - 4, 3)), Color(Color("#e8b03a"), alpha))
+
 static func draw_item(ci: CanvasItem, e: Dictionary, r: Rect2, alpha: float = 1.0) -> void:
+	var bag := e.has("inv")
+	if bag:
+		draw_container_plate(ci, r, alpha)
 	var tex := Art.item(e.id)
 	var rotated := bool(e.get("r", false))
 	if tex:
 		var base: Vector2i = Data.item_size(e.id)
-		var scale := 3.0 if base.x >= 2 and base.y >= 2 else 1.5
+		var scale := 1.0 if bag else (3.0 if base.x >= 2 and base.y >= 2 else 1.5)
+		if bag and base.x >= 2 and base.y >= 2:
+			scale = 2.0
 		var isz := Vector2(16, 16) * scale
-		var c := r.position + r.size / 2.0
+		var c := r.position + r.size / 2.0 + (Vector2(0, 1) if bag else Vector2.ZERO)
 		if rotated:
 			ci.draw_set_transform(c, PI / 2.0, Vector2.ONE)
 			ci.draw_texture_rect(tex, Rect2(-isz / 2.0, isz), false, Color(1, 1, 1, alpha))
@@ -163,5 +181,9 @@ static func draw_item(ci: CanvasItem, e: Dictionary, r: Rect2, alpha: float = 1.
 	if e.has("inv"):
 		var used: int = e.inv.used_cells()
 		var cap: int = e.inv.w * e.inv.h
-		ci.draw_rect(Rect2(r.position + Vector2(2, 2), Vector2(r.size.x - 4, 3)), Color(0, 0, 0, 0.35))
-		ci.draw_rect(Rect2(r.position + Vector2(2, 2), Vector2((r.size.x - 4) * float(used) / maxf(1, cap), 3)), Color("#8fe36b"))
+		var bar := Rect2(r.position + Vector2(3, r.size.y - 5), Vector2(r.size.x - 6, 3))
+		ci.draw_rect(bar, Color(0, 0, 0, 0.45 * alpha))
+		ci.draw_rect(Rect2(bar.position, Vector2(bar.size.x * float(used) / maxf(1.0, cap), bar.size.y)), Color(Color("#8fe36b"), alpha))
+		if r.size.x >= CELL * 2.0:
+			var label := "%dx%d" % [e.inv.w, e.inv.h]
+			ci.draw_string(f, r.position + Vector2(3, 12), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color(Color("#3a2414"), alpha))
