@@ -370,7 +370,7 @@ msgstr ""
 msgid "%s · %s\n%s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:173
+#: scenes/ui/title_screen.gd:189
 #, c-format
 msgid "%s · %s Farm\n%s · %dg"
 msgstr ""
@@ -1028,7 +1028,7 @@ msgstr ""
 msgid "Baby Wildlings inherit genes from both parents."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:832 scenes/battle/battle_screen.gd:852 scenes/ui/new_game_panel.gd:95 scenes/ui/title_screen.gd:185 ...
+#: scenes/battle/battle_screen.gd:832 scenes/battle/battle_screen.gd:852 scenes/ui/new_game_panel.gd:95 scenes/ui/title_screen.gd:201 ...
 msgid "Back"
 msgstr ""
 
@@ -1468,7 +1468,7 @@ msgstr ""
 msgid "Charmer"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:191
+#: scenes/ui/title_screen.gd:207
 msgid "Checking the cloud..."
 msgstr ""
 
@@ -1561,7 +1561,7 @@ msgstr ""
 msgid "Cloud Fluff"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:198
+#: scenes/ui/title_screen.gd:214
 msgid "Cloud backups are up to date."
 msgstr ""
 
@@ -1845,7 +1845,7 @@ msgstr ""
 msgid "Deepest: B%d. It has no bottom."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:179
+#: scenes/ui/title_screen.gd:195
 msgid "Delete this farm forever?"
 msgstr ""
 
@@ -3713,7 +3713,7 @@ msgstr ""
 msgid "Load"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:166
+#: scenes/ui/title_screen.gd:182
 msgid "Load a farm"
 msgstr ""
 
@@ -3976,7 +3976,7 @@ msgstr ""
 msgid "New farmers always buy too few parsnips. Just saying."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:200
+#: scenes/ui/title_screen.gd:216
 msgid "Newer in the cloud"
 msgstr ""
 
@@ -4044,7 +4044,7 @@ msgstr ""
 msgid "No eggs to add. Pair Wildlings in the Den and eggs appear in the farm chest."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:168
+#: scenes/ui/title_screen.gd:184
 msgid "No farms yet."
 msgstr ""
 
@@ -4402,6 +4402,10 @@ msgstr ""
 msgid "Privacy"
 msgstr ""
 
+#: scenes/ui/title_screen.gd:130
+msgid "Privacy policy"
+msgstr ""
+
 #: scenes/main/adventure_flow.gd:344
 #, c-format
 msgid "Prize: %dg."
@@ -4472,7 +4476,7 @@ msgstr ""
 msgid "Quiet mornings here are my favorite."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:128
+#: scenes/ui/title_screen.gd:134
 msgid "Quit"
 msgstr ""
 
@@ -4964,7 +4968,7 @@ msgstr ""
 msgid "Shroud"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:94 scenes/ui/coop_panel.gd:104 scenes/ui/coop_panel.gd:162 scenes/ui/title_screen.gd:133
+#: scenes/ui/account_panel.gd:94 scenes/ui/coop_panel.gd:104 scenes/ui/coop_panel.gd:162 scenes/ui/title_screen.gd:149
 msgid "Sign in"
 msgstr ""
 
@@ -5491,6 +5495,10 @@ msgstr ""
 
 #: data/villagers.json
 msgid "Tend your Leaf Wildlings well."
+msgstr ""
+
+#: scenes/ui/title_screen.gd:131
+msgid "Terms"
 msgstr ""
 
 #: data/creatures.json
@@ -6488,7 +6496,7 @@ msgstr ""
 msgid "Worn by those who completed the Wildling-dex."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:178
+#: scenes/ui/title_screen.gd:194
 msgid "X"
 msgstr ""
 
@@ -6847,12 +6855,12 @@ msgstr ""
 msgid "· status"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:133
+#: scenes/ui/title_screen.gd:149
 #, c-format
 msgid "● %s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:205
+#: scenes/ui/title_screen.gd:221
 #, c-format
 msgid "● %s · %s Farm\n%s · %dg"
 msgstr ""

@@ -31,6 +31,8 @@
 		#status-progress::-webkit-progress-value { background: linear-gradient(90deg, #8fe36b, #ffd36b); }
 		#status-progress::-moz-progress-bar { background: linear-gradient(90deg, #8fe36b, #ffd36b); }
 		#status-notice { margin-top: 18px; max-width: 420px; text-align: center; line-height: 1.5; color: #ffb4a0; display: none; }
+		#status-legal { margin-top: 28px; font-size: 13px; }
+		#status-legal a { color: #b9c8a8; margin: 0 0.4rem; }
 		#gsi-holder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, 90px); display: none; z-index: 10; }
 	</style>
 	$GODOT_HEAD_INCLUDE
@@ -44,6 +46,7 @@
 		<progress id="status-progress"></progress>
 		<div id="status-notice"></div>
 		<div id="status-install"></div>
+		<div id="status-legal"><a href="/privacy" rel="privacy-policy">Privacy</a> · <a href="/terms">Terms</a></div>
 	</div>
 	<div id="gsi-holder"></div>
 

@@ -124,10 +124,26 @@ func _fill_menu() -> void:
 		else:
 			ui.open(AccountPanel.new())))
 	_menu.add_child(UITheme.button("Settings", func(): ui.open(SettingsPanel.new())))
+	var legal := HBoxContainer.new()
+	legal.alignment = BoxContainer.ALIGNMENT_CENTER
+	legal.add_theme_constant_override("separation", 6)
+	legal.add_child(UITheme.button("Privacy policy", func(): _open_page("privacy")))
+	legal.add_child(UITheme.button("Terms", func(): _open_page("terms")))
+	_menu.add_child(legal)
 	if OS.get_name() != "Web":
 		_menu.add_child(UITheme.button("Quit", func(): get_tree().quit()))
 	if is_instance_valid(_account):
 		_on_session(Net.has_session())
+
+func _open_page(page: String) -> void:
+	var url := "https://hollowmere.tretu.de/" + page
+	if OS.get_name() == "Web":
+		var origin := str(JavaScriptBridge.eval("location.origin", true))
+		if origin.begins_with("http"):
+			url = origin + "/" + page
+		JavaScriptBridge.eval("window.open(%s, '_blank', 'noopener')" % JSON.stringify(url), true)
+		return
+	OS.shell_open(url)
 
 func _on_session(signed_in: bool) -> void:
 	_account.text = (tr("● %s") % Net.display_name) if signed_in else tr("Sign in")

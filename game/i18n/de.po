@@ -4402,6 +4402,10 @@ msgstr "Prismastrahl"
 msgid "Privacy"
 msgstr "Datenschutz"
 
+#: scenes/ui/title_screen.gd
+msgid "Privacy policy"
+msgstr "Datenschutzerklärung"
+
 #: scenes/main/adventure_flow.gd:344
 #, c-format
 msgid "Prize: %dg."
@@ -5492,6 +5496,10 @@ msgstr "Verbinde mit dem Server..."
 #: data/villagers.json
 msgid "Tend your Leaf Wildlings well."
 msgstr "Kümmere dich gut um deine Blatt-Wildlinge."
+
+#: scenes/ui/title_screen.gd
+msgid "Terms"
+msgstr "Nutzungsbedingungen"
 
 #: data/creatures.json
 msgid "Terragorn"

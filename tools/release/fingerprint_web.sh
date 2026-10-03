@@ -7,6 +7,7 @@
 set -euo pipefail
 DIR="${1:-build/web}"
 PWA="$(cd "$(dirname "$0")/../../game/web/pwa" && pwd)"
+LEGAL="$(cd "$(dirname "$0")/../../game/web/legal" && pwd)"
 cd "$DIR"
 [[ -f index.wasm && -f index.pck ]] || { echo "no fresh export in $DIR" >&2; exit 1; }
 rm -f hm-*
@@ -19,4 +20,7 @@ rm -f index.*.br index.*.gz
 perl -pi -e "s/\"executable\":\"index\"/\"executable\":\"$STEM\"/; s/\"index\\.(pck|wasm)\"/\"$STEM.\$1\"/g; s/src=\"index\\.js\"/src=\"$STEM.js\"/" index.html
 grep -q "\"executable\":\"$STEM\"" index.html && grep -q "src=\"$STEM.js\"" index.html || { echo "index.html rewrite failed" >&2; exit 1; }
 cp "$PWA"/manifest.webmanifest "$PWA"/icon-*.png .
+mkdir -p privacy terms
+cp "$LEGAL/privacy/index.html" privacy/index.html
+cp "$LEGAL/terms/index.html" terms/index.html
 echo "$STEM"

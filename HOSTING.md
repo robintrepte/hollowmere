@@ -238,6 +238,16 @@ Email and guest always work. Each extra button is shown **only** when its client
 
 Home-screen iOS PWAs often block Google's popup; Apple and email still work there.
 
+The OAuth consent screen (Google Cloud → set the app to Production, and the same idea for Apple and Discord) needs public pages on this host. They ship inside the web build:
+
+| Page | URL |
+|---|---|
+| Homepage (the game) | `https://$DOMAIN/` |
+| Privacy policy | `https://$DOMAIN/privacy` |
+| Terms of use | `https://$DOMAIN/terms` |
+
+`tools/release/fingerprint_web.sh` copies `game/web/legal/` into the export, so a normal web deploy publishes them. The loading screen links to both, which is what a review crawler sees in the homepage HTML.
+
 ## 10. GitHub Actions deploy (after the box exists)
 
 `.github/workflows/build.yml` job `deploy-web` runs on `v*` tags. It rsyncs `build/web/` to `$SITE_DIR` and restarts **only** Nakama + Postgres (`docker compose up -d --build`, no `--profile prod`).
