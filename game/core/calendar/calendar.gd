@@ -30,19 +30,19 @@ static func week_number(day_index: int) -> int:
 static func weekday_name(day_index: int) -> String:
 	match weekday(day_index):
 		0:
-			return tr("Mon")
+			return str(TranslationServer.translate("Mon"))
 		1:
-			return tr("Tue")
+			return str(TranslationServer.translate("Tue"))
 		2:
-			return tr("Wed")
+			return str(TranslationServer.translate("Wed"))
 		3:
-			return tr("Thu")
+			return str(TranslationServer.translate("Thu"))
 		4:
-			return tr("Fri")
+			return str(TranslationServer.translate("Fri"))
 		5:
-			return tr("Sat")
+			return str(TranslationServer.translate("Sat"))
 		6:
-			return tr("Sun")
+			return str(TranslationServer.translate("Sun"))
 	return WEEKDAYS[weekday(day_index)]
 
 static func date_string(day_index: int) -> String:

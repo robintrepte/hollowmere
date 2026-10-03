@@ -34,15 +34,15 @@ static func show_key(day_index: int, pid: String) -> String:
 static func rank_name(rank: int) -> String:
 	match clampi(rank, 0, SHOW_RANKS.size() - 1):
 		0:
-			return tr("Novice")
+			return str(TranslationServer.translate("Novice"))
 		1:
-			return tr("Bronze")
+			return str(TranslationServer.translate("Bronze"))
 		2:
-			return tr("Silver")
+			return str(TranslationServer.translate("Silver"))
 		3:
-			return tr("Gold")
+			return str(TranslationServer.translate("Gold"))
 		_:
-			return tr("Master")
+			return str(TranslationServer.translate("Master"))
 
 static func show_rivals(rng: RandomNumberGenerator, rank: int) -> Array:
 	var out: Array = []

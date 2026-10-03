@@ -29,7 +29,7 @@ DIALOGUE_FILES = {"villagers.json"}
 SKIP_KEYS = {"id", "icon", "color", "schedule", "music", "biome", "type", "types", "season", "kind"}
 
 STR = r'"((?:[^"\\\n]|\\.)*)"'
-TR_CALL = re.compile(r'(?<![\w.])tr\(' + STR + r'\)')
+TR_CALL = re.compile(r'(?:(?<![\w.])tr|TranslationServer\.translate)\(' + STR + r'\)')
 UI_CALLS = re.compile(r'(?:UITheme\.(?:label|button)|_say|_ask|ui\.say|ui\.ask|toast\.emit|toast)\(\[?\s*' + STR)
 LIST_LINE = re.compile(r'^\s*' + STR + r',?\s*\]?\)?\s*$')
 

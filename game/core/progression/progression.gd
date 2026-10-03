@@ -19,7 +19,7 @@ static func level_reward(level: int) -> Dictionary:
 	for e in Data.progression.farm_levels:
 		if int(e.level) == level:
 			return e
-	return {"level": level, "text": tr("Farm Level %d!") % level, "reward": {"money": 200 * level}}
+	return {"level": level, "text": str(TranslationServer.translate("Farm Level %d!")) % level, "reward": {"money": 200 * level}}
 
 ## XP rewards for actions (Farm Story style: everything gives a little XP).
 const XP := {
@@ -66,7 +66,7 @@ static func weekly_for(week: int, world_seed: int) -> Array:
 		var n := rng.randi_range(int(t.n[0]), int(t.n[1]))
 		var type_id: String = Data.type_order[rng.randi() % Data.type_order.size()]
 		out.append({
-			"id": t.id, "text": tr(String(t.text)).format({"n": n, "type": Data.type_name(type_id)}),
+			"id": t.id, "text": str(TranslationServer.translate(String(t.text))).format({"n": n, "type": Data.type_name(type_id)}),
 			"stat": String(t.stat).format({"type": type_id}), "n": n, "progress": 0,
 			"reward_money": int(t.reward_money), "done": false,
 		})

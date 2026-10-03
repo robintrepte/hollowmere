@@ -20,13 +20,13 @@ static func req_text(req: String) -> String:
 	var parts := req.split(":")
 	match parts[0]:
 		"shrine":
-			return tr("Restore %d shrines") % int(parts[1])
+			return str(TranslationServer.translate("Restore %d shrines")) % int(parts[1])
 		"level":
-			return tr("Farm Level %d") % int(parts[1])
+			return str(TranslationServer.translate("Farm Level %d")) % int(parts[1])
 		"hearts":
-			return tr("%d hearts with %s") % [int(parts[2]), Data.villager_name(parts[1])]
+			return str(TranslationServer.translate("%d hearts with %s")) % [int(parts[2]), Data.villager_name(parts[1])]
 	if Data.buildings.has(req):
-		return tr("Requires %s") % tr(Data.buildings[req].name)
+		return str(TranslationServer.translate("Requires %s")) % str(TranslationServer.translate(Data.buildings[req].name))
 	return req
 
 ## Returns [{id, price, locked:bool, req}]
