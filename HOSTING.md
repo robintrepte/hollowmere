@@ -110,7 +110,9 @@ Edit `.env` (nano is fine). Generate each `change-me` with `openssl rand -hex 24
 | `NAKAMA_HTTP_KEY` | long random |
 | `NAKAMA_CONSOLE_USER` | Nakama console login (not the game) |
 | `NAKAMA_CONSOLE_PASSWORD` | long random, not `localdevpassword` |
-| `GOOGLE_CLIENT_ID` | empty until Google sign-in is set up |
+| `GOOGLE_CLIENT_ID` | empty to hide Google sign-in |
+| `APPLE_CLIENT_ID` | empty to hide Apple; Services ID e.g. `com.hollowmere.web` |
+| `DISCORD_CLIENT_ID` | empty to hide Discord |
 
 ## 4. Upload the server tree
 
@@ -189,8 +191,10 @@ mv game/project.godot.bak game/project.godot
 tools/release/fingerprint_web.sh build/web
 tools/release/precompress_web.sh build/web
 
-# Optional: inject a Google OAuth client id (leave the placeholder if unused).
-# sed -i "s/%GOOGLE_CLIENT_ID%/YOUR_CLIENT_ID/" build/web/index.html
+# Optional: inject OAuth client ids (leave the placeholders to hide those buttons).
+# sed -i "s/%GOOGLE_CLIENT_ID%/YOUR_GOOGLE_ID/" build/web/index.html
+# sed -i "s/%APPLE_CLIENT_ID%/YOUR_APPLE_SERVICES_ID/" build/web/index.html
+# sed -i "s/%DISCORD_CLIENT_ID%/YOUR_DISCORD_APP_ID/" build/web/index.html
 
 rsync -az --delete build/web/ "$DEPLOY_USER@$SERVER_IP:$SITE_DIR/"
 ```
@@ -213,16 +217,26 @@ Desktop and web release builds read `hollowmere/server/host.release` from `game/
 - **GitHub Actions:** Settings → Secrets and variables → Actions → Variables → `HOLLOWMERE_DOMAIN` = `play.example.com` (no `https://`).
 - **Local export:** the `sed` in step 7.
 
-## 9. Google sign-in (optional)
+## 9. Social sign-in (optional)
 
-Email and guest login work without this.
+Email and guest always work. Each extra button is shown **only** when its client id is in the page (not a leftover `%PLACEHOLDER%`) **and** the device can use it (Apple only on iPhone / iPad / Mac).
 
-1. Google Cloud Console → APIs & Services → Credentials → Create OAuth client → type **Web application**.
+**Google**
+1. Google Cloud Console → Credentials → OAuth client → type **Web application**.
 2. Authorized JavaScript origins: `https://$DOMAIN`
-3. Put the client id in:
-   - GitHub secret `GOOGLE_CLIENT_ID` (CI injects it into `index.html`)
-   - or the `sed` in step 7
-4. Home-screen iOS PWAs often block Google's popup. Email and guest still work there.
+3. GitHub secret `GOOGLE_CLIENT_ID`, or `sed` into `index.html` as in step 7.
+
+**Apple**
+1. Apple Developer → Identifiers → Services ID (e.g. `com.hollowmere.web`), enable Sign In with Apple.
+2. Return URL: `https://$DOMAIN/`
+3. Same id in `.env` as `APPLE_CLIENT_ID` (Nakama checks the token audience) and GitHub secret `APPLE_CLIENT_ID`.
+
+**Discord**
+1. Discord Developer Portal → Application → OAuth2.
+2. Redirect: `https://$DOMAIN/`
+3. GitHub secret `DISCORD_CLIENT_ID` (public application id). No bot needed.
+
+Home-screen iOS PWAs often block Google's popup; Apple and email still work there.
 
 ## 10. GitHub Actions deploy (after the box exists)
 
@@ -233,7 +247,9 @@ Email and guest login work without this.
 | `DEPLOY_HOST` | secret | `$SERVER_IP` or the hostname |
 | `DEPLOY_SSH_KEY` | secret | **private** half of `$DEPLOY_USER`'s ed25519 key |
 | `HOLLOWMERE_DOMAIN` | variable | `$DOMAIN` |
-| `GOOGLE_CLIENT_ID` | secret | optional |
+| `GOOGLE_CLIENT_ID` | secret | optional; hides the Google button if empty |
+| `APPLE_CLIENT_ID` | secret | optional; Apple Services ID |
+| `DISCORD_CLIENT_ID` | secret | optional; Discord application id |
 
 The deploy user must be able to `docker compose` without sudo (step 2 added them to the `docker` group).
 

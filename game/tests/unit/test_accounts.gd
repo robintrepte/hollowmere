@@ -54,3 +54,10 @@ func test_friendly_errors() -> void:
 func test_offline_by_default() -> void:
 	assert_false(Net.is_online())
 	assert_true(Net.is_authority(), "offline play owns its own world")
+
+func test_social_buttons_hidden_without_oauth() -> void:
+	assert_eq(Net.social_providers().size(), 0, "desktop / no web shell → no Google/Apple/Discord buttons")
+	for id in ["google", "apple", "discord"]:
+		var t := Art.social_icon(id)
+		assert_not_null(t)
+		assert_eq(t.get_width(), 16)

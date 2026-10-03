@@ -80,6 +80,92 @@ static func _add_atlas(ts: TileSet, path: String, cols: int, rows: int, id: int)
 			src.create_tile(Vector2i(x, y))
 	ts.add_source(src, id)
 
+## 16×16 brand marks for the account panel (drawn, not shipped as files).
+static func social_icon(id: String) -> Texture2D:
+	var key := "social:" + id
+	if _cache.has(key):
+		return _cache[key]
+	var img := Image.create(16, 16, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	match id:
+		"google":
+			_social_google(img)
+		"apple":
+			_social_apple(img)
+		"discord":
+			_social_discord(img)
+	var tex := ImageTexture.create_from_image(img)
+	_cache[key] = tex
+	return tex
+
+static func _px(img: Image, x: int, y: int, c: Color) -> void:
+	if x >= 0 and y >= 0 and x < 16 and y < 16:
+		img.set_pixel(x, y, c)
+
+static func _social_google(img: Image) -> void:
+	var b := Color("#4285F4")
+	var r := Color("#EA4335")
+	var y := Color("#FBBC05")
+	var g := Color("#34A853")
+	# Four-color G, pixel style.
+	for i in 8:
+		_px(img, 4 + i, 2, r)
+		_px(img, 4 + i, 13, g)
+	for i in 8:
+		_px(img, 3, 4 + i, b)
+		_px(img, 12, 4 + i, y)
+	_px(img, 3, 3, r)
+	_px(img, 12, 3, r)
+	_px(img, 3, 12, g)
+	_px(img, 12, 12, g)
+	for i in 5:
+		_px(img, 7 + i, 8, b)
+	_px(img, 11, 7, b)
+	_px(img, 12, 7, b)
+	_px(img, 12, 8, b)
+
+static func _social_apple(img: Image) -> void:
+	var c := Color("#1d1d1f")
+	var rows := [
+		[7],
+		[6, 7],
+		[5, 6, 7, 8, 9],
+		[4, 5, 6, 7, 8, 9, 10],
+		[3, 4, 5, 6, 7, 8, 9, 11],
+		[3, 4, 5, 6, 7, 8, 9, 11],
+		[3, 4, 5, 6, 7, 8, 9, 10],
+		[4, 5, 6, 7, 8, 9, 10],
+		[5, 6, 8, 9],
+	]
+	for yi in rows.size():
+		for x in rows[yi]:
+			_px(img, x, yi + 3, c)
+	_px(img, 9, 2, c)
+	_px(img, 10, 1, c)
+
+static func _social_discord(img: Image) -> void:
+	var c := Color("#5865F2")
+	var e := Color.WHITE
+	# Controller-head (Clyde).
+	for yi in range(4, 12):
+		for x in range(2, 14):
+			_px(img, x, yi, c)
+	for x in range(4, 12):
+		_px(img, x, 3, c)
+		_px(img, x, 12, c)
+	_px(img, 5, 13, c)
+	_px(img, 6, 13, c)
+	_px(img, 9, 13, c)
+	_px(img, 10, 13, c)
+	_px(img, 5, 6, e)
+	_px(img, 6, 6, e)
+	_px(img, 5, 7, e)
+	_px(img, 6, 7, e)
+	_px(img, 9, 6, e)
+	_px(img, 10, 6, e)
+	_px(img, 9, 7, e)
+	_px(img, 10, 7, e)
+
 static func color(hex: String, fallback: Color = Color.WHITE) -> Color:
 	if hex == "" or not Color.html_is_valid(hex):
 		return fallback

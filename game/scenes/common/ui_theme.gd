@@ -23,14 +23,22 @@ static var _font: FontVariation
 static func fs(size: int) -> int:
 	return int(round(size * Settings.text_scale))
 
-## Drops the cached theme so the next theme() call picks up a new text size.
+## Drops the cached theme so the next theme() call picks up text size / font.
 static func reset() -> void:
 	_theme = null
+	if _font:
+		_font.base_font = _face()
+		_font.fallbacks = [symbols()]
+
+static func _face() -> Font:
+	if Settings.ui_font == "readable":
+		return load("res://assets/fonts/Nunito.ttf")
+	return load("res://assets/fonts/Tiny5.ttf")
 
 static func font() -> Font:
 	if _font == null:
 		_font = FontVariation.new()
-		_font.base_font = load("res://assets/fonts/Tiny5.ttf")
+		_font.base_font = _face()
 		_font.fallbacks = [symbols()]
 	return _font
 
@@ -140,7 +148,7 @@ static func theme() -> Theme:
 	t.set_font_size("normal_font_size", "RichTextLabel", fs(10))
 	t.set_font_size("bold_font_size", "RichTextLabel", fs(10))
 	var bold := FontVariation.new()
-	bold.base_font = load("res://assets/fonts/Tiny5.ttf")
+	bold.base_font = _face()
 	bold.fallbacks = [symbols()]
 	bold.variation_embolden = 0.6
 	t.set_font("bold_font", "RichTextLabel", bold)

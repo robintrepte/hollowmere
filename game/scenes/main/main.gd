@@ -53,7 +53,12 @@ func _ready() -> void:
 	EventBus.battle_requested.connect(_on_battle_requested)
 	EventBus.story_advanced.connect(_on_story_advanced)
 	Settings.text_scale_changed.connect(_rebuild_hud)
+	get_viewport().size_changed.connect(_on_view_resized)
 	show_title()
+
+func _on_view_resized() -> void:
+	if camera != null and world != null:
+		_setup_camera()
 
 ## Phones and mobile browsers kill backgrounded games without warning, so save when we lose focus.
 func _notification(what: int) -> void:

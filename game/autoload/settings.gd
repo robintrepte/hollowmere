@@ -7,6 +7,7 @@ signal locale_changed
 
 const PATH := "user://settings.cfg"
 const TEXT_SCALES := [1.0, 1.2, 1.4]
+const FONTS := ["pixel", "readable"]
 
 const DEFAULT_KEYS := {
 	"move_up": [KEY_W, KEY_UP],
@@ -54,6 +55,7 @@ var master_volume: float = 0.8
 var music_volume: float = 0.6
 var sfx_volume: float = 0.8
 var text_scale: float = 1.0
+var ui_font: String = "pixel"          ## pixel (Tiny5) | readable (Nunito)
 var colorblind: bool = false
 var screen_shake: bool = true
 var fullscreen: bool = false
@@ -72,7 +74,7 @@ var analytics: bool = false            ## opt-in: session length and progress
 var analytics_asked: bool = false
 var touch_controls: String = "auto"     ## auto (touchscreens) | on | off
 
-const SAVED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "colorblind", "screen_shake",
+const SAVED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind", "screen_shake",
 	"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves",
 	"custom_keys", "locale", "error_reports", "analytics", "analytics_asked", "touch_controls"]
 
@@ -163,6 +165,14 @@ func set_text_scale(v: float) -> void:
 	text_scale = v
 	text_scale_changed.emit()
 
+func set_ui_font(id: String) -> void:
+	if id not in FONTS:
+		id = "pixel"
+	if id == ui_font:
+		return
+	ui_font = id
+	text_scale_changed.emit()
+
 func rebind(action: String, keycode: int) -> void:
 	custom_keys[action] = [keycode]
 	register_inputs()
@@ -188,6 +198,12 @@ func apply() -> void:
 	_set_bus("Master", master_volume)
 	_set_bus("Music", music_volume)
 	_set_bus("SFX", sfx_volume)
+	# Fill the window at any aspect (phone portrait, ultrawide, a browser tab). Extra
+	# space shows more of the map instead of black bars.
+	var win := get_tree().root
+	win.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	win.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
+	win.content_scale_stretch = Window.CONTENT_SCALE_STRETCH_FRACTIONAL
 	if OS.get_name() != "Web":
 		var mode := DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
 		if DisplayServer.window_get_mode() != mode and DisplayServer.get_name() != "headless":
@@ -213,6 +229,8 @@ func load_settings() -> void:
 	for k in SAVED:
 		if cfg.has_section_key("settings", k):
 			set(k, cfg.get_value("settings", k))
+	if ui_font not in FONTS:
+		ui_font = "pixel"
 
 func save_settings() -> void:
 	var cfg := ConfigFile.new()

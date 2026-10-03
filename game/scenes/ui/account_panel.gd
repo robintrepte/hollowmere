@@ -1,6 +1,6 @@
 class_name AccountPanel
 extends PanelContainer
-## Hollowmere account: email / guest / Google sign-in, display name, cloud saves, server address.
+## Hollowmere account: email / guest / Google, Apple, Discord, display name, cloud saves.
 
 signal closed
 
@@ -17,8 +17,8 @@ func _ready() -> void:
 	anchor_bottom = 0.5
 	offset_left = -165
 	offset_right = 165
-	offset_top = -128
-	offset_bottom = 128
+	offset_top = -148
+	offset_bottom = 148
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 5)
 	add_child(v)
@@ -99,8 +99,7 @@ func _signed_out() -> void:
 		_run(func(): return await Net.login_email(email.text.strip_edges(), pw.text, true, nm.text.strip_edges()))))
 	var r2 := _row()
 	r2.add_child(UITheme.button("Play as guest", func(): _run(func(): return await Net.login_device())))
-	if OS.get_name() == "Web":
-		r2.add_child(UITheme.button("Sign in with Google", _google))
+	_social_buttons()
 	pw.text_submitted.connect(func(_t: String): _run(func(): return await Net.login_email(email.text.strip_edges(), pw.text, false)))
 	if OS.get_name() != "Web":
 		_server_row()
@@ -185,18 +184,48 @@ func _run(fn: Callable, ok_msg := "") -> void:
 			_status.text = ""
 		Audio.sfx("open")
 
-func _google() -> void:
-	JavaScriptBridge.eval("window.hollowmereGoogleToken = ''; window.hollowmereGoogleSignIn()", true)
-	_say("Finish signing in with Google in the popup...", true)
+func _social_buttons() -> void:
+	var ids := Net.social_providers()
+	if ids.is_empty():
+		return
+	_hint(tr("Or continue with"))
+	var r := _row()
+	for id in ids:
+		r.add_child(_social_btn(id))
+
+func _social_btn(id: String) -> Button:
+	# Brand names stay untranslated ("Apple" must not become the fruit "Apfel").
+	var labels := {"google": "Google", "apple": "Apple", "discord": "Discord"}
+	var b := UITheme.button("", func(): _oauth(id))
+	b.text = str(labels.get(id, id))
+	b.icon = Art.social_icon(id)
+	b.expand_icon = true
+	b.add_theme_constant_override("icon_max_width", 14)
+	b.add_theme_constant_override("h_separation", 5)
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return b
+
+func _oauth(which: String) -> void:
+	var start := {"google": "hollowmereGoogleSignIn", "apple": "hollowmereAppleSignIn", "discord": "hollowmereDiscordSignIn"}
+	JavaScriptBridge.eval("window.hollowmere%sToken=''; window.hollowmere%sError=''; window.%s()" % [which.capitalize(), which.capitalize(), start[which]], true)
+	_say(tr("Finish signing in with %s in the popup...") % which.capitalize(), true)
 	for i in 240:
 		await get_tree().create_timer(0.5).timeout
-		var err := str(JavaScriptBridge.eval("window.hollowmereGoogleError || ''", true))
+		if not is_inside_tree():
+			return
+		var err := Net.web_oauth_error(which)
 		if err != "":
 			_say(err)
 			return
-		var tok: String = Net.web_google_token()
+		var tok := Net.web_oauth_token(which)
 		if tok != "":
-			JavaScriptBridge.eval("window.hollowmereHideGoogle()", true)
-			_run(func(): return await Net.login_google(tok))
+			JavaScriptBridge.eval("window.hollowmereHideGoogle && window.hollowmereHideGoogle()", true)
+			match which:
+				"google":
+					_run(func(): return await Net.login_google(tok))
+				"apple":
+					_run(func(): return await Net.login_apple(tok))
+				"discord":
+					_run(func(): return await Net.login_discord(tok))
 			return
-	_say("Google sign-in timed out.")
+	_say(tr("%s sign-in timed out.") % which.capitalize())

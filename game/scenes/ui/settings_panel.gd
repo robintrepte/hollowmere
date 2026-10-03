@@ -59,6 +59,8 @@ func _ready() -> void:
 			Settings.apply())
 	_choice(body, "Text size", ["Normal", "Large", "Larger"], Settings.TEXT_SCALES.find(Settings.text_scale), func(i: int):
 		Settings.set_text_scale(Settings.TEXT_SCALES[i]))
+	_choice(body, tr("Font"), [tr("Pixel"), tr("Readable")], Settings.FONTS.find(Settings.ui_font), func(i: int):
+		Settings.set_ui_font(Settings.FONTS[i]))
 	_check(body, "Colorblind mode (type names on moves, quality pips)", Settings.colorblind, func(on): Settings.colorblind = on)
 	body.add_child(UITheme.label("Privacy", 11, UITheme.WOOD))
 	_check(body, "Send crash and error reports (no personal data)", Settings.error_reports, func(on): Settings.error_reports = on)

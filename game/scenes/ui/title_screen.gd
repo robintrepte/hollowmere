@@ -78,6 +78,9 @@ func _ready() -> void:
 	_menu.minimum_size_changed.connect(func(): panel.set_deferred("offset_top", panel.offset_bottom))
 	_fill_menu()
 	Settings.locale_changed.connect(_fill_menu)
+	Settings.text_scale_changed.connect(func():
+		UITheme.reset()
+		theme = UITheme.theme())
 	var ver := UITheme.label(tr("v%s") % ProjectSettings.get_setting("application/config/version"), 8, UITheme.CREAM, true)
 	ver.anchor_top = 1
 	ver.anchor_bottom = 1

@@ -329,6 +329,11 @@ msgstr "%s bietet"
 msgid "%s scores %d: grooming %d, happiness %d, genes %d, level %d, flair %d."
 msgstr "%s erreicht %d: Pflege %d, Zufriedenheit %d, Gene %d, Stufe %d, Ausstrahlung %d."
 
+#: scenes/ui/account_panel.gd:229
+#, c-format
+msgid "%s sign-in timed out."
+msgstr "%s-Anmeldung abgelaufen."
+
 #: scenes/main/adventure_flow.gd:143
 #, c-format
 msgid "%s sinks back into the stones. Rest up and try again."
@@ -2236,6 +2241,11 @@ msgstr "Finde eine Saisonlegende an ihrem Heimschrein und schließe Freundschaft
 msgid "Find hidden eggs around the village before time runs out!"
 msgstr "Finde versteckte Eier im Dorf, bevor die Zeit abläuft!"
 
+#: scenes/ui/account_panel.gd:209
+#, c-format
+msgid "Finish signing in with %s in the popup..."
+msgstr "Melde dich im Pop-up mit %s an..."
+
 #: scenes/ui/account_panel.gd:190
 msgid "Finish signing in with Google in the popup..."
 msgstr "Melde dich im Pop-up mit Google an..."
@@ -2299,6 +2309,10 @@ msgstr "Flieg eines Tages mit mir? Das meine ich ernst."
 #: data/villagers.json
 msgid "Flying with Galecrest is like being free."
 msgstr "Mit Galecrest zu fliegen fühlt sich an wie Freiheit."
+
+#: scenes/ui/settings_panel.gd
+msgid "Font"
+msgstr "Schrift"
 
 #: data/title_tips.json
 msgid "Food restores energy. Snacks beat naps."
@@ -4119,6 +4133,10 @@ msgstr "Hoftor wird geöffnet..."
 msgid "Opens up the lakeside land in the southeast."
 msgstr "Öffnet das Uferland im Südosten."
 
+#: scenes/ui/account_panel.gd:191
+msgid "Or continue with"
+msgstr "Oder weiter mit"
+
 #: data/trees.json
 msgid "Orange"
 msgstr "Orange"
@@ -4281,6 +4299,10 @@ msgstr "Pip: Mein bestes. Du kannst es haben. Du hast es verdient!"
 #: data/villagers.json
 msgid "Pip: That's you and me as Wardens! I'm the tall one."
 msgstr "Pip: Das sind du und ich als Hüter! Ich bin der Große."
+
+#: scenes/ui/settings_panel.gd
+msgid "Pixel"
+msgstr "Pixel"
 
 #: data/items.json
 msgid "Place it in the Hatchery. Something is moving inside!"
@@ -4513,6 +4535,10 @@ msgstr "{n} neue Minenebenen erreichen"
 #: scenes/ui/trade_panel.gd:66
 msgid "Ready"
 msgstr "Bereit"
+
+#: scenes/ui/settings_panel.gd
+msgid "Readable"
+msgstr "Gut lesbar"
 
 #: data/crops.json
 msgid "Red Cabbage"

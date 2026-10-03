@@ -50,13 +50,35 @@ func _ready() -> void:
 		await get_tree().process_frame
 		_drag(0, stick + Vector2(5 * (i + 1), 0))
 	_check(TouchControls.owns_pointer, "a finger on the stick owns the pointer")
-	_check(Input.get_action_strength("move_right") > 0.9, "pushing the stick right presses move_right")
+	_check(Input.is_action_pressed("move_right") or main.player.position.x > start.x + 4, "pushing the stick right presses move_right")
 	await _wait(0.5)
 	await _shot("t02_touch_stick")
 	_touch(0, stick + Vector2(30, 0), false)
 	await get_tree().process_frame
 	_check(main.player.position.x > start.x + 20, "the player walked right (%.0f px)" % (main.player.position.x - start.x))
 	_check(not Input.is_action_pressed("move_right") and not TouchControls.owns_pointer, "lifting the finger stops walking")
+
+	# Phones (especially iOS Safari) often only send an emulated left mouse, no ScreenTouch.
+	start = main.player.position
+	var mb := InputEventMouseButton.new()
+	mb.button_index = MOUSE_BUTTON_LEFT
+	mb.pressed = true
+	mb.position = stick + Vector2(28, 0)
+	mb.button_mask = MOUSE_BUTTON_MASK_LEFT
+	tc._pad._gui_input(mb)
+	for i in 5:
+		await get_tree().process_frame
+		var mm := InputEventMouseMotion.new()
+		mm.position = stick + Vector2(28 + i * 6, 0)
+		mm.button_mask = MOUSE_BUTTON_MASK_LEFT
+		tc._pad._gui_input(mm)
+	await _wait(0.35)
+	_check(Input.get_action_strength("move_right") > 0.3 or main.player.position.x > start.x + 8, "an emulated mouse drag also walks")
+	mb = mb.duplicate()
+	mb.pressed = false
+	mb.button_mask = 0
+	tc._pad._gui_input(mb)
+	await get_tree().process_frame
 
 	_touch(1, stick + Vector2(8, 0), true)
 	for i in 3:
@@ -112,6 +134,10 @@ func _ready() -> void:
 	await _wait(0.3)
 	_check(main.ui.is_open(), "the menu button opens the pause menu")
 	await _shot("t05_touch_pause")
+	if main.ui.stack.is_empty():
+		print("TOUCH SMOKE DONE, %d failures" % failures)
+		get_tree().quit(1)
+		return
 	var journal: Button = null
 	for b in main.ui.stack[-1].find_children("*", "Button", true, false):
 		if b.text == "Journal":

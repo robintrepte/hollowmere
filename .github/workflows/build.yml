@@ -72,9 +72,12 @@ jobs:
         run: |
           mkdir -p build/windows build/macos build/web
           godot --headless --path game --export-release "${{ matrix.preset }}"
-      - name: Inject Google client id (web)
+      - name: Inject OAuth client ids (web)
         if: matrix.preset == 'Web'
-        run: sed -i "s/%GOOGLE_CLIENT_ID%/${{ secrets.GOOGLE_CLIENT_ID }}/" build/web/index.html
+        run: |
+          sed -i "s/%GOOGLE_CLIENT_ID%/${{ secrets.GOOGLE_CLIENT_ID }}/" build/web/index.html
+          sed -i "s/%APPLE_CLIENT_ID%/${{ secrets.APPLE_CLIENT_ID }}/" build/web/index.html
+          sed -i "s/%DISCORD_CLIENT_ID%/${{ secrets.DISCORD_CLIENT_ID }}/" build/web/index.html
       - name: Fingerprint and precompress (web)
         if: matrix.preset == 'Web'
         run: |

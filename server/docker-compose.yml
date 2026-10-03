@@ -43,6 +43,7 @@ services:
         --runtime.http_key ${NAKAMA_HTTP_KEY:-dev_http_key_change_me}
         --console.username ${NAKAMA_CONSOLE_USER:-admin}
         --console.password ${NAKAMA_CONSOLE_PASSWORD:-localdevpassword}
+        --social.apple.bundle_id ${APPLE_CLIENT_ID:-com.hollowmere.unset}
     ports:
       - "127.0.0.1:7350:7350"
       - "127.0.0.1:7351:7351"

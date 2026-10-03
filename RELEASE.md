@@ -21,7 +21,7 @@ Short version: a CX22 is enough. Point `play.example.com` at the box, run nginx 
 
 ### 1.2 Google sign-in
 
-Create an OAuth client (type "Web application") in Google Cloud Console. Add `https://<domain>` as an authorized JavaScript origin, and put the client id in the `GOOGLE_CLIENT_ID` secret. Email and guest login work without it.
+Social buttons (Google / Apple / Discord) only appear when that provider's client id is injected into the web shell and the device supports it. Email and guest work without any of them. See HOSTING.md §9.
 
 ### 1.3 Apple (macOS signing and notarization)
 
@@ -49,7 +49,9 @@ Settings, Secrets and variables, Actions:
 |---|---|---|
 | `DEPLOY_HOST` | secret | deploy-web (VPS hostname or IP) |
 | `DEPLOY_SSH_KEY` | secret | deploy-web (private key of `deploy`) |
-| `GOOGLE_CLIENT_ID` | secret | web export |
+| `GOOGLE_CLIENT_ID` | secret | web export (Google button) |
+| `APPLE_CLIENT_ID` | secret | web export + Nakama (Apple button, Services ID) |
+| `DISCORD_CLIENT_ID` | secret | web export (Discord button) |
 | `MACOS_SIGN_IDENTITY` | secret | sign-macos |
 | `MACOS_CERT_P12_BASE64` | secret | sign-macos |
 | `MACOS_CERT_PASSWORD` | secret | sign-macos |

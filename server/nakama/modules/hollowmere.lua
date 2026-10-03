@@ -152,6 +152,33 @@ local function before_write(ctx, payload)
   return payload
 end
 
+-- Discord OAuth: the client sends the access token in vars; we swap it for discord:<id>.
+local function before_auth_custom(_ctx, payload)
+  local account = payload.account or payload
+  local vars = account.vars or {}
+  local token = vars.discord_token or vars["discord_token"] or ""
+  if token == "" then
+    error({"Sign in with Discord first.", 3})
+  end
+  local code, _, body = nk.http_request(
+    "https://discord.com/api/v10/users/@me",
+    "GET",
+    {Authorization = "Bearer " .. token, ["User-Agent"] = "Hollowmere"},
+    "",
+    8000
+  )
+  if code ~= 200 then
+    error({"Discord sign-in failed.", 16})
+  end
+  local ok, user = pcall(nk.json_decode, body)
+  if not ok or type(user) ~= "table" or type(user.id) ~= "string" or user.id == "" then
+    error({"Discord sign-in failed.", 16})
+  end
+  account.id = "discord:" .. user.id
+  payload.account = account
+  return payload
+end
+
 nk.register_rpc(create_coop_code, "create_coop_code")
 nk.register_rpc(resolve_coop_code, "resolve_coop_code")
 nk.register_rpc(close_coop_code, "close_coop_code")
@@ -159,5 +186,6 @@ nk.register_rpc(health, "health")
 nk.register_rpc(report_errors, "report_errors")
 nk.register_rpc(track_session, "track_session")
 nk.register_req_before(before_write, "WriteStorageObjects")
+nk.register_req_before(before_auth_custom, "AuthenticateCustom")
 
 nk.logger_info("Hollowmere module loaded")

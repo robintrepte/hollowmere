@@ -3,6 +3,8 @@ extends GutTest
 
 func after_each() -> void:
 	Settings.set_text_scale(1.0)
+	Settings.set_ui_font("pixel")
+	UITheme.reset()
 	TranslationServer.set_locale("en")
 
 func test_text_scale_scales_fonts_and_rebuilds_the_theme() -> void:
@@ -17,6 +19,19 @@ func test_text_scale_scales_fonts_and_rebuilds_the_theme() -> void:
 	Settings.set_text_scale(1.0)
 	UITheme.reset()
 	assert_eq(UITheme.theme().default_font_size, 10)
+
+func test_readable_font_swaps_the_face() -> void:
+	assert_eq(Settings.ui_font, "pixel")
+	UITheme.reset()
+	assert_true(str(UITheme.font().base_font.resource_path).contains("Tiny5"))
+	Settings.set_ui_font("readable")
+	UITheme.reset()
+	assert_eq(Settings.ui_font, "readable")
+	assert_true(str(UITheme.font().base_font.resource_path).contains("Nunito"))
+	assert_eq(UITheme.theme().default_font, UITheme.font())
+	Settings.set_ui_font("pixel")
+	UITheme.reset()
+	assert_true(str(UITheme.font().base_font.resource_path).contains("Tiny5"))
 
 func test_symbols_render_on_the_web_via_fallback() -> void:
 	var f := UITheme.font()

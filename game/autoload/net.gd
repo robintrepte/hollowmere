@@ -133,11 +133,66 @@ func login_google(id_token: String) -> String:
 	var s: NakamaSession = await client.authenticate_google_async(id_token, null, true)
 	return await _finish_login(s)
 
-func web_google_token() -> String:
+func login_apple(id_token: String) -> String:
+	_make_client()
+	var s: NakamaSession = await client.authenticate_apple_async(id_token, null, true)
+	return await _finish_login(s)
+
+## Discord: the server hook checks the access token and turns it into a custom id.
+func login_discord(access_token: String) -> String:
+	_make_client()
+	var s: NakamaSession = await client.authenticate_custom_async("discord", null, true, {"discord_token": access_token})
+	return await _finish_login(s)
+
+func web_oauth_token(which: String) -> String:
 	if OS.get_name() != "Web":
 		return ""
-	var tok = JavaScriptBridge.eval("window.hollowmereGoogleToken || ''", true)
-	return str(tok)
+	var key := "hollowmere%sToken" % which.capitalize()
+	return str(JavaScriptBridge.eval("window.%s || ''" % key, true))
+
+func web_oauth_error(which: String) -> String:
+	if OS.get_name() != "Web":
+		return ""
+	return str(JavaScriptBridge.eval("window.hollowmere%sError || ''" % which.capitalize(), true))
+
+func web_google_token() -> String:
+	return web_oauth_token("google")
+
+## Public OAuth client ids are baked into the web shell. Empty / leftover %PLACEHOLDER% means "not set up".
+func web_meta(name: String) -> String:
+	if OS.get_name() != "Web":
+		return ""
+	var v := str(JavaScriptBridge.eval(
+		"(document.querySelector('meta[name=\"%s\"]')||{}).content||''" % name, true))
+	return v.strip_edges()
+
+func oauth_configured(meta_name: String) -> bool:
+	var v := web_meta(meta_name)
+	return v != "" and not v.begins_with("%")
+
+func is_apple_device() -> bool:
+	if OS.get_name() in ["iOS", "macOS"]:
+		return true
+	if OS.get_name() != "Web":
+		return false
+	var ua := str(JavaScriptBridge.eval("navigator.userAgent||''", true))
+	var plat := str(JavaScriptBridge.eval("navigator.platform||''", true))
+	var taps := int(JavaScriptBridge.eval("navigator.maxTouchPoints||0", true))
+	return ua.contains("iPhone") or ua.contains("iPad") or ua.contains("Mac") \
+		or (plat == "MacIntel" and taps > 1)
+
+## Providers the account panel should show: configured in the page and usable on this device.
+func social_providers() -> PackedStringArray:
+	var out: PackedStringArray = []
+	if OS.get_name() != "Web":
+		return out
+	if oauth_configured("google-client-id"):
+		out.append("google")
+	if oauth_configured("apple-client-id") and is_apple_device():
+		out.append("apple")
+	if oauth_configured("discord-client-id"):
+		out.append("discord")
+	return out
 
 func _finish_login(s: NakamaSession) -> String:
 	if s == null:
@@ -158,7 +213,7 @@ func _load_account() -> void:
 	var acc = await client.get_account_async(session)
 	if acc.is_exception():
 		return
-	is_guest = acc.email == "" and acc.user.google_id == ""
+	is_guest = acc.email == "" and acc.user.google_id == "" and acc.user.apple_id == "" and acc.custom_id == ""
 	if acc.user.display_name != "":
 		display_name = acc.user.display_name
 	else:

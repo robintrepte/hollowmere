@@ -10,6 +10,8 @@ const KNOB_R := 11.0
 const DEAD := 0.22
 const LONG_PRESS := 0.45
 const MOVES := ["move_left", "move_right", "move_up", "move_down"]
+## Emulated mouse from a finger (iOS Safari often never sends ScreenTouch / ScreenDrag).
+const MOUSE_ID := 100
 
 ## Touch controls are switched on (setting, or Auto on a touchscreen).
 static var active := false
@@ -54,24 +56,43 @@ func buttons() -> Array:
 	if not in_world() or dialogue_open():
 		return []
 	var s := _pad.size
+	var btm := _safe_bottom()
 	var menu := {"id": "menu", "action": "menu", "c": Vector2(s.x - 20, 58), "r": 12.0}
 	if menu_open():
 		return [menu]
 	return [
-		{"id": "use", "action": "use_tool", "c": Vector2(s.x - 40, s.y - 88), "r": 22.0},
-		{"id": "talk", "action": "interact", "c": Vector2(s.x - 92, s.y - 66), "r": 16.0},
-		{"id": "bag", "action": "inventory", "c": Vector2(s.x - 94, s.y - 116), "r": 14.0},
+		{"id": "use", "action": "use_tool", "c": Vector2(s.x - 40, s.y - 88 - btm), "r": 22.0},
+		{"id": "talk", "action": "interact", "c": Vector2(s.x - 92, s.y - 66 - btm), "r": 16.0},
+		{"id": "bag", "action": "inventory", "c": Vector2(s.x - 94, s.y - 116 - btm), "r": 14.0},
 		menu,
 	]
+
+func idle_stick() -> Vector2:
+	return Vector2(64, _pad.size.y - 104 - _safe_bottom())
+
+## Home-indicator / notch room. Portrait uses more; landscape keeps a sliver.
+func _safe_bottom() -> float:
+	var s := _pad.size
+	return 22.0 if s.y > s.x else 8.0
 
 func in_stick_zone(p: Vector2) -> bool:
 	if not in_world() or menu_open():
 		return false
+	if p.distance_to(idle_stick()) <= STICK_R + 16.0:
+		return true
 	var s := _pad.size
 	var hotbar_left := s.x / 2.0 - Hud.SLOT * 5.5 - 10
 	if p.x > s.x * 0.42 or p.y < 84:
 		return false
 	return not (p.x > hotbar_left and p.y > s.y - 52)
+
+## ScreenTouch on a phone is often in window pixels; the pad lives in the stretched canvas.
+func _to_pad(pos: Vector2) -> Vector2:
+	var pad_rect := Rect2(Vector2.ZERO, _pad.size)
+	if pad_rect.has_point(pos):
+		return pos
+	var via: Vector2 = get_viewport().get_final_transform().affine_inverse() * pos
+	return via if pad_rect.grow(8).has_point(via) or not pad_rect.has_point(pos) else pos
 
 func stick_vector() -> Vector2:
 	if _stick_index < 0:
@@ -90,26 +111,33 @@ func _input(event: InputEvent) -> void:
 		return
 	if event is InputEventScreenTouch:
 		if event.pressed:
-			_touch_down(event.index, event.position)
+			_touch_down(event.index, _to_pad(event.position))
 		else:
 			_touch_up(event.index)
 	elif event is InputEventScreenDrag:
-		if event.index == _stick_index:
-			_stick_pos = event.position
-			var off := _stick_pos - _stick_origin
-			if off.length() > STICK_R * 1.5:
-				_stick_origin = _stick_pos - off.normalized() * STICK_R * 1.5
-			_apply_stick()
-			get_viewport().set_input_as_handled()
-		if _long.has(event.index) and event.position.distance_to(_long[event.index].pos) > 8.0:
-			_long.erase(event.index)
+		_drag(event.index, _to_pad(event.position))
+
+func _drag(index: int, pos: Vector2) -> void:
+	if index == _stick_index:
+		_stick_pos = pos
+		var off := _stick_pos - _stick_origin
+		if off.length() > STICK_R * 1.5:
+			_stick_origin = _stick_pos - off.normalized() * STICK_R * 1.5
+		_apply_stick()
+		get_viewport().set_input_as_handled()
+	if _long.has(index) and pos.distance_to(_long[index].pos) > 8.0:
+		_long.erase(index)
 
 func _touch_down(index: int, pos: Vector2) -> void:
+	if index == _stick_index or _held.has(index):
+		return
 	for b in buttons():
 		if pos.distance_to(b.c) <= b.r + 5.0:
+			var already := is_held(b.id)
 			_held[index] = b
-			_send(b.action, true)
-			Audio.sfx("tick", 0.0)
+			if not already:
+				_send(b.action, true)
+				Audio.sfx("tick", 0.0)
 			_sync()
 			get_viewport().set_input_as_handled()
 			return
@@ -171,6 +199,12 @@ func _process(delta: float) -> void:
 		return
 	if _stick_index >= 0 and menu_open():
 		_touch_up(_stick_index)
+	# iOS / some mobile browsers drop drag events after the first touch; the emulated
+	# mouse still tracks the finger, so poll it while the stick is held.
+	if _stick_index == MOUSE_ID:
+		var mp := _pad.get_local_mouse_position()
+		if _pad.get_rect().grow(120).has_point(mp):
+			_drag(MOUSE_ID, mp)
 	for i in _long.keys():
 		_long[i].t += delta
 		if _long[i].t >= LONG_PRESS:
@@ -199,7 +233,20 @@ class TouchPad extends Control:
 		return owner_controls.in_stick_zone(p)
 
 	func _gui_input(event: InputEvent) -> void:
-		if event is InputEventMouse:
+		# Local coords are already canvas-space. Drive the stick here so a swallowed
+		# emulated mouse click still moves the character.
+		if owner_controls == null:
+			return
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				owner_controls._touch_down(TouchControls.MOUSE_ID, event.position)
+			else:
+				owner_controls._touch_up(TouchControls.MOUSE_ID)
+			accept_event()
+		elif event is InputEventMouseMotion and (event.button_mask & MOUSE_BUTTON_MASK_LEFT):
+			owner_controls._drag(TouchControls.MOUSE_ID, event.position)
+			accept_event()
+		elif event is InputEventMouse:
 			accept_event()
 
 	func _draw() -> void:
@@ -212,7 +259,7 @@ class TouchPad extends Control:
 			_draw_button(b, tc.is_held(b.id), tc)
 
 	func _draw_stick(tc: TouchControls) -> void:
-		var origin := tc._stick_origin if tc._stick_index >= 0 else Vector2(64, size.y - 104)
+		var origin := tc._stick_origin if tc._stick_index >= 0 else tc.idle_stick()
 		var alpha := 0.9 if tc._stick_index >= 0 else 0.45
 		draw_circle(origin, STICK_R + 2, Color(0, 0, 0, 0.18 * alpha))
 		draw_arc(origin, STICK_R, 0, TAU, 32, Color(UITheme.PARCHMENT, 0.7 * alpha), 2.0)

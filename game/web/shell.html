@@ -4,6 +4,8 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 	<meta name="google-client-id" content="%GOOGLE_CLIENT_ID%">
+	<meta name="apple-client-id" content="%APPLE_CLIENT_ID%">
+	<meta name="discord-client-id" content="%DISCORD_CLIENT_ID%">
 	<meta name="theme-color" content="#1c2120">
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,15 +17,11 @@
 	<title>$GODOT_PROJECT_NAME</title>
 	<style>
 		html, body, #canvas { margin: 0; padding: 0; border: 0; }
-		html, body { overscroll-behavior: none; }
+		html, body { width: 100%; height: 100%; overscroll-behavior: none; }
 		body { color: #f3ead8; background-color: #1c2120; overflow: hidden; touch-action: none; font-family: "Trebuchet MS", sans-serif;
 			-webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
-		#canvas { display: block; position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; image-rendering: pixelated; touch-action: none; }
+		#canvas { display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; image-rendering: pixelated; touch-action: none; }
 		#canvas:focus { outline: none; }
-		#rotate { position: fixed; inset: 0; z-index: 20; display: none; flex-direction: column; justify-content: center; align-items: center; gap: 22px; background: #1c2120; text-align: center; font-size: 18px; color: #ffd36b; }
-		#rotate-phone { width: 34px; height: 58px; border: 4px solid #ffd36b; border-radius: 8px; animation: turn 2.2s ease-in-out infinite; }
-		@keyframes turn { 0%, 30% { transform: rotate(0deg); } 60%, 100% { transform: rotate(-90deg); } }
-		@media (orientation: portrait) and (pointer: coarse) { #rotate { display: flex; } }
 		#status-install { margin-top: 22px; max-width: 320px; text-align: center; font-size: 13px; line-height: 1.5; color: #b9c8a8; display: none; }
 		#status { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #1c2120; }
 		#status-logo { font-size: 42px; letter-spacing: 2px; color: #ffd36b; text-shadow: 3px 3px 0 #6a3e1e; margin-bottom: 18px; }
@@ -47,10 +45,30 @@
 		<div id="status-notice"></div>
 		<div id="status-install"></div>
 	</div>
-	<div id="rotate"><div id="rotate-phone"></div>Turn your device sideways to play</div>
 	<div id="gsi-holder"></div>
 
 	<script>
+		// Size the canvas to the *visible* viewport (iOS home-screen apps report 100vh too tall,
+		// which is what left black bars around the game). Godot then expands into that rectangle.
+		function fitCanvas() {
+			const c = document.getElementById("canvas");
+			if (!c) return;
+			const vv = window.visualViewport;
+			const w = Math.max(1, Math.round(vv ? vv.width : window.innerWidth));
+			const h = Math.max(1, Math.round(vv ? vv.height : window.innerHeight));
+			c.style.width = w + "px";
+			c.style.height = h + "px";
+			c.style.left = (vv ? vv.offsetLeft : 0) + "px";
+			c.style.top = (vv ? vv.offsetTop : 0) + "px";
+		}
+		fitCanvas();
+		window.addEventListener("resize", fitCanvas);
+		window.addEventListener("orientationchange", function () { setTimeout(fitCanvas, 250); });
+		if (window.visualViewport) {
+			visualViewport.addEventListener("resize", fitCanvas);
+			visualViewport.addEventListener("scroll", fitCanvas);
+		}
+
 		// Phones: suggest installing to the home screen (full screen, own icon), and in a plain browser tab
 		// go full screen on the first tap where the browser allows it (Android; iPhone Safari does not).
 		(function () {
@@ -66,19 +84,33 @@
 			if (!root.requestFullscreen) return;
 			document.addEventListener("touchend", function goFull() {
 				document.removeEventListener("touchend", goFull);
-				root.requestFullscreen({ navigationUI: "hide" })
-					.then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock("landscape"))
-					.catch(() => {});
+				root.requestFullscreen({ navigationUI: "hide" }).catch(function () {});
 			});
 		}());
 		document.addEventListener("gesturestart", (e) => e.preventDefault());
 		document.addEventListener("contextmenu", (e) => e.preventDefault());
 	</script>
 	<script>
-		// Bridge used by the game (Net.gd) through JavaScriptBridge.
+		// Discord OAuth popup lands back on this page with #access_token=...
+		(function () {
+			const h = new URLSearchParams((location.hash || "").replace(/^#/, ""));
+			const tok = h.get("access_token");
+			if (tok && window.opener) {
+				window.opener.hollowmereDiscordToken = tok;
+				window.close();
+			}
+		}());
+
+		function hmMeta(name) {
+			const el = document.querySelector('meta[name="' + name + '"]');
+			return el ? (el.content || "") : "";
+		}
+
 		window.hollowmereGoogleToken = "";
+		window.hollowmereAppleToken = "";
+		window.hollowmereDiscordToken = "";
 		window.hollowmereGoogleSignIn = function () {
-			const cid = document.querySelector('meta[name="google-client-id"]').content;
+			const cid = hmMeta("google-client-id");
 			if (!cid || cid.startsWith("%")) { window.hollowmereGoogleError = "Google sign-in is not configured."; return; }
 			const go = () => {
 				google.accounts.id.initialize({ client_id: cid, callback: (r) => { window.hollowmereGoogleToken = r.credential; document.getElementById("gsi-holder").style.display = "none"; } });
@@ -94,6 +126,31 @@
 			document.head.appendChild(s);
 		};
 		window.hollowmereHideGoogle = function () { document.getElementById("gsi-holder").style.display = "none"; };
+
+		window.hollowmereAppleSignIn = function () {
+			const cid = hmMeta("apple-client-id");
+			if (!cid || cid.startsWith("%")) { window.hollowmereAppleError = "Apple sign-in is not configured."; return; }
+			const go = () => {
+				AppleID.auth.init({ clientId: cid, scope: "name email", redirectURI: location.origin + "/", usePopup: true });
+				AppleID.auth.signIn().then((r) => { window.hollowmereAppleToken = r.authorization.id_token; })
+					.catch((e) => { window.hollowmereAppleError = (e && e.error === "popup_closed_by_user") ? "Cancelled." : "Apple sign-in failed."; });
+			};
+			if (window.AppleID) { go(); return; }
+			const s = document.createElement("script");
+			s.src = "https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js";
+			s.onload = go;
+			document.head.appendChild(s);
+		};
+
+		window.hollowmereDiscordSignIn = function () {
+			const cid = hmMeta("discord-client-id");
+			if (!cid || cid.startsWith("%")) { window.hollowmereDiscordError = "Discord sign-in is not configured."; return; }
+			const redirect = location.origin + "/";
+			const url = "https://discord.com/api/oauth2/authorize?client_id=" + encodeURIComponent(cid)
+				+ "&response_type=token&redirect_uri=" + encodeURIComponent(redirect) + "&scope=identify";
+			const pop = window.open(url, "hm-discord", "width=500,height=720");
+			if (!pop) { window.hollowmereDiscordError = "The Discord sign-in popup was blocked."; }
+		};
 	</script>
 	<script src="$GODOT_URL"></script>
 	<script>
