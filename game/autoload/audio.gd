@@ -65,9 +65,12 @@ var _beds: Dictionary = {}
 var _bed_task := -1
 var _bed_fade := 1.2
 var _last_step := 0.0
+var _away := false
+var _page_cb = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_watch_page_visibility()
 	for i in POOL:
 		var p := AudioStreamPlayer.new()
 		p.bus = "SFX"
@@ -78,6 +81,45 @@ func _ready() -> void:
 	for m in [_music_a, _music_b]:
 		m.bus = "Music"
 		add_child(m)
+
+## Tabbing away, alt-tab, or backgrounding the app silences music. The stream keeps
+## playing, so it continues from the same moment when the game is focused again.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
+		_set_away(true)
+	elif what == NOTIFICATION_APPLICATION_FOCUS_IN or what == NOTIFICATION_APPLICATION_RESUMED:
+		_set_away(false)
+
+func _set_away(away: bool) -> void:
+	if _away == away:
+		return
+	_away = away
+	apply_music_mute()
+
+## Re-applies the Music bus mute from the volume slider, plus background mute.
+func apply_music_mute() -> void:
+	var idx := AudioServer.get_bus_index("Music")
+	if idx < 0:
+		return
+	AudioServer.set_bus_mute(idx, _away or Settings.music_volume <= 0.001)
+
+func _watch_page_visibility() -> void:
+	if OS.get_name() != "Web":
+		return
+	_page_cb = JavaScriptBridge.create_callback(_on_page_visibility)
+	JavaScriptBridge.get_interface("window").hollowmerePageHidden = _page_cb
+	JavaScriptBridge.eval("""
+		document.addEventListener('visibilitychange', function () {
+			if (window.hollowmerePageHidden) window.hollowmerePageHidden(document.hidden ? 1 : 0);
+		});
+	""", true)
+	if int(JavaScriptBridge.eval("document.hidden ? 1 : 0", true)) == 1:
+		_set_away(true)
+
+func _on_page_visibility(args: Array) -> void:
+	if args.is_empty():
+		return
+	_set_away(int(args[0]) != 0)
 
 func sfx(name: String, pitch_var: float = 0.06) -> void:
 	if name == "":

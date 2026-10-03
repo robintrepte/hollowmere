@@ -218,6 +218,10 @@ func _set_bus(bus_name: String, v: float) -> void:
 		AudioServer.set_bus_send(idx, "Master")
 	AudioServer.set_bus_volume_db(idx, linear_to_db(maxf(v, 0.0001)))
 	AudioServer.set_bus_mute(idx, v <= 0.001)
+	if bus_name == "Music":
+		var audio := get_node_or_null("/root/Audio")
+		if audio:
+			audio.apply_music_mute()
 
 func seconds_per_ten_minutes() -> float:
 	return 10.0 * clock_speed
