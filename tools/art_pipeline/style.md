@@ -8,7 +8,7 @@
 ## Sizes
 | Asset | Canvas | Notes |
 |---|---|---|
-| Ground tile | 32x32 | procedural (`tiles.py`), 4 variants, 4 seasons |
+| Ground tile | 32x32 | procedural (`tiles.py`), 4 variants sharing their border noise, 4 seasons; grass fringe overlays onto path/dirt/sand/plaza |
 | Deco / tree | 32x32 to 48x64 | bottom-center anchored on its tile |
 | Building | footprint x 32 wide | height is natural (roof overhang) |
 | Creature, battle | 64x64 | shown at 2x in battle |
@@ -40,8 +40,8 @@ Type colors live in `game/data/types.json`.
 **Creature sheet**
 > 3x3 sheet of cute creature monsters for a cozy creature-collecting farming game, Pokemon-like but original, chunky pixel art, bold outline, front 3/4 view, full body, each in its own cell... magenta background... 1 name: description...
 
-**Building**
-> A single building sprite for a top-down 3/4 view cozy farming RPG, chunky pixel art exactly in the style of Stardew Valley buildings... <description, roof color hex>, door at the bottom center... Background: one single flat uniform magenta #FF00FF color. No ground, no grass, no shadow, no text, no letters.
+**Building** (always a straight front elevation; angled/isometric buildings clash with the flat tile grid)
+> A single building sprite for a top-down cozy farming RPG, chunky pixel art exactly in the style of Stardew Valley buildings... <description, roof color hex>, door at the bottom center... CAMERA: straight-on front elevation exactly like Stardew Valley and Pokemon town buildings. The front wall faces the viewer squarely as a flat rectangle with perfectly horizontal top and bottom edges; the roof is seen from slightly above as a flat shape sitting on top of the front wall. NOT isometric, NOT angled, no side walls visible, no corner pointing at the viewer, no diagonal perspective lines... Background: one single flat uniform magenta #FF00FF color. No ground, no grass, no shadow, no text, no letters.
 
 ## Rebuilding
 - Everything is reproducible from `raw/`: run `tools/art_pipeline/build_all.sh`.

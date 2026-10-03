@@ -1,16 +1,20 @@
 class_name Hud
 extends CanvasLayer
-## Clock + date + weather, money, energy, farm level, hotbar, party lead, toasts.
+## Day ribbon (sun arc, date, weather, time) up top; energy, hotbar and coins docked along the bottom;
+## farm level, party lead and quest tracker top left; toasts below them.
 
 const SLOT := 34
+const PILL := Color(0.14, 0.1, 0.13, 0.86)
+const PILL_EDGE := Color("#c9a24a")
+const SOFT := Color("#d8c8a8")
 
 var _date: Label
 var _time: Label
 var _weather: Label
+var _dial: DayDial
 var _money: Label
 var _money_shown := 0.0
-var _energy: ProgressBar
-var _energy_lbl: Label
+var _energy: EnergyPips
 var _level: Label
 var _xp: ProgressBar
 var _slots: Array = []
@@ -31,103 +35,95 @@ func _ready() -> void:
 	root.theme = UITheme.theme()
 	add_child(root)
 
-	# Clock panel (top right)
-	var clock := PanelContainer.new()
-	clock.add_theme_stylebox_override("panel", UITheme.parchment(5))
-	clock.anchor_left = 1
-	clock.anchor_right = 1
-	clock.offset_left = -112
-	clock.offset_right = -6
-	clock.offset_top = 6
-	clock.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(clock)
-	var cv := VBoxContainer.new()
-	cv.add_theme_constant_override("separation", 0)
-	clock.add_child(cv)
-	_date = UITheme.label("", 10)
-	_date.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	cv.add_child(_date)
-	_time = UITheme.label("", 14, UITheme.WOOD_DK)
-	_time.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	cv.add_child(_time)
-	_weather = UITheme.label("", 8, UITheme.MUTED)
-	_weather.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	cv.add_child(_weather)
-	var mrow := HBoxContainer.new()
-	mrow.alignment = BoxContainer.ALIGNMENT_CENTER
-	cv.add_child(mrow)
-	mrow.add_child(UITheme.icon_rect(Art.item("_coin"), 16))
-	_money = UITheme.label("0", 12, UITheme.WOOD_DK)
-	mrow.add_child(_money)
+	# Day ribbon (top center)
+	var day := PanelContainer.new()
+	day.add_theme_stylebox_override("panel", _pill(4))
+	day.anchor_left = 0.5
+	day.anchor_right = 0.5
+	day.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	day.offset_top = 5
+	day.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(day)
+	var drow := HBoxContainer.new()
+	drow.add_theme_constant_override("separation", 6)
+	day.add_child(drow)
+	_dial = DayDial.new()
+	_dial.custom_minimum_size = Vector2(36, 20)
+	_dial.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	drow.add_child(_dial)
+	var dcol := VBoxContainer.new()
+	dcol.add_theme_constant_override("separation", 0)
+	drow.add_child(dcol)
+	_date = UITheme.label("", 9, UITheme.CREAM)
+	dcol.add_child(_date)
+	_weather = UITheme.label("", 8, SOFT)
+	dcol.add_child(_weather)
+	_time = UITheme.label("", 14, UITheme.COIN)
+	_time.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	drow.add_child(_time)
 
-	# Farm level (top left)
+	# Farm level, party lead, quest (top left)
 	var lv := PanelContainer.new()
-	lv.add_theme_stylebox_override("panel", UITheme.parchment(4))
+	lv.add_theme_stylebox_override("panel", _pill(5))
 	lv.position = Vector2(6, 6)
 	lv.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(lv)
 	_lv_panel = lv
 	var lvv := VBoxContainer.new()
-	lvv.add_theme_constant_override("separation", 1)
+	lvv.add_theme_constant_override("separation", 2)
 	lv.add_child(lvv)
-	_level = UITheme.label("Farm Lv 1", 9)
-	lvv.add_child(_level)
-	_xp = ProgressBar.new()
-	_xp.custom_minimum_size = Vector2(80, 5)
-	_xp.show_percentage = false
-	lvv.add_child(_xp)
+	var lrow := HBoxContainer.new()
+	lrow.add_theme_constant_override("separation", 4)
+	lvv.add_child(lrow)
+	_level = UITheme.label("Farm Lv 1", 9, UITheme.COIN)
+	lrow.add_child(_level)
+	_xp = _bar(UITheme.COIN)
+	_xp.custom_minimum_size = Vector2(60, 4)
+	_xp.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	lrow.add_child(_xp)
 	var lead := HBoxContainer.new()
 	lvv.add_child(lead)
 	_lead_icon = UITheme.icon_rect(null, 32)
 	lead.add_child(_lead_icon)
 	var lcol := VBoxContainer.new()
-	lcol.add_theme_constant_override("separation", 1)
+	lcol.add_theme_constant_override("separation", 2)
+	lcol.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	lead.add_child(lcol)
-	_lead_name = UITheme.label("", 8)
+	_lead_name = UITheme.label("", 8, UITheme.CREAM)
 	lcol.add_child(_lead_name)
-	_lead_hp = ProgressBar.new()
-	_lead_hp.custom_minimum_size = Vector2(44, 5)
-	_lead_hp.show_percentage = false
+	_lead_hp = _bar(UITheme.LEAF)
+	_lead_hp.custom_minimum_size = Vector2(56, 4)
 	lcol.add_child(_lead_hp)
-	_quest = UITheme.label("", 8, UITheme.WOOD)
+	_quest = UITheme.label("", 8, SOFT)
 	_quest.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_quest.custom_minimum_size = Vector2(150, 0)
 	lvv.add_child(_quest)
 
-	# Energy (bottom right)
-	var en := PanelContainer.new()
-	en.add_theme_stylebox_override("panel", UITheme.parchment(4))
-	en.anchor_left = 1
-	en.anchor_right = 1
-	en.anchor_top = 1
-	en.anchor_bottom = 1
-	en.offset_left = -30
-	en.offset_right = -6
-	en.offset_top = -96
-	en.offset_bottom = -6
-	en.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(en)
-	var ev := VBoxContainer.new()
-	en.add_child(ev)
-	_energy_lbl = UITheme.label("E", 9, UITheme.WOOD_DK)
-	_energy_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	ev.add_child(_energy_lbl)
-	_energy = ProgressBar.new()
-	_energy.fill_mode = ProgressBar.FILL_BOTTOM_TO_TOP
-	_energy.show_percentage = false
-	_energy.custom_minimum_size = Vector2(12, 64)
-	_energy.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	_energy.add_theme_stylebox_override("fill", UITheme.box(UITheme.ENERGY, Color(0, 0, 0, 0), 0, 2, 0, false))
-	ev.add_child(_energy)
+	# Bottom dock: energy | hotbar | coins
+	var w := PlayerData.HOTBAR_SIZE * (SLOT + 2) + 6
+	var en := _dock_pill(root, -w / 2.0 - 4, Control.GROW_DIRECTION_BEGIN)
+	var erow := HBoxContainer.new()
+	erow.add_theme_constant_override("separation", 4)
+	en.add_child(erow)
+	erow.add_child(UITheme.icon_rect(Art.item("_energy"), 16))
+	_energy = EnergyPips.new()
+	_energy.custom_minimum_size = Vector2(EnergyPips.PIPS * 9 - 2, 7)
+	_energy.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	erow.add_child(_energy)
+	var co := _dock_pill(root, w / 2.0 + 4, Control.GROW_DIRECTION_END)
+	var mrow := HBoxContainer.new()
+	mrow.add_theme_constant_override("separation", 3)
+	co.add_child(mrow)
+	mrow.add_child(UITheme.icon_rect(Art.item("_coin"), 16))
+	_money = UITheme.label("0", 12, UITheme.COIN)
+	mrow.add_child(_money)
 
-	# Hotbar (bottom center)
 	var hb := PanelContainer.new()
-	hb.add_theme_stylebox_override("panel", UITheme.wood(3))
+	hb.add_theme_stylebox_override("panel", _pill(3))
 	hb.anchor_left = 0.5
 	hb.anchor_right = 0.5
 	hb.anchor_top = 1
 	hb.anchor_bottom = 1
-	var w := PlayerData.HOTBAR_SIZE * (SLOT + 2) + 6
 	hb.offset_left = -w / 2.0
 	hb.offset_right = w / 2.0
 	hb.offset_top = -SLOT - 12
@@ -182,6 +178,35 @@ func _ready() -> void:
 	EventBus.map_changed.connect(func(_m): _refresh_quest())
 	_refresh_all()
 
+func _pill(pad: int) -> StyleBoxFlat:
+	var s := UITheme.box(PILL, PILL_EDGE, 1, 6, pad)
+	s.border_width_bottom = 2
+	return s
+
+func _bar(fill: Color) -> ProgressBar:
+	var b := ProgressBar.new()
+	b.show_percentage = false
+	b.add_theme_stylebox_override("background", UITheme.box(Color(1, 1, 1, 0.14), Color(0, 0, 0, 0), 0, 1, 0, false))
+	b.add_theme_stylebox_override("fill", UITheme.box(fill, Color(0, 0, 0, 0), 0, 1, 0, false))
+	return b
+
+## A pill beside the hotbar, vertically centered on it; `x` is its inner edge relative to screen center.
+func _dock_pill(root: Control, x: float, grow: Control.GrowDirection) -> PanelContainer:
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel", _pill(4))
+	p.anchor_left = 0.5
+	p.anchor_right = 0.5
+	p.anchor_top = 1
+	p.anchor_bottom = 1
+	p.offset_left = x
+	p.offset_right = x
+	p.offset_top = -SLOT / 2.0 - 8 - 13
+	p.offset_bottom = -SLOT / 2.0 - 8 + 13
+	p.grow_horizontal = grow
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(p)
+	return p
+
 func _refresh_all() -> void:
 	_refresh_clock()
 	_refresh_energy()
@@ -212,6 +237,8 @@ func _refresh_clock() -> void:
 	_date.text = Calendar.date_string(GameState.day())
 	_time.text = Calendar.time_string(GameState.minute(), Settings.twelve_hour)
 	_weather.text = Calendar.weather_name(GameState.world.get("weather", "sun"))
+	_dial.minute = GameState.minute()
+	_dial.queue_redraw()
 	_refresh_level()
 
 func _refresh_level() -> void:
@@ -227,10 +254,9 @@ func _refresh_energy() -> void:
 	var p := GameState.local_player()
 	if p == null:
 		return
-	_energy.max_value = p.max_energy
-	_energy.value = p.energy
-	var low := p.energy < p.max_energy * 0.2
-	_energy.add_theme_stylebox_override("fill", UITheme.box(Color("#e07050") if low else UITheme.ENERGY, Color(0, 0, 0, 0), 0, 2, 0, false))
+	_energy.frac = clampf(p.energy / maxf(1.0, p.max_energy), 0.0, 1.0)
+	_energy.low = p.energy < p.max_energy * 0.2
+	_energy.queue_redraw()
 
 func _refresh_hotbar() -> void:
 	var p := GameState.local_player()
@@ -309,6 +335,7 @@ func _process(delta: float) -> void:
 	if _name_t > 0:
 		_name_t -= delta
 		_hotbar_name.modulate.a = clampf(_name_t, 0, 1)
+	_energy.modulate.a = 0.55 + 0.45 * absf(sin(Time.get_ticks_msec() / 250.0)) if _energy.low else 1.0
 	if Engine.get_process_frames() % 30 == 0:
 		_refresh_lead()
 
@@ -329,3 +356,44 @@ func toast(text: String, _icon: String = "") -> void:
 	tw.tween_interval(3.5)
 	tw.tween_property(pc, "modulate:a", 0.0, 0.5)
 	tw.tween_callback(pc.queue_free)
+
+
+## The sun (or moon after dusk) travelling an arc from 6am to 2am, filling the arc behind it.
+class DayDial extends Control:
+	var minute := Calendar.DAY_START
+
+	func _draw() -> void:
+		var c := Vector2(size.x / 2.0, size.y - 2)
+		var r := minf(size.x / 2.0, size.y) - 3.0
+		var t := clampf(float(minute - Calendar.DAY_START) / float(Calendar.DAY_END - Calendar.DAY_START), 0.0, 1.0)
+		var a := PI + t * PI
+		var night := Calendar.is_night(minute)
+		draw_line(Vector2(0, c.y + 1), Vector2(size.x, c.y + 1), Color(1, 1, 1, 0.35))
+		draw_arc(c, r, PI, TAU, 20, Color(1, 1, 1, 0.2), 1.0)
+		draw_arc(c, r, PI, a, 20, Color("#8a9ad8") if night else Color("#e8b040"), 2.0)
+		var p := c + Vector2(cos(a), sin(a)) * r
+		if night:
+			draw_circle(p, 3.0, Color("#e4ecff"))
+			draw_circle(p + Vector2(1.5, -1), 2.2, PILL)
+		else:
+			draw_circle(p, 4.5, Color(1, 0.85, 0.3, 0.3))
+			draw_circle(p, 3.0, UITheme.COIN)
+
+
+## Energy as a row of pips; the last one fills partially.
+class EnergyPips extends Control:
+	const PIPS := 10
+	var frac := 1.0
+	var low := false
+
+	func _draw() -> void:
+		var w := 7.0
+		var fill := Color("#e07050") if low else UITheme.ENERGY
+		for i in PIPS:
+			var r := Rect2(i * (w + 2.0), 0, w, size.y)
+			draw_rect(r, Color(1, 1, 1, 0.14))
+			var f := clampf(frac * PIPS - i, 0.0, 1.0)
+			if f > 0.0:
+				var fw := maxf(1.0, roundf(w * f))
+				draw_rect(Rect2(r.position, Vector2(fw, size.y)), fill)
+				draw_rect(Rect2(r.position, Vector2(fw, 1)), fill.lightened(0.4))

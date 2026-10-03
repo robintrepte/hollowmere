@@ -14,6 +14,10 @@ const TRELLIS := ["green_bean", "tomato", "grape", "hot_pepper", "snowpea", "cra
 const STALK := ["corn", "wheat", "sunflower", "amaranth"]
 const FLOWERS := ["tulip", "blue_jazz", "fairy_rose", "ice_lily", "moonbloom"]
 const BIG := ["melon", "pumpkin", "winter_squash", "glacier_melon"]
+const GRASSY := [0, 1, 11]
+const GRASS_SPILLS_ONTO := [2, 3, 5, 9, 15]
+const NEIGHBORS := [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
+const DIAGONALS := [Vector2i(1, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(-1, -1)]
 const OBJECT_FOOTPRINT := {"fountain": Vector2i(2, 2), "wayshrine": Vector2i(1, 1), "board": Vector2i(1, 1), "show_ring": Vector2i(0, 0)}
 
 var map_id := ""
@@ -153,8 +157,25 @@ func _draw_ground(p: Vector2i) -> void:
 			edge_layer.set_cell(p, 2, Vector2i(m, 0))
 		else:
 			edge_layer.erase_cell(p)
+	elif gid in GRASS_SPILLS_ONTO:
+		var sides := 0
+		var corners := 0
+		for i in 4:
+			if _grassy(p + NEIGHBORS[i]):
+				sides |= 1 << i
+		for i in 4:
+			var d: Vector2i = DIAGONALS[i]
+			if _grassy(p + d) and not _grassy(p + Vector2i(d.x, 0)) and not _grassy(p + Vector2i(0, d.y)):
+				corners |= 1 << i
+		if sides or corners:
+			edge_layer.set_cell(p, 3, Vector2i(sides, corners))
+		else:
+			edge_layer.erase_cell(p)
 	else:
 		edge_layer.erase_cell(p)
+
+func _grassy(p: Vector2i) -> bool:
+	return grid.in_bounds(p) and grid.get_ground(p) in GRASSY
 
 func _draw_soil(p: Vector2i) -> void:
 	if not grid.is_tilled(p):
@@ -697,7 +718,9 @@ func interactable_at(t: Vector2i) -> Dictionary:
 func _on_tile_changed(m: String, t: Vector2i) -> void:
 	if m != map_id:
 		return
-	_draw_ground(t)
+	for d in NEIGHBORS + DIAGONALS + [Vector2i.ZERO]:
+		if grid.in_bounds(t + d):
+			_draw_ground(t + d)
 	_draw_deco(t)
 	for d in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 		_draw_soil(t + d)
