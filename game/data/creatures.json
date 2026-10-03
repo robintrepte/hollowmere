@@ -9,7 +9,7 @@
     ["torrentide", "Torrentide", ["tide", "gale"], [79, 83, 80, 95, 85], null, ["aqua", "field"], 45, "melon", "", "regrowth", "It rides rainclouds and waters entire valleys."],
     ["embercub", "Embercub", ["ember"], [39, 52, 43, 50, 65], ["cindermane", 16], ["field", "beast"], 45, "hot_pepper", "", "intimidate", "A cub whose tail glows warmer when it's excited."],
     ["cindermane", "Cindermane", ["ember"], [58, 70, 58, 65, 80], ["blazeroar", 36], ["field", "beast"], 45, "hot_pepper", "", "intimidate", "Its smoldering mane keeps the farmhouse cozy in winter."],
-    ["blazeroar", "Blazeroar", ["ember", "wild"], [78, 100, 78, 85, 100], null, ["field", "beast"], 45, "hot_pepper", "", "intimidate", "Its roar can be heard across three valleys."],
+    ["blazeroar", "Blazeroar", ["ember", "wild"], [85, 112, 82, 85, 108], null, ["field", "beast"], 45, "hot_pepper", "", "intimidate", "Its roar can be heard across three valleys."],
 
     ["mossbun", "Mossbun", ["leaf", "wild"], [50, 45, 45, 40, 60], ["clovehare", 18], ["field"], 190, "kale", "", "swift", "A fluffy bunny with soft moss for ears."],
     ["clovehare", "Clovehare", ["leaf", "wild"], [70, 75, 65, 60, 100], null, ["field"], 90, "kale", "", "swift", "Its four-leaf ears are said to bring good luck."],
@@ -28,12 +28,12 @@
     ["bubbloo", "Bubbloo", ["tide", "glow"], [50, 25, 45, 60, 50], ["lumibub", 25], ["aqua", "fairy"], 160, "blueberry", "", "gentle_soul", "It blows shimmering bubbles that float for hours."],
     ["lumibub", "Lumibub", ["tide", "glow"], [85, 35, 70, 100, 70], null, ["aqua", "fairy"], 70, "blueberry", "", "gentle_soul", "Its glowing bubbles light the sea at night."],
     ["splashpup", "Splashpup", ["tide", "wild"], [55, 58, 45, 35, 55], ["surfhound", 22], ["aqua", "field"], 170, "corn", "", "iron_will", "A playful pup that loves to shake water on everyone."],
-    ["surfhound", "Surfhound", ["tide", "wild"], [80, 95, 70, 55, 95], null, ["aqua", "field"], 75, "corn", "", "iron_will", "It rides the waves to fetch sticks from far out at sea."],
+    ["surfhound", "Surfhound", ["tide", "wild"], [85, 102, 75, 55, 100], null, ["aqua", "field"], 75, "corn", "", "iron_will", "It rides the waves to fetch sticks from far out at sea."],
 
     ["cinderbug", "Cinderbug", ["ember"], [40, 45, 40, 55, 50], ["flarewing", 24], ["bug"], 180, "sunflower", "", "flame_body", "Its glowing back keeps it warm on cold nights."],
-    ["flarewing", "Flarewing", ["ember", "gale"], [65, 75, 60, 95, 90], null, ["bug"], 75, "sunflower", "", "flame_body", "It scatters glowing embers like fireflies."],
+    ["flarewing", "Flarewing", ["ember", "gale"], [70, 75, 66, 102, 95], null, ["bug"], 75, "sunflower", "", "flame_body", "It scatters glowing embers like fireflies."],
     ["kilnmole", "Kilnmole", ["ember", "stone"], [55, 60, 60, 30, 35], ["forgemole", 30], ["mineral", "field"], 140, "potato", "", "hardworker", "It digs warm tunnels under volcanoes."],
-    ["forgemole", "Forgemole", ["ember", "stone"], [85, 105, 95, 45, 45], null, ["mineral", "field"], 60, "potato", "", "hardworker", "Blacksmiths prize it for its perfectly even heat."],
+    ["forgemole", "Forgemole", ["ember", "stone"], [80, 92, 85, 45, 45], null, ["mineral", "field"], 60, "potato", "", "hardworker", "Blacksmiths prize it for its perfectly even heat."],
     ["wickling", "Wickling", ["ember", "shade"], [40, 30, 40, 65, 55], ["lanternoir", 28], ["amorphous", "spirit"], 140, "pumpkin", "", "flame_body", "A candle flame that wandered off on its own."],
     ["lanternoir", "Lanternoir", ["ember", "shade"], [60, 45, 65, 110, 85], null, ["amorphous", "spirit"], 60, "pumpkin", "", "flame_body", "It guides lost travelers home, if they're polite."],
 
@@ -92,10 +92,10 @@
     ["burrowpup", "Burrowpup", ["wild", "stone"], [50, 55, 50, 30, 45], ["digsby", 22], ["field", "mineral"], 190, "potato", "", "hardworker", "It digs holes everywhere, sometimes finding treasure."],
     ["digsby", "Digsby", ["wild", "stone"], [75, 90, 80, 45, 70], null, ["field", "mineral"], 85, "potato", "", "hardworker", "A master digger that can tunnel through solid rock."],
     ["snailmail", "Snailmail", ["stone", "tide"], [50, 40, 70, 45, 15], ["couriersnail", 24], ["aqua", "bug"], 180, "kale", "", "thick_hide", "It carries letters in its shell. Slowly."],
-    ["couriersnail", "Couriersnail", ["stone", "tide"], [80, 65, 110, 70, 25], null, ["aqua", "bug"], 80, "kale", "", "thick_hide", "It has never lost a letter in a hundred years."],
+    ["couriersnail", "Couriersnail", ["stone", "tide"], [72, 58, 92, 68, 25], null, ["aqua", "bug"], 80, "kale", "", "thick_hide", "It has never lost a letter in a hundred years."],
 
     ["mimicrate", "Mimicrate", ["wild", "shade"], [80, 95, 95, 60, 45], null, ["amorphous"], 60, "crystal_fruit", "", "lucky", "It disguises itself as a treasure chest deep in caves."],
-    ["hollowisp", "Hollowisp", ["shade", "glow"], [60, 50, 60, 95, 85], null, ["spirit"], 45, "moonbloom", "", "glimmer_coat", "The mischievous spirit of the valley. Few have seen it twice."],
+    ["hollowisp", "Hollowisp", ["shade", "glow"], [72, 55, 72, 108, 98], null, ["spirit"], 45, "moonbloom", "", "glimmer_coat", "The mischievous spirit of the valley. Few have seen it twice."],
 
     ["verdantis", "Verdantis", ["leaf", "glow"], [100, 100, 110, 110, 90], null, ["none"], 3, "fairy_rose", "", "ancient", "Guardian of Whisperwood. Forests grow in its footsteps."],
     ["maelstride", "Maelstride", ["tide", "stone"], [105, 110, 100, 100, 95], null, ["none"], 3, "coconut", "", "ancient", "Guardian of Tidecove. It calms the tides with a single cry."],

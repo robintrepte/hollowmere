@@ -5,6 +5,7 @@ extends RefCounted
 const MAX_TURNS := 80
 const SPECIES_BAND := [0.15, 0.85]
 const TYPE_BAND := [0.33, 0.67]
+const OUTLIER_MARGIN := 0.15
 
 static func make(id: String, level: int, rng: RandomNumberGenerator) -> Creature:
 	var sp: Dictionary = Data.get_species(id)
@@ -86,7 +87,45 @@ static func run(level: int = 40, rounds: int = 2, seed_value: int = 1) -> Dictio
 	if float(draws) / float(maxi(1, battles)) > 0.05:
 		flags.append("too many draws: %d / %d" % [draws, battles])
 		ok = false
-	return {"species": sp_stats, "types": ty_stats, "battles": battles, "draws": draws, "flags": flags, "ok": ok}
+	var outliers := stat_outliers(sp_stats)
+	for id in outliers:
+		flags.append("species %s plays %+.2f against its stat total" % [id, outliers[id]])
+	return {"species": sp_stats, "types": ty_stats, "battles": battles, "draws": draws, "flags": flags, "ok": ok, "outliers": outliers}
+
+static func stat_total(id: String) -> int:
+	var t := 0
+	for v in Data.species[id].base:
+		t += int(v)
+	return t
+
+## Win rate is expected to climb with base stat total (final forms of longer lines are stronger).
+## Species far off that line point at a movepool, typing or trait problem rather than a tier.
+static func stat_outliers(sp_stats: Dictionary, margin: float = OUTLIER_MARGIN) -> Dictionary:
+	var ids: Array = sp_stats.keys()
+	var n := float(ids.size())
+	if n < 3:
+		return {}
+	var mx := 0.0
+	var my := 0.0
+	for id in ids:
+		mx += stat_total(id)
+		my += float(sp_stats[id].rate)
+	mx /= n
+	my /= n
+	var sxy := 0.0
+	var sxx := 0.0
+	for id in ids:
+		var dx := stat_total(id) - mx
+		sxy += dx * (float(sp_stats[id].rate) - my)
+		sxx += dx * dx
+	var slope := sxy / maxf(sxx, 0.001)
+	var out := {}
+	for id in ids:
+		var res: float = float(sp_stats[id].rate) - (my + slope * (stat_total(id) - mx))
+		sp_stats[id]["residual"] = res
+		if absf(res) > margin:
+			out[id] = res
+	return out
 
 static func format_report(rep: Dictionary) -> String:
 	var lines: Array = ["Balance sim: %d battles, %d draws" % [rep.battles, rep.draws], "", "Types:"]
@@ -101,7 +140,7 @@ static func format_report(rep: Dictionary) -> String:
 	for i in ids.size():
 		if i < 8 or i >= ids.size() - 8:
 			var e: Dictionary = rep.species[ids[i]]
-			lines.append("  %-12s %.2f  (%d-%d-%d)" % [ids[i], e.rate, e.w, e.l, e.d])
+			lines.append("  %-12s %.2f  (%d-%d-%d)  stats %d, %+.2f vs stats" % [ids[i], e.rate, e.w, e.l, e.d, stat_total(ids[i]), float(e.get("residual", 0.0))])
 		elif i == 8:
 			lines.append("  ...")
 	if not rep.flags.is_empty():

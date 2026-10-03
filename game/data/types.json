@@ -17,11 +17,11 @@
     "tide":  {"ember": 2, "stone": 2, "tide": 0.5, "leaf": 0.5, "frost": 0.5},
     "ember": {"leaf": 2, "frost": 2, "ember": 0.5, "tide": 0.5, "stone": 0.5},
     "stone": {"ember": 2, "gale": 2, "spark": 2, "stone": 0.5, "leaf": 0.5},
-    "gale":  {"leaf": 2, "wild": 2, "stone": 0.5, "spark": 0.5, "frost": 0.5},
+    "gale":  {"leaf": 2, "wild": 2, "stone": 0.5, "spark": 0.5, "frost": 0.5, "gale": 0.5},
     "spark": {"tide": 2, "gale": 2, "shade": 2, "spark": 0.5, "stone": 0.5, "leaf": 0.5},
     "frost": {"gale": 2, "leaf": 2, "frost": 0.5, "ember": 0.5, "tide": 0.5},
     "shade": {"glow": 2, "wild": 2, "shade": 0.5},
     "glow":  {"shade": 2, "frost": 2, "glow": 0.5, "ember": 0.5},
-    "wild":  {"stone": 0.5, "glow": 2}
+    "wild":  {"stone": 0.5, "glow": 2, "spark": 2}
   }
 }

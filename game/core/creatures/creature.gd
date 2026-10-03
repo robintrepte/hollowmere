@@ -67,9 +67,11 @@ func _init_moves() -> void:
 	for e in species().learnset:
 		if int(e[0]) <= level and not learned.has(e[1]):
 			learned.append(e[1])
-	moves = pick_best_moves(learned)
+	moves = pick_best_moves(learned, species())
 
-static func pick_best_moves(pool: Array) -> Array:
+## Default loadout: the three hardest-hitting moves for this species (its stronger attack stat,
+## same-type bonus, accuracy, a nudge toward type coverage), then its best status move.
+static func pick_best_moves(pool: Array, sp: Dictionary = {}) -> Array:
 	var damaging: Array = []
 	var status_moves: Array = []
 	for m in pool:
@@ -77,12 +79,23 @@ static func pick_best_moves(pool: Array) -> Array:
 			status_moves.append(m)
 		else:
 			damaging.append(m)
-	damaging.sort_custom(func(a, b): return Data.get_move(a).power > Data.get_move(b).power)
-	var out: Array = []
+	var value := {}
 	for m in damaging:
-		if out.size() >= 3:
-			break
-		out.append(m)
+		value[m] = move_value(Data.get_move(m), sp)
+	var out: Array = []
+	var used_types := {}
+	while out.size() < 3 and out.size() < damaging.size():
+		var best := ""
+		var best_v := -1.0
+		for m in damaging:
+			if m in out:
+				continue
+			var v: float = value[m] * (0.8 if used_types.has(Data.get_move(m).type) else 1.0)
+			if v > best_v:
+				best_v = v
+				best = m
+		out.append(best)
+		used_types[Data.get_move(best).type] = true
 	if status_moves.size() > 0:
 		out.append(status_moves[status_moves.size() - 1])
 	for m in damaging:
@@ -93,6 +106,14 @@ static func pick_best_moves(pool: Array) -> Array:
 	if out.is_empty():
 		out.append("tackle")
 	return out
+
+static func move_value(m: Dictionary, sp: Dictionary) -> float:
+	var v := float(m.get("power", 0)) * (float(m.acc) / 100.0 if int(m.get("acc", 0)) > 0 else 1.05)
+	if sp.is_empty():
+		return v
+	var bs: Dictionary = sp.get("base_stats", {})
+	var atk := float(bs.get("power" if m.cat == "phys" else "focus", 70))
+	return v * atk * (1.5 if m.type in sp.get("types", []) else 1.0)
 
 func species() -> Dictionary:
 	return Data.get_species(species_id)

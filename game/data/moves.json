@@ -81,6 +81,7 @@
   "cozy_nap":      {"name": "Cozy Nap",      "type": "wild",  "cat": "status", "power": 0,   "acc": 0,   "effects": [{"k": "rest"}], "desc": "Fully heals, then sleeps for two turns."},
   "body_slam":     {"name": "Body Slam",     "type": "wild",  "cat": "phys",   "power": 85,  "acc": 100, "desc": "Slams with its whole body."},
   "hyper_rush":    {"name": "Hyper Rush",    "type": "wild",  "cat": "phys",   "power": 110, "acc": 85,  "desc": "A reckless all-out rush."},
+  "primal_roar":   {"name": "Primal Roar",   "type": "wild",  "cat": "spec",   "power": 80,  "acc": 100, "effects": [{"k": "stat", "stat": "power", "n": -1, "target": "foe", "p": 0.2}], "desc": "A deafening roar. May lower the foe's Power."},
   "heat_haze":     {"name": "Heat Haze",     "type": "ember", "cat": "status", "power": 0,   "acc": 0,   "effects": [{"k": "weather", "w": "sun"}], "desc": "Calls harsh sunlight for 5 turns. Ember moves grow stronger."},
   "rain_song":     {"name": "Rain Song",     "type": "tide",  "cat": "status", "power": 0,   "acc": 0,   "effects": [{"k": "weather", "w": "rain"}], "desc": "Sings up a rain shower for 5 turns. Tide moves grow stronger."},
   "snowfall":      {"name": "Snowfall",      "type": "frost", "cat": "status", "power": 0,   "acc": 0,   "effects": [{"k": "weather", "w": "snow"}], "desc": "Summons snow for 5 turns. Chills all but Frost types."},

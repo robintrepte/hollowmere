@@ -105,3 +105,19 @@ func test_ai_prefers_super_effective() -> void:
 			best = s
 			best_i = i
 	assert_eq(Data.get_move(foe.moves[best_i]).type in ["tide", "none", "wild"] or best > 0, true)
+
+func test_default_moves_fit_the_attacker() -> void:
+	for sid in ["blazeroar", "forgemole", "solaria", "lanternoir"]:
+		var c := _mk(sid, 45)
+		var bs: Dictionary = c.species().base_stats
+		var want := "phys" if bs.power >= bs.focus else "spec"
+		var fits := 0
+		var damaging := 0
+		for m in c.moves:
+			var mv := Data.get_move(m)
+			if mv.cat != "status":
+				damaging += 1
+				if mv.cat == want:
+					fits += 1
+		assert_gt(damaging, 1, "%s has attacks" % sid)
+		assert_true(fits * 2 > damaging, "%s mostly attacks with its stronger stat (%s): %s" % [sid, want, c.moves])

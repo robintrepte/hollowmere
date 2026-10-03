@@ -573,6 +573,10 @@ msgid "A cub whose tail glows warmer when it's excited."
 msgstr ""
 
 #: data/moves.json
+msgid "A deafening roar. May lower the foe's Power."
+msgstr ""
+
+#: data/moves.json
 msgid "A desperate attack."
 msgstr ""
 
@@ -4145,6 +4149,10 @@ msgstr ""
 
 #: data/progression.json
 msgid "Prestige III"
+msgstr ""
+
+#: data/moves.json
+msgid "Primal Roar"
 msgstr ""
 
 #: data/moves.json
