@@ -84,7 +84,7 @@ Jobs whose secrets are missing skip with a warning instead of failing.
    $G --headless --path game -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json
    $G --headless --path game res://tests/sim/balance_sim.tscn -- --rounds=12 --days=112
    $G --path game res://tests/perf/perf_bench.tscn -- --out=$PWD/.shots   # p95 must stay under 4 ms on an M-series Mac
-   for s in smoke ui_smoke title_smoke creatures_smoke adventure_smoke endless_smoke; do
+   for s in smoke ui_smoke title_smoke touch_smoke creatures_smoke adventure_smoke endless_smoke; do
      $G --path game res://tests/smoke/$s.tscn -- --out=$PWD/.shots; done      # look at the screenshots
    python3 tools/content/extract_strings.py
    ```
@@ -102,6 +102,7 @@ Jobs whose secrets are missing skip with a warning instead of failing.
    - Open `https://<domain>` in a private window: title screen, guest login, new farm, save, reload, continue.
    - Download the macOS build from itch and check that it opens without a Gatekeeper warning (`spctl -a -vv Hollowmere.app` should say "Notarized Developer ID").
    - Start a co-op session between the web build and a desktop build.
+   - On a phone (one iPhone with Safari, one Android with Chrome): open the domain in landscape, walk with the stick, open the bag, then add it to the home screen and check it opens full screen with the sprout icon.
 5. Check crash reports a day later (section 4).
 
 Rollback: re-run the `deploy-web` job of the previous tag. The engine files carry a content hash in their names, so browsers pick up the old build at once.

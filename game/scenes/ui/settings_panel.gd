@@ -48,6 +48,9 @@ func _ready() -> void:
 	if OS.get_name() != "Web":
 		_check(body, "Fullscreen", Settings.fullscreen, func(on): Settings.fullscreen = on; Settings.apply())
 	_check(body, "Screen shake", Settings.screen_shake, func(on): Settings.screen_shake = on)
+	_choice(body, "Touch controls", ["Auto", "On", "Off"], ["auto", "on", "off"].find(Settings.touch_controls), func(i: int):
+		Settings.touch_controls = ["auto", "on", "off"][i]
+		TouchControls.refresh_active())
 	var locs := Settings.available_locales()
 	if locs.size() > 1:
 		var names: Array = ["System"] + locs.map(func(l): return TranslationServer.get_locale_name(l))

@@ -115,6 +115,31 @@ def main():
     icon.resize((184, 184), Image.LANCZOS).save(os.path.join(steam, "community_icon_184.png"))
     icon.resize((32, 32), Image.LANCZOS).save(os.path.join(steam, "client_icon_32.png"))
     print("wrote store/steam/community_icon_184.png, client_icon_32.png")
+    web_icons(icon)
+
+
+def web_icons(icon):
+    """Home-screen icons for the web build (copied next to index.html by fingerprint_web.sh).
+    Phones round the corners themselves, so these drop the icon's own frame and fill edge to edge;
+    the maskable one keeps the art inside the 80% safe zone."""
+    out = os.path.join(ROOT, "game", "web", "pwa")
+    inner = icon.crop((30, 30, 482, 482))
+    bg = inner.getpixel((60, 60))
+    a = np.array(inner)
+    n = a.shape[0]
+    yy, xx = np.mgrid[0:n, 0:n]
+    corner = np.minimum(xx, n - 1 - xx) + np.minimum(yy, n - 1 - yy) < 100
+    frame = (a[..., 3] < 128) | (a[..., :3].astype(int).sum(-1) < 240)
+    a[corner & frame] = bg
+    inner = Image.fromarray(a)
+    for size in (180, 192, 512):
+        inner.resize((size, size), Image.LANCZOS).convert("RGB").save(
+            os.path.join(out, f"icon-{size}.png"), optimize=True)
+    mask = Image.new("RGBA", (512, 512), bg)
+    art = inner.resize((410, 410), Image.LANCZOS)
+    mask.alpha_composite(art, (51, 51))
+    mask.convert("RGB").save(os.path.join(out, "icon-maskable-512.png"), optimize=True)
+    print("wrote game/web/pwa/icon-{180,192,512,maskable-512}.png")
 
 
 if __name__ == "__main__":

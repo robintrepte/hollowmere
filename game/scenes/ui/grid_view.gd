@@ -54,6 +54,7 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		_set_hover(cell_at(event.position))
 	elif event is InputEventMouseButton and event.pressed:
+		_set_hover(cell_at(event.position))
 		cell_pressed.emit(self, cell_at(event.position), event.button_index, event.shift_pressed)
 		accept_event()
 	elif has_focus():

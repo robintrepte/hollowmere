@@ -37,6 +37,7 @@ var _menu_at := Vector2.ZERO
 
 const MOUSE_HELP := "Drag to move · R rotate · Right-click for actions · Shift-click quick move · Esc close"
 const PAD_HELP := "D-pad move · A pick up / drop · X actions · B rotate · Start close"
+const TOUCH_HELP := "Tap to pick up, tap again to place · Hold an item for actions · Rotate turns it · X closes"
 
 func _init(p: PlayerData = null, other_inv: Inventory = null, title: String = "", m: String = "pack") -> void:
 	player = p
@@ -71,11 +72,13 @@ func _ready() -> void:
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title_row.add_child(sp)
+	if TouchControls.active:
+		title_row.add_child(UITheme.button("Rotate", rotate_held_or_hovered))
 	var sort_btn := UITheme.button("Sort", func(): player.inventory.auto_sort(); _changed())
 	title_row.add_child(sort_btn)
 	_pack_view = _make_view(player.inventory)
 	left.add_child(_pack_view)
-	left.add_child(UITheme.label("Hotbar  (hover an item + press 1-0, or drop it here)", 8, UITheme.MUTED))
+	left.add_child(UITheme.label("Hotbar  (pick up an item and tap a slot)" if TouchControls.active else "Hotbar  (hover an item + press 1-0, or drop it here)", 8, UITheme.MUTED))
 	var hb := HBoxContainer.new()
 	hb.add_theme_constant_override("separation", 1)
 	left.add_child(hb)
@@ -122,7 +125,7 @@ func _ready() -> void:
 	info.add_child(iv)
 	_info_name = UITheme.label("", 11, UITheme.WOOD_DK)
 	iv.add_child(_info_name)
-	_info_desc = UITheme.label(PAD_HELP if Settings.using_pad else MOUSE_HELP, 9, UITheme.INK)
+	_info_desc = UITheme.label(_help(), 9, UITheme.INK)
 	_info_desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_info_desc.custom_minimum_size = Vector2(420, 0)
 	iv.add_child(_info_desc)
@@ -141,6 +144,19 @@ func _ready() -> void:
 	_center()
 	if Settings.using_pad:
 		_pack_view.grab_focus()
+
+func _help() -> String:
+	if Settings.using_pad:
+		return PAD_HELP
+	return TOUCH_HELP if TouchControls.active else MOUSE_HELP
+
+## Touch stand-in for right-click: open the actions menu for the item under the finger.
+func touch_long_press(pos: Vector2) -> void:
+	if _hover.is_empty() or _hover_inv == null:
+		return
+	_cancel_held()
+	_menu_at = pos
+	_open_menu(_hover_inv, _hover)
 
 func _center() -> void:
 	var s := get_combined_minimum_size()
@@ -256,7 +272,7 @@ func _on_hover(view: GridView, e: Dictionary) -> void:
 	_hover_inv = view.inv
 	if e.is_empty():
 		_info_name.text = ""
-		_info_desc.text = PAD_HELP if Settings.using_pad else MOUSE_HELP
+		_info_desc.text = _help()
 		return
 	var it: Dictionary = Data.get_item(e.id)
 	_info_name.text = Data.item_name(e.id, int(e.get("q", 0))) + (tr("  x%d") % int(e.n) if int(e.n) > 1 else "")

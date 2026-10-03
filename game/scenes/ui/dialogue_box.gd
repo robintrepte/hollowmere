@@ -34,6 +34,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	_panel = PanelContainer.new()
 	_panel.add_theme_stylebox_override("panel", UITheme.parchment(8))
+	_panel.mouse_filter = Control.MOUSE_FILTER_PASS
 	_panel.anchor_left = 0.5
 	_panel.anchor_right = 0.5
 	_panel.anchor_top = 1
@@ -67,6 +68,7 @@ func _ready() -> void:
 	_text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	_text.fit_content = false
 	_text.scroll_active = false
+	_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_text.add_theme_font_size_override("normal_font_size", UITheme.fs(11))

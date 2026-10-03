@@ -23,7 +23,7 @@ msgstr ""
 msgid "  Lv%d"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:262
+#: scenes/ui/inventory_panel.gd:278
 #, c-format
 msgid "  x%d"
 msgstr ""
@@ -43,7 +43,7 @@ msgstr ""
 msgid " (%d ribbons)"
 msgstr ""
 
-#: scenes/main/main.gd:82
+#: scenes/main/main.gd:89
 #, c-format
 msgid " (%s)"
 msgstr ""
@@ -112,7 +112,7 @@ msgstr ""
 msgid "%dg"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:270
+#: scenes/ui/inventory_panel.gd:286
 #, c-format
 msgid "%dx%d"
 msgstr ""
@@ -192,7 +192,7 @@ msgstr ""
 msgid "%s B%d%s"
 msgstr ""
 
-#: scenes/ui/hud.gd:287
+#: scenes/ui/hud.gd:289
 #, c-format
 msgid "%s Lv%d"
 msgstr ""
@@ -202,12 +202,12 @@ msgstr ""
 msgid "%s and %s are now a pair. Eggs will appear in the farm chest."
 msgstr ""
 
-#: scenes/main/main.gd:442
+#: scenes/main/main.gd:449
 #, c-format
 msgid "%s chain x%d! Starry odds x%.1f%s"
 msgstr ""
 
-#: scenes/main/main.gd:332
+#: scenes/main/main.gd:339
 #, c-format
 msgid "%s challenges you to a friendly battle! (Nothing is lost, win or lose.)"
 msgstr ""
@@ -237,7 +237,7 @@ msgstr ""
 msgid "%s is ready!"
 msgstr ""
 
-#: scenes/main/main.gd:410
+#: scenes/main/main.gd:417
 #, c-format
 msgid "%s joined %s!"
 msgstr ""
@@ -302,7 +302,7 @@ msgstr ""
 msgid "%s wants %d %s"
 msgstr ""
 
-#: scenes/main/main.gd:349
+#: scenes/main/main.gd:356
 #, c-format
 msgid "%s wants to trade with you."
 msgstr ""
@@ -425,7 +425,7 @@ msgstr ""
 msgid "+ Wildling"
 msgstr ""
 
-#: scenes/ui/craft_panel.gd:147 scenes/ui/inventory_panel.gd:268
+#: scenes/ui/craft_panel.gd:147 scenes/ui/inventory_panel.gd:284
 #, c-format
 msgid "+%d energy"
 msgstr ""
@@ -873,7 +873,7 @@ msgstr ""
 msgid "All eight shrines are restored! The valley is whole again. Seasonal legends now roam the land, and the Deep Hollow goes ever deeper."
 msgstr ""
 
-#: scenes/main/main.gd:89
+#: scenes/main/main.gd:96
 msgid "All save slots are full. Delete a farm from the Load menu first."
 msgstr ""
 
@@ -984,7 +984,7 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:70
+#: scenes/ui/inventory_panel.gd:71
 msgid "Backpack"
 msgstr ""
 
@@ -1109,7 +1109,7 @@ msgstr ""
 msgid "Befriended %d · Seen %d · Total %d"
 msgstr ""
 
-#: scenes/main/main.gd:402
+#: scenes/main/main.gd:409
 #, c-format
 msgid "Befriended in %s at Lv%d"
 msgstr ""
@@ -1399,7 +1399,7 @@ msgstr ""
 msgid "Chapter %d · %s"
 msgstr ""
 
-#: scenes/main/main.gd:82
+#: scenes/main/main.gd:89
 #, c-format
 msgid "Chapter complete: %s%s"
 msgstr ""
@@ -1496,7 +1496,7 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:397
+#: scenes/ui/inventory_panel.gd:413
 #, c-format
 msgid "Close %s"
 msgstr ""
@@ -1561,7 +1561,7 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:65
+#: scenes/ui/settings_panel.gd:68
 msgid "Controls (click, then press a key)"
 msgstr ""
 
@@ -1886,7 +1886,7 @@ msgstr ""
 msgid "Drop goods in the shipping bin. You get paid overnight."
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:107
+#: scenes/ui/inventory_panel.gd:110
 msgid "Drop items here.\nThey sell overnight."
 msgstr ""
 
@@ -1951,7 +1951,7 @@ msgstr ""
 msgid "Eggs you have"
 msgstr ""
 
-#: scenes/main/main.gd:84
+#: scenes/main/main.gd:91
 msgid "Elder Barley has something to tell you."
 msgstr ""
 
@@ -2032,12 +2032,12 @@ msgstr ""
 msgid "Farm %d/%d"
 msgstr ""
 
-#: scenes/ui/hud.gd:244
+#: scenes/ui/hud.gd:246
 #, c-format
 msgid "Farm Lv %d"
 msgstr ""
 
-#: scenes/ui/hud.gd:75
+#: scenes/ui/hud.gd:77
 msgid "Farm Lv 1"
 msgstr ""
 
@@ -2054,7 +2054,7 @@ msgstr ""
 msgid "Farm job: %s. %s"
 msgstr ""
 
-#: scenes/ui/hud.gd:168
+#: scenes/ui/hud.gd:170
 #, c-format
 msgid "Farm level %d!"
 msgstr ""
@@ -2371,7 +2371,7 @@ msgstr ""
 msgid "Game"
 msgstr ""
 
-#: scenes/ui/pause_menu.gd:33
+#: scenes/ui/pause_menu.gd:46
 msgid "Game saved."
 msgstr ""
 
@@ -2816,7 +2816,7 @@ msgstr ""
 msgid "Heirloom Charm"
 msgstr ""
 
-#: scenes/main/main.gd:104
+#: scenes/main/main.gd:111
 msgid "Help make Hollowmere better? Share anonymous play stats: how long you play and how far your farm gets. Nothing personal, and you can change it in Settings."
 msgstr ""
 
@@ -2854,7 +2854,7 @@ msgstr ""
 msgid "Hold an item and use it on the %s to load it."
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:272
+#: scenes/ui/inventory_panel.gd:288
 #, c-format
 msgid "Holds %dx%d%s"
 msgstr ""
@@ -2911,8 +2911,8 @@ msgstr ""
 msgid "Hot enough to make an Embercub sweat."
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:78
-msgid "Hotbar  (hover an item + press 1-0, or drop it here)"
+#: scenes/ui/inventory_panel.gd:81
+msgid "Hotbar  (pick up an item and tap a slot)"
 msgstr ""
 
 #: data/moves.json
@@ -3051,7 +3051,7 @@ msgstr ""
 msgid "Improves crop quality. Apply to tilled soil."
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:310
+#: scenes/ui/inventory_panel.gd:326
 #, c-format
 msgid "In the bin: %dg"
 msgstr ""
@@ -3807,7 +3807,7 @@ msgstr ""
 msgid "Mossbun"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:360
+#: scenes/ui/inventory_panel.gd:376
 #, c-format
 msgid "Move to %s"
 msgstr ""
@@ -4013,7 +4013,7 @@ msgstr ""
 msgid "Online play needs a free account."
 msgstr ""
 
-#: scenes/ui/pause_menu.gd:35
+#: scenes/ui/pause_menu.gd:48
 msgid "Only the host can save in co-op."
 msgstr ""
 
@@ -4208,7 +4208,7 @@ msgstr ""
 msgid "Play as guest"
 msgstr ""
 
-#: scenes/ui/coop_panel.gd:31 scenes/ui/pause_menu.gd:38
+#: scenes/ui/coop_panel.gd:31 scenes/ui/pause_menu.gd:51
 msgid "Play together"
 msgstr ""
 
@@ -4276,7 +4276,7 @@ msgstr ""
 msgid "Prism Ray"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:60
+#: scenes/ui/settings_panel.gd:63
 msgid "Privacy"
 msgstr ""
 
@@ -4354,11 +4354,11 @@ msgstr ""
 msgid "Quit"
 msgstr ""
 
-#: scenes/ui/pause_menu.gd:47
+#: scenes/ui/pause_menu.gd:60
 msgid "Quit game"
 msgstr ""
 
-#: scenes/ui/pause_menu.gd:42
+#: scenes/ui/pause_menu.gd:55
 msgid "Quit to title"
 msgstr ""
 
@@ -4434,7 +4434,7 @@ msgstr ""
 msgid "Repairs the old greenhouse. Crops grow there in any season."
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:77
+#: scenes/ui/settings_panel.gd:80
 msgid "Reset controls"
 msgstr ""
 
@@ -4518,6 +4518,10 @@ msgstr ""
 
 #: data/moves.json
 msgid "Roots the foe in place, draining it each turn."
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:76
+msgid "Rotate"
 msgstr ""
 
 #: scenes/main/adventure_flow.gd:391
@@ -4629,7 +4633,7 @@ msgstr ""
 msgid "Sap Drain"
 msgstr ""
 
-#: scenes/ui/pause_menu.gd:31
+#: scenes/ui/pause_menu.gd:44
 msgid "Save game"
 msgstr ""
 
@@ -4698,7 +4702,7 @@ msgstr ""
 msgid "Sell 1 (%dg)"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:266
+#: scenes/ui/inventory_panel.gd:282
 #, c-format
 msgid "Sells %dg"
 msgstr ""
@@ -4715,7 +4719,7 @@ msgstr ""
 msgid "Server"
 msgstr ""
 
-#: scenes/ui/pause_menu.gd:41 scenes/ui/settings_panel.gd:27 scenes/ui/title_screen.gd:96
+#: scenes/ui/pause_menu.gd:54 scenes/ui/settings_panel.gd:27 scenes/ui/title_screen.gd:96
 msgid "Settings"
 msgstr ""
 
@@ -4783,7 +4787,7 @@ msgstr ""
 msgid "Shift-click to buy 5 · Prices rise with quality when selling"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:358
+#: scenes/ui/inventory_panel.gd:374
 #, c-format
 msgid "Ship (%dg)"
 msgstr ""
@@ -4796,7 +4800,7 @@ msgstr ""
 msgid "Shipped"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:98
+#: scenes/ui/inventory_panel.gd:101
 msgid "Shipping Bin"
 msgstr ""
 
@@ -4986,7 +4990,7 @@ msgstr ""
 msgid "Somewhere, a pumpkin dreams of being a melon."
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:74
+#: scenes/ui/inventory_panel.gd:77
 msgid "Sort"
 msgstr ""
 
@@ -5334,7 +5338,7 @@ msgstr ""
 msgid "That old farm of yours has good bones."
 msgstr ""
 
-#: scenes/main/main.gd:114
+#: scenes/main/main.gd:121
 msgid "That save couldn't be loaded."
 msgstr ""
 
@@ -5585,7 +5589,7 @@ msgstr ""
 msgid "The valley's eight shrines went dark the winter she passed. Since then the Wildlings keep to the woods."
 msgstr ""
 
-#: scenes/main/main.gd:228
+#: scenes/main/main.gd:235
 #, c-format
 msgid "The way is blocked. (%s)"
 msgstr ""
@@ -5716,7 +5720,7 @@ msgstr ""
 msgid "Today's forecast: 90% chance of cozy."
 msgstr ""
 
-#: scenes/ui/hud.gd:221
+#: scenes/ui/hud.gd:223
 #, c-format
 msgid "Today: %s at the Show Ring"
 msgstr ""
@@ -5844,7 +5848,7 @@ msgstr ""
 msgid "Umbral Glade"
 msgstr ""
 
-#: scenes/main/main.gd:185
+#: scenes/main/main.gd:192
 #, c-format
 msgid "Unknown map %s"
 msgstr ""
@@ -6538,7 +6542,7 @@ msgstr ""
 msgid "Your Wildlings are rested and fully healed!"
 msgstr ""
 
-#: scenes/main/adventure_flow.gd:25 scenes/main/main.gd:378
+#: scenes/main/adventure_flow.gd:25 scenes/main/main.gd:385
 msgid "Your Wildlings are too tired to battle. Rest at home or the Wildling Center."
 msgstr ""
 
@@ -6600,7 +6604,7 @@ msgstr ""
 msgid "[%s] "
 msgstr ""
 
-#: scenes/ui/hud.gd:312 scenes/ui/inventory_panel.gd:334
+#: scenes/ui/hud.gd:314 scenes/ui/inventory_panel.gd:350
 #, c-format
 msgid "hotbar_%d"
 msgstr ""

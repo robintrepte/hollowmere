@@ -36,6 +36,7 @@ func _ready() -> void:
 	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fade.modulate.a = 0.0
 	fl.add_child(fade)
+	add_child(TouchControls.new(self))
 	EventBus.map_change_requested.connect(_on_map_change)
 	EventBus.day_started.connect(_on_day_started)
 	EventBus.shake.connect(func(s: float):
@@ -53,6 +54,12 @@ func _ready() -> void:
 	EventBus.story_advanced.connect(_on_story_advanced)
 	Settings.text_scale_changed.connect(_rebuild_hud)
 	show_title()
+
+## Phones and mobile browsers kill backgrounded games without warning, so save when we lose focus.
+func _notification(what: int) -> void:
+	if what in [NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT] and TouchControls.active:
+		if player != null and not _transitioning and Net.mode != "client":
+			SaveManager.autosave()
 
 func _rebuild_hud() -> void:
 	if hud == null:

@@ -69,10 +69,11 @@ var locale: String = ""                ## "" follows the system language
 var error_reports: bool = true          ## send crash and error reports (no personal data)
 var analytics: bool = false            ## opt-in: session length and progress
 var analytics_asked: bool = false
+var touch_controls: String = "auto"     ## auto (touchscreens) | on | off
 
 const SAVED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "colorblind", "screen_shake",
 	"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves",
-	"custom_keys", "locale", "error_reports", "analytics", "analytics_asked"]
+	"custom_keys", "locale", "error_reports", "analytics", "analytics_asked", "touch_controls"]
 
 const I18N_DIR := "res://i18n"
 

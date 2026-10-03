@@ -66,7 +66,7 @@ func _physics_process(delta: float) -> void:
 	if moving:
 		facing = dir.normalized()
 		_mouse_mode = false
-		var speed := RUN_SPEED if Input.is_action_pressed("run") == false else WALK_SPEED
+		var speed := WALK_SPEED if Input.is_action_pressed("run") or dir.length() < 0.6 else RUN_SPEED
 		var step := dir.normalized() * speed * delta
 		_move(step)
 		_step_t += delta
@@ -130,7 +130,7 @@ func _update_target() -> void:
 	var mp := get_global_mouse_position()
 	if mp.distance_to(_last_mouse) > 2.0:
 		_last_mouse = mp
-		_mouse_mode = true
+		_mouse_mode = not TouchControls.owns_pointer
 	var t := me
 	if _mouse_mode:
 		var mt := GameState.to_tile(mp)
@@ -157,6 +157,8 @@ func face_tile(t: Vector2i) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not local or locked:
 		return
+	if event is InputEventMouseButton and event.pressed:
+		_update_target()
 	if event.is_action_pressed("use_tool"):
 		_use_held = 0.01
 		use_pressed.emit(target)

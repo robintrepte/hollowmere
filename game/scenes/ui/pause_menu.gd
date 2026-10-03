@@ -1,6 +1,7 @@
 class_name PauseMenu
 extends PanelContainer
-## Esc menu: resume, save, settings, quit to title / desktop.
+## Esc menu: resume, shortcuts to the party / journal / crafting panels (the only way in on a phone),
+## save, settings, quit to title / desktop.
 
 signal closed
 signal quit_to_title
@@ -16,10 +17,9 @@ func _ready() -> void:
 	anchor_right = 0.5
 	anchor_top = 0.5
 	anchor_bottom = 0.5
-	offset_left = -80
-	offset_right = 80
-	offset_top = -100
-	offset_bottom = 100
+	grow_horizontal = Control.GROW_DIRECTION_BOTH
+	grow_vertical = Control.GROW_DIRECTION_BOTH
+	custom_minimum_size.x = 176
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 6)
 	add_child(v)
@@ -28,6 +28,19 @@ func _ready() -> void:
 	v.add_child(t)
 	var resume := UITheme.button("Resume", func(): closed.emit())
 	v.add_child(resume)
+	var panels := HBoxContainer.new()
+	panels.add_theme_constant_override("separation", 4)
+	v.add_child(panels)
+	var pd := GameState.local_player()
+	for spec in [["Party", func(): return PartyPanel.new(pd)], ["Journal", func(): return JournalPanel.new(pd)],
+			["Crafting", func(): return CraftPanel.new(pd, "crafting")]]:
+		var make: Callable = spec[1]
+		var b := UITheme.button(spec[0], func():
+			closed.emit()
+			ui.open(make.call()))
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.disabled = pd == null
+		panels.add_child(b)
 	var save := UITheme.button("Save game", func():
 		if SaveManager.save_game():
 			EventBus.toast.emit("Game saved.", "")
