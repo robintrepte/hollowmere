@@ -7,8 +7,9 @@ signal use_pressed(tile: Vector2i)
 signal interact_pressed(tile: Vector2i)
 signal warp_entered(warp: Dictionary)
 
-const WALK_SPEED := 104.0
-const RUN_SPEED := 148.0
+const SLOW_SPEED := 104.0   ## light stick / short joystick push
+const WALK_SPEED := 148.0   ## default pace (the old unshifted speed)
+const RUN_SPEED := 220.0    ## shift
 const REACH := 1
 
 var pid := "local"
@@ -17,6 +18,7 @@ var world: World
 var doll: PaperDoll
 var facing := Vector2.DOWN
 var moving := false
+var running := false
 var locked := false
 var target := Vector2i.ZERO
 var _name_label: Label
@@ -27,6 +29,7 @@ var _remote_target := Vector2.ZERO
 var _warp_cooldown := 0.3
 var _use_held := 0.0
 var _net_t := 0.0
+var _remote_stamp := 0.0
 
 func _ready() -> void:
 	add_to_group("players")
@@ -46,6 +49,15 @@ func _ready() -> void:
 	_remote_target = position
 
 func set_remote_state(pos: Vector2, face: Vector2, mov: bool) -> void:
+	var now := Time.get_ticks_msec() * 0.001
+	var dt := now - _remote_stamp
+	if _remote_stamp > 0.0 and dt > 0.02 and dt < 0.5:
+		var spd := pos.distance_to(_remote_target) / dt
+		var gate := 170.0 if running else 190.0
+		running = mov and spd > gate
+	elif not mov:
+		running = false
+	_remote_stamp = now
 	_remote_target = pos
 	facing = face
 	moving = mov
@@ -57,26 +69,31 @@ func _physics_process(delta: float) -> void:
 			position = _remote_target
 		doll.facing = facing
 		doll.moving = moving
+		doll.running = running
 		return
 	_warp_cooldown = maxf(0.0, _warp_cooldown - delta)
 	var dir := Vector2.ZERO
 	if not locked and not UIRoot.blocking and not doll.is_swinging():
 		dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	moving = dir.length() > 0.1
+	running = false
 	if moving:
 		facing = dir.normalized()
 		_mouse_mode = false
-		var speed := WALK_SPEED if Input.is_action_pressed("run") or dir.length() < 0.6 else RUN_SPEED
+		var pushed := dir.length()
+		running = Input.is_action_pressed("run") and pushed >= 0.6
+		var speed := SLOW_SPEED if pushed < 0.6 else (RUN_SPEED if running else WALK_SPEED)
 		var step := dir.normalized() * speed * delta
 		_move(step)
 		_step_t += delta
-		if _step_t > 0.32:
+		if _step_t > 0.32 * WALK_SPEED / speed:
 			_step_t = 0.0
-			Audio.sfx("step", 0.15)
-			if speed == RUN_SPEED and world and not world.info.get("indoor", false):
+			Audio.sfx("step", 0.15 if not running else 0.22)
+			if running and world and not world.info.get("indoor", false):
 				Juice.burst(get_parent(), position + Vector2(0, -1), "dust")
 	doll.facing = facing
 	doll.moving = moving
+	doll.running = running
 	var p := GameState.player(pid)
 	if p:
 		p.pos = position

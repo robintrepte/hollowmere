@@ -5,9 +5,11 @@ extends Node2D
 
 const LAYERS := ["shoes", "pants", "shirt", "body", "face", "hair"]
 const WALK_FPS := 8.0
+const RUN_FPS := 14.0
 
 var facing := Vector2.DOWN
 var moving := false
+var running := false
 var _sprites: Dictionary = {}
 var _t := 0.0
 var _tool_t := -1.0
@@ -52,7 +54,7 @@ func _process(delta: float) -> void:
 		if _tool_t > 0.28:
 			_tool_t = -1.0
 	elif moving:
-		col = 1 + int(_t * WALK_FPS) % 4
+		col = 1 + int(_t * (RUN_FPS if running else WALK_FPS)) % 4
 	var row := 0
 	var flip := false
 	if absf(facing.x) > absf(facing.y) + 0.01:
@@ -60,8 +62,15 @@ func _process(delta: float) -> void:
 		flip = facing.x < 0
 	elif facing.y < 0:
 		row = 1
+	var hop := 0.0
+	var lean := 0.0
+	if moving and running and _tool_t < 0.0:
+		hop = -absf(sin(_t * RUN_FPS * PI * 0.5)) * 3.0
+		if absf(facing.x) > absf(facing.y):
+			lean = signf(facing.x) * 0.1
+	rotation = lean
 	for l in _sprites:
 		var s: Sprite2D = _sprites[l]
 		s.frame = row * Art.DOLL_COLS + col
 		s.flip_h = flip
-		s.offset.x = -16
+		s.offset = Vector2(-16, -46.0 + hop)
