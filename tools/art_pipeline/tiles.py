@@ -6,9 +6,11 @@ Outputs (in game/assets/tiles/):
   soil.png              16 columns (neighbor mask, bit set = that side is also tilled, N=1 E=2 S=4 W=8)
                         x 32 rows (inner-corner mask + 16 if watered). Open sides are ragged; outer
                         corners are rounded off, inner corners nicked, so a plot is not a hard rectangle.
-  water_edge.png        overlays drawn on water. 16 columns (sides facing land) x 64 rows
-                        (diagonal land corners + variant * 16). Shores are ragged; corners are rounded
-                        with a different lump per corner and per variant. Straight edges match across variants.
+  water_edge.png        shore ribbon on water. 16 columns (sides facing land) x 64 rows
+                        (diagonal land corners + variant * 16). Corners are quarter-ellipses, a
+                        different radius per corner and per variant. Straight edges match across variants.
+  shore_cap_<season>.png  land color filling the outside of a rounded corner, under the ribbon.
+                        16 columns x 384 rows (6 shore terrains x 64). Same bit layout as water_edge.
   shore_fringe.png      dirt bank spilling onto the land tile. 16 columns (sides facing water)
                         x 16 rows (diagonal water). Same bank color as water_edge where the tiles meet.
   grass_edge_<season>.png  grass spilling onto bare ground: 16 columns (sides that touch grass,
@@ -283,34 +285,34 @@ SHORE_D = _wave(3.5, [(1.05, 1, 0.6), (0.7, 2, 2.0), (0.45, 3, 4.2), (0.28, 5, 1
 SOIL_D = _wave(3.3, [(1.0, 1, 0.35), (0.65, 3, 1.9), (0.4, 5, 3.7), (0.22, 8, 0.8)], 1.7, 5.4)
 FRINGE_D = _wave(2.7, [(0.85, 1, 1.4), (0.55, 3, 0.5), (0.32, 5, 2.6), (0.18, 8, 4.4)], 1.5, 4.4)
 
-# Corner order matches world.gd DIAGONALS: NE, SE, SW, NW. Extras differ so the four corners of a
-# pond (or a plot) are not the same curve. The bulge is zero on the tile axes, so it never moves the
-# straight-edge profile that has to meet the next tile.
-WATER_CORNER_EXTRA = np.array([11.0, 7.4, 13.6, 9.2])
+# Corner order matches world.gd DIAGONALS: NE, SE, SW, NW. Each value is how far (in pixels) the
+# rounded corner runs along the two shores. They differ so a pond is not the same curve four times.
+# Clamped inside the tile so the far edge stays a straight shore and still meets the next tile.
+WATER_CORNER_EXTRA = np.array([22.0, 16.0, 26.0, 19.0])
 WATER_CORNER_PHASE = np.array([5.15, 0.55, 3.40, 1.90])
-WATER_DIAG_EXTRA = np.array([6.4, 4.2, 8.0, 5.1])
+WATER_DIAG_EXTRA = np.array([13.0, 10.0, 15.0, 11.5])
 WATER_VARIANTS = (
-    {"scale": 0.78, "phase": 0.2, "power": 0.62},
-    {"scale": 1.0, "phase": 1.7, "power": 1.05},
-    {"scale": 1.16, "phase": 3.3, "power": 1.55},
-    {"scale": 1.34, "phase": 4.9, "power": 0.8},
+    {"scale": 0.88, "phase": 0.2, "power": 2.0},
+    {"scale": 1.0, "phase": 1.7, "power": 2.0},
+    {"scale": 1.06, "phase": 3.3, "power": 2.15},
+    {"scale": 1.14, "phase": 4.9, "power": 1.9},
 )
 SOIL_OUTER_EXTRA = np.array([5.8, 3.8, 7.2, 4.6])
 SOIL_OUTER_PHASE = np.array([0.5, 2.0, 3.7, 5.2])
 SOIL_INNER_EXTRA = np.array([3.2, 2.0, 3.8, 2.4])
 SOIL_INNER_PHASE = np.array([1.1, 2.8, 4.4, 0.2])
-# Just enough to turn the bank around the grass corner. A bigger bite sticks out of the
-# shoreline like an ear; the visible rounding lives on the water tile, where the bank
-# pushes into the water.
-FRINGE_CORNER_EXTRA = np.array([3.6, 2.4, 4.4, 2.8])
+# A small round cap on the grass side. Larger than this and the corner sticks into the grass as a point.
+FRINGE_CORNER_EXTRA = np.array([8.0, 6.0, 9.0, 7.0])
 FRINGE_CORNER_PHASE = np.array([0.4, 2.1, 3.6, 5.2])
-FRINGE_DIAG_EXTRA = np.array([3.8, 2.2, 4.6, 2.9])
+FRINGE_DIAG_EXTRA = np.array([6.2, 4.8, 7.0, 5.4])
 # Sides that meet at each corner: N=0 E=1 S=2 W=3.
 _CORNER_SIDES = ((0, 1), (1, 2), (2, 3), (3, 0))
 
-BANK_DARK = hexc("#3e3226")
-BANK = hexc("#5a4a32")
-LIP = hexc("#7a6444")
+# Sunlit dry bank, in the same range as path and dirt. The old #5a4a32 read as a black outline.
+BANK_DARK = hexc("#9a7048")
+BANK_DEEP = hexc("#b08a58")
+BANK = hexc("#c6a36e")
+LIP = hexc("#e4c898")
 FOAM = hexc("#d4eef8")
 SOIL_RIM = (hexc("#3a2818"), hexc("#2a1c12"))
 SOIL_HI = (1.12, 1.08)
@@ -328,13 +330,11 @@ def _corner_uv(corner, xs, ys):
 
 
 def _fillet(corner, depth, extra, phase, power, xs, ys):
-    """Wobbly quarter-disk. Radius on each axis equals that edge's depth, so seams stay put;
+    """Wobbly quarter-disk used by soil. Radius on each axis equals that edge's depth, so seams stay put;
     the extra radius lives in the middle of the arc and is lumpy rather than circular."""
     u, v, ui, vi = _corner_uv(corner, xs, ys)
     ang = np.clip(np.arctan2(v, np.maximum(u, 1e-6)), 0.0, np.pi / 2)
     window = np.clip(np.sin(ang * 2), 0.0, 1.0) ** power
-    # Window is zero on the axes, so the seam holds. Through the arc it stays a real curve
-    # (never flat) but the bumps slide around with `phase`, so it is not a circle.
     # Mild wobble only. A stronger lump turns the corner into a spike instead of a round.
     lumps = np.clip(1.0 + 0.18 * np.sin(ang * 2 + phase) + 0.12 * np.sin(ang * 5 + phase * 1.4), 0.78, 1.28)
     t = ang / (np.pi / 2)
@@ -342,9 +342,35 @@ def _fillet(corner, depth, extra, phase, power, xs, ys):
     return np.hypot(u, v) < r
 
 
-def _coverage(depth, sides_mask, corners_mask, side_extra, side_phase, corner_extra, corner_phase, power=1.0):
-    """Pixels a shore or a cut occupies. `sides_mask` bits are N E S W. `corners_mask` bits are
-    diagonal-only contacts (NE SE SW NW), used when the two adjacent sides are not both set."""
+def _round_fillet(corner, depth, extra, phase, power, xs, ys):
+    """Quarter-ellipse that meets both straight shores on a tangent, so a pond corner is a curve.
+
+    `extra` is how far the curve runs along each edge. The wobble is zero at both ends of the
+    arc, so it never steps away from the straight shore or reaches the far tile seam.
+    """
+    u, v, ui, vi = _corner_uv(corner, xs, ys)
+    du = depth[ui]
+    dv = depth[vi]
+    ru = np.minimum(np.maximum(float(extra), du + 2.0), 26.0)
+    rv = np.minimum(np.maximum(float(extra), dv + 2.0), 26.0)
+    in_corner = (u < ru) & (v < rv)
+    eu = max(ru - float(du), 1.0)
+    ev = max(rv - float(dv), 1.0)
+    x = np.clip(ru - u, 0.0, None)
+    y = np.clip(rv - v, 0.0, None)
+    ang = np.arctan2(y, np.maximum(x, 1e-6))
+    # sin(2*ang) is 0 at both ends of the quarter-arc. Phase only changes how strong the wobble is.
+    amp = 0.05 + 0.04 * (0.5 + 0.5 * np.sin(phase))
+    wob = 1.0 + amp * np.sin(ang * 2.0)
+    n = 2.0 if power < 1.5 or power > 2.4 else power
+    nx = x / (eu * wob)
+    ny = y / (ev * wob)
+    outside = np.power(nx, n) + np.power(ny, n) >= 0.96
+    return in_corner & outside
+
+
+def _side_bands(depth, sides_mask):
+    """Straight shore strips. Bits are N E S W."""
     ys, xs = np.mgrid[0:T, 0:T]
     xf, yf = xs.astype(np.float64), ys.astype(np.float64)
     bands = (
@@ -357,11 +383,21 @@ def _coverage(depth, sides_mask, corners_mask, side_extra, side_phase, corner_ex
     for i in range(4):
         if sides_mask & (1 << i):
             on |= bands[i]
+    return on
+
+
+def _coverage(depth, sides_mask, corners_mask, side_extra, side_phase, corner_extra, corner_phase, power=1.0, rounded=False):
+    """Pixels a shore or a cut occupies. `sides_mask` bits are N E S W. `corners_mask` bits are
+    diagonal-only contacts (NE SE SW NW), used when the two adjacent sides are not both set."""
+    ys, xs = np.mgrid[0:T, 0:T]
+    xf, yf = xs.astype(np.float64), ys.astype(np.float64)
+    on = _side_bands(depth, sides_mask)
+    fillet = _round_fillet if rounded else _fillet
     for c, (a, b) in enumerate(_CORNER_SIDES):
         if (sides_mask & (1 << a)) and (sides_mask & (1 << b)):
-            on |= _fillet(c, depth, side_extra[c], side_phase[c], power, xf, yf)
+            on |= fillet(c, depth, side_extra[c], side_phase[c], power, xf, yf)
         elif corners_mask & (1 << c):
-            on |= _fillet(c, depth, corner_extra[c], corner_phase[c], 1.0, xf, yf)
+            on |= fillet(c, depth, corner_extra[c], corner_phase[c], power if rounded else 1.0, xf, yf)
     return on
 
 
@@ -378,16 +414,47 @@ def _dist_inside(mask):
     return d
 
 
-def _paint_shore(mask):
-    """Dirt bank, lip and broken foam. Pixels on the tile border stay a fixed dark bank so the
-    land fringe on the next tile meets them with no seam."""
+def _corner_boxes(depth, sides_mask, corners_mask, side_extra, corner_extra):
+    """Pixels inside a rounded corner. Empty on a straight shore, so those edges stay a full bank."""
+    ys, xs = np.mgrid[0:T, 0:T]
+    xf, yf = xs.astype(np.float64), ys.astype(np.float64)
+    boxes = np.zeros((T, T), dtype=bool)
+    for c, (a, b) in enumerate(_CORNER_SIDES):
+        if (sides_mask & (1 << a)) and (sides_mask & (1 << b)):
+            extra = float(side_extra[c])
+        elif corners_mask & (1 << c):
+            extra = float(corner_extra[c])
+        else:
+            continue
+        u, v, ui, vi = _corner_uv(c, xf, yf)
+        du = float(depth[ui])
+        dv = float(depth[vi])
+        ru = min(max(extra, du + 2.0), 26.0)
+        rv = min(max(extra, dv + 2.0), 26.0)
+        boxes |= (u < ru) & (v < rv)
+    return boxes
+
+
+def _shore_parts(mask, boxes):
+    """Bank is a ribbon along the water. Farther out, inside a corner, the land color shows through."""
+    if boxes is None or not mask.any() or not np.any(boxes):
+        return mask, np.zeros(mask.shape, dtype=bool)
+    d = _dist_inside(mask)
+    cap = mask & boxes & (d >= 5)
+    return mask & ~cap, cap
+
+
+def _paint_shore(mask, boxes=None):
+    """Light dirt bank, lip and broken foam. The tile border stays the same bank the land fringe uses."""
     tile = np.zeros((T, T, 4), dtype=np.uint8)
+    mask, _cap = _shore_parts(mask, boxes)
     if not mask.any():
         return tile
     ys, xs = np.mgrid[0:T, 0:T]
     d = _dist_inside(mask)
     tile[mask, :3] = BANK.astype(np.uint8)
-    tile[d >= 3, :3] = BANK.astype(np.uint8)
+    grain = mask & (((xs * 3 + ys * 5) % 7) == 0)
+    tile[grain & (d >= 3), :3] = BANK_DEEP.astype(np.uint8)
     tile[d == 2, :3] = LIP.astype(np.uint8)
     wave = np.sin(xs * 2 * np.pi / T * 2 + 0.4) * 0.55 + np.sin(ys * 2 * np.pi / T * 3 + 1.2) * 0.45
     foam = (d == 1) & (wave > 0.05)
@@ -395,9 +462,8 @@ def _paint_shore(mask):
     tile[foam, :3] = FOAM.astype(np.uint8)
     tile[mask, 3] = 255
     tile[foam, 3] = 200
-    speck = mask & (d >= 3) & (((xs * 17 + ys * 11) % 11) == 0)
+    speck = mask & (d >= 4) & (((xs * 17 + ys * 11) % 13) == 0)
     tile[speck, :3] = BANK_DARK.astype(np.uint8)
-    # The shared tile edge is plain bank on both sides. A dark stroke there reads as a hard frame.
     border = np.zeros((T, T), dtype=bool)
     border[0, :] = border[-1, :] = border[:, 0] = border[:, -1] = True
     seam = mask & border & (d >= 2)
@@ -414,7 +480,7 @@ def _paint_shore(mask):
 
 def _paint_fringe(mask):
     """Shallow dirt spill onto a land tile. The ragged lip faces the grass; the tile border
-    matches the water overlay's dark bank."""
+    matches the water overlay's bank."""
     tile = np.zeros((T, T, 4), dtype=np.uint8)
     if not mask.any():
         return tile
@@ -431,8 +497,8 @@ def _paint_fringe(mask):
     below = np.zeros_like(mask)
     below[1:, :] = mask[:-1, :] & ~mask[1:, :]
     below &= ~border
-    tile[below, :3] = np.array([36, 32, 22], dtype=np.uint8)
-    tile[below, 3] = 64
+    tile[below, :3] = np.array([120, 96, 64], dtype=np.uint8)
+    tile[below, 3] = 40
     crumbs = ~mask & ~border & ~below
     cp = np.pad(mask, 1, constant_values=False)
     adj = cp[:-2, 1:-1] | cp[2:, 1:-1] | cp[1:-1, :-2] | cp[1:-1, 2:]
@@ -442,16 +508,38 @@ def _paint_fringe(mask):
     return tile
 
 
-def _water_tile(sides, corners, variant):
+def _water_mask(sides, corners, variant):
     v = WATER_VARIANTS[variant]
     extra = WATER_CORNER_EXTRA * v["scale"]
     phase = WATER_CORNER_PHASE + v["phase"]
-    mask = _coverage(SHORE_D, sides, corners, extra, phase, WATER_DIAG_EXTRA, WATER_CORNER_PHASE + v["phase"], v["power"])
-    return _paint_shore(mask)
+    return _coverage(SHORE_D, sides, corners, extra, phase, WATER_DIAG_EXTRA, WATER_CORNER_PHASE + v["phase"], v["power"], True)
+
+
+def _water_boxes(sides, corners, variant):
+    v = WATER_VARIANTS[variant]
+    extra = WATER_CORNER_EXTRA * v["scale"]
+    return _corner_boxes(SHORE_D, sides, corners, extra, WATER_DIAG_EXTRA)
+
+
+def _water_tile(sides, corners, variant):
+    return _paint_shore(_water_mask(sides, corners, variant), _water_boxes(sides, corners, variant))
+
+
+# Row blocks in shore_cap_<season>.png. Neighbors that are not listed fall back to grass.
+CAP_TERRAINS = ["grass", "darkgrass", "sand", "dirt", "marsh", "canyon"]
+
+
+def _cap_tile(sides, corners, variant, fill):
+    _shore, cap = _shore_parts(_water_mask(sides, corners, variant), _water_boxes(sides, corners, variant))
+    tile = np.zeros((T, T, 4), dtype=np.uint8)
+    if cap.any():
+        tile[cap, :3] = fill[cap]
+        tile[cap, 3] = 255
+    return tile
 
 
 def _fringe_tile(sides, corners):
-    mask = _coverage(FRINGE_D, sides, corners, FRINGE_CORNER_EXTRA, FRINGE_CORNER_PHASE, FRINGE_DIAG_EXTRA, FRINGE_CORNER_PHASE, 1.05)
+    mask = _coverage(FRINGE_D, sides, corners, FRINGE_CORNER_EXTRA, FRINGE_CORNER_PHASE, FRINGE_DIAG_EXTRA, FRINGE_CORNER_PHASE, 2.0, True)
     return _paint_fringe(mask)
 
 
@@ -519,6 +607,22 @@ def water_edges():
                 tile = _water_tile(m, c, v)
                 row = v * 16 + c
                 out[row * T:(row + 1) * T, m * T:(m + 1) * T] = tile
+    return Image.fromarray(out, "RGBA")
+
+
+def shore_caps(season):
+    """Land fill for the outside of a rounded water corner. One 64-row block per shore terrain."""
+    fills = [make_tile(name, season, 0) for name in CAP_TERRAINS]
+    out = np.zeros((T * 64 * len(CAP_TERRAINS), T * 16, 4), dtype=np.uint8)
+    for ti, fill in enumerate(fills):
+        for v in range(4):
+            for c in range(16):
+                for m in range(16):
+                    if bin(m).count("1") < 2 and c == 0:
+                        continue
+                    tile = _cap_tile(m, c, v, fill)
+                    row = ti * 64 + v * 16 + c
+                    out[row * T:(row + 1) * T, m * T:(m + 1) * T] = tile
     return Image.fromarray(out, "RGBA")
 
 
@@ -631,6 +735,8 @@ def main():
         grass_edges(s).save(os.path.join(out, f"grass_edge_{s}.png"))
     soil_atlas().save(os.path.join(out, "soil.png"))
     water_edges().save(os.path.join(out, "water_edge.png"))
+    for s in SEASONS:
+        shore_caps(s).save(os.path.join(out, f"shore_cap_{s}.png"))
     shore_fringe().save(os.path.join(out, "shore_fringe.png"))
     wall(GRASS["summer"], ["#6a5a4a", "#7c6a56", "#8c7a62", "#9a8870"], "#3a2e24", "#4a6a32", 5).save(os.path.join(world, "cliff.png"))
     wall(["#3a3240", "#463c4c", "#524658"], ["#2a2430", "#363040", "#433b4e", "#4e465a"], "#16121c", "#5e5264", 6).save(os.path.join(world, "cavewall.png"))

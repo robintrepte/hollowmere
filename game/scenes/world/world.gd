@@ -16,6 +16,15 @@ const FLOWERS := ["tulip", "blue_jazz", "fairy_rose", "ice_lily", "moonbloom"]
 const BIG := ["melon", "pumpkin", "winter_squash", "glacier_melon"]
 const GRASSY := [0, 1, 11]
 const GRASS_SPILLS_ONTO := [2, 3, 5, 9, 15]
+## Row block in shore_cap_<season>.png for the land a pond corner should continue.
+const CAP_OF := {
+	0: 0, 1: 0, 11: 0,
+	18: 1,
+	3: 2,
+	9: 3, 2: 3,
+	13: 4,
+	15: 5, 12: 5,
+}
 const NEIGHBORS := [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
 const DIAGONALS := [Vector2i(1, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(-1, -1)]
 const OBJECT_FOOTPRINT := {"fountain": Vector2i(2, 2), "wayshrine": Vector2i(1, 1), "board": Vector2i(1, 1), "show_ring": Vector2i(0, 0)}
@@ -26,6 +35,7 @@ var grid: FarmGrid
 var season := "spring"
 
 var ground: TileMapLayer
+var shore_cap: TileMapLayer
 var soil_layer: TileMapLayer
 var edge_layer: TileMapLayer
 var decals: Node2D
@@ -51,6 +61,9 @@ func _ready() -> void:
 	ground = TileMapLayer.new()
 	ground.z_index = -10
 	add_child(ground)
+	shore_cap = TileMapLayer.new()
+	shore_cap.z_index = -10
+	add_child(shore_cap)
 	edge_layer = TileMapLayer.new()
 	edge_layer.z_index = -9
 	add_child(edge_layer)
@@ -116,8 +129,10 @@ func load_map(id: String) -> void:
 	ground.tile_set = ts
 	soil_layer.tile_set = ts
 	edge_layer.tile_set = ts
+	shore_cap.tile_set = ts
 	ground.clear()
 	edge_layer.clear()
+	shore_cap.clear()
 	soil_layer.clear()
 	for y in grid.h:
 		for x in grid.w:
@@ -185,11 +200,15 @@ func _draw_ground(p: Vector2i) -> void:
 	if gid >= Art.SEASON_ROW_COUNT or gid < 0:
 		gid = 0
 	ground.set_cell(p, 0, Vector2i(_variant(p), gid))
+	shore_cap.erase_cell(p)
 	if gid in Tiles.WATER_TILES:
 		var sides := _shore_sides(p, true)
 		var corners := _shore_corners(p, true)
 		if sides or corners:
 			edge_layer.set_cell(p, 2, Vector2i(sides, corners + _variant(p) * 16))
+			var cap := _shore_cap_row(p, sides, corners)
+			if cap >= 0:
+				shore_cap.set_cell(p, 5, Vector2i(sides, cap))
 		else:
 			edge_layer.erase_cell(p)
 		return
@@ -209,12 +228,42 @@ func _draw_ground(p: Vector2i) -> void:
 		if gsides or gcorners:
 			edge_layer.set_cell(p, 3, Vector2i(gsides, gcorners))
 			return
-	var fsides := _shore_sides(p, false)
-	var fcorners := _shore_corners(p, false)
-	if fsides or fcorners:
-		edge_layer.set_cell(p, 4, Vector2i(fsides, fcorners))
+	# Fringe only along a straight shore. A corner tile carries its own rounded bank,
+	# and a dirt strip on the grass there would stick out as a point.
+	var fsides := 0
+	for i in 4:
+		var n: Vector2i = p + NEIGHBORS[i]
+		if not _is_water_ground(n):
+			continue
+		var facing := (i + 2) % 4
+		if _shore_sides(n, true) == (1 << facing) and _shore_corners(n, true) == 0:
+			fsides |= 1 << i
+	if fsides:
+		edge_layer.set_cell(p, 4, Vector2i(fsides, 0))
 	else:
 		edge_layer.erase_cell(p)
+
+func _shore_cap_row(p: Vector2i, sides: int, corners: int) -> int:
+	var bits := 0
+	var s := sides
+	while s:
+		bits += s & 1
+		s >>= 1
+	if bits < 2 and corners == 0:
+		return -1
+	var gid := -1
+	for i in 4:
+		if sides & (1 << i) and CAP_OF.has(grid.get_ground(p + NEIGHBORS[i])):
+			gid = grid.get_ground(p + NEIGHBORS[i])
+			break
+	if gid < 0:
+		for i in 4:
+			if corners & (1 << i) and CAP_OF.has(grid.get_ground(p + DIAGONALS[i])):
+				gid = grid.get_ground(p + DIAGONALS[i])
+				break
+	if gid < 0:
+		gid = 0
+	return corners + _variant(p) * 16 + int(CAP_OF[gid]) * 64
 
 func _grassy(p: Vector2i) -> bool:
 	return grid.in_bounds(p) and grid.get_ground(p) in GRASSY
