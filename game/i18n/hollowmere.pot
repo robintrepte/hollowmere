@@ -13,7 +13,7 @@ msgstr ""
 msgid "\nSells for %dg"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:803
+#: scenes/battle/battle_screen.gd:812
 #, c-format
 msgid "   (%d%%)"
 msgstr ""
@@ -62,7 +62,7 @@ msgstr ""
 msgid " and lost %dg"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:754
+#: scenes/battle/battle_screen.gd:759
 #, c-format
 msgid " · %d"
 msgstr ""
@@ -122,7 +122,7 @@ msgstr ""
 msgid "%s\n%s"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:754
+#: scenes/battle/battle_screen.gd:759
 #, c-format
 msgid "%s\n%s%s"
 msgstr ""
@@ -147,12 +147,12 @@ msgstr ""
 msgid "%s  Lv%d"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:835
+#: scenes/battle/battle_screen.gd:844
 #, c-format
 msgid "%s  Lv%d   HP %d/%d%s"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:801 scenes/ui/shop_panel.gd:133
+#: scenes/battle/battle_screen.gd:810 scenes/ui/shop_panel.gd:133
 #, c-format
 msgid "%s  x%d"
 msgstr ""
@@ -976,7 +976,7 @@ msgstr ""
 msgid "B%d"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:823 scenes/battle/battle_screen.gd:843 scenes/ui/new_game_panel.gd:95 scenes/ui/title_screen.gd:150 ...
+#: scenes/battle/battle_screen.gd:832 scenes/battle/battle_screen.gd:852 scenes/ui/new_game_panel.gd:95 scenes/ui/title_screen.gd:150 ...
 msgid "Back"
 msgstr ""
 
@@ -3201,7 +3201,7 @@ msgstr ""
 msgid "It's the weekly Creature Show! The judges score grooming, happiness, genes, level and a little flair."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:794
+#: scenes/battle/battle_screen.gd:803
 msgid "Items stay in the bag during friendly battles."
 msgstr ""
 
@@ -3876,7 +3876,7 @@ msgstr ""
 msgid "Nocturnyx"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:796
+#: scenes/battle/battle_screen.gd:805
 msgid "Nothing useful to use here."
 msgstr ""
 
@@ -5926,7 +5926,7 @@ msgstr ""
 msgid "Welcome to the Sleepy Sprout! Take a seat anywhere."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:721
+#: scenes/battle/battle_screen.gd:722
 #, c-format
 msgid "What will %s do?"
 msgstr ""

@@ -698,6 +698,7 @@ func _befriend_anim(shakes: int, success: bool) -> void:
 func _clear_cmd() -> void:
 	for c in _cmd.get_children():
 		c.queue_free()
+	_cmd.columns = 2
 
 func _cmd_button(text: String, cb: Callable, col: Color = UITheme.WOOD) -> Button:
 	var b := UITheme.button(text, cb)
@@ -749,6 +750,10 @@ func _show_moves() -> void:
 	_clear_cmd()
 	var c := engine.active(0)
 	var first: Button = null
+	# The bar only fits two rows of buttons: 4 moves + Back need three columns.
+	var wide := maxi(1, c.moves.size()) + 1 > 4
+	if wide:
+		_cmd.columns = 3
 	for i in c.moves.size():
 		var m: Dictionary = Data.get_move(c.moves[i])
 		var label := tr("%s\n%s%s") % [m.name, Data.type_name(m.type), (tr(" · %d") % int(m.power)) if int(m.power) > 0 else " · status"]
@@ -766,6 +771,10 @@ func _show_moves() -> void:
 	if c.moves.is_empty():
 		_cmd_button("Struggle", func(): _picked.emit({"k": "move", "i": 0}))
 	_cmd_button("Back", _show_main_menu)
+	if wide:
+		for b in _cmd.get_children():
+			if not b.is_queued_for_deletion():
+				b.custom_minimum_size.x = 100
 	if first:
 		first.call_deferred("grab_focus")
 

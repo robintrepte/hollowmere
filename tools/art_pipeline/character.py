@@ -35,14 +35,16 @@ class Layer:
                         c = SHADE
                 self.v[y, x] = c
 
-    def ellipse(self, cx, cy, rx, ry, clip=None):
+    def ellipse(self, cx, cy, rx, ry, clip=None, rim=False):
+        """rim: shade only the outer edge (faces), so no dark band crosses the middle."""
         for y in range(FH):
             for x in range(FW):
                 d = ((x + 0.5 - cx) / rx) ** 2 + ((y + 0.5 - cy) / ry) ** 2
                 if d <= 1 and (clip is None or clip(x, y)):
                     lx, ly = (x + 0.5 - cx) / rx, (y + 0.5 - cy) / ry
                     light = -0.6 * lx - 0.8 * ly
-                    self.v[y, x] = LIGHT if light > 0.45 else (SHADE if light < -0.45 else MID)
+                    dark = light < -0.45 and (not rim or d > 0.62)
+                    self.v[y, x] = LIGHT if light > (0.6 if rim else 0.45) else (SHADE if dark else MID)
 
     def px(self, x, y, c=MID):
         if 0 <= x < FW and 0 <= y < FH:
@@ -119,7 +121,7 @@ def frame(direction, fr):
             L["body"].rect(ax, ty + 6 + off, ax + 2, ty + 8 + off)
 
     # head
-    L["body"].ellipse(16, hy, 8.5, 8.2)
+    L["body"].ellipse(16, hy, 8.5, 8.2, rim=True)
     if side:
         L["body"].px(24, hy + 1, MID)
     # face
