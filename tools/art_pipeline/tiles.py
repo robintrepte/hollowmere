@@ -299,11 +299,12 @@ SOIL_OUTER_EXTRA = np.array([5.8, 3.8, 7.2, 4.6])
 SOIL_OUTER_PHASE = np.array([0.5, 2.0, 3.7, 5.2])
 SOIL_INNER_EXTRA = np.array([3.2, 2.0, 3.8, 2.4])
 SOIL_INNER_PHASE = np.array([1.1, 2.8, 4.4, 0.2])
-# Diagonal extras round the pond's outer corner (the land tile only touches water on the diagonal).
-# They differ on purpose: one corner stays tighter, the opposite one bulges.
-FRINGE_CORNER_EXTRA = np.array([11.0, 8.2, 13.2, 9.4])
+# Just enough to turn the bank around the grass corner. A bigger bite sticks out of the
+# shoreline like an ear; the visible rounding lives on the water tile, where the bank
+# pushes into the water.
+FRINGE_CORNER_EXTRA = np.array([3.6, 2.4, 4.4, 2.8])
 FRINGE_CORNER_PHASE = np.array([0.4, 2.1, 3.6, 5.2])
-FRINGE_DIAG_EXTRA = np.array([11.4, 8.4, 13.6, 9.6])
+FRINGE_DIAG_EXTRA = np.array([3.8, 2.2, 4.6, 2.9])
 # Sides that meet at each corner: N=0 E=1 S=2 W=3.
 _CORNER_SIDES = ((0, 1), (1, 2), (2, 3), (3, 0))
 
@@ -405,7 +406,7 @@ def _paint_shore(mask):
     water = ~mask
     wp = np.pad(mask, 1, constant_values=False)
     adj = wp[:-2, 1:-1] | wp[2:, 1:-1] | wp[1:-1, :-2] | wp[1:-1, 2:]
-    spark = water & adj & (np.sin(xs * 2 * np.pi / T * 5 + ys * 0.0 + 2.0) > 0.45)
+    spark = water & adj & (np.sin(xs * 2 * np.pi / T * 5 + ys * 2 * np.pi / T * 3 + 2.0) > 0.45)
     tile[spark, :3] = FOAM.astype(np.uint8)
     tile[spark, 3] = 150
     return tile

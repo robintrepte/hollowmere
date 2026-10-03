@@ -34,6 +34,7 @@ var overlay: Node2D
 var cursor: TargetCursor
 var day_tint: CanvasModulate
 var weather: WeatherFx
+var water_fx: WaterFx
 
 var _deco_nodes: Dictionary = {}     # key -> Sprite2D
 var _object_nodes: Dictionary = {}   # key -> Node2D (grid objects + crops)
@@ -73,6 +74,8 @@ func _ready() -> void:
 	add_child(day_tint)
 	weather = WeatherFx.new()
 	add_child(weather)
+	water_fx = WaterFx.new()
+	add_child(water_fx)
 	EventBus.tile_changed.connect(_on_tile_changed)
 	EventBus.objects_changed.connect(_on_objects_changed)
 	EventBus.time_changed.connect(_on_time)
@@ -132,6 +135,8 @@ func load_map(id: String) -> void:
 	_spawn_creatures()
 	_on_time(GameState.minute())
 	_apply_weather()
+	if water_fx:
+		water_fx.setup(self)
 
 func map_size_px() -> Vector2:
 	return Vector2(grid.w * T, grid.h * T)
