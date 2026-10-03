@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Front-facing sign and autotile fences.
+"""Front-facing fence autotiles composited from Nano Banana 2 sheets.
 
-Fence pieces are one 32x32 cell per neighbor mask (N=1, E=2, S=4, W=8), the same
-order soil tiles use. Rails run to the tile edge with no end cap, so a neighbor's
-rail continues the same pixels. Posts stay upright. Nothing is drawn in perspective.
+Raw sheets (magenta background, straight-on, not isometric):
+  raw/world/fence_kit.png    post, horizontal rails, vertical boards, assembled segment
+  raw/world/picket_kit.png   picket, horizontal run, vertical slats, corner
+
+Each game tile is 32x32 and numbered by neighbor mask N=1 E=2 S=4 W=8.
+Rails are stamped from one repeating strip, so a neighbor continues the same pixels.
 
   fences.py [out_dir]
 """
@@ -13,212 +16,304 @@ import sys
 import numpy as np
 from PIL import Image
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from process import bg_mask, downsample, load_rgba, quantize
+
 T = 32
-# Style bible ink + the warm wood used on the bench, chest, and shipping crate.
-INK = (34, 24, 30, 255)
-HI = (212, 156, 96, 255)
-MID = (176, 116, 68, 255)
-WOOD = (148, 90, 52, 255)
-DK = (108, 64, 42, 255)
-DEEP = (72, 42, 36, 255)
-
-WHITE_HI = (255, 250, 240, 255)
-WHITE = (236, 230, 214, 255)
-WHITE_MID = (214, 206, 188, 255)
-WHITE_DK = (176, 166, 150, 255)
-WHITE_DEEP = (132, 120, 108, 255)
-
-# Upright post. Horizontal rails cross it; vertical rails tuck into its top and bottom.
-POST = (12, 19, 8, 25)  # x0, x1, y0, y1 inclusive
-RAIL_TOP = (11, 14)     # two horizontal planks
-RAIL_BOT = (19, 22)
-# Two vertical planks inside the post's width, with a gap between them, so a
-# north-south run reads as rails leaving the post rather than a solid pole.
-V_LEFT = (12, 14)
-V_RIGHT = (17, 19)
+RAW = os.path.join(os.path.dirname(os.path.abspath(__file__)), "raw", "world")
 
 
 def blank():
     return np.zeros((T, T, 4), np.uint8)
 
 
-def px(im, x, y, c):
-    if 0 <= x < T and 0 <= y < T and c[3]:
-        im[y, x] = c
+def keyed(path):
+    a = load_rgba(path)
+    bg = bg_mask(a, "magenta")
+    out = a.copy()
+    out[bg] = 0
+    return out.astype(np.uint8)
 
 
-def fill_rect(im, x0, x1, y0, y1, c):
-    im[y0:y1 + 1, x0:x1 + 1] = c
+def x_segments(img, thresh=0.012):
+    fg = img[..., 3] > 0
+    col = fg.mean(axis=0)
+    segs = []
+    start = None
+    for i, on in enumerate(col > thresh):
+        if on and start is None:
+            start = i
+        elif not on and start is not None:
+            segs.append((start, i - 1))
+            start = None
+    if start is not None:
+        segs.append((start, len(col) - 1))
+    return segs
 
 
-def h_plank(im, x0, x1, y0, y1, palette):
-    """Horizontal plank. Top and bottom are outline; the ends are open so tiles meet."""
-    hi, mid, wood, dk = palette
-    h = y1 - y0 + 1
-    for y in range(y0, y1 + 1):
-        if y == y0 or y == y1:
-            c = INK
-        elif y == y0 + 1:
-            c = hi
-        elif y >= y1 - 1 and h > 3:
-            c = dk
+def crop_box(img, x0, x1):
+    sub = img[:, x0:x1 + 1]
+    fg = sub[..., 3] > 0
+    ys, xs = np.where(fg)
+    if len(xs) == 0:
+        return sub
+    return sub[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+
+
+def chunks_along(img, vertical):
+    """Split on the empty gaps. vertical=True separates left/right pieces."""
+    fg = img[..., 3] > 0
+    occ = fg.any(axis=0) if vertical else fg.any(axis=1)
+    parts = []
+    start = None
+    for i, on in enumerate(occ):
+        if on and start is None:
+            start = i
+        elif not on and start is not None:
+            parts.append((start, i))
+            start = None
+    if start is not None:
+        parts.append((start, len(occ)))
+    crops = []
+    for a, b in parts:
+        if vertical:
+            crops.append(img[:, a:b])
         else:
-            c = mid if (y - y0) % 2 == 0 else wood
-        for x in range(x0, x1 + 1):
-            px(im, x, y, c)
+            crops.append(img[a:b])
+    return crops
 
 
-def v_plank(im, x0, x1, y0, y1, palette):
-    """Vertical plank. Left and right are outline; the ends are open so tiles meet."""
-    hi, mid, wood, dk = palette
-    for x in range(x0, x1 + 1):
-        if x == x0 or x == x1:
-            c = INK
-        elif x == x0 + 1:
-            c = hi
-        elif x == x1 - 1:
-            c = dk
+def trim_ends(img, vertical, frac=0.12):
+    """Drop the end caps so a rail can continue into the next tile."""
+    n = img.shape[1] if vertical else img.shape[0]
+    cut = max(1, int(n * frac))
+    if vertical:
+        return img[:, cut:n - cut]
+    return img[cut:n - cut]
+
+
+def fit(img, w, h):
+    bg = img[..., 3] == 0
+    small = downsample(img.astype(np.int32), bg, w, h, fg_thresh=0.3)
+    return np.asarray(quantize(small, 12))
+
+
+def repeat(img, length, vertical):
+    """Repeat a strip. The sample at 0 and at `length` share a phase, and the
+    last pixel is a copy of the first so neighboring tiles meet on the same column."""
+    axis = 0 if vertical else 1
+    src_n = img.shape[axis]
+    out_shape = (length, img.shape[1], 4) if vertical else (img.shape[0], length, 4)
+    out = np.zeros(out_shape, np.uint8)
+    for i in range(length):
+        src_i = i % src_n
+        if vertical:
+            out[i] = img[src_i]
         else:
-            c = mid
-        for y in range(y0, y1 + 1):
-            px(im, x, y, c)
-            if c not in (INK, hi, dk) and (y % 8 == 5):
-                px(im, x, y, wood)
+            out[:, i] = img[:, src_i]
+    if vertical:
+        out[-1] = out[0]
+    else:
+        out[:, -1] = out[:, 0]
+    return out
 
 
-def post(im, palette, cap=False):
-    x0, x1, y0, y1 = POST
-    hi, mid, wood, dk = palette
-    for y in range(y0, y1 + 1):
-        for x in range(x0, x1 + 1):
-            if x == x0 or x == x1 or y == y0 or y == y1:
-                c = INK
-            elif x == x0 + 1 or y == y0 + 1:
-                c = hi
-            elif x >= x1 - 2:
-                c = DEEP if x == x1 - 1 else dk
-            elif x == x0 + 2:
-                c = mid
-            else:
-                c = wood
-            # A knot, so a row of posts isn't a rubber stamp. Stays off the outline.
-            if (x, y) in ((x0 + 3, y0 + 7), (x0 + 4, y0 + 7), (x0 + 4, y0 + 8)):
-                c = dk
-            px(im, x, y, c)
-    if cap:
-        cx = (x0 + x1) // 2
-        px(im, cx, y0 - 3, INK)
-        for x in range(cx - 1, cx + 2):
-            px(im, x, y0 - 2, INK)
-        px(im, cx, y0 - 2, WHITE_HI if hi == WHITE_HI else hi)
-        for x in range(cx - 2, cx + 3):
-            px(im, x, y0 - 1, INK)
-        for x in range(cx - 1, cx + 2):
-            px(im, x, y0 - 1, hi)
+def blit(dst, src, x, y):
+    if src is None or src.size == 0:
+        return
+    h, w = src.shape[:2]
+    x0, y0 = max(0, x), max(0, y)
+    x1, y1 = min(dst.shape[1], x + w), min(dst.shape[0], y + h)
+    if x1 <= x0 or y1 <= y0:
+        return
+    patch = src[y0 - y:y0 - y + (y1 - y0), x0 - x:x0 - x + (x1 - x0)]
+    region = dst[y0:y1, x0:x1]
+    mask = patch[..., 3:4] > 140
+    region[:] = np.where(mask, patch, region)
 
 
-def pickets(im, left_edges):
-    """Pointed pickets on the top rail. Positions repeat every tile, two on each side of the post."""
-    yb = RAIL_TOP[0]
-    for x0 in left_edges:
-        px(im, x0 + 1, yb - 6, INK)
-        for y in range(yb - 5, yb):
-            px(im, x0, y, INK)
-            px(im, x0 + 1, y, WHITE_HI if y < yb - 3 else WHITE)
-            px(im, x0 + 2, y, INK)
+def blit_span(dst, src, x0, x1, y):
+    """Stamp a horizontal strip, but only between x0 and x1 (inclusive)."""
+    if x1 < x0:
+        return
+    full = np.zeros((src.shape[0], T, 4), np.uint8)
+    blit(full, src, 0, 0)
+    blit(dst, full[:, x0:x1 + 1], x0, y)
 
 
-def fence(mask, palette, picket=False):
-    im = blank()
-    hi, mid, wood, dk = palette
-    pal = (hi, mid, wood, dk)
-    north, east, south, west = mask & 1, mask & 2, mask & 4, mask & 8
-    # Vertical planks first, then the front-facing rails, then the post.
-    if north:
-        v_plank(im, *V_LEFT, 0, POST[2] - 1, pal)
-        v_plank(im, *V_RIGHT, 0, POST[2] - 1, pal)
-    if south:
-        v_plank(im, *V_LEFT, POST[3] + 1, T - 1, pal)
-        v_plank(im, *V_RIGHT, POST[3] + 1, T - 1, pal)
+def blit_column(dst, src, x, y0, y1):
+    if y1 < y0:
+        return
+    full = np.zeros((T, src.shape[1], 4), np.uint8)
+    blit(full, src, 0, 0)
+    blit(dst, full[y0:y1 + 1], x, y0)
+
+
+def load_kits():
+    wood = keyed(os.path.join(RAW, "fence_kit.png"))
+    pick = keyed(os.path.join(RAW, "picket_kit.png"))
+    wseg = [crop_box(wood, a, b) for a, b in x_segments(wood)]
+    pseg = [crop_box(pick, a, b) for a, b in x_segments(pick)]
+    if len(wseg) < 4 or len(pseg) < 4:
+        sys.exit(f"expected 4 objects on each sheet, got wood {len(wseg)} picket {len(pseg)}")
+    return wseg, pseg
+
+
+def wood_parts(segs):
+    post = fit(segs[0], 10, 22)
+    rails = chunks_along(segs[1], vertical=False)
+    rails = [r for r in rails if r.shape[0] > 8 and r[..., 3].mean() > 0.05]
+    rails.sort(key=lambda r: -r.shape[0] * r.shape[1])
+    top = repeat(fit(trim_ends(rails[0], vertical=True), 16, 4), T, vertical=False)
+    bot = repeat(fit(trim_ends(rails[1] if len(rails) > 1 else rails[0], vertical=True), 16, 4), T, vertical=False)
+    boards = chunks_along(segs[2], vertical=True)
+    boards = [b for b in boards if b.shape[1] > 20]
+    boards.sort(key=lambda b: b.shape[1] * b.shape[0], reverse=True)
+    left = repeat(fit(trim_ends(boards[0], vertical=False), 5, 8), T, vertical=True)
+    right_src = boards[1] if len(boards) > 1 else boards[0]
+    right = repeat(fit(trim_ends(right_src, vertical=False), 5, 8), T, vertical=True)
+    return post, top, bot, left, right
+
+
+def picket_parts(segs):
+    # One picket-to-picket period, repeated so a long run stays even.
+    run = segs[1]
+    period = _picket_period(run)
+    tile = fit(period, 8, 22)
+    row = repeat(tile, T, vertical=False)
+    slat = segs[2]
+    if slat.shape[1] > 80:
+        x = (slat.shape[1] - 80) // 2
+        slat = slat[:, x:x + 80]
+    slats = repeat(fit(slat, 12, 8), T, vertical=True)
+    post = fit(segs[0], 6, 24)
+    return row, slats, post
+
+
+def _picket_period(run):
+    """Crop one full picket, from the gap before it to the gap after it."""
+    fg = run[..., 3] > 0
+    ys, xs = np.where(fg)
+    body = run[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+    tips = body[:max(8, body.shape[0] // 6), ..., 3] > 0
+    col = tips.mean(axis=0) > 0.25
+    spans = []
+    start = None
+    for i, on in enumerate(col):
+        if on and start is None:
+            start = i
+        elif not on and start is not None:
+            spans.append((start, i - 1))
+            start = None
+    if start is not None:
+        spans.append((start, len(col) - 1))
+    # Full pickets only; the sheet cuts one off at the right edge.
+    spans = [s for s in spans if s[1] - s[0] > 20]
+    if len(spans) < 2:
+        return body
+    gap = spans[1][0] - spans[0][1]
+    left = max(0, spans[0][0] - gap // 2)
+    right = min(body.shape[1], spans[0][1] + gap // 2 + 1)
+    return body[:, left:right]
+
+
+def _h_span(mask, post_x, post_w):
+    west, east = mask & 8, mask & 2
+    if west and east:
+        return 0, T - 1
     if west:
-        h_plank(im, 0, POST[0] + 2, *RAIL_TOP, pal)
-        h_plank(im, 0, POST[0] + 2, *RAIL_BOT, pal)
+        return 0, post_x + post_w // 2
     if east:
-        h_plank(im, POST[1] - 2, T - 1, *RAIL_TOP, pal)
-        h_plank(im, POST[1] - 2, T - 1, *RAIL_BOT, pal)
-    if picket and (east or west):
-        edges = []
-        if west:
-            edges += [1, 6]
-        if east:
-            edges += [23, 28]
-        pickets(im, edges)
-    post(im, pal, cap=picket)
+        return post_x + post_w // 2, T - 1
+    return None
+
+
+def wood_tile(mask, parts):
+    post, top, bot, left, right = parts
+    im = blank()
+    north_on, south_on = mask & 1, mask & 4
+    px, py = 11, 6
+    # Two boards, full height on a straight north-south run so the planks continue.
+    if north_on or south_on:
+        if north_on and south_on and not (mask & 2 or mask & 8):
+            y0, y1 = 0, T - 1
+        elif north_on and south_on:
+            y0, y1 = 0, T - 1
+        elif north_on:
+            y0, y1 = 0, py + 6
+        else:
+            y0, y1 = py + post.shape[0] - 6, T - 1
+        blit_column(im, left, 10, y0, y1)
+        blit_column(im, right, 17, y0, y1)
+    span = _h_span(mask, px, post.shape[1])
+    if span:
+        blit_span(im, top, span[0], span[1], 11)
+        blit_span(im, bot, span[0], span[1], 18)
+    # The post is the joint. A pure vertical run is just the two boards.
+    if mask != 5:
+        blit(im, post, px, py)
+    return im
+
+
+def picket_tile(mask, parts):
+    row, slats, post = parts
+    im = blank()
+    north_on, south_on = mask & 1, mask & 4
+    px, py = 13, 4
+    if north_on or south_on:
+        if north_on and south_on:
+            y0, y1 = 0, T - 1
+        elif north_on:
+            y0, y1 = 0, 18
+        else:
+            y0, y1 = 14, T - 1
+        blit_column(im, slats, 10, y0, y1)
+    span = _h_span(mask, px, post.shape[1])
+    if span:
+        blit_span(im, row, span[0], span[1], 6)
+    # Even pickets on a straight run. A post marks an end, a corner or a crossing.
+    if mask not in (10, 5):
+        blit(im, post, px, py)
     return im
 
 
 def sign():
     """A blank board on a post, square to the camera. No letters."""
     im = blank()
+    ink = (34, 24, 30, 255)
+    hi = (212, 156, 96, 255)
+    mid = (176, 116, 68, 255)
+    wood = (148, 90, 52, 255)
+    dk = (108, 64, 42, 255)
+    deep = (72, 42, 36, 255)
     x0, x1, y0, y1 = 3, 28, 3, 16
-    fill_rect(im, x0, x1, y0, y1, INK)
-    fill_rect(im, x0 + 1, x1 - 1, y0 + 1, y1 - 1, WOOD)
-    fill_rect(im, x0 + 1, x1 - 1, y0 + 1, y0 + 2, HI)
-    fill_rect(im, x0 + 2, x1 - 2, y0 + 2, y0 + 2, MID)
-    # Two planks.
-    im[y0 + 6, x0 + 1:x1] = INK
-    im[y0 + 7, x0 + 1:x1] = DK
-    im[y1 - 2, x0 + 1:x1 - 1] = DK
-    im[y1 - 1, x0:x1 + 1] = INK
-    # Grain, kept off the outline.
+    im[y0:y1 + 1, x0:x1 + 1] = ink
+    im[y0 + 1:y1, x0 + 1:x1] = wood
+    im[y0 + 1:y0 + 3, x0 + 1:x1] = hi
+    im[y0 + 2, x0 + 2:x1 - 1] = mid
+    im[y0 + 6, x0 + 1:x1] = ink
+    im[y0 + 7, x0 + 1:x1] = dk
+    im[y1 - 2, x0 + 1:x1 - 1] = dk
+    im[y1 - 1, x0:x1 + 1] = ink
     for x in (6, 11, 18, 23):
-        im[y0 + 4, x] = DK
-        im[y0 + 10, x + 1] = MID
-    # Bolts.
+        im[y0 + 4, x] = dk
+        im[y0 + 10, x + 1] = mid
     for x in (8, 23):
-        im[y0 + 3, x] = DEEP
-        im[y0 + 3, x + 1] = INK
-        im[y0 + 9, x] = DEEP
-        im[y0 + 9, x + 1] = INK
-    # Post, tucked behind the board.
-    px0, px1 = 14, 17
+        im[y0 + 3, x] = deep
+        im[y0 + 3, x + 1] = ink
+        im[y0 + 9, x] = deep
+        im[y0 + 9, x + 1] = ink
     for y in range(y1, 31):
-        for x in range(px0, px1 + 1):
-            if x == px0 or x == px1 or y == 30:
-                c = INK
-            elif x == px0 + 1:
-                c = HI
-            elif x == px1 - 1:
-                c = DK
+        for x in range(14, 18):
+            if x in (14, 17) or y == 30:
+                im[y, x] = ink
+            elif x == 15:
+                im[y, x] = hi
+            elif x == 16:
+                im[y, x] = dk
             else:
-                c = WOOD
-            im[y, x] = c
+                im[y, x] = wood
     return im
-
-
-def icon_picket():
-    """16x16 shop icon: three pickets, front view."""
-    im = np.zeros((16, 16, 4), np.uint8)
-    def p(x, y, c):
-        if 0 <= x < 16 and 0 <= y < 16:
-            im[y, x] = c
-    for x0 in (2, 7, 12):
-        p(x0 + 1, 2, INK)
-        for x in range(x0, x0 + 3):
-            p(x, 3, INK)
-        for y in range(4, 12):
-            p(x0, y, INK)
-            p(x0 + 1, y, WHITE_HI if y < 7 else WHITE)
-            p(x0 + 2, y, INK)
-        p(x0 + 1, 4, WHITE_HI)
-    for y, c in ((8, INK), (9, WHITE_HI), (10, WHITE_DK), (11, INK)):
-        for x in range(1, 15):
-            p(x, y, c)
-    return im
-
-
-WOOD_PAL = (HI, MID, WOOD, DK)
-PICKET_PAL = (WHITE_HI, WHITE, WHITE_MID, WHITE_DK)
 
 
 def save(im, path):
@@ -226,20 +321,16 @@ def save(im, path):
 
 
 def preview(pieces, path):
-    """A short run, a corner, a T, a crossing, and a closed pen, on grass."""
     grass = (95, 166, 75, 255)
     dark = (53, 108, 50, 255)
-    # 8 x 6 tiles
     layout = [
-        "s..h....",
+        "....h...",
         "..v.h--.",
         "..v.|+--",
         "..L-+.|.",
         "....|.|.",
         "....L-J.",
     ]
-    # Characters are resolved by scanning neighbors in this picture, not by the glyph.
-    # Glyphs only mark where a fence sits. 's' is the sign. 'h' is a lone post.
     rows, cols = len(layout), len(layout[0])
     canvas = np.zeros((rows * T, cols * T, 4), np.uint8)
     for y in range(rows * T):
@@ -250,68 +341,65 @@ def preview(pieces, path):
         for c, ch in enumerate(row):
             if ch != ".":
                 cells[(c, r)] = ch
-    for (c, r), ch in cells.items():
-        if ch == "s":
-            spr = sign()
-        else:
-            m = 0
-            if (c, r - 1) in cells and cells[(c, r - 1)] != "s":
-                m |= 1
-            if (c + 1, r) in cells and cells[(c + 1, r)] != "s":
-                m |= 2
-            if (c, r + 1) in cells and cells[(c, r + 1)] != "s":
-                m |= 4
-            if (c - 1, r) in cells and cells[(c - 1, r)] != "s":
-                m |= 8
-            spr = pieces[m]
-        y0, x0 = r * T, c * T
-        blk = canvas[y0:y0 + T, x0:x0 + T]
+    for (c, r), _ch in cells.items():
+        m = 0
+        if (c, r - 1) in cells:
+            m |= 1
+        if (c + 1, r) in cells:
+            m |= 2
+        if (c, r + 1) in cells:
+            m |= 4
+        if (c - 1, r) in cells:
+            m |= 8
+        spr = pieces[m]
+        blk = canvas[r * T:(r + 1) * T, c * T:(c + 1) * T]
         a = spr[..., 3:4] > 0
         blk[:] = np.where(a, spr, blk)
-    big = Image.fromarray(canvas, "RGBA").resize((canvas.shape[1] * 4, canvas.shape[0] * 4), Image.NEAREST)
+    big = Image.fromarray(canvas, "RGBA").resize((cols * T * 4, rows * T * 4), Image.NEAREST)
     big.save(path)
 
 
 def check_seams(pieces):
-    """Rails that leave a tile must match the rail that arrives on the next tile."""
     def col(im, x):
         return im[:, x].tobytes()
 
     def row(im, y):
         return im[y].tobytes()
 
-    # Straight horizontal: mask E+W (10). The open ends are the same pixels.
     assert col(pieces[10], 0) == col(pieces[10], T - 1)
-    # East end (mask 2) meets west end (mask 8).
     assert col(pieces[2], T - 1) == col(pieces[8], 0)
-    # Straight vertical: mask N+S (5). South end (4) meets north end (1).
     assert row(pieces[5], 0) == row(pieces[5], T - 1)
     assert row(pieces[4], T - 1) == row(pieces[1], 0)
-    # Corner (S+E = 6) uses the same edge rails as the straight pieces.
     assert col(pieces[6], T - 1) == col(pieces[10], T - 1)
     assert row(pieces[6], T - 1) == row(pieces[5], T - 1)
+
+
+def icon_from(tile):
+    bg = tile[..., 3] == 0
+    return downsample(tile.astype(np.int32), bg, 16, 16, fg_thresh=0.25)
 
 
 def main():
     out = sys.argv[1] if len(sys.argv) > 1 else "game/assets/world"
     os.makedirs(out, exist_ok=True)
-    wood = [fence(m, WOOD_PAL, picket=False) for m in range(16)]
-    pick = [fence(m, PICKET_PAL, picket=True) for m in range(16)]
+    wseg, pseg = load_kits()
+    wood_p = wood_parts(wseg)
+    pick_p = picket_parts(pseg)
+    wood = [wood_tile(m, wood_p) for m in range(16)]
+    pick = [picket_tile(m, pick_p) for m in range(16)]
     check_seams(wood)
     check_seams(pick)
     for m in range(16):
         save(wood[m], os.path.join(out, f"fence_{m}.png"))
         save(pick[m], os.path.join(out, f"picket_{m}.png"))
-    # Straight stand-ins so a lookup of the old single names is never the slanted sheet art.
     save(wood[10], os.path.join(out, "fence.png"))
     save(pick[10], os.path.join(out, "picket_fence.png"))
     save(sign(), os.path.join(out, "sign.png"))
-    icon_dir = os.path.join(os.path.dirname(out), "items") if out.endswith("world") else out
-    if out.endswith("world"):
-        save(icon_picket(), os.path.join(icon_dir, "picket_fence.png"))
+    if out.rstrip("/").endswith("world"):
+        save(icon_from(pick[10]), os.path.join(os.path.dirname(out), "items", "picket_fence.png"))
     preview(wood, "/tmp/fence_preview.png")
     preview(pick, "/tmp/picket_preview.png")
-    print("wrote fence, picket, and sign sprites to", out)
+    print("wrote fence and picket sprites to", out)
 
 
 if __name__ == "__main__":
