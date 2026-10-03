@@ -118,7 +118,7 @@ func _show_line(s: String) -> void:
 	_typing = true
 	_t = 0.0
 	_arrow.visible = false
-	Audio.sfx("blip", 0.1)
+	Audio.sfx("blip", 0.03)
 
 func _finish_typing() -> void:
 	while _typing:
@@ -150,7 +150,7 @@ func _process(delta: float) -> void:
 		_t += delta * CPS
 		_text.visible_characters = int(_t)
 		if int(_t) % 6 == 0 and int(_t) != int(_t - delta * CPS):
-			Audio.sfx("blip", 0.2)
+			Audio.sfx("blip", 0.04)
 		if _text.visible_characters >= _text.get_total_character_count():
 			_text.visible_characters = -1
 			_typing = false
