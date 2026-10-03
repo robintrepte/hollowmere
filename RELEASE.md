@@ -89,6 +89,14 @@ Jobs whose secrets are missing skip with a warning instead of failing.
    python3 tools/content/extract_strings.py
    ```
    The co-op and account smokes need the local server (`cd server && docker compose up -d`).
+   To check an exported desktop build boots (needs the full export templates in
+   `~/Library/Application Support/Godot/export_templates/4.7.2.stable/`):
+   ```sh
+   $G --headless --path game --export-release "macOS"
+   cd /tmp && unzip -oq ~/path/to/gamegame/build/macos/Hollowmere.zip
+   Hollowmere.app/Contents/MacOS/Hollowmere --write-movie /tmp/f.png --fixed-fps 30 --quit-after 150
+   ```
+   Then look at `/tmp/f00000149.png`: it should be the title screen.
 3. Commit, then `git tag v0.2.0 && git push --tags`.
 4. Watch the workflow. When it's green:
    - Open `https://<domain>` in a private window: title screen, guest login, new farm, save, reload, continue.
