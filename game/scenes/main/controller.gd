@@ -278,7 +278,7 @@ func _pet(wc: WildCreature) -> void:
 	c.grooming = mini(100, c.grooming + 4)
 	wc.emote("♥", 1.5)
 	Audio.sfx("heart")
-	var job := "resting" if c.job == "" else "working as a " + str(Data.job_info(c.job).get("job_name", "worker")).to_lower()
+	var job := tr("resting") if c.job == "" else tr("working as a %s") % tr(str(Data.job_info(c.job).get("job_name", "worker"))).to_lower()
 	EventBus.toast.emit(tr("You pet %s. It's %s.") % [c.display_name(), job], "")
 
 func _offer_battle(vid: String) -> void:

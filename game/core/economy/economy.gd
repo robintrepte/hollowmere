@@ -20,13 +20,13 @@ static func req_text(req: String) -> String:
 	var parts := req.split(":")
 	match parts[0]:
 		"shrine":
-			return "Restore %d shrine%s" % [int(parts[1]), "" if int(parts[1]) == 1 else "s"]
+			return tr("Restore %d shrines") % int(parts[1])
 		"level":
-			return "Farm Level %d" % int(parts[1])
+			return tr("Farm Level %d") % int(parts[1])
 		"hearts":
-			return "%d hearts with %s" % [int(parts[2]), Data.villager_name(parts[1])]
+			return tr("%d hearts with %s") % [int(parts[2]), Data.villager_name(parts[1])]
 	if Data.buildings.has(req):
-		return "Requires " + Data.buildings[req].name
+		return tr("Requires %s") % tr(Data.buildings[req].name)
 	return req
 
 ## Returns [{id, price, locked:bool, req}]

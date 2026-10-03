@@ -119,7 +119,7 @@ func species() -> Dictionary:
 	return Data.get_species(species_id)
 
 func display_name() -> String:
-	return nickname if nickname != "" else species().name
+	return nickname if nickname != "" else tr(species().name)
 
 func types() -> Array:
 	return species().types

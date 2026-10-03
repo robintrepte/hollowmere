@@ -1086,7 +1086,7 @@ func festival_act(pid: String, op: String) -> Dictionary:
 	if fest.is_empty() or p == null:
 		return _res(false, "There's no festival today.")
 	if Adventure.festival_done(world, day(), fest.id, pid):
-		return _res(false, "You've already joined this year's %s." % fest.name)
+		return _res(false, tr("You've already joined this year's %s.") % tr(str(fest.name)))
 	var r := _res(true)
 	var reward: Dictionary = fest.get("reward", {}).duplicate()
 	var frng := RandomNumberGenerator.new()

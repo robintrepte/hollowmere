@@ -110,7 +110,7 @@ func _row(id: String, price: int, locked: bool, req: String, buying: bool) -> Co
 	nv.add_theme_constant_override("separation", 0)
 	h.add_child(nv)
 	nv.add_child(UITheme.label(Data.item_name(id), 10, UITheme.INK if not locked else UITheme.MUTED))
-	var d := UITheme.label(Economy.req_text(req) if locked else str(Data.get_item(id).get("desc", "")), 8, UITheme.MUTED)
+	var d := UITheme.label(Economy.req_text(req) if locked else Data.item_desc(id), 8, UITheme.MUTED)
 	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	d.custom_minimum_size = Vector2(180, 0)
 	nv.add_child(d)

@@ -58,6 +58,7 @@ The same account and cloud saves work in the **browser** (installable home-scree
 - **Grid inventory** — items take real space, rotate, and nest inside pouches and cases
 - **Online co-op** — host-authoritative farms, trading and friendly PvP
 - **Play anywhere** — Windows, macOS, mobile browser + Add to Home Screen, full controller support
+- **English and German** — pick a language in Settings, or follow the system language
 
 Store copy and capsule art live in [`store/STORE_PAGE.md`](store/STORE_PAGE.md).
 

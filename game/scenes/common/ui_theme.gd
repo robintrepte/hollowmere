@@ -154,7 +154,7 @@ static func theme() -> Theme:
 
 static func label(text: String, size: int = 10, col: Color = INK, outline: bool = false) -> Label:
 	var l := Label.new()
-	l.text = text
+	l.text = tr(text) if text != "" else text
 	l.add_theme_font_override("font", font())
 	l.add_theme_font_size_override("font_size", fs(size))
 	l.add_theme_color_override("font_color", col)
@@ -165,7 +165,7 @@ static func label(text: String, size: int = 10, col: Color = INK, outline: bool 
 
 static func button(text: String, cb: Callable = Callable()) -> Button:
 	var b := Button.new()
-	b.text = text
+	b.text = tr(text) if text != "" else text
 	b.focus_mode = Control.FOCUS_ALL
 	if cb.is_valid():
 		b.pressed.connect(cb)

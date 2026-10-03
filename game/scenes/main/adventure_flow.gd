@@ -274,34 +274,34 @@ func show_ring() -> void:
 		var lines: Array = ["The Creature Show ring. Every Saturday the judges hold a show, and the village gathers here for its festivals."]
 		if not nx.is_empty():
 			var f: Dictionary = Data.progression.festivals[nx[0]]
-			lines.append(tr("Next festival: %s on %s %d.") % [f.name, str(f.season).capitalize(), int(f.day)])
+			lines.append(tr("Next festival: %s on %s %d.") % [tr(str(f.name)), Data.season_name(str(f.season)), int(f.day)])
 		await _say(lines)
 		return
 	if Adventure.festival_done(GameState.world, GameState.day(), fest.id, p.id):
-		await _say([tr("Thanks for joining the %s! See you next year.") % fest.name])
+		await _say([tr("Thanks for joining the %s! See you next year.") % tr(str(fest.name))])
 		return
 	match str(fest.kind):
 		"social", "spawns":
-			var c: int = await _ask(tr("%s! %s Join in?") % [fest.name, fest.desc], ["Join", "Later"])
+			var c: int = await _ask(tr("%s! %s Join in?") % [tr(str(fest.name)), tr(str(fest.desc))], ["Join", "Later"])
 			if c == 0:
 				await _festival_result(await Coop.act_async("festival_act", ["social"]), fest)
 		"egg_hunt":
 			var n := p.inventory.count("festival_egg")
 			if n == 0:
-				await _say([tr("%s! %s") % [fest.name, fest.desc], tr("Twelve painted eggs are hidden around the village. Bring back at least %d for the grand prize.") % Adventure.EGG_HUNT_GOAL])
+				await _say([tr("%s! %s") % [tr(str(fest.name)), tr(str(fest.desc))], tr("Twelve painted eggs are hidden around the village. Bring back at least %d for the grand prize.") % Adventure.EGG_HUNT_GOAL])
 				return
-			var c2: int = await _ask(tr("You found %d egg%s. Hand %s in?") % [n, "" if n == 1 else "s", "it" if n == 1 else "them"], ["Hand in", "Keep looking"])
+			var c2: int = await _ask(tr("You found %d eggs. Hand them in?") % n, ["Hand in", "Keep looking"])
 			if c2 == 0:
 				await _festival_result(await Coop.act_async("festival_act", ["eggs"]), fest)
 		"show":
 			var lead := p.lead()
 			if lead == null:
 				return
-			var c3: int = await _ask(tr("%s! Enter %s? The judges score grooming, happiness, genes, level and a little flair.") % [fest.name, lead.display_name()], ["Enter", "Not yet"])
+			var c3: int = await _ask(tr("%s! Enter %s? The judges score grooming, happiness, genes, level and a little flair.") % [tr(str(fest.name)), lead.display_name()], ["Enter", "Not yet"])
 			if c3 == 0:
 				await _festival_result(await Coop.act_async("festival_act", ["show"]), fest)
 		"fair":
-			var c4: int = await _ask(tr("%s! Your most valuable goods go on display (you keep them). Variety helps!") % fest.name, ["Set up", "Not yet"])
+			var c4: int = await _ask(tr("%s! Your most valuable goods go on display (you keep them). Variety helps!") % tr(str(fest.name)), ["Set up", "Not yet"])
 			if c4 == 0:
 				await _festival_result(await Coop.act_async("festival_act", ["fair"]), fest)
 		"tournament":
@@ -319,7 +319,7 @@ func weekly_show() -> void:
 		"Win at your Wildling's rank to earn a ribbon and move up: Novice, Bronze, Silver, Gold, then Master."])
 	var opts: Array = []
 	for c in p.party:
-		opts.append(tr("%s  ·  %s%s") % [c.display_name(), Endless.rank_name(c.show_rank), tr("  ·  %d ribbon%s") % [c.ribbons, "" if c.ribbons == 1 else "s"] if c.ribbons > 0 else ""])
+		opts.append(tr("%s  ·  %s%s") % [c.display_name(), Endless.rank_name(c.show_rank), tr("  ·  %d ribbons") % c.ribbons if c.ribbons > 0 else ""])
 	opts.append("Not today")
 	var i: int = await _ask("Who will you show?", opts)
 	if i < 0 or i >= p.party.size():
@@ -357,7 +357,10 @@ func _festival_result(r: Dictionary, fest: Dictionary) -> void:
 			lines.append("Lanterns are lit, and the night fills with Wildlings. Go and meet them!")
 		"egg_hunt":
 			var n := int(r.get("eggs", 0))
-			lines.append(tr("You handed in %d egg%s!%s") % [n, "" if n == 1 else "s", " A perfect hunt!" if n >= Adventure.EGG_HUNT_GOAL else ""])
+			var hunt := tr("You handed in %d eggs!") % n
+			if n >= Adventure.EGG_HUNT_GOAL:
+				hunt += tr(" A perfect hunt!")
+			lines.append(hunt)
 		"show":
 			var rivals: Array = r.get("rivals", [])
 			lines.append(tr("The judges give your Wildling %d points. The others scored %s.") % [int(r.score), ", ".join(rivals.map(func(s): return str(int(s))))])
@@ -377,7 +380,7 @@ func _festival_result(r: Dictionary, fest: Dictionary) -> void:
 func _battle_cup(fest: Dictionary) -> void:
 	var opp: Array = fest.get("opponents", [])
 	var names: Array = opp.map(func(v): return Data.villager_name(v))
-	var c: int = await _ask(tr("%s! Battle %s back to back. Your Wildlings are healed between rounds.") % [fest.name, ", ".join(names)], ["Enter", "Not yet"])
+	var c: int = await _ask(tr("%s! Battle %s back to back. Your Wildlings are healed between rounds.") % [tr(str(fest.name)), ", ".join(names)], ["Enter", "Not yet"])
 	if c != 0:
 		return
 	var p := ctl._pdata()
@@ -403,4 +406,4 @@ func _battle_cup(fest: Dictionary) -> void:
 	var r: Dictionary = await Coop.act_async("festival_act", ["cup"])
 	if r.get("ok", false):
 		Audio.sfx("levelup")
-		await _say([tr("You won the %s! The whole village chants your name.") % fest.name, tr("Prize: %s.") % loot_text(r.get("reward", {}))])
+		await _say([tr("You won the %s! The whole village chants your name.") % tr(str(fest.name)), tr("Prize: %s.") % loot_text(r.get("reward", {}))])

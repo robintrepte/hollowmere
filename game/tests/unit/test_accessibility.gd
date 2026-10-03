@@ -27,6 +27,24 @@ func test_symbols_render_on_the_web_via_fallback() -> void:
 				ok = true
 		assert_true(ok, "%s has a bundled glyph" % ch)
 
+func test_german_catalog_is_loaded_and_used() -> void:
+	if not "de" in Settings.available_locales():
+		Settings.load_translations()
+	assert_true("de" in Settings.available_locales(), "German catalog is registered")
+	var prev := Settings.locale
+	Settings.locale = "de"
+	Settings.apply()
+	assert_eq(tr("Settings"), "Einstellungen")
+	assert_eq(tr("New Farm"), "Neuer Hof")
+	assert_eq(Data.item_name("parsnip"), "Pastinake")
+	assert_eq(Data.item_name("parsnip_seeds"), "Pastinake-Saat")
+	assert_eq(Data.type_name("leaf"), "Blatt")
+	assert_eq(Data.season_name("spring"), "Frühling")
+	assert_eq(Endless.rank_name(0), "Anfänger")
+	Settings.locale = prev
+	Settings.apply()
+	assert_eq(Data.item_name("parsnip"), "Parsnip")
+
 func test_data_names_go_through_translation() -> void:
 	var t := Translation.new()
 	t.locale = "de"

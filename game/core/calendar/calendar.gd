@@ -27,8 +27,26 @@ static func weekday(day_index: int) -> int:
 static func week_number(day_index: int) -> int:
 	return int(day_index / 7)
 
+static func weekday_name(day_index: int) -> String:
+	match weekday(day_index):
+		0:
+			return tr("Mon")
+		1:
+			return tr("Tue")
+		2:
+			return tr("Wed")
+		3:
+			return tr("Thu")
+		4:
+			return tr("Fri")
+		5:
+			return tr("Sat")
+		6:
+			return tr("Sun")
+	return WEEKDAYS[weekday(day_index)]
+
 static func date_string(day_index: int) -> String:
-	return "%s, %s %d" % [WEEKDAYS[weekday(day_index)], season(day_index).capitalize(), day_of_season(day_index)]
+	return "%s, %s %d" % [weekday_name(day_index), Data.season_name(season(day_index)), day_of_season(day_index)]
 
 static func time_string(minutes: int, twelve_hour: bool = true) -> String:
 	var m := minutes % 1440
