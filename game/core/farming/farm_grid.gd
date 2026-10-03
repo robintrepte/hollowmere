@@ -242,6 +242,7 @@ func planted_tiles() -> Array:
 func new_day(season: String, prev_season: String, weather: String, rng: RandomNumberGenerator, protect_frost: int, guarded: bool) -> Dictionary:
 	var report := {"crow": 0, "withered": 0, "fruit": 0}
 	var season_changed := season != prev_season
+	var rained := not greenhouse and Calendar.weather_waters(weather)
 	var keys := soil.keys()
 	keys.sort()
 	for k in keys:
@@ -259,11 +260,11 @@ func new_day(season: String, prev_season: String, weather: String, rng: RandomNu
 				else:
 					s.erase("crop")
 					report.withered += 1
-		elif not s.watered and s.fert == "" and rng.randf() < 0.08 and not greenhouse:
+		elif not s.watered and not rained and s.fert == "" and rng.randf() < 0.08 and not greenhouse:
 			soil.erase(k)
 			continue
 		s.watered = false
-	if not greenhouse and Calendar.weather_waters(weather):
+	if rained:
 		for k in soil:
 			soil[k].watered = true
 	for k in objects:

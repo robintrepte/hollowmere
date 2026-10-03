@@ -38,6 +38,8 @@ jobs:
         run: godot --headless --path game res://tests/net/server_test.tscn -- --require-server
       - name: Co-op network test
         run: godot --headless --path game res://tests/net/net_test.tscn
+      - name: Desync test (host + 3 clients)
+        run: godot --headless --path game res://tests/net/desync_test.tscn
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -73,10 +75,78 @@ jobs:
       - name: Inject Google client id (web)
         if: matrix.preset == 'Web'
         run: sed -i "s/%GOOGLE_CLIENT_ID%/${{ secrets.GOOGLE_CLIENT_ID }}/" build/web/index.html
+      - name: Fingerprint and precompress (web)
+        if: matrix.preset == 'Web'
+        run: |
+          sudo apt-get install -y -qq brotli
+          tools/release/fingerprint_web.sh build/web
+          tools/release/precompress_web.sh build/web
+      - name: Web download budget (< 50 MB)
+        if: matrix.preset == 'Web'
+        run: |
+          total=$(cat build/web/*.br | wc -c)
+          echo "Compressed download: $((total / 1048576)) MB"
+          test "$total" -lt 52428800
       - uses: actions/upload-artifact@v4
         with:
           name: hollowmere-${{ matrix.preset == 'Windows Desktop' && 'windows' || matrix.preset == 'macOS' && 'macos' || 'web' }}
           path: build/
+
+  sign-macos:
+    needs: export
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: macos-latest
+    env:
+      MACOS_SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
+      MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
+      MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+      APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+      APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+      APPLE_API_KEY_BASE64: ${{ secrets.APPLE_API_KEY_BASE64 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: hollowmere-macos
+          path: dist
+      - name: Sign and notarize
+        if: env.MACOS_SIGN_IDENTITY != ''
+        run: tools/release/sign_macos.sh dist/macos/Hollowmere.zip
+      - name: Unsigned build (no Apple secrets yet)
+        if: env.MACOS_SIGN_IDENTITY == ''
+        run: echo "::warning::macOS build is unsigned; add the Apple secrets listed in RELEASE.md"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hollowmere-macos-release
+          path: dist/macos/Hollowmere.zip
+
+  itch:
+    needs: [export, sign-macos]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    env:
+      BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+      ITCH_TARGET: ${{ vars.ITCH_TARGET }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: hollowmere-windows
+          path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: hollowmere-macos-release
+          path: dist/mac
+      - name: Push playtest builds to itch.io
+        if: env.BUTLER_API_KEY != '' && env.ITCH_TARGET != ''
+        run: |
+          curl -sL -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip -q butler.zip && chmod +x butler
+          version="${GITHUB_REF_NAME#v}"
+          ./butler push dist/windows "$ITCH_TARGET:windows" --userversion "$version"
+          ./butler push dist/mac/Hollowmere.zip "$ITCH_TARGET:mac" --userversion "$version"
+      - name: Skipped (no itch secrets yet)
+        if: env.BUTLER_API_KEY == '' || env.ITCH_TARGET == ''
+        run: echo "::warning::Set BUTLER_API_KEY (secret) and ITCH_TARGET (variable, e.g. you/hollowmere) to publish to itch.io"
 
   deploy-web:
     needs: export

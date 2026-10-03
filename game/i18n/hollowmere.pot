@@ -202,12 +202,12 @@ msgstr ""
 msgid "%s and %s are now a pair. Eggs will appear in the farm chest."
 msgstr ""
 
-#: scenes/main/main.gd:437
+#: scenes/main/main.gd:442
 #, c-format
 msgid "%s chain x%d! Starry odds x%.1f%s"
 msgstr ""
 
-#: scenes/main/main.gd:327
+#: scenes/main/main.gd:332
 #, c-format
 msgid "%s challenges you to a friendly battle! (Nothing is lost, win or lose.)"
 msgstr ""
@@ -232,12 +232,12 @@ msgstr ""
 msgid "%s is enjoying the farm."
 msgstr ""
 
-#: autoload/game_state.gd:865
+#: autoload/game_state.gd:872
 #, c-format
 msgid "%s is ready!"
 msgstr ""
 
-#: scenes/main/main.gd:405
+#: scenes/main/main.gd:410
 #, c-format
 msgid "%s joined %s!"
 msgstr ""
@@ -302,7 +302,7 @@ msgstr ""
 msgid "%s wants %d %s"
 msgstr ""
 
-#: scenes/main/main.gd:344
+#: scenes/main/main.gd:349
 #, c-format
 msgid "%s wants to trade with you."
 msgstr ""
@@ -332,7 +332,7 @@ msgstr ""
 msgid "%s · %s\n%s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:137
+#: scenes/ui/title_screen.gd:138
 #, c-format
 msgid "%s · %s Farm\n%s · %dg"
 msgstr ""
@@ -976,7 +976,7 @@ msgstr ""
 msgid "B%d"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:823 scenes/battle/battle_screen.gd:843 scenes/ui/new_game_panel.gd:95 scenes/ui/title_screen.gd:149 ...
+#: scenes/battle/battle_screen.gd:823 scenes/battle/battle_screen.gd:843 scenes/ui/new_game_panel.gd:95 scenes/ui/title_screen.gd:150 ...
 msgid "Back"
 msgstr ""
 
@@ -1105,7 +1105,7 @@ msgstr ""
 msgid "Befriended %d · Seen %d · Total %d"
 msgstr ""
 
-#: scenes/main/main.gd:397
+#: scenes/main/main.gd:402
 #, c-format
 msgid "Befriended in %s at Lv%d"
 msgstr ""
@@ -1208,7 +1208,7 @@ msgstr ""
 msgid "Bouldron"
 msgstr ""
 
-#: autoload/game_state.gd:254
+#: autoload/game_state.gd:261
 #, c-format
 msgid "Bounty complete: %s!"
 msgstr ""
@@ -1412,7 +1412,7 @@ msgstr ""
 msgid "Charmer"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:155
+#: scenes/ui/title_screen.gd:156
 msgid "Checking the cloud..."
 msgstr ""
 
@@ -1501,7 +1501,7 @@ msgstr ""
 msgid "Cloud Fluff"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:162
+#: scenes/ui/title_screen.gd:163
 msgid "Cloud backups are up to date."
 msgstr ""
 
@@ -1521,7 +1521,7 @@ msgstr ""
 msgid "Cluckle Egg"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:67
+#: scenes/ui/title_screen.gd:68
 msgid "Co-op"
 msgstr ""
 
@@ -1545,11 +1545,11 @@ msgstr ""
 msgid "Conductor Caverns"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:57
+#: scenes/ui/title_screen.gd:58
 msgid "Continue"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:60
+#: scenes/ui/settings_panel.gd:65
 msgid "Controls (click, then press a key)"
 msgstr ""
 
@@ -1765,7 +1765,7 @@ msgstr ""
 msgid "Deepest: B%d. It has no bottom."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:143
+#: scenes/ui/title_screen.gd:144
 msgid "Delete this farm forever?"
 msgstr ""
 
@@ -2744,6 +2744,10 @@ msgstr ""
 msgid "Heirloom Charm"
 msgstr ""
 
+#: scenes/main/main.gd:104
+msgid "Help make Hollowmere better? Share anonymous play stats: how long you play and how far your farm gets. Nothing personal, and you can change it in Settings."
+msgstr ""
+
 #: data/types.json
 msgid "Helps crops grow faster overnight."
 msgstr ""
@@ -3451,7 +3455,7 @@ msgstr ""
 msgid "Leaf moves hit 1.5x harder below 1/3 HP. Farm: +1 Grower power."
 msgstr ""
 
-#: autoload/game_state.gd:221
+#: autoload/game_state.gd:228
 #, c-format
 msgid "Learned recipe: %s"
 msgstr ""
@@ -3537,11 +3541,11 @@ msgstr ""
 msgid "Lively"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:64
+#: scenes/ui/title_screen.gd:65
 msgid "Load"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:130
+#: scenes/ui/title_screen.gd:131
 msgid "Load a farm"
 msgstr ""
 
@@ -3780,7 +3784,7 @@ msgstr ""
 msgid "Never fails. Extremely rare."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:60
+#: scenes/ui/title_screen.gd:61
 msgid "New Farm"
 msgstr ""
 
@@ -3792,7 +3796,7 @@ msgstr ""
 msgid "New farmers always buy too few parsnips. Just saying."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:164
+#: scenes/ui/title_screen.gd:165
 msgid "Newer in the cloud"
 msgstr ""
 
@@ -3856,7 +3860,7 @@ msgstr ""
 msgid "No eggs to add. Pair Wildlings in the Den and eggs appear in the farm chest."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:132
+#: scenes/ui/title_screen.gd:133
 msgid "No farms yet."
 msgstr ""
 
@@ -3960,7 +3964,7 @@ msgstr ""
 msgid "Overgrowth"
 msgstr ""
 
-#: autoload/game_state.gd:231
+#: autoload/game_state.gd:238
 #, c-format
 msgid "Pack full: %d %s sent to the farm chest."
 msgstr ""
@@ -4159,6 +4163,10 @@ msgstr ""
 msgid "Prism Ray"
 msgstr ""
 
+#: scenes/ui/settings_panel.gd:60
+msgid "Privacy"
+msgstr ""
+
 #: scenes/main/adventure_flow.gd:344
 #, c-format
 msgid "Prize: %dg."
@@ -4229,7 +4237,7 @@ msgstr ""
 msgid "Quiet mornings here are my favorite."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:74
+#: scenes/ui/title_screen.gd:75
 msgid "Quit"
 msgstr ""
 
@@ -4309,7 +4317,7 @@ msgstr ""
 msgid "Repairs the old greenhouse. Crops grow there in any season."
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:72
+#: scenes/ui/settings_panel.gd:77
 msgid "Reset controls"
 msgstr ""
 
@@ -4586,7 +4594,7 @@ msgstr ""
 msgid "Server"
 msgstr ""
 
-#: scenes/ui/pause_menu.gd:41 scenes/ui/settings_panel.gd:27 scenes/ui/title_screen.gd:72
+#: scenes/ui/pause_menu.gd:41 scenes/ui/settings_panel.gd:27 scenes/ui/title_screen.gd:73
 msgid "Settings"
 msgstr ""
 
@@ -5173,7 +5181,7 @@ msgstr ""
 msgid "That old farm of yours has good bones."
 msgstr ""
 
-#: scenes/main/main.gd:109
+#: scenes/main/main.gd:114
 msgid "That save couldn't be loaded."
 msgstr ""
 
@@ -5420,7 +5428,7 @@ msgstr ""
 msgid "The valley's eight shrines went dark the winter she passed. Since then the Wildlings keep to the woods."
 msgstr ""
 
-#: scenes/main/main.gd:223
+#: scenes/main/main.gd:228
 #, c-format
 msgid "The way is blocked. (%s)"
 msgstr ""
@@ -5666,7 +5674,7 @@ msgstr ""
 msgid "Umbral Glade"
 msgstr ""
 
-#: scenes/main/main.gd:180
+#: scenes/main/main.gd:185
 #, c-format
 msgid "Unknown map %s"
 msgstr ""
@@ -5897,7 +5905,7 @@ msgstr ""
 msgid "Wavelash"
 msgstr ""
 
-#: autoload/game_state.gd:210
+#: autoload/game_state.gd:217
 #, c-format
 msgid "Weekly challenge complete: %s (+%dg)"
 msgstr ""
@@ -6094,7 +6102,7 @@ msgstr ""
 msgid "Worn by those who completed the Wildling-dex."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:142
+#: scenes/ui/title_screen.gd:143
 msgid "X"
 msgstr ""
 
@@ -6247,7 +6255,7 @@ msgstr ""
 msgid "You're electric, you know that?"
 msgstr ""
 
-#: autoload/game_state.gd:358
+#: autoload/game_state.gd:365
 msgid "You're exhausted... you pass out."
 msgstr ""
 
@@ -6275,7 +6283,7 @@ msgstr ""
 msgid "You're the reason I keep coming back."
 msgstr ""
 
-#: autoload/game_state.gd:504
+#: autoload/game_state.gd:511
 msgid "You're too tired. Eat something or go to bed."
 msgstr ""
 
@@ -6328,7 +6336,7 @@ msgstr ""
 msgid "Your Wildlings are rested and fully healed!"
 msgstr ""
 
-#: scenes/main/adventure_flow.gd:25 scenes/main/main.gd:373
+#: scenes/main/adventure_flow.gd:25 scenes/main/main.gd:378
 msgid "Your Wildlings are too tired to battle. Rest at home or the Wildling Center."
 msgstr ""
 
@@ -6405,7 +6413,7 @@ msgstr ""
 msgid "mine:%s:%d"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:75
+#: scenes/ui/title_screen.gd:76
 #, c-format
 msgid "v%s"
 msgstr ""
@@ -6415,12 +6423,12 @@ msgstr ""
 msgid "· %d"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:97
+#: scenes/ui/title_screen.gd:98
 #, c-format
 msgid "● %s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:169
+#: scenes/ui/title_screen.gd:170
 #, c-format
 msgid "● %s · %s Farm\n%s · %dg"
 msgstr ""

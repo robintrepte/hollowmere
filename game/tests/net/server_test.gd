@@ -53,6 +53,23 @@ func _ready() -> void:
 	_ok(gone.has("error"), "closed code no longer resolves")
 	_ok((await Net.call_rpc("resolve_coop_code", {"code": "ZZ"})).has("error"), "short code rejected")
 
+	# Error reports and opt-in play stats.
+	Telemetry.queue.clear()
+	Telemetry.record("script", "Invalid access to key 'x' (%s)" % tag, "res://scenes/test.gd:12 (_ready)")
+	Telemetry.record("script", "Invalid access to key 'x' (%s)" % tag, "res://scenes/test.gd:12 (_ready)")
+	_ok(Telemetry.queue.size() == 1 and Telemetry.queue.values()[0].count == 2, "repeated errors fold into one report")
+	await Telemetry.flush()
+	_ok(Telemetry.queue.is_empty(), "error reports delivered")
+	_ok(not (await Net.call_rpc("report_errors", {"reports": [{"sig": "x".repeat(5000), "count": 99999}]})).has("error"), "oversized report is clipped, not rejected")
+	Settings.analytics = true
+	Telemetry._beat_minutes = 7.0
+	await Telemetry.heartbeat()
+	_ok(Telemetry._beat_minutes < 1.0 and not Telemetry._new_session, "play-stats heartbeat accepted")
+	Settings.analytics = false
+	Telemetry._beat_minutes = 5.0
+	await Telemetry.heartbeat()
+	_ok(Telemetry._beat_minutes == 5.0, "no play stats without opt-in")
+
 	# Email sign in / errors.
 	await Net.logout()
 	_ok(not Net.has_session(), "logout")

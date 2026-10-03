@@ -100,6 +100,11 @@ func _start_new(opts: Dictionary) -> void:
 		lines.append(l.replace("{name}", p.name))
 	player.locked = true
 	await ui.say(lines, "A letter")
+	if not Settings.analytics_asked and Telemetry.enabled:
+		var c: int = await ui.ask("Help make Hollowmere better? Share anonymous play stats: how long you play and how far your farm gets. Nothing personal, and you can change it in Settings.", ["Sure", "No thanks"])
+		Settings.analytics = c == 0
+		Settings.analytics_asked = true
+		Settings.save_settings()
 	player.locked = false
 
 func _load_slot(slot: int) -> void:

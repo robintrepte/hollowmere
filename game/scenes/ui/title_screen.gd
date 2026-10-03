@@ -52,6 +52,7 @@ func _ready() -> void:
 	_menu = VBoxContainer.new()
 	_menu.add_theme_constant_override("separation", 5)
 	panel.add_child(_menu)
+	_menu.minimum_size_changed.connect(func(): panel.set_deferred("offset_top", panel.offset_bottom))
 	var latest := _latest_slot()
 	if latest >= 0:
 		var cont := UITheme.button("Continue", func(): load_requested.emit(latest))

@@ -31,6 +31,11 @@ SaveManager="*res://autoload/save_manager.gd"
 Audio="*res://autoload/audio.gd"
 Net="*res://autoload/net.gd"
 Coop="*res://autoload/coop.gd"
+Telemetry="*res://autoload/telemetry.gd"
+
+[debug]
+
+settings/gdscript/always_track_call_stacks=true
 
 [display]
 

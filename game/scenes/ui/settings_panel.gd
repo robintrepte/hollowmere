@@ -57,6 +57,11 @@ func _ready() -> void:
 	_choice(body, "Text size", ["Normal", "Large", "Larger"], Settings.TEXT_SCALES.find(Settings.text_scale), func(i: int):
 		Settings.set_text_scale(Settings.TEXT_SCALES[i]))
 	_check(body, "Colorblind mode (type names on moves, quality pips)", Settings.colorblind, func(on): Settings.colorblind = on)
+	body.add_child(UITheme.label("Privacy", 11, UITheme.WOOD))
+	_check(body, "Send crash and error reports (no personal data)", Settings.error_reports, func(on): Settings.error_reports = on)
+	_check(body, "Share anonymous play stats (session length, progress)", Settings.analytics, func(on):
+		Settings.analytics = on
+		Settings.analytics_asked = true)
 	body.add_child(UITheme.label("Controls (click, then press a key)", 11, UITheme.WOOD))
 	for a in REBINDABLE:
 		var h := HBoxContainer.new()

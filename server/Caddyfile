@@ -12,9 +12,16 @@
 	handle {
 		encode gzip
 		root * /srv/site
-		# index.pck/index.wasm keep their names across releases, so always revalidate (ETag -> 304).
-		header Cache-Control "no-cache"
+		# Engine files are renamed per release to hm-<content hash>.* (tools/release/fingerprint_web.sh),
+		# so they never change under a name; only index.html has to be revalidated.
+		@fingerprinted path /hm-*
+		@page not path /hm-*
+		header @fingerprinted Cache-Control "public, max-age=31536000, immutable"
+		header @page Cache-Control "no-cache"
 		try_files {path} /index.html
-		file_server
+		# The deploy step writes .br/.gz next to the wasm/pck/js (wasm: ~39 MB raw, ~7 MB brotli).
+		file_server {
+			precompressed br gzip
+		}
 	}
 }

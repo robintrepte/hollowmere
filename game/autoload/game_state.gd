@@ -29,18 +29,25 @@ func _queue_story() -> void:
 
 # --- Setup ------------------------------------------------------------------------
 
-func new_game(opts: Dictionary) -> void:
-	var seed_v: int = int(opts.get("seed", randi()))
-	rng.seed = seed_v
-	world = {
-		"version": SAVE_VERSION, "seed": seed_v, "day": 0, "minute": Calendar.DAY_START, "weather": "sun",
-		"money": 500, "farm_name": opts.get("farm_name", "Sunny"), "buildings": [], "shrines": [],
+## Every world key with its starting value. Loading fills keys an older save doesn't have.
+static func default_world() -> Dictionary:
+	return {
+		"version": SAVE_VERSION, "seed": 0, "day": 0, "minute": Calendar.DAY_START, "weather": "sun",
+		"money": 500, "farm_name": "Sunny", "buildings": [], "shrines": [],
 		"regions": ["meadow", "whisperwood"], "dex": {}, "dex_claimed": [], "weekly": [], "weekly_week": -1,
 		"board": [], "board_week": -1, "stats": {"earned": 0}, "farm": {"level": 1, "xp": 0}, "mine_depth": {},
 		"flags": {}, "quest": 0, "legends": [], "festival_done": [], "hatchery": [], "shipping": [],
-		"pairs": [], "luck": 0.0, "created": Time.get_unix_time_from_system(), "played": 0.0,
+		"pairs": [], "luck": 0.0, "created": 0.0, "played": 0.0,
 		"chains": {}, "bounty": {}, "bounty_week": -1,
 	}
+
+func new_game(opts: Dictionary) -> void:
+	var seed_v: int = int(opts.get("seed", randi()))
+	rng.seed = seed_v
+	world = default_world()
+	world.seed = seed_v
+	world.farm_name = opts.get("farm_name", "Sunny")
+	world.created = Time.get_unix_time_from_system()
 	grids.clear()
 	_map_cache.clear()
 	for m in PERSISTENT_MAPS:
@@ -1375,6 +1382,10 @@ func to_dict() -> Dictionary:
 
 func from_dict(d: Dictionary) -> void:
 	world = d.world.duplicate(true)
+	var defaults := default_world()
+	for k in defaults:
+		if not world.has(k):
+			world[k] = defaults[k]
 	rng.seed = hash([int(world.seed), int(world.day)])
 	grids.clear()
 	for m in PERSISTENT_MAPS:

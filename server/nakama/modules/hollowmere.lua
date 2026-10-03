@@ -1,4 +1,5 @@
--- Hollowmere server module: invite codes for co-op, cloud-save validation, health.
+-- Hollowmere server module: invite codes for co-op, cloud-save validation, error reports,
+-- opt-in play stats, health.
 local nk = require("nakama")
 
 local SYSTEM = "00000000-0000-0000-0000-000000000000"
@@ -68,6 +69,62 @@ local function close_coop_code(ctx, payload)
   return "{}"
 end
 
+local function clip(s, n)
+  s = tostring(s or "")
+  if #s > n then return s:sub(1, n) end
+  return s
+end
+
+-- Error reports, grouped by signature across all players (Nakama console: storage "errors").
+-- payload: {"reports": [{"sig", "msg", "where", "kind", "count", "version", "platform", "log"}]}
+local function report_errors(ctx, payload)
+  local req = nk.json_decode(payload or "{}")
+  for i, r in ipairs(req.reports or {}) do
+    if i > 25 then break end
+    local sig = clip(r.sig, 240)
+    if sig ~= "" then
+      local key = nk.md5_hash(sig)
+      local rows = nk.storage_read({{collection = "errors", key = key, user_id = SYSTEM}})
+      local v = rows[1] and rows[1].value or {
+        sig = sig, msg = clip(r.msg, 600), where = clip(r.where, 300), kind = clip(r.kind, 16),
+        first = nk.time() / 1000, count = 0, reporters = 0, versions = {},
+      }
+      v.count = (v.count or 0) + math.max(1, math.min(tonumber(r.count) or 1, 1000))
+      v.reporters = (v.reporters or 0) + 1
+      v.last = nk.time() / 1000
+      v.versions = v.versions or {}
+      v.versions[clip(r.version, 24)] = true
+      v.platform = clip(r.platform, 24)
+      if r.log and r.log ~= "" then v.log = clip(r.log, 6000) end
+      nk.storage_write({{collection = "errors", key = key, user_id = SYSTEM, value = v, permission_read = 0, permission_write = 0}})
+    end
+  end
+  return "{}"
+end
+
+-- Opt-in play stats: minutes played per UTC day, so retention (D1/D7/D30) can be read per player.
+-- payload: {"minutes": n, "new_session": bool, "version", "platform", "game_day"}
+local function track_session(ctx, payload)
+  local req = nk.json_decode(payload or "{}")
+  local minutes = math.max(0, math.min(tonumber(req.minutes) or 0, 60))
+  local today = tostring(math.floor(nk.time() / 86400000))
+  local rows = nk.storage_read({{collection = "analytics", key = "sessions", user_id = ctx.user_id}})
+  local v = rows[1] and rows[1].value or {first_day = today, sessions = 0, minutes = 0, days = {}, active_days = 0}
+  if req.new_session then v.sessions = v.sessions + 1 end
+  v.minutes = v.minutes + minutes
+  if v.days[today] == nil then
+    v.active_days = (v.active_days or 0) + 1
+    if v.active_days <= 400 then v.days[today] = 0 end
+  end
+  if v.days[today] ~= nil then v.days[today] = v.days[today] + minutes end
+  v.last_day = today
+  v.version = clip(req.version, 24)
+  v.platform = clip(req.platform, 24)
+  v.game_day = tonumber(req.game_day) or 0
+  nk.storage_write({{collection = "analytics", key = "sessions", user_id = ctx.user_id, value = v, permission_read = 0, permission_write = 0}})
+  return "{}"
+end
+
 local function health(_ctx, _payload)
   return nk.json_encode({ok = true, time = nk.time()})
 end
@@ -99,6 +156,8 @@ nk.register_rpc(create_coop_code, "create_coop_code")
 nk.register_rpc(resolve_coop_code, "resolve_coop_code")
 nk.register_rpc(close_coop_code, "close_coop_code")
 nk.register_rpc(health, "health")
+nk.register_rpc(report_errors, "report_errors")
+nk.register_rpc(track_session, "track_session")
 nk.register_req_before(before_write, "WriteStorageObjects")
 
 nk.logger_info("Hollowmere module loaded")

@@ -66,6 +66,13 @@ var cloud_saves: bool = true
 var custom_keys: Dictionary = {}       ## action -> [keycodes]
 var using_pad := false                 ## last input came from a gamepad (not saved)
 var locale: String = ""                ## "" follows the system language
+var error_reports: bool = true          ## send crash and error reports (no personal data)
+var analytics: bool = false            ## opt-in: session length and progress
+var analytics_asked: bool = false
+
+const SAVED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "colorblind", "screen_shake",
+	"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves",
+	"custom_keys", "locale", "error_reports", "analytics", "analytics_asked"]
 
 const I18N_DIR := "res://i18n"
 
@@ -193,15 +200,13 @@ func load_settings() -> void:
 	var cfg := ConfigFile.new()
 	if cfg.load(PATH) != OK:
 		return
-	for k in ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "colorblind", "screen_shake",
-			"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves", "custom_keys", "locale"]:
+	for k in SAVED:
 		if cfg.has_section_key("settings", k):
 			set(k, cfg.get_value("settings", k))
 
 func save_settings() -> void:
 	var cfg := ConfigFile.new()
-	for k in ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "colorblind", "screen_shake",
-			"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves", "custom_keys", "locale"]:
+	for k in SAVED:
 		## Only a server the player changed is pinned, so builds can move to a new address.
 		if k.begins_with("server_") and get(k) == default_server(k.trim_prefix("server_"), get(k)):
 			continue
