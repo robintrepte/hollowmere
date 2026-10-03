@@ -18,10 +18,10 @@ const GRASSY := [0, 1, 11]
 const GRASS_SPILLS_ONTO := [2, 3, 5, 9, 15]
 ## Row block in shore_cap_<season>.png for the land a pond corner should continue.
 const CAP_OF := {
-	0: 0, 1: 0, 11: 0,
+	0: 0, 1: 0, 11: 0, 7: 0,
 	18: 1,
 	3: 2,
-	9: 3, 2: 3,
+	9: 3, 2: 3, 5: 3, 17: 3,
 	13: 4,
 	15: 5, 12: 5,
 }
@@ -228,29 +228,11 @@ func _draw_ground(p: Vector2i) -> void:
 		if gsides or gcorners:
 			edge_layer.set_cell(p, 3, Vector2i(gsides, gcorners))
 			return
-	# Fringe only along a straight shore. A corner tile carries its own rounded bank,
-	# and a dirt strip on the grass there would stick out as a point.
-	var fsides := 0
-	for i in 4:
-		var n: Vector2i = p + NEIGHBORS[i]
-		if not _is_water_ground(n):
-			continue
-		var facing := (i + 2) % 4
-		if _shore_sides(n, true) == (1 << facing) and _shore_corners(n, true) == 0:
-			fsides |= 1 << i
-	if fsides:
-		edge_layer.set_cell(p, 4, Vector2i(fsides, 0))
-	else:
-		edge_layer.erase_cell(p)
+	# No dirt fringe. The shore on the water tile is already the neighbor's ground color,
+	# and a brown strip here was the dark ring that didn't match the grass.
+	edge_layer.erase_cell(p)
 
 func _shore_cap_row(p: Vector2i, sides: int, corners: int) -> int:
-	var bits := 0
-	var s := sides
-	while s:
-		bits += s & 1
-		s >>= 1
-	if bits < 2 and corners == 0:
-		return -1
 	var gid := -1
 	for i in 4:
 		if sides & (1 << i) and CAP_OF.has(grid.get_ground(p + NEIGHBORS[i])):

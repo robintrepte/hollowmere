@@ -142,10 +142,11 @@ PETALS = {
 }
 
 
-def make_tile(name, season, variant):
+def make_tile(name, season, variant, shared_only=False):
     rng = np.random.default_rng(zlib.crc32(f"{name}:{season}:{variant}".encode()))
     shared = fbm(np.random.default_rng(zlib.crc32(f"{name}:{season}".encode())))
-    n = shared + (fbm(rng) - shared) * EDGE_W
+    # Shores use the shared field alone so they meet the neighboring ground tile.
+    n = shared if shared_only else shared + (fbm(rng) - shared) * EDGE_W
     if name in ("grass", "flowers", "tallgrass"):
         g = GRASS[season]
         img = ramp(n * 0.55 + 0.25, g)
@@ -445,30 +446,17 @@ def _shore_parts(mask, boxes):
 
 
 def _paint_shore(mask, boxes=None):
-    """Light dirt bank, lip and broken foam. The tile border stays the same bank the land fringe uses."""
+    """Foam along the waterline only. The shore body is the neighbor's ground, drawn as a cap."""
+    del boxes
     tile = np.zeros((T, T, 4), dtype=np.uint8)
-    mask, _cap = _shore_parts(mask, boxes)
     if not mask.any():
         return tile
     ys, xs = np.mgrid[0:T, 0:T]
     d = _dist_inside(mask)
-    tile[mask, :3] = BANK.astype(np.uint8)
-    grain = mask & (((xs * 3 + ys * 5) % 7) == 0)
-    tile[grain & (d >= 3), :3] = BANK_DEEP.astype(np.uint8)
-    tile[d == 2, :3] = LIP.astype(np.uint8)
     wave = np.sin(xs * 2 * np.pi / T * 2 + 0.4) * 0.55 + np.sin(ys * 2 * np.pi / T * 3 + 1.2) * 0.45
     foam = (d == 1) & (wave > 0.05)
-    tile[(d == 1) & ~foam, :3] = LIP.astype(np.uint8)
     tile[foam, :3] = FOAM.astype(np.uint8)
-    tile[mask, 3] = 255
-    tile[foam, 3] = 200
-    speck = mask & (d >= 4) & (((xs * 17 + ys * 11) % 13) == 0)
-    tile[speck, :3] = BANK_DARK.astype(np.uint8)
-    border = np.zeros((T, T), dtype=bool)
-    border[0, :] = border[-1, :] = border[:, 0] = border[:, -1] = True
-    seam = mask & border & (d >= 2)
-    tile[seam, :3] = BANK.astype(np.uint8)
-    tile[seam, 3] = 255
+    tile[foam, 3] = 210
     water = ~mask
     wp = np.pad(mask, 1, constant_values=False)
     adj = wp[:-2, 1:-1] | wp[2:, 1:-1] | wp[1:-1, :-2] | wp[1:-1, 2:]
@@ -530,11 +518,12 @@ CAP_TERRAINS = ["grass", "darkgrass", "sand", "dirt", "marsh", "canyon"]
 
 
 def _cap_tile(sides, corners, variant, fill):
-    _shore, cap = _shore_parts(_water_mask(sides, corners, variant), _water_boxes(sides, corners, variant))
+    """The whole shore, in the neighboring ground color, so grass meets grass instead of a dark ring."""
+    mask = _water_mask(sides, corners, variant)
     tile = np.zeros((T, T, 4), dtype=np.uint8)
-    if cap.any():
-        tile[cap, :3] = fill[cap]
-        tile[cap, 3] = 255
+    if mask.any():
+        tile[mask, :3] = fill[mask]
+        tile[mask, 3] = 255
     return tile
 
 
@@ -611,14 +600,14 @@ def water_edges():
 
 
 def shore_caps(season):
-    """Land fill for the outside of a rounded water corner. One 64-row block per shore terrain."""
-    fills = [make_tile(name, season, 0) for name in CAP_TERRAINS]
+    """Neighbor ground color for every shore, including straight edges. One 64-row block per terrain."""
+    fills = [make_tile(name, season, 0, True) for name in CAP_TERRAINS]
     out = np.zeros((T * 64 * len(CAP_TERRAINS), T * 16, 4), dtype=np.uint8)
     for ti, fill in enumerate(fills):
         for v in range(4):
             for c in range(16):
                 for m in range(16):
-                    if bin(m).count("1") < 2 and c == 0:
+                    if m == 0 and c == 0:
                         continue
                     tile = _cap_tile(m, c, v, fill)
                     row = ti * 64 + v * 16 + c
