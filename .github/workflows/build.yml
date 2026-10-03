@@ -167,4 +167,5 @@ jobs:
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
           rsync -az --delete site/web/ deploy@"$DEPLOY_HOST":/srv/hollowmere/site/
           rsync -az --exclude .env --exclude site/ server/ deploy@"$DEPLOY_HOST":/srv/hollowmere/
-          ssh deploy@"$DEPLOY_HOST" "cd /srv/hollowmere && docker compose --profile prod up -d --build"
+          # nginx (HOSTING.md) already owns 80/443. Do not start the Caddy profile here.
+          ssh deploy@"$DEPLOY_HOST" "cd /srv/hollowmere && docker compose up -d --build"

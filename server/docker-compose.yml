@@ -1,8 +1,9 @@
 # Hollowmere backend: Nakama (accounts, cloud saves, relayed co-op) on Postgres.
 #
 #   Local dev:   docker compose up -d                  -> http://127.0.0.1:7350, console :7351
-#   Production:  HOLLOWMERE_DOMAIN=play.example.com docker compose --profile prod up -d
-#                (Caddy terminates TLS for the domain, serves the web build from ./site, proxies the API)
+#   Production:  nginx on the host (HOSTING.md). Do not start the Caddy profile
+#                on a box that already runs nginx — both want 80/443.
+#   Caddy alt:   HOLLOWMERE_DOMAIN=play.example.com docker compose --profile prod up -d
 #
 # Secrets come from .env (see .env.example). Never commit the real .env.
 

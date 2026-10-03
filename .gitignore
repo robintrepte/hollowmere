@@ -19,10 +19,11 @@ server/build/
 tools/art_pipeline/out/
 .shots/
 
-# Secrets
+# Secrets and on-server backups
 .env
 *.p12
 *.keystore
+*.sql.gz
 
 # OS
 .DS_Store

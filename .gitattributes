@@ -1,0 +1,6 @@
+# Keep GitHub's language bar on the game, not the vendor addons or import sidecars.
+game/addons/** linguist-vendored
+*.import linguist-generated
+*.uid linguist-generated
+*.png linguist-detectable=false
+*.ttf linguist-detectable=false

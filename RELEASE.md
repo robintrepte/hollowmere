@@ -7,31 +7,17 @@ Everything after `git tag` is automated by `.github/workflows/build.yml`:
 |---|---|---|
 | `test` | every push / PR | script compile, GUT unit tests, translation template check, 112-day balance sim, Nakama integration test, co-op test, host + 3 client desync test |
 | `export` | every push / PR | Windows, macOS and Web exports; the web build is fingerprinted, precompressed and must stay under 50 MB of Brotli |
+| `deploy-web` | `v*` tags | rsyncs the web build to `/srv/hollowmere/site` and rebuilds Nakama (nginx on the host owns TLS; see HOSTING.md) |
 | `sign-macos` | `v*` tags | codesign (hardened runtime), notarize, staple; warns and ships unsigned if the Apple secrets are missing |
 | `itch` | `v*` tags | `butler push` to the `windows` and `mac` channels |
-| `deploy-web` | `v*` tags | rsyncs the web build and `server/` to the VPS and restarts the stack |
 
 ## 1. One-time setup
 
 ### 1.1 Server and domain (needed for login, cloud saves, co-op and the web build)
 
-1. Rent a small VPS (2 vCPU / 2 GB RAM is plenty for launch; Nakama + Postgres + Caddy).
-2. Point the domain's `A` (and `AAAA`) record at it, e.g. `play.hollowmere.com`.
-3. On the VPS:
-   ```sh
-   sudo apt install docker.io docker-compose-v2 rsync
-   sudo adduser --disabled-password deploy && sudo usermod -aG docker deploy
-   sudo mkdir -p /srv/hollowmere/site && sudo chown -R deploy /srv/hollowmere
-   sudo ufw allow 22,80,443/tcp && sudo ufw enable
-   ```
-4. Add the public half of a fresh ed25519 key to `~deploy/.ssh/authorized_keys`; the private half becomes the `DEPLOY_SSH_KEY` secret.
-5. Copy `server/.env.example` to `/srv/hollowmere/.env` and replace every `change-me` with a long random string (`openssl rand -hex 24`). Set `HOLLOWMERE_DOMAIN`. Leave `NAKAMA_SERVER_KEY` equal to `hollowmere/server/key` in `game/project.godot`: it ships inside every client and is not a secret.
-6. Nightly database backup (crontab of `deploy`):
-   ```sh
-   0 4 * * * docker exec hollowmere-postgres-1 pg_dump -U nakama nakama | gzip > /srv/hollowmere/backup-$(date +\%a).sql.gz
-   ```
-   That keeps a rolling week. Copy them off the box now and then.
-7. The first tagged release deploys the stack. Caddy gets TLS certificates by itself once DNS resolves.
+Step-by-step Hetzner + Ubuntu + nginx (the commands an agent can run): **[HOSTING.md](HOSTING.md)**.
+
+Short version: a CX22 is enough. Point `play.example.com` at the box, run nginx + certbot on the host, Docker only for Nakama + Postgres. Put the private SSH key in `DEPLOY_SSH_KEY` and the hostname in the `HOLLOWMERE_DOMAIN` variable. Leave `NAKAMA_SERVER_KEY` equal to `hollowmere/server/key` in `game/project.godot`: it ships inside every client and is not a secret.
 
 ### 1.2 Google sign-in
 
