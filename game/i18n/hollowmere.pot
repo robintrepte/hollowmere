@@ -13,7 +13,7 @@ msgstr ""
 msgid "\nSells for %dg"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:812
+#: scenes/battle/battle_screen.gd:818
 #, c-format
 msgid "   (%d%%)"
 msgstr ""
@@ -22,7 +22,7 @@ msgstr ""
 msgid "  (guest)"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:844
+#: scenes/battle/battle_screen.gd:850
 msgid "  (out)"
 msgstr ""
 
@@ -31,7 +31,7 @@ msgstr ""
 msgid "  Lv%d"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:266
+#: scenes/ui/inventory_panel.gd:271
 #, c-format
 msgid "  x%d"
 msgstr ""
@@ -63,7 +63,7 @@ msgstr ""
 msgid " (%d ribbons)"
 msgstr ""
 
-#: scenes/main/main.gd:94
+#: scenes/main/main.gd:98
 #, c-format
 msgid " (%s)"
 msgstr ""
@@ -91,12 +91,12 @@ msgstr ""
 msgid " with genes %d+"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:759
+#: scenes/battle/battle_screen.gd:770
 #, c-format
 msgid " · %d"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:759
+#: scenes/battle/battle_screen.gd:770
 msgid " · status"
 msgstr ""
 
@@ -151,6 +151,11 @@ msgstr ""
 msgid "%d hearts with %s"
 msgstr ""
 
+#: autoload/game_state.gd:879
+#, c-format
+msgid "%d in %s"
+msgstr ""
+
 #: scenes/ui/party_panel.gd:237
 #, c-format
 msgid "%d more known moves. Click a slot to swap."
@@ -161,12 +166,12 @@ msgstr ""
 msgid "%d new eggs in the farm chest!"
 msgstr ""
 
-#: scenes/main/adventure_flow.gd:34 scenes/ui/day_report.gd:48 scenes/ui/shop_panel.gd:117 scenes/ui/shop_panel.gd:193 ...
+#: scenes/main/adventure_flow.gd:34 scenes/ui/day_report.gd:48 scenes/ui/shop_panel.gd:124 scenes/ui/shop_panel.gd:203 ...
 #, c-format
 msgid "%dg"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:274
+#: scenes/ui/inventory_panel.gd:279
 #, c-format
 msgid "%dx%d"
 msgstr ""
@@ -176,7 +181,7 @@ msgstr ""
 msgid "%s\n%s"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:759
+#: scenes/battle/battle_screen.gd:770
 #, c-format
 msgid "%s\n%s%s"
 msgstr ""
@@ -201,12 +206,12 @@ msgstr ""
 msgid "%s  Lv%d"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:844
+#: scenes/battle/battle_screen.gd:850
 #, c-format
 msgid "%s  Lv%d   HP %d/%d%s"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:810 scenes/ui/shop_panel.gd:133
+#: scenes/battle/battle_screen.gd:816 scenes/ui/shop_panel.gd:140
 #, c-format
 msgid "%s  x%d"
 msgstr ""
@@ -221,12 +226,12 @@ msgstr ""
 msgid "%s %d"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:195 scenes/ui/shop_panel.gd:218
+#: scenes/ui/shop_panel.gd:205 scenes/ui/shop_panel.gd:228
 #, c-format
 msgid "%s %d/%d"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:215 scenes/ui/shop_panel.gd:222
+#: scenes/ui/shop_panel.gd:225 scenes/ui/shop_panel.gd:232
 #, c-format
 msgid "%s %s"
 msgstr ""
@@ -321,12 +326,12 @@ msgstr ""
 msgid "%s can't grow in %s."
 msgstr ""
 
-#: scenes/main/main.gd:458
+#: scenes/main/main.gd:461
 #, c-format
 msgid "%s chain x%d! Starry odds x%.1f%s"
 msgstr ""
 
-#: scenes/main/main.gd:348
+#: scenes/main/main.gd:352
 #, c-format
 msgid "%s challenges you to a friendly battle! (Nothing is lost, win or lose.)"
 msgstr ""
@@ -386,7 +391,7 @@ msgstr ""
 msgid "%s has received enough gifts this week."
 msgstr ""
 
-#: autoload/game_state.gd:1299
+#: autoload/game_state.gd:1339
 #, c-format
 msgid "%s has to keep at least one Wildling."
 msgstr ""
@@ -426,7 +431,7 @@ msgstr ""
 msgid "%s is hurt by its burn!"
 msgstr ""
 
-#: autoload/game_state.gd:911
+#: autoload/game_state.gd:951
 #, c-format
 msgid "%s is ready!"
 msgstr ""
@@ -456,7 +461,7 @@ msgstr ""
 msgid "%s isn't convinced yet."
 msgstr ""
 
-#: scenes/main/main.gd:426
+#: scenes/main/main.gd:430
 #, c-format
 msgid "%s joined %s!"
 msgstr ""
@@ -511,12 +516,12 @@ msgstr ""
 msgid "%s nature · %s"
 msgstr ""
 
-#: autoload/game_state.gd:1294
+#: autoload/game_state.gd:1334
 #, c-format
 msgid "%s no longer has that Wildling."
 msgstr ""
 
-#: autoload/game_state.gd:1290
+#: autoload/game_state.gd:1330
 #, c-format
 msgid "%s no longer has that item."
 msgstr ""
@@ -526,7 +531,7 @@ msgstr ""
 msgid "%s offers"
 msgstr ""
 
-#: autoload/game_state.gd:1246
+#: autoload/game_state.gd:1286
 #, c-format
 msgid "%s only takes one rematch a week."
 msgstr ""
@@ -606,7 +611,7 @@ msgstr ""
 msgid "%s wants to be your friend!"
 msgstr ""
 
-#: scenes/main/main.gd:365
+#: scenes/main/main.gd:369
 #, c-format
 msgid "%s wants to trade with you."
 msgstr ""
@@ -666,17 +671,17 @@ msgstr ""
 msgid "%s · %s\n%s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:189
+#: scenes/ui/title_screen.gd:238
 #, c-format
 msgid "%s · %s Farm\n%s · %dg"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:221
+#: scenes/ui/shop_panel.gd:231
 #, c-format
 msgid "%s → %s. Holds more water and soaks a wider area."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:219
+#: scenes/ui/shop_panel.gd:229
 #, c-format
 msgid "%s → %s. Works a wider area and breaks tougher debris."
 msgstr ""
@@ -801,7 +806,7 @@ msgstr ""
 msgid "%s: Wow, you're good! Rematch tomorrow?"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:111 scenes/ui/shop_panel.gd:96
+#: scenes/ui/account_panel.gd:111 scenes/ui/shop_panel.gd:103
 #, c-format
 msgid "%s:%d"
 msgstr ""
@@ -819,7 +824,7 @@ msgstr ""
 msgid "+%d XP"
 msgstr ""
 
-#: scenes/ui/craft_panel.gd:147 scenes/ui/inventory_panel.gd:272
+#: scenes/ui/craft_panel.gd:147 scenes/ui/inventory_panel.gd:277
 #, c-format
 msgid "+%d energy"
 msgstr ""
@@ -870,7 +875,7 @@ msgstr ""
 msgid "85 Wildlings befriended!"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:237
+#: scenes/ui/shop_panel.gd:247
 #, c-format
 msgid "A %d x %d grid pack."
 msgstr ""
@@ -1303,7 +1308,7 @@ msgstr ""
 msgid "Ah, the new farmer. Your grandparent would be proud."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:139 scenes/ui/trade_panel.gd:201
+#: scenes/ui/shop_panel.gd:146 scenes/ui/trade_panel.gd:201
 msgid "All"
 msgstr ""
 
@@ -1311,7 +1316,7 @@ msgstr ""
 msgid "All eight shrines are restored! The valley is whole again. Seasonal legends now roam the land, and the Deep Hollow goes ever deeper."
 msgstr ""
 
-#: scenes/main/main.gd:101
+#: scenes/main/main.gd:105
 msgid "All save slots are full. Delete a farm from the Load menu first."
 msgstr ""
 
@@ -1319,11 +1324,11 @@ msgstr ""
 msgid "Already built."
 msgstr ""
 
-#: autoload/game_state.gd:968
+#: autoload/game_state.gd:1008
 msgid "Already delivered."
 msgstr ""
 
-#: autoload/game_state.gd:1011
+#: autoload/game_state.gd:1051
 msgid "Already on the farm."
 msgstr ""
 
@@ -1443,7 +1448,7 @@ msgstr ""
 msgid "Baby Wildlings inherit genes from both parents."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:773 scenes/battle/battle_screen.gd:832 scenes/battle/battle_screen.gd:852 scenes/ui/new_game_panel.gd:95 ...
+#: scenes/battle/battle_screen.gd:783 scenes/battle/battle_screen.gd:838 scenes/battle/battle_screen.gd:858 scenes/ui/new_game_panel.gd:95 ...
 msgid "Back"
 msgstr ""
 
@@ -1451,15 +1456,15 @@ msgstr ""
 msgid "Backpack"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:57
+#: scenes/ui/shop_panel.gd:58
 msgid "Backpacks"
 msgstr ""
 
-#: autoload/game_state.gd:1008
+#: autoload/game_state.gd:1048
 msgid "Bad creature."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:725 scenes/ui/hatchery_panel.gd:75
+#: scenes/battle/battle_screen.gd:736 scenes/ui/hatchery_panel.gd:75
 msgid "Bag"
 msgstr ""
 
@@ -1503,7 +1508,7 @@ msgstr ""
 msgid "Bashes with a glowing halo."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:212
+#: scenes/ui/shop_panel.gd:222
 msgid "Basic"
 msgstr ""
 
@@ -1523,7 +1528,7 @@ msgstr ""
 msgid "Battle three village champions in a row!"
 msgstr ""
 
-#: scenes/main/adventure_flow.gd:72 scenes/main/main.gd:348
+#: scenes/main/adventure_flow.gd:72 scenes/main/main.gd:352
 msgid "Battle!"
 msgstr ""
 
@@ -1593,7 +1598,7 @@ msgstr ""
 msgid "Befriended %d · Seen %d · Total %d"
 msgstr ""
 
-#: scenes/main/main.gd:418
+#: scenes/main/main.gd:422
 #, c-format
 msgid "Befriended in %s at Lv%d"
 msgstr ""
@@ -1622,7 +1627,7 @@ msgstr ""
 msgid "Big Hatchery"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:350
+#: scenes/ui/inventory_panel.gd:356
 msgid "Bind to next hotbar slot"
 msgstr ""
 
@@ -1691,9 +1696,19 @@ msgstr ""
 msgid "Both Wildlings must live in the Den."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:245
+#: autoload/game_state.gd:873 scenes/ui/shop_panel.gd:260
 #, c-format
 msgid "Bought %d %s"
+msgstr ""
+
+#: autoload/game_state.gd:880
+#, c-format
+msgid "Bought %d %s (%s)"
+msgstr ""
+
+#: autoload/game_state.gd:876
+#, c-format
+msgid "Bought %d %s (in %s)"
 msgstr ""
 
 #: data/moves.json
@@ -1793,7 +1808,7 @@ msgstr ""
 msgid "Brews a thunderstorm for 5 turns. Spark and Gale moves surge."
 msgstr ""
 
-#: autoload/game_state.gd:927
+#: autoload/game_state.gd:967
 #, c-format
 msgid "Bring %d %s."
 msgstr ""
@@ -1802,7 +1817,7 @@ msgstr ""
 msgid "Bring ore, get bars. Bring bars, get better tools."
 msgstr ""
 
-#: autoload/game_state.gd:1219
+#: autoload/game_state.gd:1259
 msgid "Bring the Wildling along in your party."
 msgstr ""
 
@@ -1826,7 +1841,7 @@ msgstr ""
 msgid "Bubbloo"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:203 scenes/ui/shop_panel.gd:53
+#: scenes/ui/shop_panel.gd:213 scenes/ui/shop_panel.gd:54
 msgid "Build"
 msgstr ""
 
@@ -1834,7 +1849,7 @@ msgstr ""
 msgid "Builds stairs to a big new terrace above your farm."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:204
+#: scenes/ui/shop_panel.gd:214
 msgid "Built ✓"
 msgstr ""
 
@@ -1854,7 +1869,7 @@ msgstr ""
 msgid "But it missed!"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:237 scenes/ui/shop_panel.gd:50
+#: scenes/ui/shop_panel.gd:247 scenes/ui/shop_panel.gd:51
 msgid "Buy"
 msgstr ""
 
@@ -1920,7 +1935,7 @@ msgstr ""
 msgid "Chapter %d · %s"
 msgstr ""
 
-#: scenes/main/main.gd:94
+#: scenes/main/main.gd:98
 #, c-format
 msgid "Chapter complete: %s%s"
 msgstr ""
@@ -1941,7 +1956,7 @@ msgstr ""
 msgid "Chat"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:207
+#: scenes/ui/title_screen.gd:256
 msgid "Checking the cloud..."
 msgstr ""
 
@@ -1957,7 +1972,7 @@ msgstr ""
 msgid "Chillchick"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:835
+#: scenes/battle/battle_screen.gd:841
 msgid "Choose a Wildling"
 msgstr ""
 
@@ -2029,7 +2044,7 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:384
+#: scenes/ui/inventory_panel.gd:390
 #, c-format
 msgid "Close %s"
 msgstr ""
@@ -2046,7 +2061,7 @@ msgstr ""
 msgid "Cloud Fluff"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:214
+#: scenes/ui/title_screen.gd:263
 msgid "Cloud backups are up to date."
 msgstr ""
 
@@ -2066,7 +2081,7 @@ msgstr ""
 msgid "Cluckle Egg"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:92 scenes/ui/title_screen.gd:121
+#: scenes/ui/settings_panel.gd:92 scenes/ui/title_screen.gd:125
 msgid "Co-op"
 msgstr ""
 
@@ -2098,7 +2113,7 @@ msgstr ""
 msgid "Containers inside your backpack hold even more stuff."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:111
+#: scenes/ui/title_screen.gd:115
 msgid "Continue"
 msgstr ""
 
@@ -2346,11 +2361,11 @@ msgstr ""
 msgid "Deepest: B%d. It has no bottom."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:195
+#: scenes/ui/title_screen.gd:244
 msgid "Delete"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:195
+#: scenes/ui/title_screen.gd:244
 msgid "Delete this farm forever?"
 msgstr ""
 
@@ -2409,6 +2424,10 @@ msgstr ""
 
 #: scenes/ui/journal_panel.gd:191 scenes/ui/journal_panel.gd:256 scenes/ui/journal_panel.gd:268
 msgid "Done ✓"
+msgstr ""
+
+#: scenes/ui/inventory_panel.gd:282
+msgid "Double-click to open"
 msgstr ""
 
 #: data/villagers.json
@@ -2471,7 +2490,7 @@ msgstr ""
 msgid "East: Tidecove."
 msgstr ""
 
-#: scenes/main/controller.gd:83 scenes/ui/inventory_panel.gd:343
+#: scenes/main/controller.gd:83 scenes/ui/inventory_panel.gd:349
 msgid "Eat"
 msgstr ""
 
@@ -2512,7 +2531,7 @@ msgstr ""
 msgid "Eggs you have"
 msgstr ""
 
-#: scenes/main/main.gd:96
+#: scenes/main/main.gd:100
 msgid "Elder Barley has something to tell you."
 msgstr ""
 
@@ -2762,7 +2781,7 @@ msgstr ""
 msgid "Fierce"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:724
+#: scenes/battle/battle_screen.gd:735
 msgid "Fight"
 msgstr ""
 
@@ -2868,11 +2887,11 @@ msgstr ""
 msgid "Forager"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:733 scenes/battle/battle_screen.gd:746
+#: scenes/battle/battle_screen.gd:744 scenes/battle/battle_screen.gd:757
 msgid "Forfeit"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:745
+#: scenes/battle/battle_screen.gd:756
 msgid "Forfeit the friendly battle?"
 msgstr ""
 
@@ -2982,7 +3001,7 @@ msgstr ""
 msgid "Fully restores HP."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:215
+#: scenes/ui/shop_panel.gd:225
 msgid "Fully upgraded."
 msgstr ""
 
@@ -3488,7 +3507,7 @@ msgstr ""
 msgid "Heirloom Charm"
 msgstr ""
 
-#: scenes/main/main.gd:116
+#: scenes/main/main.gd:120
 msgid "Help make Hollowmere better? Share anonymous play stats: how long you play and how far your farm gets. Nothing personal, and you can change it in Settings."
 msgstr ""
 
@@ -3526,7 +3545,7 @@ msgstr ""
 msgid "Hold an item and use it on the %s to load it."
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:276
+#: scenes/ui/inventory_panel.gd:281
 #, c-format
 msgid "Holds %dx%d%s"
 msgstr ""
@@ -3731,7 +3750,7 @@ msgstr ""
 msgid "Improves crop quality. Apply to tilled soil."
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:300
+#: scenes/ui/inventory_panel.gd:306
 #, c-format
 msgid "In the bin: %dg"
 msgstr ""
@@ -3995,7 +4014,7 @@ msgstr ""
 msgid "It's the weekly Creature Show! The judges score grooming, happiness, genes, level and a little flair."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:803
+#: scenes/battle/battle_screen.gd:809
 msgid "Items stay in the bag during friendly battles."
 msgstr ""
 
@@ -4193,11 +4212,11 @@ msgstr ""
 msgid "Kale"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:195
+#: scenes/ui/title_screen.gd:244
 msgid "Keep"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:747
+#: scenes/battle/battle_screen.gd:758
 msgid "Keep going"
 msgstr ""
 
@@ -4327,7 +4346,7 @@ msgstr ""
 msgid "Let's go!"
 msgstr ""
 
-#: scenes/main/main.gd:365
+#: scenes/main/main.gd:369
 msgid "Let's trade"
 msgstr ""
 
@@ -4396,11 +4415,11 @@ msgstr ""
 msgid "Lively"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:118
+#: scenes/ui/title_screen.gd:122
 msgid "Load"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:182
+#: scenes/ui/title_screen.gd:231
 msgid "Load a farm"
 msgstr ""
 
@@ -4502,7 +4521,7 @@ msgstr ""
 msgid "Max Salve"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:215
+#: scenes/ui/shop_panel.gd:225
 msgid "Max ✓"
 msgstr ""
 
@@ -4586,7 +4605,7 @@ msgstr ""
 msgid "Mira: She always said a valley grows as much as its people do."
 msgstr ""
 
-#: autoload/game_state.gd:882
+#: autoload/game_state.gd:922
 msgid "Missing ingredients."
 msgstr ""
 
@@ -4618,7 +4637,7 @@ msgstr ""
 msgid "Mossbun"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:348
+#: scenes/ui/inventory_panel.gd:354
 #, c-format
 msgid "Move to %s"
 msgstr ""
@@ -4692,7 +4711,7 @@ msgstr ""
 msgid "Never fails. Extremely rare."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:114
+#: scenes/ui/title_screen.gd:118
 msgid "New Farm"
 msgstr ""
 
@@ -4704,7 +4723,7 @@ msgstr ""
 msgid "New farmers always buy too few parsnips. Just saying."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:216
+#: scenes/ui/title_screen.gd:265
 msgid "Newer in the cloud"
 msgstr ""
 
@@ -4780,7 +4799,7 @@ msgstr ""
 msgid "No eggs to add. Pair Wildlings in the Den and eggs appear in the farm chest."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:184
+#: scenes/ui/title_screen.gd:233
 msgid "No farms yet."
 msgstr ""
 
@@ -4800,7 +4819,7 @@ msgstr ""
 msgid "No room in your pack."
 msgstr ""
 
-#: scenes/main/main.gd:116 scenes/main/main.gd:365
+#: scenes/main/main.gd:120 scenes/main/main.gd:369
 msgid "No thanks"
 msgstr ""
 
@@ -4820,7 +4839,7 @@ msgstr ""
 msgid "North: Whisperwood. Restore the Grove Shrine there."
 msgstr ""
 
-#: autoload/game_state.gd:834 autoload/game_state.gd:930 autoload/game_state.gd:952
+#: autoload/game_state.gd:836 autoload/game_state.gd:970 autoload/game_state.gd:992
 msgid "Not enough gold."
 msgstr ""
 
@@ -4828,7 +4847,7 @@ msgstr ""
 msgid "Not enough money."
 msgstr ""
 
-#: scenes/main/controller.gd:299 scenes/main/main.gd:348
+#: scenes/main/controller.gd:299 scenes/main/main.gd:352
 msgid "Not now"
 msgstr ""
 
@@ -4852,7 +4871,7 @@ msgstr ""
 msgid "Not yet"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:805
+#: scenes/battle/battle_screen.gd:811
 msgid "Nothing useful to use here."
 msgstr ""
 
@@ -4925,7 +4944,7 @@ msgstr ""
 msgid "Only the strong earn the shrine's light."
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:341
+#: scenes/ui/inventory_panel.gd:347
 msgid "Open"
 msgstr ""
 
@@ -4981,7 +5000,7 @@ msgstr ""
 msgid "Overgrowth"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:239
+#: scenes/ui/shop_panel.gd:249
 msgid "Owned ✓"
 msgstr ""
 
@@ -5015,7 +5034,7 @@ msgstr ""
 msgid "Partners in research. And... maybe more?"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:726 scenes/battle/battle_screen.gd:835 scenes/ui/pause_menu.gd:35
+#: scenes/battle/battle_screen.gd:737 scenes/battle/battle_screen.gd:841 scenes/ui/pause_menu.gd:35
 msgid "Party"
 msgstr ""
 
@@ -5242,7 +5261,7 @@ msgstr ""
 msgid "Privacy"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:130
+#: scenes/ui/title_screen.gd:153
 msgid "Privacy policy"
 msgstr ""
 
@@ -5320,7 +5339,7 @@ msgstr ""
 msgid "Quiet mornings here are my favorite."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:134
+#: scenes/ui/title_screen.gd:132
 msgid "Quit"
 msgstr ""
 
@@ -5602,7 +5621,7 @@ msgstr ""
 msgid "Rucksack"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:733
+#: scenes/battle/battle_screen.gd:744
 msgid "Run"
 msgstr ""
 
@@ -5738,16 +5757,16 @@ msgstr ""
 msgid "Selene: The glade likes you. That's rare."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:51
+#: scenes/ui/shop_panel.gd:52
 msgid "Sell"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:137
+#: scenes/ui/shop_panel.gd:144
 #, c-format
 msgid "Sell 1 (%dg)"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:270
+#: scenes/ui/inventory_panel.gd:275
 #, c-format
 msgid "Sells %dg"
 msgstr ""
@@ -5776,7 +5795,7 @@ msgstr ""
 msgid "Set up"
 msgstr ""
 
-#: scenes/ui/pause_menu.gd:59 scenes/ui/settings_panel.gd:27 scenes/ui/title_screen.gd:126
+#: scenes/ui/pause_menu.gd:59 scenes/ui/settings_panel.gd:27 scenes/ui/title_screen.gd:130
 msgid "Settings"
 msgstr ""
 
@@ -5844,7 +5863,7 @@ msgstr ""
 msgid "Shift-click moves items between grids in a flash."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:66
+#: scenes/ui/shop_panel.gd:67
 msgid "Shift-click to buy 5 · Prices rise with quality when selling"
 msgstr ""
 
@@ -5884,7 +5903,7 @@ msgstr ""
 msgid "Shroud"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:94 scenes/ui/coop_panel.gd:104 scenes/ui/coop_panel.gd:162 scenes/ui/title_screen.gd:149
+#: scenes/ui/account_panel.gd:94 scenes/ui/coop_panel.gd:104 scenes/ui/coop_panel.gd:162 scenes/ui/title_screen.gd:198
 msgid "Sign in"
 msgstr ""
 
@@ -6058,7 +6077,7 @@ msgstr ""
 msgid "Solaria"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:81
+#: scenes/ui/shop_panel.gd:88
 msgid "Sold out for today."
 msgstr ""
 
@@ -6152,11 +6171,11 @@ msgstr ""
 msgid "Splashpup"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:345
+#: scenes/ui/inventory_panel.gd:351
 msgid "Split half"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:346
+#: scenes/ui/inventory_panel.gd:352
 msgid "Split one"
 msgstr ""
 
@@ -6371,7 +6390,7 @@ msgstr ""
 msgid "String Lights"
 msgstr ""
 
-#: data/moves.json scenes/battle/battle_screen.gd:772
+#: data/moves.json scenes/battle/battle_screen.gd:782
 msgid "Struggle"
 msgstr ""
 
@@ -6419,7 +6438,7 @@ msgstr ""
 msgid "Super Salve"
 msgstr ""
 
-#: scenes/main/main.gd:116
+#: scenes/main/main.gd:120
 msgid "Sure"
 msgstr ""
 
@@ -6495,7 +6514,7 @@ msgstr ""
 msgid "Tend your Leaf Wildlings well."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:131
+#: scenes/ui/title_screen.gd:157
 msgid "Terms"
 msgstr ""
 
@@ -6524,11 +6543,11 @@ msgstr ""
 msgid "That old farm of yours has good bones."
 msgstr ""
 
-#: scenes/main/main.gd:126
+#: scenes/main/main.gd:130
 msgid "That save couldn't be loaded."
 msgstr ""
 
-#: autoload/game_state.gd:923
+#: autoload/game_state.gd:963
 msgid "That tool is already the best it can be."
 msgstr ""
 
@@ -6594,7 +6613,7 @@ msgstr ""
 msgid "The Grove Shrines have been dark for many years."
 msgstr ""
 
-#: autoload/game_state.gd:994
+#: autoload/game_state.gd:1034
 msgid "The Hatchery is full."
 msgstr ""
 
@@ -6654,7 +6673,7 @@ msgstr ""
 msgid "The canyon has many secrets underground."
 msgstr ""
 
-#: autoload/game_state.gd:1081
+#: autoload/game_state.gd:1121
 msgid "The cave is blocked."
 msgstr ""
 
@@ -6671,7 +6690,7 @@ msgstr ""
 msgid "The coin sparkles as it sinks. You feel a little luckier today."
 msgstr ""
 
-#: scenes/main/main.gd:151
+#: scenes/main/main.gd:155
 msgid "The connection to the farm was lost."
 msgstr ""
 
@@ -6781,7 +6800,7 @@ msgstr ""
 msgid "The shipping bin is full."
 msgstr ""
 
-#: autoload/game_state.gd:1066
+#: autoload/game_state.gd:1106
 msgid "The shrine glows!"
 msgstr ""
 
@@ -6789,7 +6808,7 @@ msgstr ""
 msgid "The shrine is cold and dark. Its orb is cracked through."
 msgstr ""
 
-#: autoload/game_state.gd:1052
+#: autoload/game_state.gd:1092
 msgid "The shrine is still dark."
 msgstr ""
 
@@ -6867,7 +6886,7 @@ msgstr ""
 msgid "The way is blocked."
 msgstr ""
 
-#: scenes/main/main.gd:240
+#: scenes/main/main.gd:244
 #, c-format
 msgid "The way is blocked. (%s)"
 msgstr ""
@@ -6876,7 +6895,7 @@ msgstr ""
 msgid "The wayshrine hums. Its stones remember every road you've opened."
 msgstr ""
 
-#: autoload/game_state.gd:1214
+#: autoload/game_state.gd:1254
 msgid "The weekly Creature Show is held on Saturdays."
 msgstr ""
 
@@ -6928,15 +6947,15 @@ msgstr ""
 msgid "Theo: Try this. Honest opinion... You like it? I'll call it Veggie Stew."
 msgstr ""
 
-#: autoload/game_state.gd:1043
+#: autoload/game_state.gd:1083
 msgid "There's no Warden there."
 msgstr ""
 
-#: autoload/game_state.gd:1126
+#: autoload/game_state.gd:1166
 msgid "There's no festival today."
 msgstr ""
 
-#: autoload/game_state.gd:1001
+#: autoload/game_state.gd:1041
 msgid "There's no room there."
 msgstr ""
 
@@ -6944,7 +6963,7 @@ msgstr ""
 msgid "These two don't seem interested in each other."
 msgstr ""
 
-#: autoload/game_state.gd:851
+#: autoload/game_state.gd:891
 msgid "They won't buy that."
 msgstr ""
 
@@ -7105,7 +7124,7 @@ msgstr ""
 msgid "Trail Mix"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:353
+#: scenes/ui/inventory_panel.gd:359
 msgid "Trash"
 msgstr ""
 
@@ -7186,12 +7205,12 @@ msgstr ""
 msgid "Umbral Glade"
 msgstr ""
 
-#: scenes/main/main.gd:197
+#: scenes/main/main.gd:201
 #, c-format
 msgid "Unknown map %s"
 msgstr ""
 
-#: autoload/game_state.gd:1297
+#: autoload/game_state.gd:1337
 msgid "Unknown offer."
 msgstr ""
 
@@ -7215,11 +7234,11 @@ msgstr ""
 msgid "Updraft"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:222
+#: scenes/ui/shop_panel.gd:232
 msgid "Upgrade"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:55
+#: scenes/ui/shop_panel.gd:56
 msgid "Upgrade tools"
 msgstr ""
 
@@ -7490,7 +7509,7 @@ msgstr ""
 msgid "Welcome to the Sleepy Sprout! Take a seat anywhere."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:722
+#: scenes/battle/battle_screen.gd:733
 #, c-format
 msgid "What will %s do?"
 msgstr ""
@@ -7682,7 +7701,7 @@ msgstr ""
 msgid "Worn by those who completed the Wildling-dex."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:194
+#: scenes/ui/title_screen.gd:243
 msgid "X"
 msgstr ""
 
@@ -7712,7 +7731,7 @@ msgstr ""
 msgid "You can't befriend a rock. We tried."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:737
+#: scenes/battle/battle_screen.gd:748
 msgid "You can't run from a trainer battle!"
 msgstr ""
 
@@ -7728,7 +7747,7 @@ msgstr ""
 msgid "You don't flinch from the heat. Respect."
 msgstr ""
 
-#: autoload/game_state.gd:875
+#: autoload/game_state.gd:915
 msgid "You don't know that recipe yet."
 msgstr ""
 
@@ -7776,15 +7795,15 @@ msgstr ""
 msgid "You have an eye for quality."
 msgstr ""
 
-#: autoload/game_state.gd:1162
+#: autoload/game_state.gd:1202
 msgid "You have nothing to display. Bring crops, artisan goods or gems."
 msgstr ""
 
-#: autoload/game_state.gd:1084
+#: autoload/game_state.gd:1124
 msgid "You haven't been that deep yet."
 msgstr ""
 
-#: autoload/game_state.gd:1140
+#: autoload/game_state.gd:1180
 msgid "You haven't found any eggs yet."
 msgstr ""
 
@@ -7813,16 +7832,16 @@ msgstr ""
 msgid "You make the valley more colorful."
 msgstr ""
 
-#: autoload/game_state.gd:971 core/farming/machines.gd:16
+#: autoload/game_state.gd:1011 core/farming/machines.gd:16
 #, c-format
 msgid "You need %d %s."
 msgstr ""
 
-#: autoload/game_state.gd:1147
+#: autoload/game_state.gd:1187
 msgid "You need a Wildling to enter."
 msgstr ""
 
-#: autoload/game_state.gd:878
+#: autoload/game_state.gd:918
 msgid "You need a kitchen to cook."
 msgstr ""
 
@@ -7950,12 +7969,12 @@ msgstr ""
 msgid "You've already given %s a gift today."
 msgstr ""
 
-#: autoload/game_state.gd:1128
+#: autoload/game_state.gd:1168
 #, c-format
 msgid "You've already joined this year's %s."
 msgstr ""
 
-#: autoload/game_state.gd:1216
+#: autoload/game_state.gd:1256
 msgid "You've already shown a Wildling today. Come back next Saturday!"
 msgstr ""
 
@@ -8020,7 +8039,7 @@ msgstr ""
 msgid "Your Wildlings are rested and fully healed!"
 msgstr ""
 
-#: scenes/main/adventure_flow.gd:25 scenes/main/main.gd:394
+#: scenes/main/adventure_flow.gd:25 scenes/main/main.gd:398
 msgid "Your Wildlings are too tired to battle. Rest at home or the Wildling Center."
 msgstr ""
 
@@ -8057,7 +8076,7 @@ msgstr ""
 msgid "Your name"
 msgstr ""
 
-#: autoload/game_state.gd:703 autoload/game_state.gd:831 autoload/game_state.gd:885
+#: autoload/game_state.gd:703 autoload/game_state.gd:833 autoload/game_state.gd:848 autoload/game_state.gd:925
 msgid "Your pack is full."
 msgstr ""
 
@@ -8122,7 +8141,7 @@ msgstr ""
 msgid "goods preserved"
 msgstr ""
 
-#: scenes/ui/hud.gd:314 scenes/ui/inventory_panel.gd:324
+#: scenes/ui/hud.gd:314 scenes/ui/inventory_panel.gd:330
 #, c-format
 msgid "hotbar_%d"
 msgstr ""
@@ -8161,12 +8180,16 @@ msgstr ""
 msgid "summer"
 msgstr ""
 
-#: scenes/main/main.gd:426
+#: scenes/main/main.gd:430
 msgid "the Sanctuary"
 msgstr ""
 
-#: scenes/main/main.gd:426
+#: scenes/main/main.gd:430
 msgid "the farm Den"
+msgstr ""
+
+#: autoload/game_state.gd:871
+msgid "the farm chest"
 msgstr ""
 
 #: scenes/main/adventure_flow.gd:126
@@ -8193,7 +8216,7 @@ msgstr ""
 msgid "tomorrow!"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:84
+#: scenes/ui/title_screen.gd:88
 #, c-format
 msgid "v%s"
 msgstr ""
@@ -8207,7 +8230,7 @@ msgstr ""
 msgid "working as a %s"
 msgstr ""
 
-#: scenes/main/main.gd:426
+#: scenes/main/main.gd:430
 msgid "your party"
 msgstr ""
 
@@ -8220,12 +8243,12 @@ msgstr ""
 msgid "· status"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:149
+#: scenes/ui/title_screen.gd:198
 #, c-format
 msgid "● %s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:221
+#: scenes/ui/title_screen.gd:270
 #, c-format
 msgid "● %s · %s Farm\n%s · %dg"
 msgstr ""

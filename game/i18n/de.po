@@ -114,6 +114,11 @@ msgstr "%d Pflanzen sind beim Jahreszeitenwechsel verwelkt."
 msgid "%d hearts with %s"
 msgstr "%d Herzen mit %s"
 
+#: autoload/game_state.gd:879
+#, c-format
+msgid "%d in %s"
+msgstr "%d in %s"
+
 #: scenes/ui/party_panel.gd:236
 #, c-format
 msgid "%d more known moves. Click a slot to swap."
@@ -1261,6 +1266,16 @@ msgstr "Geboren am längsten Tag des Sommers."
 msgid "Bought %d %s"
 msgstr "%d %s gekauft"
 
+#: autoload/game_state.gd:880
+#, c-format
+msgid "Bought %d %s (%s)"
+msgstr "%d %s gekauft (%s)"
+
+#: autoload/game_state.gd:876
+#, c-format
+msgid "Bought %d %s (in %s)"
+msgstr "%d %s gekauft (in %s)"
+
 #: data/moves.json
 msgid "Boulder Crash"
 msgstr "Felsbrecher"
@@ -1922,6 +1937,10 @@ msgstr "Fertig"
 #: scenes/ui/journal_panel.gd:190 scenes/ui/journal_panel.gd:255 scenes/ui/journal_panel.gd:267
 msgid "Done ✓"
 msgstr "Fertig ✓"
+
+#: scenes/ui/inventory_panel.gd:282
+msgid "Double-click to open"
+msgstr "Doppelklick zum Öffnen"
 
 #: data/villagers.json
 msgid "Dr. Fern"
@@ -6872,6 +6891,10 @@ msgstr "das Heiligtum"
 #: scenes/main/main.gd:417
 msgid "the farm Den"
 msgstr "der Hof-Bau"
+
+#: autoload/game_state.gd:871
+msgid "the farm chest"
+msgstr "der Hoftruhe"
 
 #: scenes/ui/map_panel.gd
 msgid "the valley"
