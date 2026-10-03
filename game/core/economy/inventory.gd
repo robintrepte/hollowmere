@@ -152,6 +152,8 @@ func _place_new(id: String, n: int, q: int, meta: Dictionary) -> int:
 		if pos.is_empty():
 			break
 		var take := mini(left, mx)
+		if take <= 0:
+			break
 		entries.append(_make_entry(id, take, q, meta, pos))
 		left -= take
 	return left

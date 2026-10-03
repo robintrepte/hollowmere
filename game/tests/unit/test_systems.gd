@@ -241,3 +241,18 @@ func test_focus_tile_reaches_something_one_step_off() -> void:
 	assert_eq(w.focus_tile(me, Vector2i(6, 6)), Vector2i(6, 5), "a door one tile beside the aim is close enough")
 	assert_eq(w.focus_tile(me, Vector2i(5, 4)), Vector2i(5, 4), "something you are not facing is left alone")
 	w.free()
+
+func test_shop_purchase_does_not_stack_rows_or_repeat() -> void:
+	GameState.new_game({"seed": 3, "player_name": "Shop", "farm_name": "T", "starter": "sproutle"})
+	GameState.add_money(500)
+	var sp := ShopPanel.new("general_store")
+	add_child(sp)
+	var rows := sp._list.get_child_count()
+	assert_gt(rows, 0)
+	sp._refresh()
+	assert_eq(sp._list.get_child_count(), rows, "rebuilding the list replaces rows instead of keeping the old ones")
+	var before := GameState.money()
+	sp._buy("parsnip_seeds", 1)
+	sp._buy("parsnip_seeds", 1)
+	assert_eq(GameState.money(), before - Data.buy_price("parsnip_seeds"), "a second click during the purchase is ignored")
+	sp.free()

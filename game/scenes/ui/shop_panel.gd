@@ -10,6 +10,7 @@ var _sell_list: VBoxContainer
 var _money: Label
 var _tab := "buy"
 var _tabs: HBoxContainer
+var _buying := false
 
 func _init(id: String = "") -> void:
 	shop_id = id
@@ -72,9 +73,15 @@ func _refresh_money() -> void:
 		_money.text = str(GameState.money())
 
 func _refresh() -> void:
+	if _list == null or not is_inside_tree() or is_queued_for_deletion():
+		return
 	_refresh_money()
+	# Drop the old rows now. queue_free would leave them in the layout until the
+	# end of the frame, and a click that lands on a freshly built button would
+	# rebuild again before those rows were gone.
 	for c in _list.get_children():
-		c.queue_free()
+		_list.remove_child(c)
+		c.free()
 	if _tab == "buy":
 		var stock := Economy.shop_stock(shop_id, GameState.season(), GameState.ctx(), GameState.day(), int(GameState.world.seed))
 		if stock.is_empty():
@@ -116,10 +123,10 @@ func _row(id: String, price: int, locked: bool, req: String, buying: bool) -> Co
 	nv.add_child(d)
 	var b := UITheme.button(tr("%dg") % price)
 	b.disabled = locked or GameState.money() < price
-	b.gui_input.connect(func(ev):
-		if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT and not b.disabled:
-			_buy(id, 5 if ev.shift_pressed else 1)
-			b.accept_event())
+	b.pressed.connect(func():
+		if b.disabled or _buying:
+			return
+		_buy(id, 5 if Input.is_physical_key_pressed(KEY_SHIFT) else 1))
 	h.add_child(b)
 	pc.tooltip_text = Data.item_name(id)
 	return pc
@@ -170,6 +177,9 @@ func _offer(icon: Texture2D, title: String, desc: String, costs: Array, label: S
 	return pc
 
 func _act(action: String, args: Array) -> void:
+	if _buying:
+		return
+	_buying = true
 	var r: Dictionary = Coop.act(action, args)
 	if r.ok:
 		Audio.sfx(r.get("sfx", "coin") if r.get("sfx", "") != "" else "coin")
@@ -177,7 +187,7 @@ func _act(action: String, args: Array) -> void:
 		Audio.sfx("error")
 		EventBus.toast.emit(r.reason, "")
 	await get_tree().process_frame
-	_refresh()
+	_finish_purchase()
 
 func _build_list() -> void:
 	var p := GameState.local_player()
@@ -239,6 +249,9 @@ func _backpack_list() -> void:
 			func(): _act("buy_backpack", [lvl]), tr("Owned ✓") if owned else ""))
 
 func _buy(id: String, n: int) -> void:
+	if _buying:
+		return
+	_buying = true
 	var r: Dictionary = Coop.act("buy", [shop_id, id, n])
 	if r.ok:
 		Audio.sfx("coin")
@@ -250,11 +263,20 @@ func _buy(id: String, n: int) -> void:
 		Audio.sfx("error")
 		EventBus.toast.emit(r.reason, "")
 	await get_tree().process_frame
-	_refresh()
+	_finish_purchase()
+
+func _finish_purchase() -> void:
+	var alive := is_inside_tree() and not is_queued_for_deletion()
+	if alive:
+		_refresh()
+	_buying = false
 
 func _sell(uid: String, n: int) -> void:
+	if _buying:
+		return
+	_buying = true
 	var r: Dictionary = Coop.act("sell", [uid, n])
 	if r.ok:
 		Audio.sfx("coin")
 	await get_tree().process_frame
-	_refresh()
+	_finish_purchase()
