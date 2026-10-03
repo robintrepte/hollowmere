@@ -9,3 +9,7 @@ battle/snow https://replicate.delivery/xezq/fqXo2z7iwVxFXK8BxekdryWMFFOtkV12OBYk
 battle/twilight https://replicate.delivery/xezq/8AnBqU3eKDwXfkrWL0bfmp1sGiQ0wzNwF1MciEMOV6r0U5muA/tmpylakwm5y.png
 battle/cave https://replicate.delivery/xezq/hldjpySGaP7TBpTMG6GQPKMAB1Pf6QoX1RREwJJfR6YgqcTXA/tmpf906evlp.png
 ui/title_bg https://replicate.delivery/xezq/L6YuWhcGnmKOAViM6Zq39RE1n2qtupzgmW3gL4MvlebUVupLA/tmp7i7i9n71.png
+ui/title_spring https://replicate.delivery/xezq/KzenhrUDMlUqXCoZYkXyuAy3TRbOarAUvatGOCjAPN26DxpLA/tmpgjj6lxkp.png
+ui/title_night https://replicate.delivery/xezq/UrKAWz0QOWaNIlJtwwldazHQQmZjtlYg6OJf2JqgiShNExpLA/tmpmezai2fq.png
+ui/title_fall https://replicate.delivery/xezq/81C2LuI7dFKKFZbREVesgXhbtarSPVN2SF2Okw9kpbz8DxpLA/tmp1ncjkdmk.png
+ui/title_winter https://replicate.delivery/xezq/C77EtcfzefGxip0U15eFiowhcueZIfl67KLgcstW5OIGfDxpLA/tmpl3ecelm_.png

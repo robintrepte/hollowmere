@@ -1,15 +1,37 @@
 class_name TitleScreen
 extends Control
-## Title: key art, logo, continue / new / load / co-op / settings / quit.
+## Title: rotating seasonal key art with ambient animation, logo, splash tips,
+## continue / new / load / co-op / settings / quit.
 
 signal new_game_requested(opts: Dictionary)
 signal load_requested(slot: int)
 signal coop_requested
 
+const SCENES := [
+	{"bg": "title_bg", "fx": "pollen"},
+	{"bg": "title_spring", "fx": "petals"},
+	{"bg": "title_night", "fx": "fireflies"},
+	{"bg": "title_fall", "fx": "leaves"},
+	{"bg": "title_winter", "fx": "snow"},
+]
+const SCENE_SECONDS := 45.0
+const TIP_SECONDS := 7.0
+const LAST_SCENE_FILE := "user://title.cfg"
+
 var ui: UIRoot
 var _menu: VBoxContainer
 var _bg: TextureRect
+var _bg_next: TextureRect
+var _ambience: TitleAmbience
 var _logo: TextureRect
+var _splash: Control
+var _splash_label: Label
+var _splash_k := 1.0
+var _tips: Array = []
+var _tip_i := 0
+var _tip_t := 0.0
+var _scene := 0
+var _scene_t := 0.0
 var _load_btn: Button
 var _account: Button
 var _t := 0.0
@@ -20,13 +42,13 @@ func _init(u: UIRoot = null) -> void:
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	theme = UITheme.theme()
-	_bg = TextureRect.new()
-	_bg.texture = Art.tex("res://assets/ui/title_bg.png")
-	_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	_bg.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	add_child(_bg)
+	_bg = _backdrop()
+	_bg_next = _backdrop()
+	_bg_next.modulate.a = 0.0
+	_ambience = TitleAmbience.new()
+	add_child(_ambience)
+	_scene = _pick_scene()
+	_show_scene(_scene, false)
 	_logo = TextureRect.new()
 	_logo.texture = Art.tex("res://assets/ui/logo.png")
 	_logo.anchor_left = 0.5
@@ -37,6 +59,7 @@ func _ready() -> void:
 	_logo.offset_bottom = 16 + 81
 	_logo.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_child(_logo)
+	_build_splash()
 	var panel := PanelContainer.new()
 	panel.add_theme_stylebox_override("panel", UITheme.box(Color(0.96, 0.9, 0.77, 0.92), UITheme.OUTLINE, 2, 4, 8))
 	panel.anchor_left = 0.5
@@ -175,7 +198,89 @@ func _fill_cloud(box: VBoxContainer, p: Control) -> void:
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		box.add_child(b)
 
+func _backdrop() -> TextureRect:
+	var r := TextureRect.new()
+	r.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	r.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	r.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	r.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(r)
+	return r
+
+## A random scene, never the one shown at the previous launch.
+func _pick_scene() -> int:
+	var cfg := ConfigFile.new()
+	cfg.load(LAST_SCENE_FILE)
+	var last := int(cfg.get_value("title", "scene", -1))
+	var i := randi() % (SCENES.size() - 1)
+	if i >= last and last >= 0:
+		i += 1
+	cfg.set_value("title", "scene", i)
+	cfg.save(LAST_SCENE_FILE)
+	return i
+
+func _show_scene(i: int, fade: bool) -> void:
+	var tex := Art.tex("res://assets/ui/%s.png" % SCENES[i].bg)
+	if not fade:
+		_bg.texture = tex
+		_ambience.set_fx(SCENES[i].fx)
+		return
+	_bg_next.texture = tex
+	var tw := create_tween()
+	tw.tween_property(_ambience, "modulate:a", 0.0, 0.8)
+	tw.parallel().tween_property(_bg_next, "modulate:a", 1.0, 2.0)
+	tw.tween_callback(func():
+		_bg.texture = tex
+		_bg_next.modulate.a = 0.0
+		_ambience.set_fx(SCENES[i].fx))
+	tw.tween_property(_ambience, "modulate:a", 1.0, 0.8)
+
+func _build_splash() -> void:
+	var d: Dictionary = Data._load_json("res://data/title_tips.json")
+	_tips = d.get("lines", []).duplicate()
+	_tips.shuffle()
+	_splash = Control.new()
+	_splash.anchor_left = 0.5
+	_splash.anchor_right = 0.5
+	_splash.offset_top = 104
+	_splash.offset_bottom = 104
+	_splash.rotation = deg_to_rad(-2.0)
+	_splash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_splash)
+	_splash_label = UITheme.label("", 12, Color("#ffe14a"), true)
+	_splash_label.add_theme_constant_override("outline_size", 6)
+	_splash_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_splash_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_splash_label.offset_left = -220
+	_splash_label.offset_right = 220
+	_splash_label.mouse_filter = Control.MOUSE_FILTER_STOP
+	_splash_label.gui_input.connect(func(ev: InputEvent):
+		if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
+			Audio.sfx("blip")
+			_next_tip())
+	_splash.add_child(_splash_label)
+	_next_tip()
+
+func _next_tip() -> void:
+	if _tips.is_empty():
+		return
+	_splash_label.text = tr(_tips[_tip_i % _tips.size()])
+	_tip_i += 1
+	_tip_t = 0.0
+	_splash_k = 0.0
+	create_tween().tween_property(self, "_splash_k", 1.0, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
 func _process(delta: float) -> void:
 	_t += delta
 	_logo.offset_top = 16 + roundf(sin(_t * 1.4) * 2.0)
 	_logo.offset_bottom = _logo.offset_top + 81
+	_splash.scale = Vector2.ONE * _splash_k * (1.0 + 0.04 * sin(_t * 6.0))
+	_tip_t += delta
+	if _tip_t >= TIP_SECONDS:
+		_next_tip()
+	_scene_t += delta
+	if _scene_t >= SCENE_SECONDS:
+		_scene_t = 0.0
+		_scene = (_scene + 1) % SCENES.size()
+		_show_scene(_scene, true)

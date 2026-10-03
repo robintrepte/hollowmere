@@ -192,7 +192,7 @@ msgstr ""
 msgid "%s B%d%s"
 msgstr ""
 
-#: scenes/ui/hud.gd:265
+#: scenes/ui/hud.gd:287
 #, c-format
 msgid "%s Lv%d"
 msgstr ""
@@ -332,7 +332,7 @@ msgstr ""
 msgid "%s · %s\n%s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:138
+#: scenes/ui/title_screen.gd:161
 #, c-format
 msgid "%s · %s Farm\n%s · %dg"
 msgstr ""
@@ -976,7 +976,11 @@ msgstr ""
 msgid "B%d"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:832 scenes/battle/battle_screen.gd:852 scenes/ui/new_game_panel.gd:95 scenes/ui/title_screen.gd:150 ...
+#: data/title_tips.json
+msgid "Baby Wildlings inherit genes from both parents."
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:832 scenes/battle/battle_screen.gd:852 scenes/ui/new_game_panel.gd:95 scenes/ui/title_screen.gd:173 ...
 msgid "Back"
 msgstr ""
 
@@ -1412,7 +1416,7 @@ msgstr ""
 msgid "Charmer"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:156
+#: scenes/ui/title_screen.gd:179
 msgid "Checking the cloud..."
 msgstr ""
 
@@ -1476,6 +1480,10 @@ msgstr ""
 msgid "Clever"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Click a Wildling. Go on."
+msgstr ""
+
 #: scenes/main/adventure_flow.gd:202
 msgid "Climb back out of the cave?"
 msgstr ""
@@ -1501,7 +1509,7 @@ msgstr ""
 msgid "Cloud Fluff"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:163
+#: scenes/ui/title_screen.gd:186
 msgid "Cloud backups are up to date."
 msgstr ""
 
@@ -1521,7 +1529,7 @@ msgstr ""
 msgid "Cluckle Egg"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:68
+#: scenes/ui/title_screen.gd:91
 msgid "Co-op"
 msgstr ""
 
@@ -1545,7 +1553,11 @@ msgstr ""
 msgid "Conductor Caverns"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:58
+#: data/title_tips.json
+msgid "Containers inside your backpack hold even more stuff."
+msgstr ""
+
+#: scenes/ui/title_screen.gd:81
 msgid "Continue"
 msgstr ""
 
@@ -1674,6 +1686,10 @@ msgstr ""
 msgid "Cozy lights that glow at night."
 msgstr ""
 
+#: data/title_tips.json
+msgid "Cozy mode: always on."
+msgstr ""
+
 #: data/items.json
 msgid "Crackling dust from Voltick."
 msgstr ""
@@ -1698,6 +1714,10 @@ msgstr ""
 msgid "Creature Show ladder · every Saturday at the Show Ring"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Creature Shows open every Saturday at the Show Ring."
+msgstr ""
+
 #: data/traits.json
 msgid "Critical hit chance doubled. Farm: more rare finds."
 msgstr ""
@@ -1705,6 +1725,14 @@ msgstr ""
 #: data/items.json
 #, c-format
 msgid "Crops grow 25% faster. Apply to tilled soil."
+msgstr ""
+
+#: data/title_tips.json
+msgid "Crops in the greenhouse grow all year round."
+msgstr ""
+
+#: data/title_tips.json
+msgid "Crows fear scarecrows. Scarecrows fear nothing."
 msgstr ""
 
 #: data/moves.json
@@ -1765,7 +1793,7 @@ msgstr ""
 msgid "Deepest: B%d. It has no bottom."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:144
+#: scenes/ui/title_screen.gd:167
 msgid "Delete this farm forever?"
 msgstr ""
 
@@ -1850,6 +1878,14 @@ msgstr ""
 msgid "Drench"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Drink some water. You, not the crops."
+msgstr ""
+
+#: data/title_tips.json
+msgid "Drop goods in the shipping bin. You get paid overnight."
+msgstr ""
+
 #: scenes/ui/inventory_panel.gd:107
 msgid "Drop items here.\nThey sell overnight."
 msgstr ""
@@ -1864,10 +1900,6 @@ msgstr ""
 
 #: data/creatures.json
 msgid "Dustail"
-msgstr ""
-
-#: scenes/ui/hud.gd:112
-msgid "E"
 msgstr ""
 
 #: data/buildings.json
@@ -1911,6 +1943,10 @@ msgstr ""
 msgid "Eggplant"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Eggs hatch at the Hatchery. Every egg is a surprise!"
+msgstr ""
+
 #: scenes/ui/hatchery_panel.gd:98
 msgid "Eggs you have"
 msgstr ""
@@ -1939,12 +1975,20 @@ msgstr ""
 msgid "Ember Wildlings make the best forge companions."
 msgstr ""
 
+#: data/title_tips.json
+msgid "Ember Wildlings smelt ore and burn weeds."
+msgstr ""
+
 #: data/traits.json
 msgid "Ember moves hit 1.5x harder below 1/3 HP. Farm: +1 Smelter power."
 msgstr ""
 
 #: data/creatures.json
 msgid "Embercub"
+msgstr ""
+
+#: data/title_tips.json
+msgid "Embercub is warm. Do not hug in summer."
 msgstr ""
 
 #: data/progression.json
@@ -1961,6 +2005,10 @@ msgstr ""
 
 #: data/moves.json
 msgid "Erupting roots. The user takes recoil."
+msgstr ""
+
+#: data/title_tips.json
+msgid "Every Wildling has a nature that shapes its stats."
 msgstr ""
 
 #: data/villagers.json
@@ -1984,12 +2032,12 @@ msgstr ""
 msgid "Farm %d/%d"
 msgstr ""
 
-#: scenes/ui/hud.gd:221
+#: scenes/ui/hud.gd:244
 #, c-format
 msgid "Farm Lv %d"
 msgstr ""
 
-#: scenes/ui/hud.gd:73
+#: scenes/ui/hud.gd:75
 msgid "Farm Lv 1"
 msgstr ""
 
@@ -2006,7 +2054,7 @@ msgstr ""
 msgid "Farm job: %s. %s"
 msgstr ""
 
-#: scenes/ui/hud.gd:175
+#: scenes/ui/hud.gd:168
 #, c-format
 msgid "Farm level %d!"
 msgstr ""
@@ -2115,6 +2163,10 @@ msgstr ""
 msgid "Fierce"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Fill your Dex by befriending every Wildling."
+msgstr ""
+
 #: data/progression.json
 msgid "Find a seasonal legend at its home shrine and befriend it."
 msgstr ""
@@ -2187,6 +2239,10 @@ msgstr ""
 msgid "Flying with Galecrest is like being free."
 msgstr ""
 
+#: data/title_tips.json
+msgid "Food restores energy. Snacks beat naps."
+msgstr ""
+
 #: data/items.json
 msgid "Forage Basket"
 msgstr ""
@@ -2197,6 +2253,10 @@ msgstr ""
 
 #: data/creatures.json
 msgid "Forgemole"
+msgstr ""
+
+#: data/title_tips.json
+msgid "Free-range, organic pixels."
 msgstr ""
 
 #: data/items.json
@@ -2457,6 +2517,10 @@ msgstr ""
 msgid "Glows softly at night."
 msgstr ""
 
+#: data/title_tips.json
+msgid "Go to bed before 2am, or you'll pass out and lose gold!"
+msgstr ""
+
 #: data/progression.json
 msgid "Gold"
 msgstr ""
@@ -2570,6 +2634,10 @@ msgstr ""
 msgid "Grove Keeper"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Grow your own salad, one pixel at a time."
+msgstr ""
+
 #: data/progression.json
 msgid "Grow, ship, cook. Let the farm find its feet."
 msgstr ""
@@ -2645,6 +2713,10 @@ msgstr ""
 
 #: data/moves.json
 msgid "Halo Bash"
+msgstr ""
+
+#: data/title_tips.json
+msgid "Hand-tilled, pixel by pixel."
 msgstr ""
 
 #: scenes/ui/party_panel.gd:194
@@ -3197,6 +3269,10 @@ msgstr ""
 msgid "It's locked."
 msgstr ""
 
+#: data/title_tips.json
+msgid "It's not hoarding if it's organized."
+msgstr ""
+
 #: scenes/main/adventure_flow.gd:318
 msgid "It's the weekly Creature Show! The judges score grooming, happiness, genes, level and a little flair."
 msgstr ""
@@ -3427,6 +3503,10 @@ msgstr ""
 msgid "Knocking on the farm gate..."
 msgstr ""
 
+#: data/title_tips.json
+msgid "Ladders in the mines lead deeper, to better ore."
+msgstr ""
+
 #: data/buildings.json
 msgid "Lakeside Plot"
 msgstr ""
@@ -3449,6 +3529,10 @@ msgstr ""
 
 #: data/moves.json
 msgid "Leaf Dart"
+msgstr ""
+
+#: data/title_tips.json
+msgid "Leaf Wildlings help crops grow faster overnight."
 msgstr ""
 
 #: data/traits.json
@@ -3541,11 +3625,11 @@ msgstr ""
 msgid "Lively"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:65
+#: scenes/ui/title_screen.gd:88
 msgid "Load"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:131
+#: scenes/ui/title_screen.gd:154
 msgid "Load a farm"
 msgstr ""
 
@@ -3589,6 +3673,10 @@ msgstr ""
 #: scenes/ui/craft_panel.gd:185
 #, c-format
 msgid "Made %d %s"
+msgstr ""
+
+#: data/title_tips.json
+msgid "Made with love and a lot of compost."
 msgstr ""
 
 #: data/creatures.json
@@ -3784,7 +3872,7 @@ msgstr ""
 msgid "Never fails. Extremely rare."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:61
+#: scenes/ui/title_screen.gd:84
 msgid "New Farm"
 msgstr ""
 
@@ -3796,7 +3884,7 @@ msgstr ""
 msgid "New farmers always buy too few parsnips. Just saying."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:165
+#: scenes/ui/title_screen.gd:188
 msgid "Newer in the cloud"
 msgstr ""
 
@@ -3856,11 +3944,15 @@ msgstr ""
 msgid "No compatible partner in the Den. Egg groups: %s."
 msgstr ""
 
+#: data/title_tips.json
+msgid "No crops were harmed. Some were eaten."
+msgstr ""
+
 #: scenes/ui/hatchery_panel.gd:96
 msgid "No eggs to add. Pair Wildlings in the Den and eggs appear in the farm chest."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:133
+#: scenes/ui/title_screen.gd:156
 msgid "No farms yet."
 msgstr ""
 
@@ -3878,6 +3970,11 @@ msgstr ""
 
 #: scenes/battle/battle_screen.gd:805
 msgid "Nothing useful to use here."
+msgstr ""
+
+#: data/title_tips.json
+#, c-format
+msgid "Now with 100% more Wildlings!"
 msgstr ""
 
 #: data/items.json
@@ -3986,6 +4083,10 @@ msgstr ""
 msgid "Parsnip"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Parsnips: the gateway vegetable."
+msgstr ""
+
 #: data/villagers.json
 msgid "Partners in research. And... maybe more?"
 msgstr ""
@@ -4021,6 +4122,10 @@ msgstr ""
 
 #: data/traits.json
 msgid "Permafrost"
+msgstr ""
+
+#: data/title_tips.json
+msgid "Pet your Wildlings. They earned it."
 msgstr ""
 
 #: data/moves.json
@@ -4131,6 +4236,10 @@ msgstr ""
 msgid "Potato"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Powered by tea and parsnips."
+msgstr ""
+
 #: data/types.json
 msgid "Preserver"
 msgstr ""
@@ -4141,6 +4250,10 @@ msgstr ""
 
 #: data/types.json
 msgid "Preserves crops in the farm chest and protects crops from season change."
+msgstr ""
+
+#: data/title_tips.json
+msgid "Press R to rotate items in your backpack."
 msgstr ""
 
 #: data/progression.json
@@ -4237,7 +4350,7 @@ msgstr ""
 msgid "Quiet mornings here are my favorite."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:75
+#: scenes/ui/title_screen.gd:98
 msgid "Quit"
 msgstr ""
 
@@ -4267,6 +4380,10 @@ msgstr ""
 
 #: data/moves.json
 msgid "Rain Song"
+msgstr ""
+
+#: data/title_tips.json
+msgid "Rain waters your crops for you!"
 msgstr ""
 
 #: data/moves.json
@@ -4520,6 +4637,10 @@ msgstr ""
 msgid "Scarecrow"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Scarecrows keep the crows away from your crops."
+msgstr ""
+
 #: data/items.json
 msgid "Scythe"
 msgstr ""
@@ -4594,7 +4715,7 @@ msgstr ""
 msgid "Server"
 msgstr ""
 
-#: scenes/ui/pause_menu.gd:41 scenes/ui/settings_panel.gd:27 scenes/ui/title_screen.gd:73
+#: scenes/ui/pause_menu.gd:41 scenes/ui/settings_panel.gd:27 scenes/ui/title_screen.gd:96
 msgid "Settings"
 msgstr ""
 
@@ -4654,6 +4775,10 @@ msgstr ""
 msgid "Shellfort"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Shift-click moves items between grids in a flash."
+msgstr ""
+
 #: scenes/ui/shop_panel.gd:66
 msgid "Shift-click to buy 5 · Prices rise with quality when selling"
 msgstr ""
@@ -4697,6 +4822,10 @@ msgstr ""
 
 #: scenes/ui/account_panel.gd:94 scenes/ui/coop_panel.gd:104 scenes/ui/coop_panel.gd:162
 msgid "Sign in"
+msgstr ""
+
+#: data/title_tips.json
+msgid "Sign in and your farm is backed up to the cloud."
 msgstr ""
 
 #: scenes/ui/account_panel.gd:103
@@ -4788,6 +4917,10 @@ msgstr ""
 msgid "Snowfall"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Snowmen are not Wildlings. We checked."
+msgstr ""
+
 #: data/creatures.json
 msgid "Snowpaca"
 msgstr ""
@@ -4847,6 +4980,10 @@ msgstr ""
 #: scenes/main/adventure_flow.gd:149
 #, c-format
 msgid "Something ancient is near. The air smells of %s."
+msgstr ""
+
+#: data/title_tips.json
+msgid "Somewhere, a pumpkin dreams of being a melon."
 msgstr ""
 
 #: scenes/ui/inventory_panel.gd:74
@@ -4918,12 +5055,20 @@ msgstr ""
 msgid "Sprinkler"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Sprinklers water the tiles around them every morning."
+msgstr ""
+
 #: data/progression.json
 msgid "Sprout"
 msgstr ""
 
 #: data/creatures.json
 msgid "Sproutle"
+msgstr ""
+
+#: data/title_tips.json
+msgid "Sproutle naps 20 hours a day. Goals."
 msgstr ""
 
 #: data/creatures.json
@@ -5136,6 +5281,10 @@ msgstr ""
 msgid "Sweet Treat"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Sweet Treats give better befriending odds."
+msgstr ""
+
 #: data/items.json
 msgid "Sweet and tart."
 msgstr ""
@@ -5154,6 +5303,10 @@ msgstr ""
 
 #: data/moves.json
 msgid "Tailwind"
+msgstr ""
+
+#: data/title_tips.json
+msgid "Take a break! Your farm will wait for you."
 msgstr ""
 
 #: scenes/ui/journal_panel.gd:171
@@ -5298,6 +5451,10 @@ msgstr ""
 
 #: scenes/main/controller.gd:197
 msgid "The coin sparkles as it sinks. You feel a little luckier today."
+msgstr ""
+
+#: data/title_tips.json
+msgid "The early farmer gets the parsnip."
 msgstr ""
 
 #: data/villagers.json
@@ -5530,6 +5687,14 @@ msgstr ""
 msgid "Tide Lantern Night"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Tide Wildlings water your crops every morning."
+msgstr ""
+
+#: data/title_tips.json
+msgid "Tide beats Ember. Ember beats Leaf. Leaf beats Tide."
+msgstr ""
+
 #: data/traits.json
 msgid "Tide moves hit 1.5x harder below 1/3 HP. Farm: +1 Waterer power."
 msgstr ""
@@ -5546,7 +5711,12 @@ msgstr ""
 msgid "Tills soil for planting."
 msgstr ""
 
-#: scenes/ui/hud.gd:200
+#: data/title_tips.json
+#, c-format
+msgid "Today's forecast: 90% chance of cozy."
+msgstr ""
+
+#: scenes/ui/hud.gd:221
 #, c-format
 msgid "Today: %s at the Show Ring"
 msgstr ""
@@ -5687,6 +5857,10 @@ msgstr ""
 msgid "Up for a Wildling battle?"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Up to 4 friends can farm together in co-op."
+msgstr ""
+
 #: data/traits.json
 msgid "Updraft"
 msgstr ""
@@ -5737,6 +5911,10 @@ msgstr ""
 
 #: data/villagers.json
 msgid "Village Kid"
+msgstr ""
+
+#: data/title_tips.json
+msgid "Villagers love gifts. Some love them more than others."
 msgstr ""
 
 #: data/moves.json
@@ -5860,6 +6038,10 @@ msgstr ""
 msgid "Warden rematches · one per Warden each week · teams around Lv%d"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Wardens guard the old shrines of every region."
+msgstr ""
+
 #: data/progression.json
 msgid "Warm drinks, snow sculptures, and good company."
 msgstr ""
@@ -5905,9 +6087,17 @@ msgstr ""
 msgid "Wavelash"
 msgstr ""
 
+#: data/title_tips.json
+msgid "Weaken a wild Wildling before you offer a treat."
+msgstr ""
+
 #: autoload/game_state.gd:217
 #, c-format
 msgid "Weekly challenge complete: %s (+%dg)"
+msgstr ""
+
+#: data/title_tips.json
+msgid "Weekly challenges pay out extra gold."
 msgstr ""
 
 #: scenes/ui/journal_panel.gd:240
@@ -6020,6 +6210,10 @@ msgstr ""
 msgid "Wildling-dex complete! You are a true Hollowmere legend."
 msgstr ""
 
+#: data/title_tips.json
+msgid "Wildlings do not pay rent."
+msgstr ""
+
 #: data/villagers.json
 msgid "Wildlings love food from the farm. Use it when befriending."
 msgstr ""
@@ -6102,7 +6296,7 @@ msgstr ""
 msgid "Worn by those who completed the Wildling-dex."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:143
+#: scenes/ui/title_screen.gd:166
 msgid "X"
 msgstr ""
 
@@ -6121,6 +6315,10 @@ msgstr ""
 
 #: data/villagers.json
 msgid "You came back. In this weather."
+msgstr ""
+
+#: data/title_tips.json
+msgid "You can't befriend a rock. We tried."
 msgstr ""
 
 #: data/villagers.json
@@ -6324,6 +6522,10 @@ msgstr ""
 msgid "You've thawed something in me."
 msgstr ""
 
+#: data/title_tips.json
+msgid "Your Tetris skills finally pay off!"
+msgstr ""
+
 #: scenes/battle/battle_screen.gd:469
 msgid "Your Wildlings are all worn out..."
 msgstr ""
@@ -6398,7 +6600,7 @@ msgstr ""
 msgid "[%s] "
 msgstr ""
 
-#: scenes/ui/hud.gd:290 scenes/ui/inventory_panel.gd:334
+#: scenes/ui/hud.gd:312 scenes/ui/inventory_panel.gd:334
 #, c-format
 msgid "hotbar_%d"
 msgstr ""
@@ -6413,7 +6615,7 @@ msgstr ""
 msgid "mine:%s:%d"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:76
+#: scenes/ui/title_screen.gd:99
 #, c-format
 msgid "v%s"
 msgstr ""
@@ -6423,12 +6625,12 @@ msgstr ""
 msgid "· %d"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:98
+#: scenes/ui/title_screen.gd:121
 #, c-format
 msgid "● %s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:170
+#: scenes/ui/title_screen.gd:193
 #, c-format
 msgid "● %s · %s Farm\n%s · %dg"
 msgstr ""

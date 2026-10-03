@@ -84,7 +84,7 @@ Jobs whose secrets are missing skip with a warning instead of failing.
    $G --headless --path game -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json
    $G --headless --path game res://tests/sim/balance_sim.tscn -- --rounds=12 --days=112
    $G --path game res://tests/perf/perf_bench.tscn -- --out=$PWD/.shots   # p95 must stay under 4 ms on an M-series Mac
-   for s in smoke ui_smoke creatures_smoke adventure_smoke endless_smoke; do
+   for s in smoke ui_smoke title_smoke creatures_smoke adventure_smoke endless_smoke; do
      $G --path game res://tests/smoke/$s.tscn -- --out=$PWD/.shots; done      # look at the screenshots
    python3 tools/content/extract_strings.py
    ```
