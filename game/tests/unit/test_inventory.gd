@@ -19,6 +19,18 @@ func test_rotation() -> void:
 	assert_eq(inv.add("tool_belt", 1), 0, "2x1 belt fits rotated in a 1x2 grid")
 	assert_true(bool(inv.entries[0].r))
 
+func test_pack_first_add_keeps_new_stacks_visible() -> void:
+	var inv := Inventory.new(4, 4)
+	inv.add("seed_pouch", 1)
+	inv.add("parsnip_seeds", 4)
+	assert_eq(inv.add("parsnip_seeds", 3, 0, {}, false), 0)
+	assert_eq(inv.first_of("seed_pouch").inv.count("parsnip_seeds"), 4)
+	var top := 0
+	for e in inv.entries:
+		if e.id == "parsnip_seeds":
+			top += int(e.n)
+	assert_eq(top, 3)
+
 func test_containers_absorb_matching_items() -> void:
 	var inv := Inventory.new(4, 4)
 	inv.add("seed_pouch", 1)

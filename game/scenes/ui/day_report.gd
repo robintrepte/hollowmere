@@ -65,7 +65,7 @@ func _ready() -> void:
 		elif jv is int or jv is float:
 			n = int(jv)
 		if n > 0:
-			lines.append(tr("%d %s") % [n, k[1]])
+			lines.append(tr("%d %s") % [n, tr(k[1])])
 	if int(jobs.get("tired", 0)) > 0:
 		lines.append(tr("%d Wildlings are tired and need rest") % int(jobs.tired))
 	if not lines.is_empty():

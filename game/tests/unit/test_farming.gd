@@ -43,6 +43,40 @@ func test_frost_protection() -> void:
 	var rep := g.new_day("summer", "spring", "sun", rng, 5, true)
 	assert_eq(int(rep.withered), 0)
 
+func test_until_clears_empty_soil_only() -> void:
+	var g := _grid()
+	var p := Vector2i(3, 3)
+	assert_true(g.till(p))
+	assert_true(g.until(p))
+	assert_false(g.is_tilled(p))
+	g.till(p)
+	g.plant(p, "parsnip_seeds", "spring")
+	assert_false(g.until(p), "a crop stays")
+	assert_false(g.crop_at(p).is_empty())
+
+func test_bare_soil_reverts_overnight() -> void:
+	var g := _grid()
+	var local := RandomNumberGenerator.new()
+	local.seed = 7
+	var n := 0
+	for x in range(1, 9):
+		for y in range(1, 9):
+			g.till(Vector2i(x, y))
+			n += 1
+	g.new_day("spring", "spring", "sun", local, 0, true)
+	var left := g.soil.size()
+	assert_lt(left, int(n * 0.75), "most dry empty soil is gone by morning")
+	assert_gt(left, int(n * 0.2), "not every tile reverts in one night")
+
+func test_watered_bare_soil_stays() -> void:
+	var g := _grid()
+	var p := Vector2i(2, 2)
+	g.till(p)
+	g.water(p)
+	g.new_day("spring", "spring", "sun", rng, 0, true)
+	assert_true(g.is_tilled(p))
+	assert_false(bool(g.soil_at(p).watered))
+
 func test_rain_waters() -> void:
 	var g := _grid()
 	g.till(Vector2i(2, 2))

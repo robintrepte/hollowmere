@@ -79,7 +79,7 @@ func _story() -> void:
 		var col := VBoxContainer.new()
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		h.add_child(col)
-		col.add_child(UITheme.label(tr("Chapter %d · %s") % [int(w.quest) + 1, ch.title], 10, UITheme.INK))
+		col.add_child(UITheme.label(tr("Chapter %d · %s") % [int(w.quest) + 1, tr(str(ch.title))], 10, UITheme.INK))
 		col.add_child(_wrap(Adventure.tracker(w, player), 8, UITheme.WOOD))
 		if not ch.goal.is_empty() and w.flags.get("story_seen:" + str(ch.id), false):
 			var pr := Adventure.goal_progress(ch.goal, Adventure.story_facts(w, player))
@@ -93,7 +93,7 @@ func _story() -> void:
 	for i in mini(int(w.quest), Adventure.chapters().size()):
 		done.append(str(Adventure.chapters()[i].title))
 	if not done.is_empty():
-		_body.add_child(_wrap("Finished: " + " · ".join(done), 8, UITheme.MUTED))
+		_body.add_child(_wrap(tr("Finished: %s") % " · ".join(done), 8, UITheme.MUTED))
 	_body.add_child(UITheme.label(tr("The valley · %d / %d shrines awake") % [w.shrines.size(), Adventure.SHRINE_COUNT], 9, UITheme.WOOD))
 	var grid := GridContainer.new()
 	grid.columns = 2
@@ -122,9 +122,9 @@ func _story() -> void:
 		rc.add_theme_constant_override("separation", 0)
 		rh.add_child(rc)
 		rc.add_child(UITheme.label(Data.region_name(rid) if open else "???", 9, UITheme.INK))
-		var status := "Locked"
+		var status := tr("Locked")
 		if open:
-			status = {"dark": tr("Warden %s awaits") % Data.villager_name(str(r.warden)), "ready": "Shrine ready to wake", "restored": "Shrine awake ✓"}[state]
+			status = {"dark": tr("Warden %s awaits") % Data.villager_name(str(r.warden)), "ready": tr("Shrine ready to wake"), "restored": tr("Shrine awake ✓")}[state]
 		rc.add_child(UITheme.label(status, 8, UITheme.LEAF.darkened(0.3) if state == "restored" else UITheme.MUTED))
 		if open and r.has("mine"):
 			var total := Adventure.mine_floors(rid)
@@ -153,7 +153,8 @@ func _people() -> void:
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		col.add_theme_constant_override("separation", 0)
 		h.add_child(col)
-		var name_line := tr("%s%s") % [v.name, "  ♥ dating" if st.get("dating", false) else ("  ♥ married" if st.get("married", false) else "")]
+		var heart := tr("  ♥ dating") if st.get("dating", false) else (tr("  ♥ married") if st.get("married", false) else "")
+		var name_line := tr("%s%s") % [v.name, heart]
 		col.add_child(UITheme.label(name_line, 10, UITheme.INK))
 		var hearts := Relationships.hearts(st)
 		var cap := Relationships.MAX_HEARTS if not v.get("romance", false) or st.get("dating", false) else Relationships.MAX_HEARTS_FRIEND
@@ -164,12 +165,12 @@ func _people() -> void:
 			bits.append(tr("Birthday: %s %d") % [str(bd[0]).capitalize(), int(bd[1])])
 		bits.append(tr("Gifts this week %d/2") % int(st.gifts_week))
 		if v.get("romance", false):
-			bits.append("Romanceable")
+			bits.append(tr("Romanceable"))
 		col.add_child(UITheme.label("  ·  ".join(bits), 8, UITheme.MUTED))
 		var today := VBoxContainer.new()
 		h.add_child(today)
-		today.add_child(UITheme.label("Talked ✓" if st.talked else "Not talked", 8, UITheme.LEAF.darkened(0.3) if st.talked else UITheme.MUTED))
-		today.add_child(UITheme.label("Gift ✓" if st.gifted_today else "No gift yet", 8, UITheme.LEAF.darkened(0.3) if st.gifted_today else UITheme.MUTED))
+		today.add_child(UITheme.label(tr("Talked ✓") if st.talked else tr("Not talked"), 8, UITheme.LEAF.darkened(0.3) if st.talked else UITheme.MUTED))
+		today.add_child(UITheme.label(tr("Gift ✓") if st.gifted_today else tr("No gift yet"), 8, UITheme.LEAF.darkened(0.3) if st.gifted_today else UITheme.MUTED))
 
 func _board() -> void:
 	_body.add_child(UITheme.label("Village Board · new requests every Monday", 9, UITheme.MUTED))
@@ -276,7 +277,7 @@ func _weekly() -> void:
 	sc.add_child(_wrap(", ".join(ranks), 9, UITheme.INK))
 	var nxt := GameState.day() if Endless.show_open(GameState.day()) else Endless.next_show(GameState.day())
 	if nxt >= 0:
-		sc.add_child(UITheme.label(tr("Next show: %s") % ("today!" if nxt == GameState.day() else Calendar.date_string(nxt)), 8, UITheme.MUTED))
+		sc.add_child(UITheme.label(tr("Next show: %s") % (tr("today!") if nxt == GameState.day() else Calendar.date_string(nxt)), 8, UITheme.MUTED))
 	var ch := GameState.chain_of(player.id)
 	if not ch.is_empty() and int(ch.n) >= 2:
 		var chh := _card()
@@ -293,4 +294,5 @@ func _weekly() -> void:
 			if w != "" and GameState.rematch_ready(player.id, w):
 				left.append(Data.villager_name(w))
 		var rh := _card()
-		rh.add_child(_wrap("Still waiting for you: " + ", ".join(left) if not left.is_empty() else "You've beaten every Warden this week!", 9, UITheme.INK))
+		var waiting := (tr("Still waiting for you: %s") % ", ".join(left)) if not left.is_empty() else tr("You've beaten every Warden this week!")
+		rh.add_child(_wrap(waiting, 9, UITheme.INK))

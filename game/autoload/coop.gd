@@ -381,7 +381,7 @@ func _do_gift(from_pid: String, to_pid: String, kind: String, ref: String, n: in
 		label = c.display_name()
 	_sync_player(from_pid)
 	_sync_player(to_pid)
-	_notify(to_pid, "%s sent you %s!" % [a.name, label])
+	_notify(to_pid, tr("%s sent you %s!") % [a.name, label])
 
 func _sync_player(pid: String) -> void:
 	for peer_id in Net.peers:
@@ -420,7 +420,7 @@ func pvp_invite(from_pid: String, from_name: String) -> void:
 
 func decline_challenge(from_pid: String) -> void:
 	for peer_id in _peer_ids_for(from_pid):
-		rpc_id(peer_id, "notify", "%s can't battle right now." % GameState.local_player().name)
+		rpc_id(peer_id, "notify", tr("%s can't battle right now.") % GameState.local_player().name)
 
 func accept_challenge(from_pid: String) -> void:
 	var team: Array = []
@@ -542,7 +542,7 @@ func _trade_op(pid: String, op: String, d: Dictionary) -> void:
 					t.ok[t.b] = false
 		"cancel":
 			t.status = "closed"
-			t.msg = "%s closed the trade." % GameState.player(pid).name
+			t.msg = tr("%s closed the trade.") % GameState.player(pid).name
 	_send_trade(tid2)
 	if t.status in ["done", "closed"]:
 		_trades.erase(tid2)
@@ -590,7 +590,7 @@ func _cancel_trades_of(pid: String) -> void:
 		var t: Dictionary = _trades[tid]
 		if pid in [t.a, t.b]:
 			t.status = "closed"
-			t.msg = "The other player left."
+			t.msg = tr("The other player left.")
 			_send_trade(tid)
 			_trades.erase(tid)
 

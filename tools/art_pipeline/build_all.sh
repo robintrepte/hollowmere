@@ -27,6 +27,8 @@ while read -r f _url names; do
   [ "$f" = adventure.png ] && extra=(--drop-small 0.05)
   $P sprites "$RAW/world/$f" "$names" game/assets/world ${extra[@]+"${extra[@]}"}
 done < tools/art_pipeline/world_sheets.txt
+# The sheet copy was isometric. This crate faces the camera like the other farm objects.
+$P single "$RAW/world/shipping_bin.png" game/assets/world/shipping_bin.png --w 32 --h 32 --colors 20
 # Sign and fences are drawn square to the camera. Fence tiles connect on every side,
 # so the isometric copies cut from the sheets are replaced here.
 $PY tools/art_pipeline/fences.py game/assets/world

@@ -303,6 +303,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		Audio.sfx("open")
 		ui.open(CraftPanel.new(GameState.local_player(), "crafting"))
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("map"):
+		Audio.sfx("open")
+		ui.open(MapPanel.new())
+		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("coop"):
 		Audio.sfx("open")
 		ui.open(CoopPanel.new(ui, true))

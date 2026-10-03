@@ -30,8 +30,12 @@ SKIP_KEYS = {"id", "icon", "color", "schedule", "music", "biome", "type", "types
 
 STR = r'"((?:[^"\\\n]|\\.)*)"'
 TR_CALL = re.compile(r'(?:(?<![\w.])tr|TranslationServer\.translate)\(' + STR + r'\)')
-UI_CALLS = re.compile(r'(?:UITheme\.(?:label|button)|_say|_ask|ui\.say|ui\.ask|toast\.emit|toast)\(\[?\s*' + STR)
+UI_CALLS = re.compile(r'(?:UITheme\.(?:label|button)|_cmd_button|_say|_ask|ui\.say|ui\.ask|toast\.emit|toast|add_item)\(\[?\s*' + STR)
 LIST_LINE = re.compile(r'^\s*' + STR + r',?\s*\]?\)?\s*$')
+REASON = re.compile(r'(?:\.reason|\.line)\s*=\s*' + STR)
+HELPER = re.compile(r'\b(?:_slider|_check|_choice|_column|_edit|_field)\([^,\n]*,\s*' + STR)
+HINT = re.compile(r'\b(?:_hint|_field)\(\s*' + STR)
+BRACKET = re.compile(r'\[([^\[\]]*)\]')
 
 
 def unescape(s):
@@ -90,6 +94,21 @@ def scan_gd(path, found):
             add(found, unescape(m.group(1)), ref)
         for m in UI_CALLS.finditer(line):
             add(found, unescape(m.group(1)), ref)
+        for m in REASON.finditer(line):
+            add(found, unescape(m.group(1)), ref)
+        for m in HELPER.finditer(line):
+            add(found, unescape(m.group(1)), ref)
+        for m in HINT.finditer(line):
+            add(found, unescape(m.group(1)), ref)
+        # Button rows, dialogue choices and tab labels live in ["Label", ...] arrays.
+        for bm in BRACKET.finditer(line):
+            for sm in re.finditer(STR, bm.group(1)):
+                s = unescape(sm.group(1))
+                if s.startswith("#") or s.startswith("{") or s.startswith("slot_") or "/" in s:
+                    continue
+                if s in ("iOS", "macOS") or s.startswith("Economy sim"):
+                    continue
+                add(found, s, ref)
         if in_list:
             m = LIST_LINE.match(line)
             if m:
@@ -106,7 +125,7 @@ def po_escape(s):
 
 def build():
     found = {}
-    for f in sorted(glob.glob(os.path.join(GAME, "data", "*.json"))):
+    for f in sorted(glob.glob(os.path.join(GAME, "data", "**", "*.json"), recursive=True)):
         name = os.path.basename(f)
         with io.open(f, encoding="utf-8") as fh:
             walk_json(json.load(fh), found, "data/" + name, dialogue=name in DIALOGUE_FILES)

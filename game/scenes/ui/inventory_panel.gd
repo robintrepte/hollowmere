@@ -97,23 +97,14 @@ func _ready() -> void:
 		_right.add_child(UITheme.label(other_title, 12, UITheme.WOOD_DK))
 		_other_view = _make_view(other)
 		_right.add_child(_other_view)
-	elif mode == "ship":
-		_right.add_child(UITheme.label("Shipping Bin", 12, UITheme.WOOD_DK))
-		var drop := PanelContainer.new()
-		drop.add_theme_stylebox_override("panel", UITheme.box(Color("#c8a070"), UITheme.OUTLINE, 2, 4, 8, false))
-		drop.custom_minimum_size = Vector2(180, 110)
-		drop.gui_input.connect(_on_ship_input)
-		var dv := VBoxContainer.new()
-		dv.alignment = BoxContainer.ALIGNMENT_CENTER
-		drop.add_child(dv)
-		dv.add_child(UITheme.icon_rect(Art.world("shipping_bin"), 48))
-		var dl := UITheme.label("Drop items here.\nThey sell overnight.", 9, UITheme.INK)
-		dl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		dv.add_child(dl)
-		_right.add_child(drop)
-		_ship_total = UITheme.label("", 10, UITheme.WOOD_DK)
-		_right.add_child(_ship_total)
-		_refresh_ship()
+		if other == GameState.shipping_bin:
+			var hint := UITheme.label("Sells overnight. Take items back out any time before then.", 8, UITheme.MUTED)
+			hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			hint.custom_minimum_size = Vector2(180, 0)
+			_right.add_child(hint)
+			_ship_total = UITheme.label("", 10, UITheme.WOOD_DK)
+			_right.add_child(_ship_total)
+			_refresh_ship()
 	_container_box = VBoxContainer.new()
 	_right.add_child(_container_box)
 
@@ -254,9 +245,6 @@ func _quick_move(inv: Inventory, e: Dictionary) -> void:
 			target = player.inventory
 	else:
 		target = player.inventory
-	if mode == "ship" and inv != other:
-		_ship_entry(e)
-		return
 	if target == null or not target.accepts(e.id):
 		Audio.sfx("error", 0.0)
 		return
@@ -301,26 +289,12 @@ func _on_hotbar_input(ev: InputEvent, i: int) -> void:
 			_refresh_hotbar()
 		accept_event()
 
-func _on_ship_input(ev: InputEvent) -> void:
-	if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT and held_uid != "":
-		var f := player.inventory.find(held_uid)
-		if not f.is_empty():
-			_ship_entry(f.entry)
-		_clear_held()
-
-func _ship_entry(e: Dictionary) -> void:
-	var r: Dictionary = Coop.act("ship", [e.uid, -1])
-	if r.ok:
-		Audio.sfx("ship")
-		_changed()
-		_refresh_ship()
-	elif r.reason != "":
-		EventBus.toast.emit(r.reason, "")
-
 func _refresh_ship() -> void:
 	if _ship_total == null:
 		return
 	var total := 0
+	for e in GameState.shipping_bin.entries:
+		total += Data.sell_price(e.id, int(e.q)) * int(e.n)
 	for s in GameState.world.get("shipping", []):
 		total += Data.sell_price(s.id, int(s.q)) * int(s.n)
 	_ship_total.text = tr("In the bin: %dg") % total
@@ -364,21 +338,19 @@ func _open_menu(inv: Inventory, e: Dictionary) -> void:
 	_menu_inv = inv
 	var it: Dictionary = Data.get_item(e.id)
 	if e.has("inv"):
-		_menu.add_item("Open", 1)
+		_menu.add_item(tr("Open"), 1)
 	if Data.is_edible(e.id) and it.get("cat", "") != "seed":
-		_menu.add_item("Eat", 2)
+		_menu.add_item(tr("Eat"), 2)
 	if int(e.n) > 1:
-		_menu.add_item("Split half", 3)
-		_menu.add_item("Split one", 4)
-	if mode == "ship" and Data.sell_price(e.id, 0) > 0 and inv != other:
-		_menu.add_item(tr("Ship (%dg)") % (Data.sell_price(e.id, int(e.q)) * int(e.n)), 5)
+		_menu.add_item(tr("Split half"), 3)
+		_menu.add_item(tr("Split one"), 4)
 	if other != null:
 		_menu.add_item(tr("Move to %s") % ("Backpack" if inv == other else other_title), 6)
 	if inv == player.inventory or player.inventory.find(e.uid).size() > 0:
-		_menu.add_item("Bind to next hotbar slot", 7)
+		_menu.add_item(tr("Bind to next hotbar slot"), 7)
 	if not it.get("cat", "") in ["tool", "key"]:
 		_menu.add_separator()
-		_menu.add_item("Trash", 9)
+		_menu.add_item(tr("Trash"), 9)
 	_menu.reset_size()
 	_menu.popup(Rect2i(Vector2i(_menu_at), Vector2i.ZERO))
 
@@ -392,7 +364,6 @@ func _on_menu(id: int) -> void:
 				Audio.sfx("eat")
 		3: _menu_inv.split(e.uid, int(e.n) / 2)
 		4: _menu_inv.split(e.uid, 1)
-		5: _ship_entry(e)
 		6: _quick_move(_menu_inv, e)
 		7:
 			for i in PlayerData.HOTBAR_SIZE:
@@ -428,6 +399,7 @@ func _close_container() -> void:
 
 func _changed() -> void:
 	EventBus.inventory_changed.emit()
+	_refresh_ship()
 	_refresh_hotbar()
 	for v in [_pack_view, _other_view, _container_view]:
 		if v:

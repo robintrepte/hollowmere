@@ -141,36 +141,73 @@ func _variant(p: Vector2i) -> int:
 	var r := absi(hsh) % 10
 	return 0 if r < 4 else (1 if r < 7 else (2 if r < 9 else 3))
 
+func _is_water_ground(p: Vector2i) -> bool:
+	return grid.in_bounds(p) and grid.get_ground(p) in Tiles.WATER_TILES
+
+func _is_shore_land(p: Vector2i) -> bool:
+	return grid.in_bounds(p) and not grid.get_ground(p) in Tiles.WATER_TILES and grid.get_ground(p) != Tiles.GROUND.bridge
+
+## Cardinal bits N=1 E=2 S=4 W=8. On water, a bit means that side faces land.
+## On land, a bit means that side faces water.
+func _shore_sides(p: Vector2i, on_water: bool) -> int:
+	var m := 0
+	for i in 4:
+		var n: Vector2i = p + NEIGHBORS[i]
+		if on_water:
+			if _is_shore_land(n):
+				m |= 1 << i
+		elif _is_water_ground(n):
+			m |= 1 << i
+	return m
+
+## Diagonal bits NE=1 SE=2 SW=4 NW=8, only when neither adjacent cardinal already covers that corner.
+func _shore_corners(p: Vector2i, on_water: bool) -> int:
+	var m := 0
+	for i in 4:
+		var d: Vector2i = DIAGONALS[i]
+		var diag := p + d
+		var ax := p + Vector2i(d.x, 0)
+		var ay := p + Vector2i(0, d.y)
+		if on_water:
+			if _is_shore_land(diag) and not _is_shore_land(ax) and not _is_shore_land(ay):
+				m |= 1 << i
+		elif _is_water_ground(diag) and not _is_water_ground(ax) and not _is_water_ground(ay):
+			m |= 1 << i
+	return m
+
 func _draw_ground(p: Vector2i) -> void:
 	var gid := grid.get_ground(p)
 	if gid >= Art.SEASON_ROW_COUNT or gid < 0:
 		gid = 0
 	ground.set_cell(p, 0, Vector2i(_variant(p), gid))
 	if gid in Tiles.WATER_TILES:
-		var m := 0
-		var dirs := [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
-		for i in 4:
-			var n: Vector2i = p + dirs[i]
-			if grid.in_bounds(n) and not grid.get_ground(n) in Tiles.WATER_TILES and grid.get_ground(n) != Tiles.GROUND.bridge:
-				m |= 1 << i
-		if m:
-			edge_layer.set_cell(p, 2, Vector2i(m, 0))
+		var sides := _shore_sides(p, true)
+		var corners := _shore_corners(p, true)
+		if sides or corners:
+			edge_layer.set_cell(p, 2, Vector2i(sides, corners + _variant(p) * 16))
 		else:
 			edge_layer.erase_cell(p)
-	elif gid in GRASS_SPILLS_ONTO:
-		var sides := 0
-		var corners := 0
+		return
+	if gid == Tiles.GROUND.bridge:
+		edge_layer.erase_cell(p)
+		return
+	if gid in GRASS_SPILLS_ONTO:
+		var gsides := 0
+		var gcorners := 0
 		for i in 4:
 			if _grassy(p + NEIGHBORS[i]):
-				sides |= 1 << i
+				gsides |= 1 << i
 		for i in 4:
 			var d: Vector2i = DIAGONALS[i]
 			if _grassy(p + d) and not _grassy(p + Vector2i(d.x, 0)) and not _grassy(p + Vector2i(0, d.y)):
-				corners |= 1 << i
-		if sides or corners:
-			edge_layer.set_cell(p, 3, Vector2i(sides, corners))
-		else:
-			edge_layer.erase_cell(p)
+				gcorners |= 1 << i
+		if gsides or gcorners:
+			edge_layer.set_cell(p, 3, Vector2i(gsides, gcorners))
+			return
+	var fsides := _shore_sides(p, false)
+	var fcorners := _shore_corners(p, false)
+	if fsides or fcorners:
+		edge_layer.set_cell(p, 4, Vector2i(fsides, fcorners))
 	else:
 		edge_layer.erase_cell(p)
 
@@ -182,11 +219,17 @@ func _draw_soil(p: Vector2i) -> void:
 		soil_layer.erase_cell(p)
 		return
 	var m := 0
-	var dirs := [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
 	for i in 4:
-		if grid.is_tilled(p + dirs[i]):
+		if grid.is_tilled(p + NEIGHBORS[i]):
 			m |= 1 << i
-	soil_layer.set_cell(p, 1, Vector2i(m, 1 if grid.soil_at(p).get("watered", false) else 0))
+	# Inner corners: both adjacent plots are tilled, the diagonal one is not. That notch gets rounded off.
+	var corners := 0
+	for i in 4:
+		var d: Vector2i = DIAGONALS[i]
+		if grid.is_tilled(p + Vector2i(d.x, 0)) and grid.is_tilled(p + Vector2i(0, d.y)) and not grid.is_tilled(p + d):
+			corners |= 1 << i
+	var row := corners + (16 if grid.soil_at(p).get("watered", false) else 0)
+	soil_layer.set_cell(p, 1, Vector2i(m, row))
 
 func _deco_sprite_name(p: Vector2i, d: int) -> String:
 	var n: String = DECO_SPRITES.get(d, "")
@@ -728,6 +771,54 @@ func warp_at(t: Vector2i) -> Dictionary:
 func interactable_at(t: Vector2i) -> Dictionary:
 	return interactables.get(t, {})
 
+## The tile talk / use should hit. The aimed tile wins when it already has something;
+## otherwise a villager, door, chest or the like one step off still counts, if you're facing it.
+func focus_tile(me: Vector2i, aim: Vector2i) -> Vector2i:
+	if _worth_talking(aim):
+		return aim
+	var aim_dir := Vector2(aim - me)
+	aim_dir = Vector2.DOWN if aim_dir.length() < 0.01 else aim_dir.normalized()
+	var best := aim
+	var best_steps := 99
+	var best_kind := 99
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			if dx == 0 and dy == 0:
+				continue
+			var c := aim + Vector2i(dx, dy)
+			if absi(c.x - me.x) > 1 or absi(c.y - me.y) > 1:
+				continue
+			var kind := _talk_kind(c)
+			if kind == 99:
+				continue
+			var dir := Vector2(c - me)
+			if dir.length() < 0.01 or dir.normalized().dot(aim_dir) < 0.5:
+				continue
+			var steps := absi(dx) + absi(dy)
+			if steps < best_steps or (steps == best_steps and kind < best_kind):
+				best_steps = steps
+				best_kind = kind
+				best = c
+	return best
+
+## 0 villager, 1 pet, 2 door/sign/building, 3 placed object, 4 ripe crop, 99 nothing.
+func _talk_kind(t: Vector2i) -> int:
+	if npc_at(t):
+		return 0
+	var w := creature_at(t)
+	if w and w.pet:
+		return 1
+	if not interactable_at(t).is_empty():
+		return 2
+	if grid and not grid.object_at(t).is_empty():
+		return 3
+	if grid and grid.crop_ready(t):
+		return 4
+	return 99
+
+func _worth_talking(t: Vector2i) -> bool:
+	return _talk_kind(t) < 99
+
 # --- Refresh hooks ---------------------------------------------------------------------------
 
 func _on_tile_changed(m: String, t: Vector2i) -> void:
@@ -741,7 +832,7 @@ func _on_tile_changed(m: String, t: Vector2i) -> void:
 		var n: Vector2i = t + dir
 		if grid.in_bounds(n) and grid.get_deco(n) == Tiles.DECO.fence:
 			_draw_deco(n)
-	for d in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+	for d in NEIGHBORS + DIAGONALS + [Vector2i.ZERO]:
 		_draw_soil(t + d)
 	_draw_crop(t)
 	_draw_object(t)

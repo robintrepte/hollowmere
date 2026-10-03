@@ -13,15 +13,17 @@ var w: int = 6
 var h: int = 4
 var filter: Array = []
 var nested: bool = false
+var sellable_only: bool = false
 var entries: Array = []
 
 static var _uid_counter: int = 0
 
-func _init(width: int = 6, height: int = 4, filt: Array = [], is_nested: bool = false) -> void:
+func _init(width: int = 6, height: int = 4, filt: Array = [], is_nested: bool = false, only_sellable: bool = false) -> void:
 	w = width
 	h = height
 	filter = filt
 	nested = is_nested
+	sellable_only = only_sellable
 
 static func new_uid() -> String:
 	_uid_counter += 1
@@ -43,6 +45,8 @@ func accepts(id: String) -> bool:
 	if not Data.has_item(id):
 		return false
 	if nested and not Data.container_spec(id).is_empty():
+		return false
+	if sellable_only and Data.sell_price(id, 0) <= 0:
 		return false
 	if filter.is_empty():
 		return true
@@ -99,8 +103,8 @@ func containers() -> Array:
 			out.append(e)
 	return out
 
-func _stack_into_existing(id: String, n: int, q: int, meta: Dictionary) -> int:
-	if not meta.is_empty():
+func _stack_here(id: String, n: int, q: int, meta: Dictionary) -> int:
+	if not meta.is_empty() or n <= 0:
 		return n
 	var mx: int = Data.stack_max(id)
 	var left := n
@@ -111,11 +115,33 @@ func _stack_into_existing(id: String, n: int, q: int, meta: Dictionary) -> int:
 			var take := mini(left, mx - int(e.n))
 			e.n = int(e.n) + take
 			left -= take
+	return left
+
+func _stack_into_existing(id: String, n: int, q: int, meta: Dictionary) -> int:
+	var left := _stack_here(id, n, q, meta)
 	for c in containers():
 		if left <= 0:
 			break
 		if c.inv.accepts(id):
 			left = c.inv._stack_into_existing(id, left, q, meta)
+	return left
+
+func _fill_filtered(id: String, n: int, q: int, meta: Dictionary) -> int:
+	var left := n
+	for c in containers():
+		if left <= 0:
+			break
+		if c.inv.accepts(id) and not c.inv.filter.is_empty():
+			left = c.inv._place_new(id, left, q, meta)
+	return left
+
+func _fill_open(id: String, n: int, q: int, meta: Dictionary) -> int:
+	var left := n
+	for c in containers():
+		if left <= 0:
+			break
+		if c.inv.accepts(id) and c.inv.filter.is_empty():
+			left = c.inv._place_new(id, left, q, meta)
 	return left
 
 func _place_new(id: String, n: int, q: int, meta: Dictionary) -> int:
@@ -131,33 +157,52 @@ func _place_new(id: String, n: int, q: int, meta: Dictionary) -> int:
 	return left
 
 ## Adds items; returns the number that didn't fit.
-func add(id: String, n: int = 1, q: int = 0, meta: Dictionary = {}) -> int:
+## containers_first files new stacks into matching bags (seed pouch, treat tin, …)
+## before the main grid. Purchases pass false so they show up in the pack.
+func add(id: String, n: int = 1, q: int = 0, meta: Dictionary = {}, containers_first: bool = true) -> int:
 	if n <= 0 or not accepts(id):
 		return n
-	var left := _stack_into_existing(id, n, q, meta)
+	var left := n
+	if containers_first:
+		left = _stack_into_existing(id, left, q, meta)
+		left = _fill_filtered(id, left, q, meta)
+		if left > 0:
+			left = _place_new(id, left, q, meta)
+	else:
+		left = _stack_here(id, left, q, meta)
+		if left > 0:
+			left = _place_new(id, left, q, meta)
+		if left > 0:
+			for c in containers():
+				if left <= 0:
+					break
+				if c.inv.accepts(id):
+					left = c.inv._stack_into_existing(id, left, q, meta)
+		left = _fill_filtered(id, left, q, meta)
 	if left > 0:
-		for c in containers():
-			if left <= 0:
-				break
-			if c.inv.accepts(id) and not c.inv.filter.is_empty():
-				left = c.inv._place_new(id, left, q, meta)
-	if left > 0:
-		left = _place_new(id, left, q, meta)
-	if left > 0:
-		for c in containers():
-			if left <= 0:
-				break
-			if c.inv.accepts(id) and c.inv.filter.is_empty():
-				left = c.inv._place_new(id, left, q, meta)
+		left = _fill_open(id, left, q, meta)
 	if left != n:
 		changed.emit()
 	return left
 
 ## True if all n would fit (simulated on a copy).
-func can_add(id: String, n: int = 1, q: int = 0) -> bool:
-	var copy := Inventory.new(w, h, filter, nested)
+func can_add(id: String, n: int = 1, q: int = 0, containers_first: bool = true) -> bool:
+	var copy := Inventory.new(w, h, filter, nested, sellable_only)
 	copy.from_dict(to_dict())
-	return copy.add(id, n, q) == 0
+	return copy.add(id, n, q, {}, containers_first) == 0
+
+## How many of id sit in this grid, and inside each container.
+func homes_of(id: String) -> Dictionary:
+	var top := 0
+	for e in entries:
+		if e.id == id:
+			top += int(e.n)
+	var bags: Array = []
+	for c in containers():
+		var have: int = c.inv.count(id)
+		if have > 0:
+			bags.append({"uid": c.uid, "name": Data.item_name(c.id), "n": have})
+	return {"top": top, "bags": bags}
 
 func all_entries() -> Array:
 	var out: Array = []

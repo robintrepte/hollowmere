@@ -118,16 +118,16 @@ static func make(kind: String, id: String, invs: Array) -> bool:
 static func building_ok(id: String, ctx: Dictionary, money: int, invs: Array) -> Dictionary:
 	var b: Dictionary = Data.buildings.get(id, {})
 	if b.is_empty():
-		return {"ok": false, "reason": "Unknown."}
+		return {"ok": false, "reason": TranslationServer.translate("Unknown.")}
 	if id in ctx.get("buildings", []):
-		return {"ok": false, "reason": "Already built."}
+		return {"ok": false, "reason": TranslationServer.translate("Already built.")}
 	if not meets(b.requires, ctx):
 		return {"ok": false, "reason": req_text(b.requires)}
 	if money < int(b.price):
-		return {"ok": false, "reason": "Not enough money."}
+		return {"ok": false, "reason": TranslationServer.translate("Not enough money.")}
 	for k in b.materials:
 		if count_in(invs, k) < int(b.materials[k]):
-			return {"ok": false, "reason": "Need %d %s." % [int(b.materials[k]), Data.item_name(k)]}
+			return {"ok": false, "reason": TranslationServer.translate("Need %d %s.") % [int(b.materials[k]), Data.item_name(k)]}
 	return {"ok": true, "reason": ""}
 
 static func upgrade_spec(next_level: int) -> Dictionary:

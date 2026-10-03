@@ -4,7 +4,7 @@ extends PanelContainer
 
 signal closed
 
-const REBINDABLE := ["move_up", "move_down", "move_left", "move_right", "use_tool", "interact", "inventory", "party", "journal", "map", "run", "rotate_item"]
+const REBINDABLE := ["move_up", "move_down", "move_left", "move_right", "use_tool", "interact", "inventory", "party", "journal", "craft", "map", "menu", "coop", "chat", "hotbar_next", "hotbar_prev", "run", "rotate_item"]
 
 var _waiting_action := ""
 var _bind_buttons: Dictionary = {}
@@ -37,7 +37,7 @@ func _ready() -> void:
 	body.add_theme_constant_override("separation", 3)
 	sc.add_child(body)
 	body.add_child(UITheme.label("Audio", 11, UITheme.WOOD))
-	_slider(body, "Master", Settings.master_volume, func(x): Settings.master_volume = x; Settings.apply())
+	_slider(body, "Master volume", Settings.master_volume, func(x): Settings.master_volume = x; Settings.apply())
 	_slider(body, "Music", Settings.music_volume, func(x): Settings.music_volume = x; Settings.apply())
 	_slider(body, "Sound effects", Settings.sfx_volume, func(x): Settings.sfx_volume = x; Settings.apply())
 	body.add_child(UITheme.label("Game", 11, UITheme.WOOD))
@@ -71,7 +71,7 @@ func _ready() -> void:
 	for a in REBINDABLE:
 		var h := HBoxContainer.new()
 		body.add_child(h)
-		var l := UITheme.label(a.replace("_", " ").capitalize(), 9)
+		var l := UITheme.label(_control_label(a), 9)
 		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		h.add_child(l)
 		var b := UITheme.button(Settings.key_name(a))
@@ -83,6 +83,17 @@ func _ready() -> void:
 		Settings.reset_bindings()
 		for a2 in _bind_buttons:
 			_bind_buttons[a2].text = Settings.key_name(a2)))
+
+func _control_label(a: String) -> String:
+	match a:
+		"craft": return tr("Crafting")
+		"map": return tr("Valley map")
+		"menu": return tr("Menu")
+		"coop": return tr("Co-op")
+		"chat": return tr("Chat")
+		"hotbar_next": return tr("Next item slot")
+		"hotbar_prev": return tr("Previous item slot")
+		_: return a.replace("_", " ").capitalize()
 
 func _slider(parent: Control, text: String, value: float, cb: Callable) -> void:
 	var h := HBoxContainer.new()

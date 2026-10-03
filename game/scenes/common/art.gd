@@ -57,17 +57,21 @@ static func doll_layer(layer: String) -> Texture2D:
 static func hair_layer(style: int) -> Texture2D:
 	return doll_layer("hair_" + HAIR_STYLES[clampi(style, 0, HAIR_STYLES.size() - 1)])
 
-## Runtime TileSet: source 0 = ground (4 variants x 20 rows), 1 = soil (16 masks x dry/wet), 2 = water edges,
-## 3 = grass spilling onto bare ground (16 side masks x 16 corner masks).
+## Runtime TileSet: source 0 = ground (4 variants x 20 rows),
+## 1 = soil (16 connected-side masks x 32 rows: inner corners, plus 16 when watered),
+## 2 = water edges (16 land-side masks x 64 rows: diagonal corners + variant * 16),
+## 3 = grass spilling onto bare ground (16 side masks x 16 corner masks),
+## 4 = dirt bank spilling off water onto the neighboring land.
 static func tileset(season: String) -> TileSet:
 	if _tilesets.has(season):
 		return _tilesets[season]
 	var ts := TileSet.new()
 	ts.tile_size = Vector2i(Tiles.TILE, Tiles.TILE)
 	_add_atlas(ts, "res://assets/tiles/ground_%s.png" % season, 4, SEASON_ROW_COUNT, 0)
-	_add_atlas(ts, "res://assets/tiles/soil.png", 16, 2, 1)
-	_add_atlas(ts, "res://assets/tiles/water_edge.png", 16, 1, 2)
+	_add_atlas(ts, "res://assets/tiles/soil.png", 16, 32, 1)
+	_add_atlas(ts, "res://assets/tiles/water_edge.png", 16, 64, 2)
 	_add_atlas(ts, "res://assets/tiles/grass_edge_%s.png" % season, 16, 16, 3)
+	_add_atlas(ts, "res://assets/tiles/shore_fringe.png", 16, 16, 4)
 	_tilesets[season] = ts
 	return ts
 

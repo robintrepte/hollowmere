@@ -21,6 +21,7 @@ var moving := false
 var running := false
 var locked := false
 var target := Vector2i.ZERO
+var _talk_tile := Vector2i.ZERO
 var _name_label: Label
 var _mouse_mode := false
 var _last_mouse := Vector2.ZERO
@@ -163,8 +164,22 @@ func _update_target() -> void:
 		else:
 			f = Vector2(0, signf(f.y))
 		t = me + Vector2i(int(f.x), int(f.y))
-	target = t
-	world.cursor.show_at(t, not locked)
+	# Tools, seeds and furniture stay on the exact tile. Talk, gifts and doors
+	# also reach a villager or object one tile off, as long as you're facing it.
+	_talk_tile = world.focus_tile(me, t)
+	target = t if _precise_aim() else _talk_tile
+	world.cursor.show_at(target, not locked)
+
+func _precise_aim() -> bool:
+	var p := GameState.player(pid)
+	if p == null:
+		return false
+	var e := p.selected_entry()
+	if e.is_empty():
+		return false
+	var it: Dictionary = Data.get_item(e.id)
+	var cat := str(it.get("cat", ""))
+	return cat in ["tool", "seed", "sapling"] or it.has("fert") or it.has("place")
 
 func face_tile(t: Vector2i) -> void:
 	var d := Vector2(GameState.tile_center(t) - (position + Vector2(0, -8)))
@@ -181,5 +196,5 @@ func _unhandled_input(event: InputEvent) -> void:
 		use_pressed.emit(target)
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("interact"):
-		interact_pressed.emit(target)
+		interact_pressed.emit(_talk_tile)
 		get_viewport().set_input_as_handled()

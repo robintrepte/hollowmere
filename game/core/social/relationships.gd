@@ -40,25 +40,25 @@ static func gift_taste(vid: String, item_id: String) -> String:
 ## Returns {ok, taste, pts, line}
 static func give_gift(vid: String, st: Dictionary, item_id: String, q: int, is_birthday: bool) -> Dictionary:
 	if st.gifted_today:
-		return {"ok": false, "line": "You've already given %s a gift today." % Data.villager_name(vid)}
+		return {"ok": false, "line": TranslationServer.translate("You've already given %s a gift today.") % Data.villager_name(vid)}
 	if int(st.gifts_week) >= 2 and not is_birthday:
-		return {"ok": false, "line": "%s has received enough gifts this week." % Data.villager_name(vid)}
+		return {"ok": false, "line": TranslationServer.translate("%s has received enough gifts this week.") % Data.villager_name(vid)}
 	if item_id == "bouquet":
 		var v: Dictionary = Data.villagers[vid]
 		if not v.get("romance", false):
-			return {"ok": false, "line": "%s smiles politely, but doesn't take the bouquet." % v.name}
+			return {"ok": false, "line": TranslationServer.translate("%s smiles politely, but doesn't take the bouquet.") % v.name}
 		if hearts(st) < 8:
-			return {"ok": false, "line": "%s blushes. \"Maybe when we know each other better...\"" % v.name}
+			return {"ok": false, "line": TranslationServer.translate("%s blushes. \"Maybe when we know each other better...\"") % v.name}
 		st.dating = true
 		st.gifted_today = true
 		add_points(vid, st, 100)
-		return {"ok": true, "taste": "love", "pts": 100, "line": "%s: \"Yes! I'd love to.\"" % v.name, "dating": true}
+		return {"ok": true, "taste": "love", "pts": 100, "line": TranslationServer.translate("%s: \"Yes! I'd love to.\"") % v.name, "dating": true}
 	if item_id == "hollow_pendant":
 		if not st.get("dating", false) or hearts(st) < 10:
-			return {"ok": false, "line": "This isn't the right moment."}
+			return {"ok": false, "line": TranslationServer.translate("This isn't the right moment.")}
 		st.married = true
 		st.gifted_today = true
-		return {"ok": true, "taste": "love", "pts": 0, "line": "%s: \"Of course I'll marry you!\"" % Data.villager_name(vid), "married": true}
+		return {"ok": true, "taste": "love", "pts": 0, "line": TranslationServer.translate("%s: \"Of course I'll marry you!\"") % Data.villager_name(vid), "married": true}
 	var taste := gift_taste(vid, item_id)
 	var pts := {"love": 80, "like": 45, "neutral": 20, "dislike": -20}[taste] as int
 	pts = int(pts * (1.0 + 0.1 * q))
@@ -68,12 +68,12 @@ static func give_gift(vid: String, st: Dictionary, item_id: String, q: int, is_b
 	st.gifted_today = true
 	st.gifts_week = int(st.gifts_week) + 1
 	var lines := {
-		"love": "\"Oh! I love this! Thank you so much!\"",
-		"like": "\"How thoughtful. Thank you!\"",
-		"neutral": "\"Thanks.\"",
-		"dislike": "\"Um... I'll find a use for it, I guess.\"",
+		"love": TranslationServer.translate("\"Oh! I love this! Thank you so much!\""),
+		"like": TranslationServer.translate("\"How thoughtful. Thank you!\""),
+		"neutral": TranslationServer.translate("\"Thanks.\""),
+		"dislike": TranslationServer.translate("\"Um... I'll find a use for it, I guess.\""),
 	}
-	return {"ok": true, "taste": taste, "pts": pts, "line": "%s: %s" % [Data.villager_name(vid), lines[taste]]}
+	return {"ok": true, "taste": taste, "pts": pts, "line": TranslationServer.translate("%s: %s") % [Data.villager_name(vid), lines[taste]]}
 
 static func talk(vid: String, st: Dictionary, season: String, rng: RandomNumberGenerator) -> String:
 	var v: Dictionary = Data.villagers.get(vid, {})
@@ -90,7 +90,7 @@ static func talk(vid: String, st: Dictionary, season: String, rng: RandomNumberG
 	if v.get("season", {}).has(season):
 		pool.append(v.season[season])
 	if st.get("married", false):
-		pool.append("I'm so glad we're together. Let's make today a good one.")
+		pool.append(TranslationServer.translate("I'm so glad we're together. Let's make today a good one."))
 	if pool.is_empty():
 		return "..."
 	return pool[rng.randi() % pool.size()]

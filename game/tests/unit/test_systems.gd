@@ -149,6 +149,34 @@ func test_game_state_save_roundtrip() -> void:
 	assert_true(GameState.grids.farm.is_tilled(Vector2i(4, 12)))
 	assert_eq(GameState.money(), 750)
 
+func test_shipping_bin_can_be_emptied_before_it_sells() -> void:
+	GameState.new_game({"seed": 7})
+	var p := GameState.local_player()
+	p.inventory.add("parsnip", 4)
+	var e: Dictionary = p.inventory.first_of("parsnip")
+	assert_true(GameState.ship(p.id, e.uid).ok)
+	assert_eq(GameState.shipping_bin.count("parsnip"), 4)
+	assert_eq(p.inventory.count("parsnip"), 0)
+	var back: Dictionary = GameState.shipping_bin.first_of("parsnip")
+	var taken := GameState.shipping_bin.take(back.uid, 2)
+	p.inventory.add(taken.id, int(taken.n), int(taken.q), taken.meta)
+	assert_eq(p.inventory.count("parsnip"), 2)
+	assert_eq(GameState.shipping_bin.count("parsnip"), 2)
+	var hoe: Dictionary = p.inventory.first_of("hoe")
+	assert_false(GameState.ship(p.id, hoe.uid).ok, "tools stay in the pack")
+	var m0 := GameState.money()
+	var rep := GameState.end_day()
+	assert_eq(GameState.shipping_bin.count("parsnip"), 0)
+	assert_eq(int(rep.ship_total), Data.sell_price("parsnip", 0) * 2)
+	assert_eq(GameState.money() - m0, int(rep.ship_total))
+	# A save from before the bin was a grid still loads those goods into it.
+	GameState.world.shipping.append({"id": "parsnip", "n": 3, "q": 1})
+	var d: Dictionary = JSON.parse_string(JSON.stringify(GameState.to_dict()))
+	GameState.from_dict(d)
+	assert_eq(GameState.shipping_bin.count("parsnip"), 3)
+	assert_eq(int(GameState.shipping_bin.first_of("parsnip").q), 1)
+	assert_eq(GameState.world.shipping.size(), 0)
+
 func test_end_day_progresses() -> void:
 	GameState.new_game({"seed": 42})
 	var p := GameState.local_player()
@@ -178,6 +206,14 @@ func test_world_actions() -> void:
 	assert_true(GameState.use_item(pid, "farm", t, seeds.uid).ok)
 	assert_true(GameState.use_tool(pid, "farm", t, "watering_can").ok)
 	assert_eq(p.inventory.count("parsnip_seeds"), 14)
+	assert_false(GameState.use_tool(pid, "farm", t, "hoe").ok, "hoe leaves a planted tile alone")
+	assert_false(g.crop_at(t).is_empty())
+	var bare := Vector2i(6, 12)
+	g.set_deco(bare, 0)
+	assert_true(GameState.use_tool(pid, "farm", bare, "hoe").ok)
+	assert_true(g.is_tilled(bare))
+	assert_true(GameState.use_tool(pid, "farm", bare, "hoe").ok, "hoe again clears empty soil")
+	assert_false(g.is_tilled(bare))
 
 func test_fence_neighbor_mask_matches_sprite_bits() -> void:
 	# Art in tools/art_pipeline/fences.py is numbered N=1 E=2 S=4 W=8.
@@ -195,4 +231,13 @@ func test_fence_neighbor_mask_matches_sprite_bits() -> void:
 	g.set_deco(Vector2i(3, 2), Tiles.DECO.fence)
 	g.set_deco(Vector2i(2, 2), Tiles.DECO.fence)
 	assert_eq(w._link_mask(Vector2i(2, 2), "fence"), 1 | 2, "north and east fences select the corner piece")
+	w.free()
+
+func test_focus_tile_reaches_something_one_step_off() -> void:
+	var w := World.new()
+	w.interactables[Vector2i(6, 5)] = {"type": "sign", "text": "hi"}
+	var me := Vector2i(5, 5)
+	assert_eq(w.focus_tile(me, Vector2i(6, 5)), Vector2i(6, 5), "the tile you aimed at still wins")
+	assert_eq(w.focus_tile(me, Vector2i(6, 6)), Vector2i(6, 5), "a door one tile beside the aim is close enough")
+	assert_eq(w.focus_tile(me, Vector2i(5, 4)), Vector2i(5, 4), "something you are not facing is left alone")
 	w.free()

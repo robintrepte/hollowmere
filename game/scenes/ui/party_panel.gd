@@ -109,9 +109,10 @@ func _row(c: Creature) -> Control:
 	v.add_child(nl)
 	var sub := ""
 	if tab == "farm":
-		sub = ("Job: " + Data.job_info(c.job).get("job_name", "Worker") if c.job != "" else "Resting") + tr("  ·  energy %d") % c.energy
+		var job := (tr("Job: %s") % tr(str(Data.job_info(c.job).get("job_name", tr("Worker"))))) if c.job != "" else tr("Resting")
+		sub = job + (tr("  ·  energy %d") % c.energy)
 	else:
-		sub = tr("HP %d/%d%s") % [c.hp, c.max_hp(), "  ·  fainted" if c.is_fainted() else ""]
+		sub = tr("HP %d/%d%s") % [c.hp, c.max_hp(), tr("  ·  fainted") if c.is_fainted() else ""]
 	var sl := UITheme.label(sub, 8, UITheme.MUTED)
 	sl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(sl)
@@ -173,7 +174,7 @@ func _show_detail() -> void:
 	var info := VBoxContainer.new()
 	info.add_theme_constant_override("separation", 2)
 	top.add_child(info)
-	info.add_child(UITheme.label(tr("%s%s") % ["★ Starry " if c.starry else "", c.display_name()], 13, UITheme.WOOD_DK))
+	info.add_child(UITheme.label(tr("%s%s") % [tr("★ Starry ") if c.starry else "", c.display_name()], 13, UITheme.WOOD_DK))
 	var types := HBoxContainer.new()
 	for t in c.types():
 		types.add_child(_chip(Data.type_name(t), Data.type_color(t)))
@@ -213,7 +214,7 @@ func _show_detail() -> void:
 		var g := Breeding.gene_grade(int(c.genes[s]))
 		var gl := UITheme.label("Gene " + g, 8, Breeding.grade_color(g))
 		gl.mouse_filter = Control.MOUSE_FILTER_PASS
-		gl.tooltip_text = "Genes are inherited when breeding. S is the best."
+		gl.tooltip_text = tr("Genes are inherited when breeding. S is the best.")
 		grid.add_child(gl)
 	# Moves
 	_detail.add_child(UITheme.label("Moves", 10, UITheme.WOOD))
@@ -270,7 +271,7 @@ func _show_detail() -> void:
 				_sel = null
 				_refresh()
 			else:
-				EventBus.toast.emit("The Den is full, or this is your last party member.", ""))
+				EventBus.toast.emit(tr("The Den is full, or this is your last party member."), ""))
 		send.disabled = player.party.size() <= 1
 		acts.add_child(send)
 	else:
@@ -282,7 +283,7 @@ func _show_detail() -> void:
 		acts.add_child(join)
 		var jobs := OptionButton.new()
 		jobs.add_theme_font_size_override("font_size", UITheme.fs(9))
-		jobs.add_item("Rest (no job)")
+		jobs.add_item(tr("Rest (no job)"))
 		jobs.set_item_metadata(0, "")
 		var sel_i := 0
 		for t in c.types():

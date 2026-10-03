@@ -42,9 +42,33 @@ func _ready() -> void:
 static func egg_hint(egg: Dictionary) -> String:
 	var parents: Array = egg.get("parents", [])
 	if parents.size() == 2:
-		return "From %s and %s" % [Data.get_species(parents[0]).get("name", "?"), Data.get_species(parents[1]).get("name", "?")]
+		return TranslationServer.translate("From %s and %s") % [TranslationServer.translate(str(Data.get_species(parents[0]).get("name", "?"))), TranslationServer.translate(str(Data.get_species(parents[1]).get("name", "?")))]
 	var t: String = Data.get_species(egg.get("species", "")).get("types", ["wild"])[0]
-	return "It feels a little %s..." % {"leaf": "leafy", "tide": "damp", "ember": "warm", "stone": "heavy", "gale": "light", "spark": "tingly", "frost": "chilly", "shade": "shadowy", "glow": "glowy", "wild": "fuzzy"}.get(t, "odd")
+	return TranslationServer.translate("It feels a little %s...") % _egg_feel(t)
+
+static func _egg_feel(t: String) -> String:
+	match t:
+		"leaf":
+			return TranslationServer.translate("leafy")
+		"tide":
+			return TranslationServer.translate("damp")
+		"ember":
+			return TranslationServer.translate("warm")
+		"stone":
+			return TranslationServer.translate("heavy")
+		"gale":
+			return TranslationServer.translate("light")
+		"spark":
+			return TranslationServer.translate("tingly")
+		"frost":
+			return TranslationServer.translate("chilly")
+		"shade":
+			return TranslationServer.translate("shadowy")
+		"glow":
+			return TranslationServer.translate("glowy")
+		"wild":
+			return TranslationServer.translate("fuzzy")
+	return TranslationServer.translate("odd")
 
 func _available_eggs() -> Array:
 	var out: Array = []
@@ -64,7 +88,7 @@ func _refresh() -> void:
 		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_body.add_child(l)
 		return
-	_body.add_child(UITheme.label(tr("Warming %d / %d") % [GameState.world.hatchery.size(), cap], 10, UITheme.WOOD))
+	_body.add_child(UITheme.label(TranslationServer.translate("Warming %d / %d") % [GameState.world.hatchery.size(), cap], 10, UITheme.WOOD))
 	for i in cap:
 		var row := PanelContainer.new()
 		row.add_theme_stylebox_override("panel", UITheme.box(UITheme.PARCHMENT_DK, Color("#b09060"), 1, 3, 4, false))
@@ -81,7 +105,7 @@ func _refresh() -> void:
 			v.add_theme_constant_override("separation", 1)
 			h.add_child(v)
 			var days := int(slot.days)
-			v.add_child(UITheme.label(tr("Hatches %s") % ("tomorrow!" if days <= 1 else tr("in %d days") % days), 10, UITheme.INK))
+			v.add_child(UITheme.label(TranslationServer.translate("Hatches %s") % (TranslationServer.translate("tomorrow!") if days <= 1 else TranslationServer.translate("in %d days") % days), 10, UITheme.INK))
 			v.add_child(UITheme.label(egg_hint(egg), 8, UITheme.MUTED))
 			var bar := ProgressBar.new()
 			bar.show_percentage = false
@@ -101,7 +125,7 @@ func _refresh() -> void:
 		_body.add_child(row2)
 		row2.add_child(UITheme.icon_rect(Art.item("wildling_egg"), 20))
 		var meta: Dictionary = e.entry.get("meta", {})
-		var l2 := UITheme.label(tr("%s  (%s)") % [egg_hint(meta.get("egg", {})), e.from], 9, UITheme.INK)
+		var l2 := UITheme.label(TranslationServer.translate("%s  (%s)") % [egg_hint(meta.get("egg", {})), e.from], 9, UITheme.INK)
 		l2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row2.add_child(l2)
 		var b := UITheme.button("Incubate", func():

@@ -86,6 +86,41 @@ func test_buy_backpack() -> void:
 	assert_gt(p.inventory.w, w0)
 	assert_eq(p.backpack_level, 1)
 
+func _top_count(inv: Inventory, id: String) -> int:
+	var n := 0
+	for e in inv.entries:
+		if e.id == id:
+			n += int(e.n)
+	return n
+
+func test_buy_lands_in_the_backpack() -> void:
+	GameState.add_money(20000)
+	var m := GameState.money()
+	p.inventory.add("kale_seeds", 2)
+	var pouch: Dictionary = p.inventory.first_of("seed_pouch")
+	assert_eq(pouch.inv.count("kale_seeds"), 2, "picked-up seeds still file into the pouch")
+	var r := GameState.buy(pid, "general_store", "kale_seeds", 3)
+	assert_true(r.ok, r.get("reason", ""))
+	assert_eq(GameState.money(), m - int(Data.buy_price("kale_seeds")) * 3)
+	assert_eq(_top_count(p.inventory, "kale_seeds"), 3, "the purchase is visible in the pack")
+	assert_eq(pouch.inv.count("kale_seeds"), 2, "the pouch keeps only what was already in it")
+	var sap := GameState.buy(pid, "general_store", "cherry_sapling", 1)
+	assert_true(sap.ok, sap.get("reason", ""))
+	assert_eq(_top_count(p.inventory, "cherry_sapling"), 1)
+	assert_eq(pouch.inv.count("cherry_sapling"), 0)
+
+func test_buy_overflow_goes_into_the_matching_bag() -> void:
+	GameState.add_money(5000)
+	var inv := Inventory.new(2, 1)
+	assert_eq(inv.add("seed_pouch", 1), 0)
+	assert_eq(inv.add("fiber", 20), 0)
+	p.inventory = inv
+	var r := GameState.buy(pid, "general_store", "potato_seeds", 4)
+	assert_true(r.ok, r.get("reason", ""))
+	assert_eq(_top_count(inv, "potato_seeds"), 0)
+	assert_eq(inv.first_of("seed_pouch").inv.count("potato_seeds"), 4)
+	assert_eq(str(r.note), tr("Bought %d %s (in %s)") % [4, Data.item_name("potato_seeds"), Data.item_name("seed_pouch")])
+
 func test_deliver_board() -> void:
 	assert_gt(GameState.world.board.size(), 0)
 	var b: Dictionary = GameState.world.board[0]

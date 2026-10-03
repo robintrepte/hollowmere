@@ -177,7 +177,7 @@ func _interact_static(io: Dictionary) -> void:
 		"treasure":
 			await adventure.treasure(Vector2i(int(io.x), int(io.y)), io)
 		"shipping_bin":
-			ui.open(InventoryPanel.new(p, null, "Shipping Bin", "ship"))
+			ui.open(InventoryPanel.new(p, GameState.shipping_bin, "Shipping Bin", "chest"))
 		"farm_chest":
 			Audio.sfx("chest")
 			ui.open(InventoryPanel.new(p, GameState.farm_chest, "Farm Chest", "chest"))

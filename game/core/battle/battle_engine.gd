@@ -60,6 +60,61 @@ var weather: String = ""
 var weather_turns: int = -1            # -1 = lasts the whole battle
 var base_weather: String = ""
 
+func _weather_now(w: String) -> String:
+	match w:
+		"rain":
+			return tr("It's raining.")
+		"storm":
+			return tr("A storm is raging.")
+		"snow":
+			return tr("Snow is falling.")
+		"fog":
+			return tr("The fog is thick.")
+		"sun":
+			return tr("The sunlight is harsh.")
+	return ""
+
+func _weather_edge(w: String, ending: bool) -> String:
+	if ending:
+		match w:
+			"sun":
+				return tr("The sunlight faded.")
+			"rain":
+				return tr("The rain stopped.")
+			"storm":
+				return tr("The storm passed.")
+			"snow":
+				return tr("The snow stopped.")
+			"fog":
+				return tr("The fog lifted.")
+		return ""
+	match w:
+		"sun":
+			return tr("The sunlight turned harsh!")
+		"rain":
+			return tr("Rain started to pour!")
+		"storm":
+			return tr("A thunderstorm rolled in!")
+		"snow":
+			return tr("Snow began to fall!")
+		"fog":
+			return tr("A thick fog rolled in!")
+	return ""
+
+func _status_line(st: String) -> String:
+	match st:
+		"burn":
+			return tr("%s was burned!")
+		"soak":
+			return tr("%s got soaked!")
+		"root":
+			return tr("%s was rooted in place!")
+		"daze":
+			return tr("%s became dazed!")
+		"sleep":
+			return tr("%s fell asleep!")
+	return "%s"
+
 func _init(player_team: Array, foe_team: Array, battle_kind: int = Kind.WILD, seed_value: int = 0, foe_name: String = "", player_name: String = "You") -> void:
 	kind = battle_kind
 	rng.seed = seed_value if seed_value != 0 else randi()
@@ -101,33 +156,33 @@ func start() -> Array:
 	participants[active(0).uid] = true
 	if kind == Kind.WILD:
 		var foe := active(1)
-		ev.append({"t": "text", "msg": "A wild %s%s appeared!" % ["Starry " if foe.starry else "", foe.display_name()]})
+		ev.append({"t": "text", "msg": tr("A wild %s%s appeared!") % [tr("Starry ") if foe.starry else "", foe.display_name()]})
 	elif kind == Kind.PVP:
 		## Both players watch these events, so PvP text names each side instead of saying "you".
-		ev.append({"t": "text", "msg": "%s and %s face off!" % [sides[0].name, sides[1].name]})
+		ev.append({"t": "text", "msg": tr("%s and %s face off!") % [sides[0].name, sides[1].name]})
 		for side in [0, 1]:
 			ev.append({"t": "switch", "side": side, "index": sides[side].active, "species": active(side).species_id})
-			ev.append({"t": "text", "msg": "%s sent out %s!" % [sides[side].name, active(side).display_name()]})
+			ev.append({"t": "text", "msg": tr("%s sent out %s!") % [sides[side].name, active(side).display_name()]})
 	else:
-		ev.append({"t": "text", "msg": "%s wants to battle!" % sides[1].name})
+		ev.append({"t": "text", "msg": tr("%s wants to battle!") % sides[1].name})
 		ev.append({"t": "switch", "side": 1, "index": sides[1].active, "species": active(1).species_id})
-		ev.append({"t": "text", "msg": "%s sent out %s!" % [sides[1].name, active(1).display_name()]})
+		ev.append({"t": "text", "msg": tr("%s sent out %s!") % [sides[1].name, active(1).display_name()]})
 	if kind != Kind.PVP:
 		ev.append({"t": "switch", "side": 0, "index": sides[0].active, "species": active(0).species_id})
-		ev.append({"t": "text", "msg": "Go, %s!" % active(0).display_name()})
+		ev.append({"t": "text", "msg": tr("Go, %s!") % active(0).display_name()})
 	if weather != "":
 		ev.append({"t": "weather", "w": weather})
-		ev.append({"t": "text", "msg": {"rain": "It's raining.", "storm": "A storm is raging.", "snow": "Snow is falling.", "fog": "The fog is thick.", "sun": "The sunlight is harsh."}[weather]})
+		ev.append({"t": "text", "msg": _weather_now(weather)})
 	_on_entry(0, ev)
 	_on_entry(1, ev)
 	return ev
 
 func _on_entry(side: int, ev: Array) -> void:
 	var c := active(side)
-	var tr: Dictionary = Data.traits.get(c.trait_id, {})
-	if tr.has("entry_foe_stat"):
-		var e: Array = tr.entry_foe_stat
-		_apply_stage(foe_of(side), e[0], int(e[1]), ev, "%s's %s" % [c.display_name(), tr.name])
+	var trait_def: Dictionary = Data.traits.get(c.trait_id, {})
+	if trait_def.has("entry_foe_stat"):
+		var e: Array = trait_def.entry_foe_stat
+		_apply_stage(foe_of(side), e[0], int(e[1]), ev, tr("%s's %s") % [c.display_name(), tr(str(trait_def.name))])
 
 ## Returns true if `side` must choose a replacement before the next turn.
 func needs_switch(side: int) -> bool:
@@ -148,7 +203,7 @@ func _do_switch(side: int, index: int, ev: Array) -> void:
 	var old := s.current()
 	var mine := side == 0 and kind != Kind.PVP
 	if not old.is_fainted():
-		ev.append({"t": "text", "msg": "%s, come back!" % old.display_name()} if mine else {"t": "text", "msg": "%s withdrew %s." % [s.name, old.display_name()]})
+		ev.append({"t": "text", "msg": tr("%s, come back!") % old.display_name()} if mine else {"t": "text", "msg": tr("%s withdrew %s.") % [s.name, old.display_name()]})
 	if old.status == "root" or old.status == "daze":
 		old.status = ""
 	s.active = index
@@ -156,7 +211,7 @@ func _do_switch(side: int, index: int, ev: Array) -> void:
 	if side == 0:
 		participants[s.current().uid] = true
 	ev.append({"t": "switch", "side": side, "index": index, "species": s.current().species_id})
-	ev.append({"t": "text", "msg": ("Go, %s!" % s.current().display_name()) if mine else ("%s sent out %s!" % [s.name, s.current().display_name()])})
+	ev.append({"t": "text", "msg": (tr("Go, %s!") % s.current().display_name()) if mine else (tr("%s sent out %s!") % [s.name, s.current().display_name()])})
 	_on_entry(side, ev)
 
 # --- PvP sync (the challenger runs the engine; the opponent mirrors it) -------------------------
@@ -214,14 +269,14 @@ func submit(a0: Dictionary, a1: Dictionary) -> Array:
 			if kind == Kind.WILD and side == 0:
 				run_attempts += 1
 				if active(0).status == "root":
-					ev.append({"t": "text", "msg": "%s is rooted and can't escape!" % active(0).display_name()})
+					ev.append({"t": "text", "msg": tr("%s is rooted and can't escape!") % active(0).display_name()})
 					acts[0] = {"k": "none"}
 				else:
-					ev.append({"t": "text", "msg": "You got away safely!"})
+					ev.append({"t": "text", "msg": tr("You got away safely!")})
 					_end("run", ev)
 					return ev
 			elif kind == Kind.PVP:
-				ev.append({"t": "text", "msg": "%s forfeited." % sides[side].name})
+				ev.append({"t": "text", "msg": tr("%s forfeited.") % sides[side].name})
 				_end("lose" if side == 0 else "win", ev)
 				return ev
 			else:
@@ -235,7 +290,7 @@ func submit(a0: Dictionary, a1: Dictionary) -> Array:
 			if can_switch(side):
 				_do_switch(side, int(acts[side].i), ev)
 			else:
-				ev.append({"t": "text", "msg": "%s is rooted and can't switch!" % active(side).display_name()})
+				ev.append({"t": "text", "msg": tr("%s is rooted and can't switch!") % active(side).display_name()})
 	# 3. Items
 	for side in order:
 		if acts[side].get("k", "") == "item":
@@ -303,22 +358,22 @@ func _execute_move(side: int, move_id: String, ev: Array) -> void:
 		if user.status_turns <= 0:
 			user.status = ""
 			ev.append({"t": "status", "side": side, "status": ""})
-			ev.append({"t": "text", "msg": "%s woke up!" % user.display_name()})
+			ev.append({"t": "text", "msg": tr("%s woke up!") % user.display_name()})
 		else:
-			ev.append({"t": "text", "msg": "%s is fast asleep." % user.display_name()})
+			ev.append({"t": "text", "msg": tr("%s is fast asleep.") % user.display_name()})
 			return
 	if user.status == "daze":
 		user.status_turns -= 1
 		if user.status_turns <= 0:
 			user.status = ""
 			ev.append({"t": "status", "side": side, "status": ""})
-			ev.append({"t": "text", "msg": "%s snapped out of its daze!" % user.display_name()})
+			ev.append({"t": "text", "msg": tr("%s snapped out of its daze!") % user.display_name()})
 		elif rng.randf() < 0.33:
-			ev.append({"t": "text", "msg": "%s is too dazed to move!" % user.display_name()})
+			ev.append({"t": "text", "msg": tr("%s is too dazed to move!") % user.display_name()})
 			return
 	var m: Dictionary = Data.get_move(move_id)
 	ev.append({"t": "move", "side": side, "move": move_id, "name": m.name, "type": m.type, "cat": m.cat})
-	ev.append({"t": "text", "msg": "%s used %s!" % [user.display_name(), m.name]})
+	ev.append({"t": "text", "msg": tr("%s used %s!") % [user.display_name(), tr(str(m.name))]})
 	var acc := float(m.acc)
 	if weather == "fog" and not "shade" in user.types():
 		acc *= 0.85
@@ -327,7 +382,7 @@ func _execute_move(side: int, move_id: String, ev: Array) -> void:
 	if acc > 0.0 and (m.cat != "status" or _targets_foe(m)):
 		if rng.randf() * 100.0 >= acc:
 			ev.append({"t": "miss", "side": side})
-			ev.append({"t": "text", "msg": "But it missed!"})
+			ev.append({"t": "text", "msg": tr("But it missed!")})
 			return
 	if m.cat == "status":
 		_apply_effects(side, m, ev, 0)
@@ -335,21 +390,21 @@ func _execute_move(side: int, move_id: String, ev: Array) -> void:
 	var dmg_info := calc_damage(side, move_id)
 	var dmg: int = dmg_info.damage
 	if dmg_info.eff == 0.0:
-		ev.append({"t": "text", "msg": "It had no effect..."})
+		ev.append({"t": "text", "msg": tr("It had no effect...")})
 		return
 	# Sturdy
 	if target.trait_id == "sturdy" and target.hp == target.max_hp() and dmg >= target.hp and not sides[target_side].sturdy_used.has(target.uid):
 		dmg = target.hp - 1
 		sides[target_side].sturdy_used[target.uid] = true
-		ev.append({"t": "text", "msg": "%s hung on with Sturdy!" % target.display_name()})
+		ev.append({"t": "text", "msg": tr("%s hung on with Sturdy!") % target.display_name()})
 	target.hp = max(0, target.hp - dmg)
 	ev.append({"t": "damage", "side": target_side, "amount": dmg, "hp": target.hp, "max": target.max_hp(), "eff": dmg_info.eff, "crit": dmg_info.crit})
 	if dmg_info.crit:
-		ev.append({"t": "text", "msg": "A critical hit!"})
+		ev.append({"t": "text", "msg": tr("A critical hit!")})
 	if dmg_info.eff > 1.0:
-		ev.append({"t": "text", "msg": "It's super effective!"})
+		ev.append({"t": "text", "msg": tr("It's super effective!")})
 	elif dmg_info.eff < 1.0:
-		ev.append({"t": "text", "msg": "It's not very effective..."})
+		ev.append({"t": "text", "msg": tr("It's not very effective...")})
 	# Contact traits
 	if m.cat == "phys" and not target.is_fainted():
 		var ttr: Dictionary = Data.traits.get(target.trait_id, {})
@@ -432,23 +487,23 @@ func _apply_effects(side: int, m: Dictionary, ev: Array, dealt: int) -> void:
 					var r := maxi(1, int(dealt * float(e.f)))
 					user.hp = max(0, user.hp - r)
 					ev.append({"t": "damage", "side": side, "amount": r, "hp": user.hp, "max": user.max_hp(), "eff": 1.0, "crit": false})
-					ev.append({"t": "text", "msg": "%s is hit with recoil!" % user.display_name()})
+					ev.append({"t": "text", "msg": tr("%s is hit with recoil!") % user.display_name()})
 			"rest":
 				user.hp = user.max_hp()
 				user.status = "sleep"
 				user.status_turns = 3
 				ev.append({"t": "heal", "side": side, "amount": user.max_hp(), "hp": user.hp, "max": user.max_hp()})
 				ev.append({"t": "status", "side": side, "status": "sleep"})
-				ev.append({"t": "text", "msg": "%s curled up for a cozy nap!" % user.display_name()})
+				ev.append({"t": "text", "msg": tr("%s curled up for a cozy nap!") % user.display_name()})
 
 func _start_weather(w: String, ev: Array) -> void:
 	if weather == w:
-		ev.append({"t": "text", "msg": "But it failed!"})
+		ev.append({"t": "text", "msg": tr("But it failed!")})
 		return
 	weather = w
 	weather_turns = WEATHER_TURNS
 	ev.append({"t": "weather", "w": w})
-	ev.append({"t": "text", "msg": WEATHER[w].start})
+	ev.append({"t": "text", "msg": _weather_edge(w, false)})
 
 func _inflict(target_side: int, st: String, ev: Array, announce_fail: bool = false) -> void:
 	var c := active(target_side)
@@ -456,12 +511,12 @@ func _inflict(target_side: int, st: String, ev: Array, announce_fail: bool = fal
 		return
 	if c.status != "":
 		if announce_fail:
-			ev.append({"t": "text", "msg": "But it failed!"})
+			ev.append({"t": "text", "msg": tr("But it failed!")})
 		return
 	var immune: Array = Data.traits.get(c.trait_id, {}).get("status_immune", [])
 	if st in immune or (st == "burn" and "ember" in c.types()) or (st == "soak" and "tide" in c.types()) or (st == "root" and "leaf" in c.types()):
 		if announce_fail:
-			ev.append({"t": "text", "msg": "%s is unaffected!" % c.display_name()})
+			ev.append({"t": "text", "msg": tr("%s is unaffected!") % c.display_name()})
 		return
 	c.status = st
 	match st:
@@ -471,24 +526,29 @@ func _inflict(target_side: int, st: String, ev: Array, announce_fail: bool = fal
 		"root": c.status_turns = 5
 		_: c.status_turns = 0
 	ev.append({"t": "status", "side": target_side, "status": st})
-	var msgs := {"burn": "%s was burned!", "soak": "%s got soaked!", "root": "%s was rooted in place!", "daze": "%s became dazed!", "sleep": "%s fell asleep!"}
-	ev.append({"t": "text", "msg": msgs[st] % c.display_name()})
+	ev.append({"t": "text", "msg": _status_line(st) % c.display_name()})
 
 func _apply_stage(side: int, stat: String, n: int, ev: Array, source: String = "") -> void:
 	var cur: int = int(sides[side].stages[stat])
 	var nv := clampi(cur + n, -6, 6)
 	var c := active(side)
+	var stat_name := tr(stat.capitalize())
 	if nv == cur:
-		ev.append({"t": "text", "msg": "%s's %s won't go any %s!" % [c.display_name(), stat.capitalize(), "higher" if n > 0 else "lower"]})
+		var stuck := tr("%s's %s won't go any higher!") if n > 0 else tr("%s's %s won't go any lower!")
+		ev.append({"t": "text", "msg": stuck % [c.display_name(), stat_name]})
 		return
 	sides[side].stages[stat] = nv
 	ev.append({"t": "stat", "side": side, "stat": stat, "n": n})
-	var how := "rose" if n == 1 else "rose sharply" if n > 1 else "fell" if n == -1 else "fell sharply"
-	var prefix := (source + " lowered ") if source != "" else ""
-	if prefix != "":
-		ev.append({"t": "text", "msg": "%s%s's %s!" % [prefix, c.display_name(), stat.capitalize()]})
+	if source != "":
+		ev.append({"t": "text", "msg": tr("%s lowered %s's %s!") % [source, c.display_name(), stat_name]})
+	elif n > 1:
+		ev.append({"t": "text", "msg": tr("%s's %s rose sharply!") % [c.display_name(), stat_name]})
+	elif n == 1:
+		ev.append({"t": "text", "msg": tr("%s's %s rose!") % [c.display_name(), stat_name]})
+	elif n < -1:
+		ev.append({"t": "text", "msg": tr("%s's %s fell sharply!") % [c.display_name(), stat_name]})
 	else:
-		ev.append({"t": "text", "msg": "%s's %s %s!" % [c.display_name(), stat.capitalize(), how]})
+		ev.append({"t": "text", "msg": tr("%s's %s fell!") % [c.display_name(), stat_name]})
 
 func _heal(side: int, amount: int, ev: Array) -> void:
 	var c := active(side)
@@ -498,7 +558,7 @@ func _heal(side: int, amount: int, ev: Array) -> void:
 	c.hp = mini(c.max_hp(), c.hp + amount)
 	if c.hp > before:
 		ev.append({"t": "heal", "side": side, "amount": c.hp - before, "hp": c.hp, "max": c.max_hp()})
-		ev.append({"t": "text", "msg": "%s restored HP!" % c.display_name()})
+		ev.append({"t": "text", "msg": tr("%s restored HP!") % c.display_name()})
 
 func _use_item(side: int, item_id: String, target: int, ev: Array) -> void:
 	var it: Dictionary = Data.get_item(item_id)
@@ -512,26 +572,26 @@ func _use_item(side: int, item_id: String, target: int, ev: Array) -> void:
 		if int(stock[item_id]) <= 0:
 			stock.erase(item_id)
 	ev.append({"t": "item", "side": side, "id": item_id})
-	ev.append({"t": "text", "msg": "%s used a %s." % [sides[side].name, it.get("name", item_id)]})
+	ev.append({"t": "text", "msg": tr("%s used a %s.") % [sides[side].name, tr(str(it.get("name", item_id)))]})
 	if it.has("revive"):
 		if c.is_fainted():
 			c.hp = max(1, int(c.max_hp() * float(it.revive)))
-			ev.append({"t": "text", "msg": "%s was revived!" % c.display_name()})
+			ev.append({"t": "text", "msg": tr("%s was revived!") % c.display_name()})
 		return
 	if c.is_fainted():
-		ev.append({"t": "text", "msg": "It had no effect."})
+		ev.append({"t": "text", "msg": tr("It had no effect.")})
 		return
 	if it.has("heal"):
 		var before := c.hp
 		c.hp = mini(c.max_hp(), c.hp + int(it.heal))
 		if target == sides[side].active:
 			ev.append({"t": "heal", "side": side, "amount": c.hp - before, "hp": c.hp, "max": c.max_hp()})
-		ev.append({"t": "text", "msg": "%s recovered %d HP." % [c.display_name(), c.hp - before]})
+		ev.append({"t": "text", "msg": tr("%s recovered %d HP.") % [c.display_name(), c.hp - before]})
 	if it.get("cure", false) and c.status != "":
 		c.status = ""
 		if target == sides[side].active:
 			ev.append({"t": "status", "side": side, "status": ""})
-		ev.append({"t": "text", "msg": "%s was cured!" % c.display_name()})
+		ev.append({"t": "text", "msg": tr("%s was cured!") % c.display_name()})
 
 ## Chance to befriend the wild foe with an item (treat or charm).
 func befriend_chance(item_id: String) -> float:
@@ -557,12 +617,12 @@ func _try_befriend(item_id: String, ev: Array) -> void:
 	var it: Dictionary = Data.get_item(item_id)
 	var chance := befriend_chance(item_id)
 	if it.has("charm"):
-		ev.append({"t": "text", "msg": "You held up the %s!" % it.name})
+		ev.append({"t": "text", "msg": tr("You held up the %s!") % tr(str(it.name))})
 	else:
 		var fav := Data.treat_power(item_id, foe.species_id) > float(it.get("treat", 0.0))
-		ev.append({"t": "text", "msg": "You offered the %s %s." % [foe.display_name(), it.get("name", item_id)]})
+		ev.append({"t": "text", "msg": tr("You offered the %s %s.") % [foe.display_name(), tr(str(it.get("name", item_id)))]})
 		if fav:
-			ev.append({"t": "text", "msg": "It's %s's favorite food!" % foe.display_name()})
+			ev.append({"t": "text", "msg": tr("It's %s's favorite food!") % foe.display_name()})
 	var success := rng.randf() < chance
 	var shakes := 3
 	if not success:
@@ -576,12 +636,12 @@ func _try_befriend(item_id: String, ev: Array) -> void:
 		shakes = mini(shakes, 2)
 	ev.append({"t": "befriend", "shakes": shakes, "success": success})
 	if success:
-		ev.append({"t": "text", "msg": "%s wants to be your friend!" % foe.display_name()})
+		ev.append({"t": "text", "msg": tr("%s wants to be your friend!") % foe.display_name()})
 		befriended = foe
 		foe.status = ""
 		_end("befriend", ev)
 	else:
-		var lines := ["%s isn't convinced yet.", "%s sniffed it, then looked away.", "So close! %s almost came over!"]
+		var lines := [tr("%s isn't convinced yet."), tr("%s sniffed it, then looked away."), tr("So close! %s almost came over!")]
 		ev.append({"t": "text", "msg": lines[clampi(shakes, 0, 2)] % foe.display_name()})
 
 func _end_of_turn(ev: Array) -> void:
@@ -594,25 +654,25 @@ func _end_of_turn(ev: Array) -> void:
 				var d := maxi(1, c.max_hp() / 16)
 				c.hp = max(0, c.hp - d)
 				ev.append({"t": "damage", "side": side, "amount": d, "hp": c.hp, "max": c.max_hp(), "eff": 1.0, "crit": false})
-				ev.append({"t": "text", "msg": "%s is hurt by its burn!" % c.display_name()})
+				ev.append({"t": "text", "msg": tr("%s is hurt by its burn!") % c.display_name()})
 			"root":
 				var d2 := maxi(1, c.max_hp() / 8)
 				d2 = mini(d2, c.hp)
 				c.hp -= d2
 				ev.append({"t": "damage", "side": side, "amount": d2, "hp": c.hp, "max": c.max_hp(), "eff": 1.0, "crit": false})
-				ev.append({"t": "text", "msg": "Roots drain %s's energy!" % c.display_name()})
+				ev.append({"t": "text", "msg": tr("Roots drain %s's energy!") % c.display_name()})
 				_heal(foe_of(side), d2, ev)
 				c.status_turns -= 1
 				if c.status_turns <= 0 and not c.is_fainted():
 					c.status = ""
 					ev.append({"t": "status", "side": side, "status": ""})
-					ev.append({"t": "text", "msg": "%s broke free of the roots!" % c.display_name()})
+					ev.append({"t": "text", "msg": tr("%s broke free of the roots!") % c.display_name()})
 			"soak":
 				c.status_turns -= 1
 				if c.status_turns <= 0:
 					c.status = ""
 					ev.append({"t": "status", "side": side, "status": ""})
-					ev.append({"t": "text", "msg": "%s dried off." % c.display_name()})
+					ev.append({"t": "text", "msg": tr("%s dried off.") % c.display_name()})
 		var regen := float(Data.traits.get(c.trait_id, {}).get("regen", 0.0))
 		if regen > 0.0 and not c.is_fainted() and c.hp < c.max_hp():
 			_heal(side, max(1, int(c.max_hp() * regen)), ev)
@@ -620,11 +680,11 @@ func _end_of_turn(ev: Array) -> void:
 			var chill := maxi(1, c.max_hp() / 16)
 			c.hp = max(0, c.hp - chill)
 			ev.append({"t": "damage", "side": side, "amount": chill, "hp": c.hp, "max": c.max_hp(), "eff": 1.0, "crit": false})
-			ev.append({"t": "text", "msg": "%s is chilled by the snow!" % c.display_name()})
+			ev.append({"t": "text", "msg": tr("%s is chilled by the snow!") % c.display_name()})
 	if weather_turns > 0:
 		weather_turns -= 1
 		if weather_turns == 0:
-			ev.append({"t": "text", "msg": WEATHER[weather].end})
+			ev.append({"t": "text", "msg": _weather_edge(weather, true)})
 			weather = base_weather
 			weather_turns = -1
 			ev.append({"t": "weather", "w": weather})
@@ -635,7 +695,7 @@ func _check_faints(ev: Array) -> void:
 		if c.is_fainted() and not _announced_faint.has(c.uid):
 			_announced_faint[c.uid] = true
 			ev.append({"t": "faint", "side": side})
-			ev.append({"t": "text", "msg": "%s%s fainted!" % ["The wild " if kind == Kind.WILD and side == 1 else "", c.display_name()]})
+			ev.append({"t": "text", "msg": tr("%s%s fainted!") % [tr("The wild ") if kind == Kind.WILD and side == 1 else "", c.display_name()]})
 			c.status = ""
 			if side == 1:
 				_award_xp(c, ev)
@@ -663,16 +723,17 @@ func _award_xp(foe: Creature, ev: Array) -> void:
 	var each := maxi(1, total / alive.size())
 	for c in alive:
 		ev.append({"t": "xp", "uid": c.uid, "amount": each})
-		ev.append({"t": "text", "msg": "%s gained %d XP!" % [c.display_name(), each]})
+		ev.append({"t": "text", "msg": tr("%s gained %d XP!") % [c.display_name(), each]})
 		for e in c.gain_xp(each):
 			e["uid"] = c.uid
 			ev.append(e)
 			if e.t == "level":
-				ev.append({"t": "text", "msg": "%s grew to level %d!" % [c.display_name(), e.level]})
+				ev.append({"t": "text", "msg": tr("%s grew to level %d!") % [c.display_name(), e.level]})
 				if c == active(0):
 					ev.append({"t": "heal", "side": 0, "amount": 0, "hp": c.hp, "max": c.max_hp()})
 			elif e.t == "learn":
-				ev.append({"t": "text", "msg": ("%s learned %s!" if e.equipped else "%s can now use %s! (Equip it from the Party menu.)") % [c.display_name(), Data.get_move(e.move).name]})
+				var learned := tr("%s learned %s!") if e.equipped else tr("%s can now use %s! (Equip it from the Party menu.)")
+				ev.append({"t": "text", "msg": learned % [c.display_name(), tr(str(Data.get_move(e.move).name))]})
 		c.change_happiness(2)
 
 func _end(res: String, ev: Array) -> void:

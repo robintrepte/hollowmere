@@ -216,9 +216,9 @@ static func tracker(world: Dictionary, p: PlayerData) -> String:
 	if ch.is_empty():
 		return ""
 	if not world.flags.get("story_seen:" + str(ch.id), false):
-		return "Talk to Elder Barley in the village."
+		return TranslationServer.translate("Talk to Elder Barley in the village.")
 	var pr := goal_progress(ch.goal, story_facts(world, p))
-	var hint: String = ch.get("hint", "")
+	var hint := TranslationServer.translate(str(ch.get("hint", "")))
 	if ch.goal.is_empty():
 		return hint
-	return "%s (%d/%d)" % [hint, int(pr[0]), int(pr[1])]
+	return TranslationServer.translate("%s (%d/%d)") % [hint, int(pr[0]), int(pr[1])]

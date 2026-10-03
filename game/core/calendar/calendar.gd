@@ -101,4 +101,15 @@ static func weather_waters(w: String) -> bool:
 	return w == "rain" or w == "storm"
 
 static func weather_name(w: String) -> String:
-	return {"sun": "Sunny", "rain": "Rain", "storm": "Storm", "snow": "Snow", "fog": "Fog"}.get(w, w.capitalize())
+	match w:
+		"sun":
+			return TranslationServer.translate("Sunny")
+		"rain":
+			return TranslationServer.translate("Rain")
+		"storm":
+			return TranslationServer.translate("Storm")
+		"snow":
+			return TranslationServer.translate("Snow")
+		"fog":
+			return TranslationServer.translate("Fog")
+	return TranslationServer.translate(w.capitalize())

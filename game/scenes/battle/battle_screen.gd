@@ -226,7 +226,7 @@ func _refresh_box(side: int, animate_hp: bool = false) -> void:
 			pips += "○" if m.is_fainted() else "●"
 	b.pips.text = pips + (" " if pips != "" else "")
 	var tag: Array = STATUS_TAG.get(c.status, ["", "#000000"])
-	b.status.text = tag[0]
+	b.status.text = tr(str(tag[0]))
 	b.status.add_theme_color_override("font_outline_color", Color(tag[1]))
 	b.status.add_theme_constant_override("outline_size", 6)
 	var frac := float(c.hp) / float(maxi(1, c.max_hp()))
@@ -458,7 +458,7 @@ func _after_battle() -> void:
 		"win":
 			if setup.get("kind", "wild") != "wild":
 				var reward := int(setup.get("reward", 0))
-				await _say(tr("You beat %s!") % setup.get("foe_name", "the trainer"))
+				await _say(tr("You beat %s!") % setup.get("foe_name", tr("the trainer")))
 				for l in setup.get("lose_lines", []):
 					await _say(l)
 				if reward > 0:
@@ -730,11 +730,11 @@ func _show_main_menu() -> void:
 		else:
 			_show_main_menu())
 	var pvp: bool = setup.get("kind", "") == "pvp"
-	_cmd_button("Forfeit" if pvp else "Run", func():
+	_cmd_button(tr("Forfeit") if pvp else tr("Run"), func():
 		if pvp:
 			_confirm_forfeit()
 		elif setup.get("kind", "wild") != "wild":
-			_msg.text = "You can't run from a trainer battle!"
+			_msg.text = tr("You can't run from a trainer battle!")
 			Audio.sfx("error")
 		else:
 			_picked.emit({"k": "run"}))
@@ -742,7 +742,7 @@ func _show_main_menu() -> void:
 
 func _confirm_forfeit() -> void:
 	_clear_cmd()
-	_msg.text = "Forfeit the friendly battle?"
+	_msg.text = tr("Forfeit the friendly battle?")
 	_cmd_button("Forfeit", func(): _picked.emit({"k": "run"}), UITheme.HEART.darkened(0.3))
 	_cmd_button("Keep going", _show_main_menu).call_deferred("grab_focus")
 
@@ -832,7 +832,7 @@ func _show_bag() -> void:
 	v.add_child(UITheme.button("Back", func(): _close_overlay(); _show_main_menu()))
 
 func _choose_party(forced: bool) -> int:
-	var p := _list_overlay("Choose a Wildling" if forced else "Party")
+	var p := _list_overlay(tr("Choose a Wildling") if forced else tr("Party"))
 	var v: VBoxContainer = p.get_meta("list")
 	var result := [-2]
 	var team: Array = engine.sides[0].team
@@ -841,7 +841,7 @@ func _choose_party(forced: bool) -> int:
 		var row := HBoxContainer.new()
 		v.add_child(row)
 		row.add_child(UITheme.icon_rect(Art.creature(c.species_id, true), 32))
-		var b := UITheme.button(tr("%s  Lv%d   HP %d/%d%s") % [c.display_name(), c.level, c.hp, c.max_hp(), "  (out)" if i == engine.sides[0].active else ""], func():
+		var b := UITheme.button(tr("%s  Lv%d   HP %d/%d%s") % [c.display_name(), c.level, c.hp, c.max_hp(), tr("  (out)") if i == engine.sides[0].active else ""], func():
 			result[0] = i
 			_advance.emit())
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT

@@ -56,9 +56,11 @@ func test_german_catalog_is_loaded_and_used() -> void:
 	assert_eq(Data.type_name("leaf"), "Blatt")
 	assert_eq(Data.season_name("spring"), "Frühling")
 	assert_eq(Endless.rank_name(0), "Anfänger")
-	Settings.locale = prev
+	Settings.locale = "en"
 	Settings.apply()
 	assert_eq(Data.item_name("parsnip"), "Parsnip")
+	Settings.locale = prev
+	Settings.apply()
 
 func test_data_names_go_through_translation() -> void:
 	var t := Translation.new()

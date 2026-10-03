@@ -3,8 +3,14 @@
 
 Outputs (in game/assets/tiles/):
   ground_<season>.png   4 variant columns x 20 rows (row = ground tile id, see core/world/tiles.gd)
-  soil.png              16 columns (4-bit neighbor mask N=1 E=2 S=4 W=8) x 2 rows (dry, watered)
-  water_edge.png        16 columns of edge overlays drawn over water (mask = sides that face land)
+  soil.png              16 columns (neighbor mask, bit set = that side is also tilled, N=1 E=2 S=4 W=8)
+                        x 32 rows (inner-corner mask + 16 if watered). Open sides are ragged; outer
+                        corners are rounded off, inner corners nicked, so a plot is not a hard rectangle.
+  water_edge.png        overlays drawn on water. 16 columns (sides facing land) x 64 rows
+                        (diagonal land corners + variant * 16). Shores are ragged; corners are rounded
+                        with a different lump per corner and per variant. Straight edges match across variants.
+  shore_fringe.png      dirt bank spilling onto the land tile. 16 columns (sides facing water)
+                        x 16 rows (diagonal water). Same bank color as water_edge where the tiles meet.
   grass_edge_<season>.png  grass spilling onto bare ground: 16 columns (sides that touch grass,
                         N=1 E=2 S=4 W=8) x 16 rows (diagonal-only grass, NE=1 SE=2 SW=4 NW=8)
   cliff.png, cavewall.png  32x48 blocking deco
@@ -263,9 +269,202 @@ def ground_atlas(season):
     return Image.fromarray(atlas, "RGBA")
 
 
+def _wave(base, harmonics, lo, hi):
+    """Periodic depth along one tile edge. Sample 0 and sample T-1 are neighbors, so tiles join."""
+    k = np.arange(T) * 2 * np.pi / T
+    d = np.full(T, float(base))
+    for amp, freq, phase in harmonics:
+        d += amp * np.sin(freq * k + phase)
+    return np.clip(d, lo, hi)
+
+
+# Shared by every autotile of that terrain, so a long edge undulates instead of stepping.
+SHORE_D = _wave(3.5, [(1.05, 1, 0.6), (0.7, 2, 2.0), (0.45, 3, 4.2), (0.28, 5, 1.1), (0.16, 8, 3.3)], 2.2, 5.6)
+SOIL_D = _wave(3.3, [(1.0, 1, 0.35), (0.65, 3, 1.9), (0.4, 5, 3.7), (0.22, 8, 0.8)], 1.7, 5.4)
+FRINGE_D = _wave(2.7, [(0.85, 1, 1.4), (0.55, 3, 0.5), (0.32, 5, 2.6), (0.18, 8, 4.4)], 1.5, 4.4)
+
+# Corner order matches world.gd DIAGONALS: NE, SE, SW, NW. Extras differ so the four corners of a
+# pond (or a plot) are not the same curve. The bulge is zero on the tile axes, so it never moves the
+# straight-edge profile that has to meet the next tile.
+WATER_CORNER_EXTRA = np.array([11.0, 7.4, 13.6, 9.2])
+WATER_CORNER_PHASE = np.array([5.15, 0.55, 3.40, 1.90])
+WATER_DIAG_EXTRA = np.array([6.4, 4.2, 8.0, 5.1])
+WATER_VARIANTS = (
+    {"scale": 0.78, "phase": 0.2, "power": 0.62},
+    {"scale": 1.0, "phase": 1.7, "power": 1.05},
+    {"scale": 1.16, "phase": 3.3, "power": 1.55},
+    {"scale": 1.34, "phase": 4.9, "power": 0.8},
+)
+SOIL_OUTER_EXTRA = np.array([5.8, 3.8, 7.2, 4.6])
+SOIL_OUTER_PHASE = np.array([0.5, 2.0, 3.7, 5.2])
+SOIL_INNER_EXTRA = np.array([3.2, 2.0, 3.8, 2.4])
+SOIL_INNER_PHASE = np.array([1.1, 2.8, 4.4, 0.2])
+# Diagonal extras round the pond's outer corner (the land tile only touches water on the diagonal).
+# They differ on purpose: one corner stays tighter, the opposite one bulges.
+FRINGE_CORNER_EXTRA = np.array([11.0, 8.2, 13.2, 9.4])
+FRINGE_CORNER_PHASE = np.array([0.4, 2.1, 3.6, 5.2])
+FRINGE_DIAG_EXTRA = np.array([11.4, 8.4, 13.6, 9.6])
+# Sides that meet at each corner: N=0 E=1 S=2 W=3.
+_CORNER_SIDES = ((0, 1), (1, 2), (2, 3), (3, 0))
+
+BANK_DARK = hexc("#3e3226")
+BANK = hexc("#5a4a32")
+LIP = hexc("#7a6444")
+FOAM = hexc("#d4eef8")
+SOIL_RIM = (hexc("#3a2818"), hexc("#2a1c12"))
+SOIL_HI = (1.12, 1.08)
+
+
+def _corner_uv(corner, xs, ys):
+    """Distances from a tile corner, plus the depth-array index of each adjacent edge at that corner."""
+    if corner == 0:  # NE
+        return T - 0.5 - xs, ys + 0.5, 0, T - 1
+    if corner == 1:  # SE
+        return T - 0.5 - xs, T - 0.5 - ys, T - 1, T - 1
+    if corner == 2:  # SW
+        return xs + 0.5, T - 0.5 - ys, T - 1, 0
+    return xs + 0.5, ys + 0.5, 0, 0
+
+
+def _fillet(corner, depth, extra, phase, power, xs, ys):
+    """Wobbly quarter-disk. Radius on each axis equals that edge's depth, so seams stay put;
+    the extra radius lives in the middle of the arc and is lumpy rather than circular."""
+    u, v, ui, vi = _corner_uv(corner, xs, ys)
+    ang = np.clip(np.arctan2(v, np.maximum(u, 1e-6)), 0.0, np.pi / 2)
+    window = np.clip(np.sin(ang * 2), 0.0, 1.0) ** power
+    # Window is zero on the axes, so the seam holds. Through the arc it stays a real curve
+    # (never flat) but the bumps slide around with `phase`, so it is not a circle.
+    # Mild wobble only. A stronger lump turns the corner into a spike instead of a round.
+    lumps = np.clip(1.0 + 0.18 * np.sin(ang * 2 + phase) + 0.12 * np.sin(ang * 5 + phase * 1.4), 0.78, 1.28)
+    t = ang / (np.pi / 2)
+    r = np.minimum((1 - t) * depth[ui] + t * depth[vi] + extra * window * lumps, 20.0)
+    return np.hypot(u, v) < r
+
+
+def _coverage(depth, sides_mask, corners_mask, side_extra, side_phase, corner_extra, corner_phase, power=1.0):
+    """Pixels a shore or a cut occupies. `sides_mask` bits are N E S W. `corners_mask` bits are
+    diagonal-only contacts (NE SE SW NW), used when the two adjacent sides are not both set."""
+    ys, xs = np.mgrid[0:T, 0:T]
+    xf, yf = xs.astype(np.float64), ys.astype(np.float64)
+    bands = (
+        yf + 0.5 < depth[xs],
+        (T - xf) - 0.5 < depth[ys],
+        (T - yf) - 0.5 < depth[xs],
+        xf + 0.5 < depth[ys],
+    )
+    on = np.zeros((T, T), dtype=bool)
+    for i in range(4):
+        if sides_mask & (1 << i):
+            on |= bands[i]
+    for c, (a, b) in enumerate(_CORNER_SIDES):
+        if (sides_mask & (1 << a)) and (sides_mask & (1 << b)):
+            on |= _fillet(c, depth, side_extra[c], side_phase[c], power, xf, yf)
+        elif corners_mask & (1 << c):
+            on |= _fillet(c, depth, corner_extra[c], corner_phase[c], 1.0, xf, yf)
+    return on
+
+
+def _dist_inside(mask):
+    """How many steps a covered pixel is from the nearest uncovered one. Outside the tile does not count."""
+    d = np.where(mask, np.int16(99), np.int16(0))
+    for _ in range(14):
+        p = np.pad(d, 1, constant_values=99)
+        neigh = (
+            p[:-2, 1:-1], p[2:, 1:-1], p[1:-1, :-2], p[1:-1, 2:],
+            p[:-2, :-2], p[:-2, 2:], p[2:, :-2], p[2:, 2:],
+        )
+        d = np.where(mask, np.minimum(d, np.minimum.reduce(neigh) + 1), 0)
+    return d
+
+
+def _paint_shore(mask):
+    """Dirt bank, lip and broken foam. Pixels on the tile border stay a fixed dark bank so the
+    land fringe on the next tile meets them with no seam."""
+    tile = np.zeros((T, T, 4), dtype=np.uint8)
+    if not mask.any():
+        return tile
+    ys, xs = np.mgrid[0:T, 0:T]
+    d = _dist_inside(mask)
+    tile[mask, :3] = BANK.astype(np.uint8)
+    tile[d >= 3, :3] = BANK.astype(np.uint8)
+    tile[d == 2, :3] = LIP.astype(np.uint8)
+    wave = np.sin(xs * 2 * np.pi / T * 2 + 0.4) * 0.55 + np.sin(ys * 2 * np.pi / T * 3 + 1.2) * 0.45
+    foam = (d == 1) & (wave > 0.05)
+    tile[(d == 1) & ~foam, :3] = LIP.astype(np.uint8)
+    tile[foam, :3] = FOAM.astype(np.uint8)
+    tile[mask, 3] = 255
+    tile[foam, 3] = 200
+    speck = mask & (d >= 3) & (((xs * 17 + ys * 11) % 11) == 0)
+    tile[speck, :3] = BANK_DARK.astype(np.uint8)
+    # The shared tile edge is plain bank on both sides. A dark stroke there reads as a hard frame.
+    border = np.zeros((T, T), dtype=bool)
+    border[0, :] = border[-1, :] = border[:, 0] = border[:, -1] = True
+    seam = mask & border & (d >= 2)
+    tile[seam, :3] = BANK.astype(np.uint8)
+    tile[seam, 3] = 255
+    water = ~mask
+    wp = np.pad(mask, 1, constant_values=False)
+    adj = wp[:-2, 1:-1] | wp[2:, 1:-1] | wp[1:-1, :-2] | wp[1:-1, 2:]
+    spark = water & adj & (np.sin(xs * 2 * np.pi / T * 5 + ys * 0.0 + 2.0) > 0.45)
+    tile[spark, :3] = FOAM.astype(np.uint8)
+    tile[spark, 3] = 150
+    return tile
+
+
+def _paint_fringe(mask):
+    """Shallow dirt spill onto a land tile. The ragged lip faces the grass; the tile border
+    matches the water overlay's dark bank."""
+    tile = np.zeros((T, T, 4), dtype=np.uint8)
+    if not mask.any():
+        return tile
+    ys, xs = np.mgrid[0:T, 0:T]
+    pad = np.pad(mask, 1, constant_values=True)
+    interior = pad[:-2, 1:-1] & pad[2:, 1:-1] & pad[1:-1, :-2] & pad[1:-1, 2:]
+    rim = mask & ~interior
+    tile[mask, :3] = BANK.astype(np.uint8)
+    tile[mask, 3] = 255
+    tile[rim, :3] = LIP.astype(np.uint8)
+    border = np.zeros((T, T), dtype=bool)
+    border[0, :] = border[-1, :] = border[:, 0] = border[:, -1] = True
+    tile[mask & border, :3] = BANK.astype(np.uint8)
+    below = np.zeros_like(mask)
+    below[1:, :] = mask[:-1, :] & ~mask[1:, :]
+    below &= ~border
+    tile[below, :3] = np.array([36, 32, 22], dtype=np.uint8)
+    tile[below, 3] = 64
+    crumbs = ~mask & ~border & ~below
+    cp = np.pad(mask, 1, constant_values=False)
+    adj = cp[:-2, 1:-1] | cp[2:, 1:-1] | cp[1:-1, :-2] | cp[1:-1, 2:]
+    crumbs &= adj & (((xs * 5 + ys * 3) % 3) == 0)
+    tile[crumbs, :3] = LIP.astype(np.uint8)
+    tile[crumbs, 3] = 140
+    return tile
+
+
+def _water_tile(sides, corners, variant):
+    v = WATER_VARIANTS[variant]
+    extra = WATER_CORNER_EXTRA * v["scale"]
+    phase = WATER_CORNER_PHASE + v["phase"]
+    mask = _coverage(SHORE_D, sides, corners, extra, phase, WATER_DIAG_EXTRA, WATER_CORNER_PHASE + v["phase"], v["power"])
+    return _paint_shore(mask)
+
+
+def _fringe_tile(sides, corners):
+    mask = _coverage(FRINGE_D, sides, corners, FRINGE_CORNER_EXTRA, FRINGE_CORNER_PHASE, FRINGE_DIAG_EXTRA, FRINGE_CORNER_PHASE, 1.05)
+    return _paint_fringe(mask)
+
+
+def _soil_alpha(connected, inner_corners):
+    """`connected` bits are tilled neighbors. Open sides and the two kinds of corner eat into the tile."""
+    open_sides = (~np.uint8(connected)) & 15
+    cut = _coverage(SOIL_D, int(open_sides), inner_corners, SOIL_OUTER_EXTRA, SOIL_OUTER_PHASE, SOIL_INNER_EXTRA, SOIL_INNER_PHASE, 1.0)
+    return ~cut
+
+
 def soil_atlas():
-    """Tilled soil autotile. Mask bit set => neighbor in that direction is also tilled."""
-    out = np.zeros((T * 2, T * 16, 4), dtype=np.uint8)
+    """Tilled soil. Column = connected-neighbor mask. Row = inner-corner mask, plus 16 when watered."""
+    out = np.zeros((T * 32, T * 16, 4), dtype=np.uint8)
+    alphas = [[_soil_alpha(m, c) for m in range(16)] for c in range(16)]
     for wet in (0, 1):
         rng = np.random.default_rng(77 + wet)
         n = fbm(rng)
@@ -276,68 +475,84 @@ def soil_atlas():
                 if (x * 7 + y * 3) % 5:
                     base[y, x] = hexc(cols[0])
                     base[y + 1, x] = hexc(cols[3]) if (x % 3) else base[y + 1, x]
-        for m in range(16):
-            tile = np.zeros((T, T, 4), dtype=np.uint8)
-            tile[..., :3] = base.astype(np.uint8)
-            tile[..., 3] = 255
-            inset = 2
-            alpha = np.ones((T, T), dtype=bool)
-            if not m & 1:
-                alpha[:inset, :] = False
-            if not m & 2:
-                alpha[:, T - inset:] = False
-            if not m & 4:
-                alpha[T - inset:, :] = False
-            if not m & 8:
-                alpha[:, :inset] = False
-            edge = alpha.copy()
-            inner = alpha.copy()
-            inner[1:, :] &= alpha[:-1, :]
-            inner[:-1, :] &= alpha[1:, :]
-            inner[:, 1:] &= alpha[:, :-1]
-            inner[:, :-1] &= alpha[:, 1:]
-            border = edge & ~inner
-            for (ok, sl) in ((m & 1, np.s_[0, :]), (m & 2, np.s_[:, T - 1]), (m & 4, np.s_[T - 1, :]), (m & 8, np.s_[:, 0])):
-                if ok:
-                    border[sl] = False
-            tile[border, :3] = hexc("#2e1c12").astype(np.uint8)
-            hi = inner.copy()
-            hi[1:, :] = inner[1:, :] & ~inner[:-1, :]
-            hi[0, :] = False
-            tile[hi & ~border, :3] = np.clip(base[hi & ~border] * 1.18, 0, 255).astype(np.uint8)
-            tile[..., 3] = np.where(alpha, 255, 0)
-            out[wet * T:(wet + 1) * T, m * T:(m + 1) * T] = tile
+        rim = SOIL_RIM[wet]
+        hi = SOIL_HI[wet]
+        for c in range(16):
+            for m in range(16):
+                alpha = alphas[c][m]
+                tile = np.zeros((T, T, 4), dtype=np.uint8)
+                tile[alpha, :3] = base[alpha].astype(np.uint8)
+                tile[alpha, 3] = 255
+                # Outside the tile counts as soil, so a side that connects to the next plot
+                # stays the plain furrow color and the seam disappears. The lip only appears
+                # where this tile actually gives way to grass.
+                pad = np.pad(alpha, 1, constant_values=True)
+                top = alpha & ~pad[:-2, 1:-1]
+                bottom = alpha & ~pad[2:, 1:-1]
+                west = alpha & ~pad[1:-1, :-2]
+                east = alpha & ~pad[1:-1, 2:]
+                rim_px = top | bottom | west | east
+                tile[rim_px, :3] = np.clip(base[rim_px] * 0.84, 0, 255).astype(np.uint8)
+                tile[bottom | east, :3] = rim.astype(np.uint8)
+                tile[top, :3] = np.clip(base[top] * hi, 0, 255).astype(np.uint8)
+                below = np.zeros_like(alpha)
+                below[1:, :] = alpha[:-1, :] & ~alpha[1:, :]
+                tile[below, :3] = rim.astype(np.uint8)
+                tile[below, 3] = 60
+                ys, xs = np.mgrid[0:T, 0:T]
+                cp = np.pad(alpha, 1, constant_values=False)
+                adj = cp[:-2, 1:-1] | cp[2:, 1:-1] | cp[1:-1, :-2] | cp[1:-1, 2:]
+                crumbs = ~alpha & adj & ~below & (((xs * 5 + ys * 3) % 3) == 0)
+                tile[crumbs, :3] = base[crumbs].astype(np.uint8)
+                tile[crumbs, 3] = 145
+                out[(wet * 16 + c) * T:(wet * 16 + c + 1) * T, m * T:(m + 1) * T] = tile
     return Image.fromarray(out, "RGBA")
 
 
 def water_edges():
-    """Overlay for water tiles; mask bit set => that side borders land (N=1 E=2 S=4 W=8)."""
-    out = np.zeros((T, T * 16, 4), dtype=np.uint8)
-    bank, lip, foam = hexc("#5a4a32"), hexc("#7a6444"), hexc("#d8f0fa")
-    for m in range(16):
-        tile = np.zeros((T, T, 4), dtype=np.uint8)
-        for side in range(4):
-            if not m & (1 << side):
-                continue
-            for d, col in ((0, bank), (1, bank), (2, lip), (3, foam)):
-                if side == 0:
-                    sl = np.s_[d, :]
-                elif side == 1:
-                    sl = np.s_[:, T - 1 - d]
-                elif side == 2:
-                    sl = np.s_[T - 1 - d, :]
-                else:
-                    sl = np.s_[:, d]
-                if col is foam:
-                    seg = tile[sl]
-                    keep = np.arange(T) % 5 != 0
-                    seg[keep & (seg[..., 3] == 0), :3] = col.astype(np.uint8)
-                    seg[keep & (seg[..., 3] == 0), 3] = 200
-                    tile[sl] = seg
-                else:
-                    tile[sl] = np.append(col, 255).astype(np.uint8)
-        out[:, m * T:(m + 1) * T] = tile
+    """16 side-masks by 64 rows (16 diagonal masks x 4 corner variants)."""
+    out = np.zeros((T * 64, T * 16, 4), dtype=np.uint8)
+    for v in range(4):
+        for c in range(16):
+            for m in range(16):
+                tile = _water_tile(m, c, v)
+                row = v * 16 + c
+                out[row * T:(row + 1) * T, m * T:(m + 1) * T] = tile
     return Image.fromarray(out, "RGBA")
+
+
+def shore_fringe():
+    """Dirt reaching from the water onto the neighboring land tile. 16 x 16, same bit order as grass edges."""
+    out = np.zeros((T * 16, T * 16, 4), dtype=np.uint8)
+    for c in range(16):
+        for m in range(16):
+            out[c * T:(c + 1) * T, m * T:(m + 1) * T] = _fringe_tile(m, c)
+    return Image.fromarray(out, "RGBA")
+
+
+def _check_tile_seams():
+    """Straight shores must survive corner variants, and a corner fillet must not reach the far seam."""
+    north = [_water_tile(1, 0, v) for v in range(4)]
+    for v in range(1, 4):
+        if not np.array_equal(north[0], north[v]):
+            raise SystemExit("water variant changed a straight shore")
+    corner = _water_tile(1 | 8, 0, 3)  # largest NW fillet
+    if not np.array_equal(corner[:, 31], north[0][:, 31]):
+        raise SystemExit("NW water fillet reached the east seam")
+    west = _water_tile(8, 0, 0)
+    if not np.array_equal(corner[31, :], west[31, :]):
+        raise SystemExit("NW water fillet reached the south seam")
+    ne = _water_tile(1 | 2, 0, 2)
+    if not np.array_equal(ne[:, 0], north[0][:, 0]):
+        raise SystemExit("NE water fillet reached the west seam")
+    if np.array_equal(_water_tile(1 | 2, 0, 0), _water_tile(1 | 2, 0, 3)):
+        raise SystemExit("water corner variants are identical")
+    soil_n = _soil_alpha(2 | 4 | 8, 0)  # only north open
+    soil_nw = _soil_alpha(2 | 4, 0)  # north and west open
+    if not np.array_equal(soil_n[:, 31], soil_nw[:, 31]):
+        raise SystemExit("soil corner cut reached the east seam")
+    if soil_nw[16, 16] != True or soil_n[0, 16] != False:
+        raise SystemExit("soil mask ate the middle or missed the open edge")
 
 
 def grass_edges(season):
@@ -409,11 +624,13 @@ def main():
     out = os.path.join(args.root, "game/assets/tiles")
     world = os.path.join(args.root, "game/assets/world")
     os.makedirs(out, exist_ok=True)
+    _check_tile_seams()
     for s in SEASONS:
         ground_atlas(s).save(os.path.join(out, f"ground_{s}.png"))
         grass_edges(s).save(os.path.join(out, f"grass_edge_{s}.png"))
     soil_atlas().save(os.path.join(out, "soil.png"))
     water_edges().save(os.path.join(out, "water_edge.png"))
+    shore_fringe().save(os.path.join(out, "shore_fringe.png"))
     wall(GRASS["summer"], ["#6a5a4a", "#7c6a56", "#8c7a62", "#9a8870"], "#3a2e24", "#4a6a32", 5).save(os.path.join(world, "cliff.png"))
     wall(["#3a3240", "#463c4c", "#524658"], ["#2a2430", "#363040", "#433b4e", "#4e465a"], "#16121c", "#5e5264", 6).save(os.path.join(world, "cavewall.png"))
     print("tiles written to", out)

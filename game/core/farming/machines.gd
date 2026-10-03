@@ -7,30 +7,30 @@ extends RefCounted
 static func can_load(machine_id: String, item_id: String, q: int, inv: Inventory) -> Dictionary:
 	var spec: Dictionary = Data.machines.get(machine_id, {})
 	if spec.is_empty():
-		return {"ok": false, "reason": "That's not a machine."}
+		return {"ok": false, "reason": TranslationServer.translate("That's not a machine.")}
 	var it: Dictionary = Data.get_item(item_id)
 	if spec.has("recipes"):
 		for rec in spec.recipes:
 			if rec.in == item_id:
 				if inv.count(item_id) < int(rec.n):
-					return {"ok": false, "reason": "You need %d %s." % [int(rec.n), Data.item_name(item_id)]}
+					return {"ok": false, "reason": TranslationServer.translate("You need %d %s.") % [int(rec.n), Data.item_name(item_id)]}
 				var consume := {item_id: int(rec.n)}
 				if rec.fuel != "":
 					if inv.count(rec.fuel) < 1:
-						return {"ok": false, "reason": "The furnace needs Coal."}
+						return {"ok": false, "reason": TranslationServer.translate("The furnace needs Coal.")}
 					consume[rec.fuel] = 1
 				return {"ok": true, "consume": consume, "output": {"id": rec.out, "n": 1, "q": 0}, "time": int(rec.time)}
-		return {"ok": false, "reason": "The furnace only accepts ore."}
+		return {"ok": false, "reason": TranslationServer.translate("The furnace only accepts ore.")}
 	if spec.get("any", "") == "crop":
 		if not it.get("cat", "") in ["crop", "fruit"]:
-			return {"ok": false, "reason": "Put a crop or fruit in."}
+			return {"ok": false, "reason": TranslationServer.translate("Put a crop or fruit in.")}
 		if spec.has("seeds"):
 			if not Data.has_item(item_id + "_seeds"):
-				return {"ok": false, "reason": "That can't be turned into seeds."}
+				return {"ok": false, "reason": TranslationServer.translate("That can't be turned into seeds.")}
 			return {"ok": true, "consume": {item_id: 1}, "output": {"id": item_id + "_seeds", "n": int(spec.seeds), "q": 0}, "time": int(spec.time)}
 		var out_id: String = "%s:%s" % [spec.prefix, item_id]
 		if Data.get_item(out_id).is_empty():
-			return {"ok": false, "reason": "That won't work."}
+			return {"ok": false, "reason": TranslationServer.translate("That won't work.")}
 		return {"ok": true, "consume": {item_id: 1}, "output": {"id": out_id, "n": 1, "q": q}, "time": int(spec.time)}
 	return {"ok": false, "reason": ""}
 

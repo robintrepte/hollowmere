@@ -113,10 +113,10 @@ static func bounty_met(b: Dictionary, c: Creature) -> bool:
 static func bounty_text(b: Dictionary) -> String:
 	if b.is_empty():
 		return ""
-	var name: String = Data.species.get(b.species, {}).get("name", b.species)
-	var s := "Befriend or hatch a %s (%s)" % [name, Data.region_name(b.region)]
+	var name := TranslationServer.translate(str(Data.species.get(b.species, {}).get("name", b.species)))
+	var s := TranslationServer.translate("Befriend or hatch a %s (%s)") % [name, Data.region_name(b.region)]
 	if int(b.min_genes) > 0:
-		s += " with genes %d+" % int(b.min_genes)
+		s += TranslationServer.translate(" with genes %d+") % int(b.min_genes)
 	return s
 
 # --- Warden rematches -------------------------------------------------------------------

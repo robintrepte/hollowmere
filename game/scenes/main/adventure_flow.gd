@@ -31,9 +31,9 @@ static func loot_text(loot: Dictionary) -> String:
 	var bits: Array = []
 	for k in loot:
 		if k == "money":
-			bits.append("%dg" % int(loot[k]))
+			bits.append(TranslationServer.translate("%dg") % int(loot[k]))
 		else:
-			bits.append("%d %s" % [int(loot[k]), Data.item_name(k)])
+			bits.append(TranslationServer.translate("%d %s") % [int(loot[k]), Data.item_name(k)])
 	return ", ".join(bits)
 
 # --- Story ------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ func story_talk(vid: String) -> bool:
 	await _say(ch.get("lines", []), vid)
 	GameState.world.flags["story_seen:" + str(ch.id)] = true
 	Coop.act("story_seen_act", [str(ch.id)])
-	EventBus.toast.emit(tr("%s: %s") % [ch.title, ch.hint], "book")
+	EventBus.toast.emit(TranslationServer.translate("%s: %s") % [ch.title, ch.hint], "book")
 	Audio.sfx("sparkle")
 	return true
 
@@ -78,7 +78,7 @@ func warden_battle(vid: String) -> void:
 	var res: Dictionary = await _battle({
 		"kind": "warden", "vid": vid, "team": info.team, "foe_name": name, "reward": info.reward,
 		"items": info.items, "ai": info.ai, "friendly": true,
-		"lose_lines": [tr("%s: Not yet. Train with your Wildlings and come back tomorrow.") % name],
+		"lose_lines": [TranslationServer.translate("%s: Not yet. Train with your Wildlings and come back tomorrow.") % name],
 	})
 	if res.get("result", "") != "win":
 		return
@@ -96,7 +96,7 @@ func rematch(vid: String) -> void:
 	if int(p.stats.get("battled:" + vid, -1)) == GameState.day() or not p.has_usable_party():
 		return
 	var tier := Endless.rematch_tier(GameState.world)
-	var c: int = await _ask(tr("The valley is whole again, but I've kept training. Rematch? My team is around level %d now.") % Endless.rematch_level(tier), ["Rematch!", "Not this week"], vid)
+	var c: int = await _ask(TranslationServer.translate("The valley is whole again, but I've kept training. Rematch? My team is around level %d now.") % Endless.rematch_level(tier), ["Rematch!", "Not this week"], vid)
 	if c != 0:
 		return
 	p.stats["battled:" + vid] = GameState.day()
@@ -104,7 +104,7 @@ func rematch(vid: String) -> void:
 	var res: Dictionary = await _battle({
 		"kind": "warden", "vid": vid, "team": info.team, "foe_name": name, "reward": 0,
 		"items": info.items, "ai": 2, "friendly": true,
-		"lose_lines": [tr("%s: Good fight. Come back tomorrow if you want another go.") % name],
+		"lose_lines": [TranslationServer.translate("%s: Good fight. Come back tomorrow if you want another go.") % name],
 	})
 	if res.get("result", "") != "win":
 		return
@@ -112,25 +112,27 @@ func rematch(vid: String) -> void:
 	if not r.get("ok", false):
 		return
 	Relationships.add_points(vid, p.relationship(vid), 40)
-	var lines: Array = ["Still the best in the valley. Same time next week?", tr("Prize: %s.") % loot_text(r.get("reward", {}))]
+	var lines: Array = ["Still the best in the valley. Same time next week?", TranslationServer.translate("Prize: %s.") % loot_text(r.get("reward", {}))]
 	if r.get("tier_up", false):
-		lines.append(tr("Word spreads. Every Warden is training harder: their teams now reach level %d.") % int(r.level))
+		lines.append(TranslationServer.translate("Word spreads. Every Warden is training harder: their teams now reach level %d.") % int(r.level))
 	Audio.sfx("levelup")
 	await _say(lines, vid)
 
 func shrine(o: Dictionary) -> void:
 	var region: String = o.get("region", "")
 	var guardian := Adventure.guardian_of(region)
-	var gname: String = Data.species.get(guardian, {}).get("name", "the guardian")
+	var gname := str(Data.species.get(guardian, {}).get("name", ""))
+	if gname == "":
+		gname = TranslationServer.translate("the guardian")
 	var warden := Adventure.warden_of(region)
 	match Adventure.shrine_state(GameState.world, region):
 		"dark":
-			await _say(["The shrine is cold and dark. Its orb is cracked through.", tr("%s keeps watch here. Perhaps a battle would prove your bond with your Wildlings.") % Data.villager_name(warden)])
+			await _say(["The shrine is cold and dark. Its orb is cracked through.", TranslationServer.translate("%s keeps watch here. Perhaps a battle would prove your bond with your Wildlings.") % Data.villager_name(warden)])
 		"ready":
 			var c: int = await _ask("The stones hum under your hand. Wake the shrine?", ["Wake it", "Not yet"])
 			if c != 0:
 				return
-			await _say([tr("Light pours into the cracks... %s, guardian of the shrine, awakens!") % gname])
+			await _say([TranslationServer.translate("Light pours into the cracks... %s, guardian of the shrine, awakens!") % gname])
 			var res: Dictionary = await _battle({"kind": "wild", "species": guardian, "level": Adventure.guardian_level(region), "ai": 2, "boss": true, "friendly": true})
 			match res.get("result", ""):
 				"win":
@@ -140,13 +142,13 @@ func shrine(o: Dictionary) -> void:
 				"":
 					pass
 				_:
-					await _say([tr("%s sinks back into the stones. Rest up and try again.") % gname])
+					await _say([TranslationServer.translate("%s sinks back into the stones. Rest up and try again.") % gname])
 		"restored":
-			var lines: Array = [tr("The %s Shrine glows warmly.") % Data.region_name(region)]
+			var lines: Array = [TranslationServer.translate("The %s Shrine glows warmly.") % Data.region_name(region)]
 			if Adventure.guardian_free(GameState.world, region):
-				lines.append(tr("%s lingers nearby. Perhaps it would join you, if you asked kindly with a charm.") % gname)
+				lines.append(TranslationServer.translate("%s lingers nearby. Perhaps it would join you, if you asked kindly with a charm.") % gname)
 			if Adventure.legend_here(GameState.world, region, GameState.season()) != "":
-				lines.append(tr("Something ancient is near. The air smells of %s.") % GameState.season())
+				lines.append(TranslationServer.translate("Something ancient is near. The air smells of %s.") % GameState.season())
 			await _say(lines)
 
 ## Shows the shrine reward text and redraws the shrine. r is guardian_result_act's result.
@@ -169,12 +171,15 @@ func cave(o: Dictionary) -> void:
 	var floors := Adventure.elevator_floors(GameState.world, region)
 	var deep := Adventure.deepest(GameState.world, region)
 	var total := Adventure.mine_floors(region)
-	var depth_txt := (tr("Deepest: B%d of %d.") % [deep, total]) if total > 0 else (tr("Deepest: B%d. It has no bottom.") % deep)
+	var depth_txt := (TranslationServer.translate("Deepest: B%d of %d.") % [deep, total]) if total > 0 else (TranslationServer.translate("Deepest: B%d. It has no bottom.") % deep)
 	var opts: Array = []
 	for f in floors:
-		opts.append(tr("B%d") % int(f))
+		opts.append(TranslationServer.translate("B%d") % int(f))
 	opts.append("Leave")
-	var c: int = await _ask(tr("%s. %s") % [mine.get("name", "A cave"), depth_txt if deep > 0 else "Nobody has explored it in years."], opts)
+	var cave_name := str(mine.get("name", ""))
+	if cave_name == "":
+		cave_name = TranslationServer.translate("A cave")
+	var c: int = await _ask(TranslationServer.translate("%s. %s") % [cave_name, depth_txt if deep > 0 else TranslationServer.translate("Nobody has explored it in years.")], opts)
 	if c < 0 or c >= floors.size():
 		return
 	await enter_floor(region, int(floors[c]))
@@ -182,15 +187,15 @@ func cave(o: Dictionary) -> void:
 func enter_floor(region: String, n: int) -> void:
 	var r: Dictionary = await Coop.act_async("mine_floor_act", [region, n])
 	if not r.get("ok", false):
-		EventBus.toast.emit(str(r.get("reason", "The way is blocked.")), "")
+		EventBus.toast.emit(str(r.get("reason", TranslationServer.translate("The way is blocked."))), "")
 		return
 	if int(GameState.world.mine_depth.get(region, 0)) < n:
 		GameState.world.mine_depth[region] = n
-	var mid := tr("mine:%s:%d") % [region, n]
+	var mid := TranslationServer.translate("mine:%s:%d") % [region, n]
 	var sp: Array = GameState.map_info(mid).spawn
 	EventBus.map_change_requested.emit(mid, Vector2i(int(sp[0]), int(sp[1])))
 	if r.get("new_elevator", false):
-		EventBus.toast.emit(tr("The cave mouth can now take you straight to B%d.") % n, "star")
+		EventBus.toast.emit(TranslationServer.translate("The cave mouth can now take you straight to B%d.") % n, "star")
 
 func ladder_down() -> void:
 	var info: Dictionary = ctl.world.info
@@ -210,11 +215,11 @@ func ladder_up() -> void:
 
 func treasure(t: Vector2i, o: Dictionary) -> void:
 	if GameState.treasure_opened(ctl.world.map_id, t):
-		EventBus.toast.emit("It's empty.", "")
+		EventBus.toast.emit(TranslationServer.translate("It's empty."), "")
 		return
 	var r: Dictionary = await Coop.act_async("open_treasure_act", [ctl.world.map_id, t.x, t.y])
 	if not r.get("ok", false):
-		EventBus.toast.emit(str(r.get("reason", "It won't open.")), "")
+		EventBus.toast.emit(str(r.get("reason", TranslationServer.translate("It won't open."))), "")
 		return
 	ctl.world.mark_treasure_opened(t)
 	if r.get("mimic", false):
@@ -225,7 +230,10 @@ func treasure(t: Vector2i, o: Dictionary) -> void:
 		return
 	Audio.sfx("chest")
 	var grand: bool = o.get("grand", false)
-	await _say([("At the very bottom of the cave, a great chest! " if grand else "") + "You found " + loot_text(r.get("loot", {})) + "."])
+	var found := TranslationServer.translate("You found %s.") % loot_text(r.get("loot", {}))
+	if grand:
+		found = TranslationServer.translate("At the very bottom of the cave, a great chest! %s") % found
+	await _say([found])
 
 # --- Wayshrines -------------------------------------------------------------------------
 
@@ -274,34 +282,34 @@ func show_ring() -> void:
 		var lines: Array = ["The Creature Show ring. Every Saturday the judges hold a show, and the village gathers here for its festivals."]
 		if not nx.is_empty():
 			var f: Dictionary = Data.progression.festivals[nx[0]]
-			lines.append(tr("Next festival: %s on %s %d.") % [tr(str(f.name)), Data.season_name(str(f.season)), int(f.day)])
+			lines.append(TranslationServer.translate("Next festival: %s on %s %d.") % [TranslationServer.translate(str(f.name)), Data.season_name(str(f.season)), int(f.day)])
 		await _say(lines)
 		return
 	if Adventure.festival_done(GameState.world, GameState.day(), fest.id, p.id):
-		await _say([tr("Thanks for joining the %s! See you next year.") % tr(str(fest.name))])
+		await _say([TranslationServer.translate("Thanks for joining the %s! See you next year.") % TranslationServer.translate(str(fest.name))])
 		return
 	match str(fest.kind):
 		"social", "spawns":
-			var c: int = await _ask(tr("%s! %s Join in?") % [tr(str(fest.name)), tr(str(fest.desc))], ["Join", "Later"])
+			var c: int = await _ask(TranslationServer.translate("%s! %s Join in?") % [TranslationServer.translate(str(fest.name)), TranslationServer.translate(str(fest.desc))], ["Join", "Later"])
 			if c == 0:
 				await _festival_result(await Coop.act_async("festival_act", ["social"]), fest)
 		"egg_hunt":
 			var n := p.inventory.count("festival_egg")
 			if n == 0:
-				await _say([tr("%s! %s") % [tr(str(fest.name)), tr(str(fest.desc))], tr("Twelve painted eggs are hidden around the village. Bring back at least %d for the grand prize.") % Adventure.EGG_HUNT_GOAL])
+				await _say([TranslationServer.translate("%s! %s") % [TranslationServer.translate(str(fest.name)), TranslationServer.translate(str(fest.desc))], TranslationServer.translate("Twelve painted eggs are hidden around the village. Bring back at least %d for the grand prize.") % Adventure.EGG_HUNT_GOAL])
 				return
-			var c2: int = await _ask(tr("You found %d eggs. Hand them in?") % n, ["Hand in", "Keep looking"])
+			var c2: int = await _ask(TranslationServer.translate("You found %d eggs. Hand them in?") % n, ["Hand in", "Keep looking"])
 			if c2 == 0:
 				await _festival_result(await Coop.act_async("festival_act", ["eggs"]), fest)
 		"show":
 			var lead := p.lead()
 			if lead == null:
 				return
-			var c3: int = await _ask(tr("%s! Enter %s? The judges score grooming, happiness, genes, level and a little flair.") % [tr(str(fest.name)), lead.display_name()], ["Enter", "Not yet"])
+			var c3: int = await _ask(TranslationServer.translate("%s! Enter %s? The judges score grooming, happiness, genes, level and a little flair.") % [TranslationServer.translate(str(fest.name)), lead.display_name()], ["Enter", "Not yet"])
 			if c3 == 0:
 				await _festival_result(await Coop.act_async("festival_act", ["show"]), fest)
 		"fair":
-			var c4: int = await _ask(tr("%s! Your most valuable goods go on display (you keep them). Variety helps!") % tr(str(fest.name)), ["Set up", "Not yet"])
+			var c4: int = await _ask(TranslationServer.translate("%s! Your most valuable goods go on display (you keep them). Variety helps!") % TranslationServer.translate(str(fest.name)), ["Set up", "Not yet"])
 			if c4 == 0:
 				await _festival_result(await Coop.act_async("festival_act", ["fair"]), fest)
 		"tournament":
@@ -319,7 +327,7 @@ func weekly_show() -> void:
 		"Win at your Wildling's rank to earn a ribbon and move up: Novice, Bronze, Silver, Gold, then Master."])
 	var opts: Array = []
 	for c in p.party:
-		opts.append(tr("%s  ·  %s%s") % [c.display_name(), Endless.rank_name(c.show_rank), tr("  ·  %d ribbons") % c.ribbons if c.ribbons > 0 else ""])
+		opts.append(TranslationServer.translate("%s  ·  %s%s") % [c.display_name(), Endless.rank_name(c.show_rank), TranslationServer.translate("  ·  %d ribbons") % c.ribbons if c.ribbons > 0 else ""])
 	opts.append("Not today")
 	var i: int = await _ask("Who will you show?", opts)
 	if i < 0 or i >= p.party.size():
@@ -330,57 +338,57 @@ func weekly_show() -> void:
 		return
 	var parts: Dictionary = r.parts
 	var lines: Array = [
-		tr("%s scores %d: grooming %d, happiness %d, genes %d, level %d, flair %d.") % [r.name, int(r.score),
+		TranslationServer.translate("%s scores %d: grooming %d, happiness %d, genes %d, level %d, flair %d.") % [r.name, int(r.score),
 			int(parts.grooming), int(parts.happiness), int(parts.genes), int(parts.level), int(parts.flair)],
-		tr("The other %s entrants scored %s.") % [Endless.rank_name(int(r.rank)), ", ".join(r.rivals.map(func(s): return str(int(s))))],
+		TranslationServer.translate("The other %s entrants scored %s.") % [Endless.rank_name(int(r.rank)), ", ".join(r.rivals.map(func(s): return str(int(s))))],
 	]
 	if int(r.place) == 1:
-		lines.append(tr("%s wins the %s class and earns a ribbon! (%d total)") % [r.name, Endless.rank_name(int(r.rank)), int(r.ribbons)])
+		lines.append(TranslationServer.translate("%s wins the %s class and earns a ribbon! (%d total)") % [r.name, Endless.rank_name(int(r.rank)), int(r.ribbons)])
 		if r.rank_up:
-			lines.append(tr("%s moves up to the %s class!") % [r.name, Endless.rank_name(int(r.new_rank))])
+			lines.append(TranslationServer.translate("%s moves up to the %s class!") % [r.name, Endless.rank_name(int(r.new_rank))])
 	else:
-		lines.append(tr("You placed %s. Grooming and a happy Wildling go a long way. Try again next Saturday!") % PLACES[clampi(int(r.place), 1, 4)])
+		lines.append(TranslationServer.translate("You placed %s. Grooming and a happy Wildling go a long way. Try again next Saturday!") % TranslationServer.translate(PLACES[clampi(int(r.place), 1, 4)]))
 	if int(r.prize) > 0:
-		lines.append(tr("Prize: %dg.") % int(r.prize))
+		lines.append(TranslationServer.translate("Prize: %dg.") % int(r.prize))
 	Audio.sfx("levelup" if int(r.place) == 1 else "coin")
 	await _say(lines)
 
 func _festival_result(r: Dictionary, fest: Dictionary) -> void:
 	if not r.get("ok", false):
-		await _say([str(r.get("reason", "Maybe later."))])
+		await _say([str(r.get("reason", TranslationServer.translate("Maybe later.")))])
 		return
 	var lines: Array = []
 	match str(fest.kind):
 		"social":
-			lines.append("You spend the day laughing with the village. Everyone feels a little closer.")
+			lines.append(TranslationServer.translate("You spend the day laughing with the village. Everyone feels a little closer."))
 		"spawns":
-			lines.append("Lanterns are lit, and the night fills with Wildlings. Go and meet them!")
+			lines.append(TranslationServer.translate("Lanterns are lit, and the night fills with Wildlings. Go and meet them!"))
 		"egg_hunt":
 			var n := int(r.get("eggs", 0))
-			var hunt := tr("You handed in %d eggs!") % n
+			var hunt := TranslationServer.translate("You handed in %d eggs!") % n
 			if n >= Adventure.EGG_HUNT_GOAL:
-				hunt += tr(" A perfect hunt!")
+				hunt += TranslationServer.translate(" A perfect hunt!")
 			lines.append(hunt)
 		"show":
 			var rivals: Array = r.get("rivals", [])
-			lines.append(tr("The judges give your Wildling %d points. The others scored %s.") % [int(r.score), ", ".join(rivals.map(func(s): return str(int(s))))])
-			lines.append(tr("You placed %s!") % PLACES[clampi(int(r.place), 1, 4)])
+			lines.append(TranslationServer.translate("The judges give your Wildling %d points. The others scored %s.") % [int(r.score), ", ".join(rivals.map(func(s): return str(int(s))))])
+			lines.append(TranslationServer.translate("You placed %s!") % TranslationServer.translate(PLACES[clampi(int(r.place), 1, 4)]))
 		"fair":
 			var picks: Array = r.get("picks", [])
-			lines.append(tr("Your display: %s.") % ", ".join(picks.map(func(pk): return Data.item_name(pk.id, int(pk.q)))))
+			lines.append(TranslationServer.translate("Your display: %s.") % ", ".join(picks.map(func(pk): return Data.item_name(pk.id, int(pk.q)))))
 			var rv: Array = r.get("rivals", [])
-			lines.append(tr("Judges' score: %d. %s") % [int(r.score), "  ".join(rv.map(func(x): return tr("%s %d") % [Data.villager_name(x[0]), int(x[1])]))])
-			lines.append(tr("You placed %s!") % PLACES[clampi(int(r.place), 1, 4)])
+			lines.append(TranslationServer.translate("Judges' score: %d. %s") % [int(r.score), "  ".join(rv.map(func(x): return TranslationServer.translate("%s %d") % [Data.villager_name(x[0]), int(x[1])]))])
+			lines.append(TranslationServer.translate("You placed %s!") % TranslationServer.translate(PLACES[clampi(int(r.place), 1, 4)]))
 	var reward: Dictionary = r.get("reward", {})
 	if not reward.is_empty():
-		lines.append(tr("Prize: %s.") % loot_text(reward))
+		lines.append(TranslationServer.translate("Prize: %s.") % loot_text(reward))
 	Audio.sfx("levelup")
 	await _say(lines)
 
 func _battle_cup(fest: Dictionary) -> void:
 	var opp: Array = fest.get("opponents", [])
 	var names: Array = opp.map(func(v): return Data.villager_name(v))
-	var c: int = await _ask(tr("%s! Battle %s back to back. Your Wildlings are healed between rounds.") % [tr(str(fest.name)), ", ".join(names)], ["Enter", "Not yet"])
+	var c: int = await _ask(TranslationServer.translate("%s! Battle %s back to back. Your Wildlings are healed between rounds.") % [TranslationServer.translate(str(fest.name)), ", ".join(names)], ["Enter", "Not yet"])
 	if c != 0:
 		return
 	var p := ctl._pdata()
@@ -391,7 +399,7 @@ func _battle_cup(fest: Dictionary) -> void:
 		var info := Trainers.team_for(vid, mini(5, sh + 1), Adventure.cup_level(sh, i), GameState.rng)
 		if info.is_empty():
 			continue
-		await _say([tr("Round %d: %s steps into the ring!") % [i + 1, Data.villager_name(vid)]])
+		await _say([TranslationServer.translate("Round %d: %s steps into the ring!") % [i + 1, Data.villager_name(vid)]])
 		var res: Dictionary = await _battle({
 			"kind": "trainer", "vid": vid, "team": info.team, "foe_name": Data.villager_name(vid), "reward": 0,
 			"items": info.items, "ai": 2, "friendly": true,
@@ -399,11 +407,11 @@ func _battle_cup(fest: Dictionary) -> void:
 		if res.get("result", "") != "win":
 			p.heal_party()
 			EventBus.party_changed.emit()
-			await _say([tr("Knocked out in round %d. The crowd cheers anyway! You can try again today.") % (i + 1)])
+			await _say([TranslationServer.translate("Knocked out in round %d. The crowd cheers anyway! You can try again today.") % (i + 1)])
 			return
 	p.heal_party()
 	EventBus.party_changed.emit()
 	var r: Dictionary = await Coop.act_async("festival_act", ["cup"])
 	if r.get("ok", false):
 		Audio.sfx("levelup")
-		await _say([tr("You won the %s! The whole village chants your name.") % tr(str(fest.name)), tr("Prize: %s.") % loot_text(r.get("reward", {}))])
+		await _say([TranslationServer.translate("You won the %s! The whole village chants your name.") % TranslationServer.translate(str(fest.name)), TranslationServer.translate("Prize: %s.") % loot_text(r.get("reward", {}))])

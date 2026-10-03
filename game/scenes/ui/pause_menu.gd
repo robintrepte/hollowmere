@@ -1,6 +1,6 @@
 class_name PauseMenu
 extends PanelContainer
-## Esc menu: resume, shortcuts to the party / journal / crafting panels (the only way in on a phone),
+## Esc menu: resume, shortcuts to the party / journal / crafting / map panels (the only way in on a phone),
 ## save, settings, quit to title / desktop.
 
 signal closed
@@ -41,6 +41,11 @@ func _ready() -> void:
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.disabled = pd == null
 		panels.add_child(b)
+	var map_btn := UITheme.button("Valley map", func():
+		closed.emit()
+		ui.open(MapPanel.new()))
+	map_btn.disabled = pd == null
+	v.add_child(map_btn)
 	var save := UITheme.button("Save game", func():
 		if SaveManager.save_game():
 			EventBus.toast.emit("Game saved.", "")

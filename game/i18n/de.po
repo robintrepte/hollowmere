@@ -204,6 +204,11 @@ msgstr "%s %s%s"
 msgid "%s (power %d)"
 msgstr "%s (Kraft %d)"
 
+#: scenes/ui/map_panel.gd
+#, c-format
+msgid "%s B%s"
+msgstr "%s B%s"
+
 #: scenes/ui/journal_panel.gd:131
 #, c-format
 msgid "%s B%d%s"
@@ -1217,7 +1222,7 @@ msgstr "Blazeroar"
 
 #: data/moves.json
 msgid "Blizzard"
-msgstr "Blizzard"
+msgstr "Schneesturm"
 
 #: data/creatures.json
 msgid "Blizzowl"
@@ -1464,6 +1469,10 @@ msgstr "Aufladen"
 msgid "Charges wrapped in fire."
 msgstr "Stürmt eingehüllt in Feuer vor."
 
+#: scenes/ui/settings_panel.gd
+msgid "Chat"
+msgstr "Chat"
+
 #: data/types.json
 msgid "Charmer"
 msgstr "Glücksbringer"
@@ -1560,6 +1569,10 @@ msgstr "Hof schließen"
 #: data/items.json
 msgid "Cloud Fluff"
 msgstr "Wolkenflausch"
+
+#: scenes/ui/map_panel.gd
+msgid "Closed"
+msgstr "Geschlossen"
 
 #: scenes/ui/title_screen.gd:195
 msgid "Cloud backups are up to date."
@@ -1745,6 +1758,10 @@ msgstr "Gemütlicher Modus: immer an."
 #: data/items.json
 msgid "Crackling dust from Voltick."
 msgstr "Knisternder Staub von Voltick."
+
+#: scenes/ui/settings_panel.gd
+msgid "Crafting"
+msgstr "Handwerk"
 
 #: data/crops.json
 msgid "Cranberry"
@@ -2797,7 +2814,7 @@ msgstr "Gustmoth"
 #: scenes/ui/party_panel.gd:114
 #, c-format
 msgid "HP %d/%d%s"
-msgstr "HP %d/%d%s"
+msgstr "KP %d/%d%s"
 
 #: data/moves.json
 msgid "Hail Lance"
@@ -3823,6 +3840,10 @@ msgstr "Meadowmoo"
 msgid "Melon"
 msgstr "Melone"
 
+#: scenes/ui/settings_panel.gd
+msgid "Menu"
+msgstr "Menü"
+
 #: data/creatures.json
 msgid "Mesacoyote"
 msgstr "Mesacoyote"
@@ -3989,6 +4010,10 @@ msgstr "Neuer in der Cloud"
 msgid "Next festival: %s on %s %d."
 msgstr "Nächstes Fest: %s am %s %d."
 
+#: scenes/ui/settings_panel.gd
+msgid "Next item slot"
+msgstr "Nächster Platz"
+
 #: scenes/ui/journal_panel.gd:219
 #, c-format
 msgid "Next reward at %d befriended"
@@ -4124,6 +4149,10 @@ msgstr "Hof im LAN öffnen"
 #: scenes/ui/coop_panel.gd:158
 msgid "Open farm online"
 msgstr "Hof online öffnen"
+
+#: scenes/ui/map_panel.gd
+msgid "Opened by restoring shrines"
+msgstr "Durch wiederhergestellte Schreine geöffnet"
 
 #: scenes/ui/coop_panel.gd:175
 msgid "Opening the farm gate..."
@@ -4389,6 +4418,10 @@ msgstr "Prestige II"
 #: data/progression.json
 msgid "Prestige III"
 msgstr "Prestige III"
+
+#: scenes/ui/settings_panel.gd
+msgid "Previous item slot"
+msgstr "Vorheriger Platz"
 
 #: data/moves.json
 msgid "Primal Roar"
@@ -4851,6 +4884,10 @@ msgstr "1 verkaufen (%dg)"
 msgid "Sells %dg"
 msgstr "Bringt %dg"
 
+#: scenes/ui/inventory_panel.gd
+msgid "Sells overnight. Take items back out any time before then."
+msgstr "Wird über Nacht verkauft. Du kannst die Sachen vorher jederzeit wieder herausnehmen."
+
 #: scenes/ui/coop_panel.gd:225
 msgid "Send"
 msgstr "Senden"
@@ -5209,7 +5246,7 @@ msgstr "Frühling"
 
 #: data/items.json
 msgid "Sprinkler"
-msgstr "Sprinkler"
+msgstr "Sprenger"
 
 #: data/title_tips.json
 msgid "Sprinklers water the tiles around them every morning."
@@ -5711,6 +5748,10 @@ msgstr "Die anderen %s Teilnehmer kamen auf %s."
 msgid "The patterns on its wings look like a starry sky."
 msgstr "Die Muster auf seinen Flügeln sehen aus wie ein Sternenhimmel."
 
+#: autoload/game_state.gd
+msgid "The shipping bin is full."
+msgstr "Die Versandkiste ist voll."
+
 #: scenes/main/adventure_flow.gd:128
 msgid "The shrine is cold and dark. Its orb is cracked through."
 msgstr "Der Schrein ist kalt und dunkel. Seine Kugel ist durchgerissen."
@@ -6076,6 +6117,10 @@ msgstr "Dein Rucksack + deine Hoftruhe   "
 #: data/progression.json
 msgid "Valley Grower"
 msgstr "Talgärtner"
+
+#: scenes/ui/map_panel.gd
+msgid "Valley map"
+msgstr "Talkarte"
 
 #: data/items.json
 msgid "Veggie Stew"
@@ -6504,6 +6549,11 @@ msgstr "Yamswurzel"
 msgid "Yawn"
 msgstr "Gähnen"
 
+#: scenes/ui/map_panel.gd
+#, c-format
+msgid "You are in %s"
+msgstr "Du bist in %s"
+
 #: scenes/battle/battle_screen.gd:461
 #, c-format
 msgid "You beat %s!"
@@ -6823,6 +6873,10 @@ msgstr "das Heiligtum"
 msgid "the farm Den"
 msgstr "der Hof-Bau"
 
+#: scenes/ui/map_panel.gd
+msgid "the valley"
+msgstr "dem Tal"
+
 #: scenes/ui/title_screen.gd:81
 #, c-format
 msgid "v%s"
@@ -6894,3 +6948,988 @@ msgstr "Tempo"
 
 msgid "Language"
 msgstr "Sprache"
+
+msgid "  (guest)"
+msgstr "  (Gast)"
+
+msgid "  (out)"
+msgstr "  (aktiv)"
+
+msgid "  ·  fainted"
+msgstr "  ·  besiegt"
+
+msgid "  ♥ dating"
+msgstr "  ♥ verabredet"
+
+msgid "  ♥ married"
+msgstr "  ♥ verheiratet"
+
+msgid " with genes %d+"
+msgstr " mit Genen %d+"
+
+msgid "\"How thoughtful. Thank you!\""
+msgstr "\"Wie aufmerksam. Danke!\""
+
+msgid "\"Oh! I love this! Thank you so much!\""
+msgstr "\"Oh! Das liebe ich! Vielen, vielen Dank!\""
+
+msgid "\"Thanks.\""
+msgstr "\"Danke.\""
+
+msgid "\"Um... I'll find a use for it, I guess.\""
+msgstr "\"Ähm... ich finde schon eine Verwendung dafür.\""
+
+msgid "%s (%d/%d)"
+msgstr "%s (%d/%d)"
+
+msgid "%s and %s face off!"
+msgstr "%s und %s stehen sich gegenüber!"
+
+msgid "%s became dazed!"
+msgstr "%s ist benommen!"
+
+msgid "%s blushes. \"Maybe when we know each other better...\""
+msgstr "%s wird rot. \"Vielleicht, wenn wir uns besser kennen...\""
+
+msgid "%s broke free of the roots!"
+msgstr "%s reißt sich von den Wurzeln los!"
+
+msgid "%s can now use %s! (Equip it from the Party menu.)"
+msgstr "%s kann jetzt %s einsetzen! (Lege es im Team-Menü an.)"
+
+msgid "%s can't battle right now."
+msgstr "%s kann gerade nicht kämpfen."
+
+msgid "%s can't grow in %s."
+msgstr "%s wächst nicht im %s."
+
+msgid "%s closed the trade."
+msgstr "%s hat den Tausch beendet."
+
+msgid "%s curled up for a cozy nap!"
+msgstr "%s rollt sich zum Schlafen zusammen!"
+
+msgid "%s dried off."
+msgstr "%s ist wieder trocken."
+
+msgid "%s fell asleep!"
+msgstr "%s schläft ein!"
+
+msgid "%s forfeited."
+msgstr "%s gibt auf."
+
+msgid "%s gained %d XP!"
+msgstr "%s erhält %d EP!"
+
+msgid "%s got soaked!"
+msgstr "%s ist klatschnass!"
+
+msgid "%s grew to level %d!"
+msgstr "%s erreicht Stufe %d!"
+
+msgid "%s has received enough gifts this week."
+msgstr "%s hat diese Woche genug Geschenke bekommen."
+
+msgid "%s has to keep at least one Wildling."
+msgstr "%s muss mindestens ein Wildling behalten."
+
+msgid "%s hung on with Sturdy!"
+msgstr "%s hält dank Robust durch!"
+
+msgid "%s is chilled by the snow!"
+msgstr "%s friert im Schnee!"
+
+msgid "%s is fast asleep."
+msgstr "%s schläft tief und fest."
+
+msgid "%s is hit with recoil!"
+msgstr "%s erleidet Rückstoß!"
+
+msgid "%s is hurt by its burn!"
+msgstr "%s leidet unter der Verbrennung!"
+
+msgid "%s is rooted and can't escape!"
+msgstr "%s ist festgewurzelt und kann nicht fliehen!"
+
+msgid "%s is rooted and can't switch!"
+msgstr "%s ist festgewurzelt und kann nicht wechseln!"
+
+msgid "%s is too dazed to move!"
+msgstr "%s ist zu benommen, um sich zu bewegen!"
+
+msgid "%s is unaffected!"
+msgstr "%s bleibt unberührt!"
+
+msgid "%s isn't convinced yet."
+msgstr "%s ist noch nicht überzeugt."
+
+msgid "%s learned %s!"
+msgstr "%s lernt %s!"
+
+msgid "%s lowered %s's %s!"
+msgstr "%s senkte %s: %s!"
+
+msgid "%s no longer has that Wildling."
+msgstr "%s hat dieses Wildling nicht mehr."
+
+msgid "%s no longer has that item."
+msgstr "%s hat diesen Gegenstand nicht mehr."
+
+msgid "%s only takes one rematch a week."
+msgstr "%s nimmt nur eine Revanche pro Woche an."
+
+msgid "%s recovered %d HP."
+msgstr "%s heilt %d KP."
+
+msgid "%s restored HP!"
+msgstr "%s stellt KP wieder her!"
+
+msgid "%s sent out %s!"
+msgstr "%s schickt %s!"
+
+msgid "%s sent you %s!"
+msgstr "%s schickt dir %s!"
+
+msgid "%s smiles politely, but doesn't take the bouquet."
+msgstr "%s lächelt höflich, nimmt den Strauß aber nicht."
+
+msgid "%s snapped out of its daze!"
+msgstr "%s ist nicht mehr benommen!"
+
+msgid "%s sniffed it, then looked away."
+msgstr "%s schnuppert daran und schaut weg."
+
+msgid "%s used %s!"
+msgstr "%s setzt %s ein!"
+
+msgid "%s used a %s."
+msgstr "%s benutzt %s."
+
+msgid "%s wants to battle!"
+msgstr "%s will kämpfen!"
+
+msgid "%s wants to be your friend!"
+msgstr "%s möchte dein Freund sein!"
+
+msgid "%s was burned!"
+msgstr "%s wurde verbrannt!"
+
+msgid "%s was cured!"
+msgstr "%s ist geheilt!"
+
+msgid "%s was revived!"
+msgstr "%s wurde wiederbelebt!"
+
+msgid "%s was rooted in place!"
+msgstr "%s ist festgewurzelt!"
+
+msgid "%s withdrew %s."
+msgstr "%s ruft %s zurück."
+
+msgid "%s woke up!"
+msgstr "%s wacht auf!"
+
+msgid "%s%s fainted!"
+msgstr "%s%s wurde besiegt!"
+
+msgid "%s's %s"
+msgstr "%s: %s"
+
+msgid "%s's %s fell sharply!"
+msgstr "%s: %s sank stark!"
+
+msgid "%s's %s fell!"
+msgstr "%s: %s sank!"
+
+msgid "%s's %s rose sharply!"
+msgstr "%s: %s stieg stark!"
+
+msgid "%s's %s rose!"
+msgstr "%s: %s stieg!"
+
+msgid "%s's %s won't go any higher!"
+msgstr "%s: %s kann nicht weiter steigen!"
+
+msgid "%s's %s won't go any lower!"
+msgstr "%s: %s kann nicht weiter sinken!"
+
+msgid "%s, come back!"
+msgstr "%s, komm zurück!"
+
+msgid "%s: \"Of course I'll marry you!\""
+msgstr "%s: \"Natürlich heirate ich dich!\""
+
+msgid "%s: \"Yes! I'd love to.\""
+msgstr "%s: \"Ja! Sehr gern.\""
+
+msgid "+%d XP"
+msgstr "+%d EP"
+
+msgid "+1 %s"
+msgstr "+1 %s"
+
+msgid "12-hour clock"
+msgstr "12-Stunden-Uhr"
+
+msgid "A cave"
+msgstr "Eine Höhle"
+
+msgid "A critical hit!"
+msgstr "Ein Volltreffer!"
+
+msgid "A storm is raging."
+msgstr "Ein Sturm tobt."
+
+msgid "A thick fog rolled in!"
+msgstr "Dichter Nebel zieht auf!"
+
+msgid "A thunderstorm rolled in!"
+msgstr "Ein Gewitter zieht auf!"
+
+msgid "A wild %s%s appeared!"
+msgstr "Ein wildes %s%s erscheint!"
+
+msgid "Already built."
+msgstr "Schon gebaut."
+
+msgid "Already delivered."
+msgstr "Schon abgegeben."
+
+msgid "Already on the farm."
+msgstr "Ist schon auf dem Hof."
+
+msgid "At the very bottom of the cave, a great chest! %s"
+msgstr "Ganz unten in der Höhle, eine große Truhe! %s"
+
+msgid "Auto"
+msgstr "Auto"
+
+msgid "BRN"
+msgstr "BRD"
+
+msgid "Bad creature."
+msgstr "Unbekanntes Wildling."
+
+msgid "Bag"
+msgstr "Tasche"
+
+msgid "Basic"
+msgstr "Einfach"
+
+msgid "Battle!"
+msgstr "Kampf!"
+
+msgid "Befriend or hatch a %s (%s)"
+msgstr "Schließ Freundschaft mit einem %s oder lass eines schlüpfen (%s)"
+
+msgid "Bind to next hotbar slot"
+msgstr "Auf den nächsten Schnellplatz legen"
+
+msgid "Both Wildlings must live in the Den."
+msgstr "Beide Wildlings müssen im Bau leben."
+
+msgid "Bring %d %s."
+msgstr "Bring %d %s."
+
+msgid "Bring the Wildling along in your party."
+msgstr "Nimm das Wildling mit ins Team."
+
+msgid "Built ✓"
+msgstr "Gebaut ✓"
+
+msgid "But it failed!"
+msgstr "Es schlug fehl!"
+
+msgid "But it missed!"
+msgstr "Daneben!"
+
+msgid "Can't place that here."
+msgstr "Das kannst du hier nicht hinlegen."
+
+msgid "Choose a Wildling"
+msgstr "Wähle ein Wildling"
+
+msgid "Climb out"
+msgstr "Rausklettern"
+
+msgid "Colorblind mode (type names on moves, quality pips)"
+msgstr "Farbenblind-Modus (Typnamen bei Attacken, Qualitätspunkte)"
+
+msgid "DAZ"
+msgstr "BEN"
+
+msgid "Day length (relaxed ->)"
+msgstr "Tageslänge (entspannt ->)"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "East: Tidecove."
+msgstr "Osten: Tidecove."
+
+msgid "Eat"
+msgstr "Essen"
+
+msgid "Email"
+msgstr "E-Mail"
+
+msgid "Empty the chest first."
+msgstr "Leere zuerst die Truhe."
+
+msgid "Enter"
+msgstr "Mitmachen"
+
+msgid "Farm chest"
+msgstr "Hoftruhe"
+
+msgid "Farm name"
+msgstr "Hofname"
+
+msgid "Farmer name (new accounts)"
+msgstr "Bauernname (neue Konten)"
+
+msgid "Fight"
+msgstr "Kampf"
+
+msgid "Finished: %s"
+msgstr "Geschafft: %s"
+
+msgid "Fog"
+msgstr "Nebel"
+
+msgid "Forfeit"
+msgstr "Aufgeben"
+
+msgid "Forfeit the friendly battle?"
+msgstr "Den Freundschaftskampf aufgeben?"
+
+msgid "From %s and %s"
+msgstr "Von %s und %s"
+
+msgid "Fullscreen"
+msgstr "Vollbild"
+
+msgid "Fully upgraded."
+msgstr "Voll verbessert."
+
+msgid "Genes are inherited when breeding. S is the best."
+msgstr "Gene werden beim Züchten vererbt. S ist das beste."
+
+msgid "Give"
+msgstr "Geben"
+
+msgid "Go, %s!"
+msgstr "Los, %s!"
+
+msgid "Guest accounts live on this device. Add an email to keep your farms anywhere."
+msgstr "Gastkonten bleiben auf diesem Gerät. Füg eine E-Mail hinzu, damit deine Höfe überall dabei sind."
+
+msgid "Hand in"
+msgstr "Abgeben"
+
+msgid "Hollowmere Village"
+msgstr "Dorf Hollowmere"
+
+msgid "I'm so glad we're together. Let's make today a good one."
+msgstr "Ich bin so froh, dass wir zusammen sind. Machen wir einen guten Tag daraus."
+
+msgid "It feels a little %s..."
+msgstr "Es fühlt sich etwas %s an..."
+
+msgid "It had no effect."
+msgstr "Es hatte keine Wirkung."
+
+msgid "It had no effect..."
+msgstr "Es hatte keine Wirkung..."
+
+msgid "It won't open."
+msgstr "Es geht nicht auf."
+
+msgid "It's %s's favorite food!"
+msgstr "Das ist das Lieblingsessen von %s!"
+
+msgid "It's busy."
+msgstr "Das ist gerade beschäftigt."
+
+msgid "It's not very effective..."
+msgstr "Das ist nicht sehr effektiv..."
+
+msgid "It's raining."
+msgstr "Es regnet."
+
+msgid "It's super effective!"
+msgstr "Das ist sehr effektiv!"
+
+msgid "Job: %s"
+msgstr "Arbeit: %s"
+
+msgid "Journal"
+msgstr "Tagebuch"
+
+msgid "Keep"
+msgstr "Behalten"
+
+msgid "Keep going"
+msgstr "Weitermachen"
+
+msgid "Keep looking"
+msgstr "Weitersuchen"
+
+msgid "Lanterns are lit, and the night fills with Wildlings. Go and meet them!"
+msgstr "Laternen brennen, und die Nacht ist voller Wildlings. Geh und triff sie!"
+
+msgid "Large"
+msgstr "Groß"
+
+msgid "Larger"
+msgstr "Größer"
+
+msgid "Later"
+msgstr "Später"
+
+msgid "Lay your hand on the shrine. It will answer you now."
+msgstr "Leg deine Hand auf den Schrein. Er antwortet dir jetzt."
+
+msgid "Let's battle!"
+msgstr "Lass uns kämpfen!"
+
+msgid "Let's trade"
+msgstr "Lass uns tauschen"
+
+msgid "Locked"
+msgstr "Gesperrt"
+
+msgid "Make a wish"
+msgstr "Wünsch dir was"
+
+msgid "Max ✓"
+msgstr "Maximum ✓"
+
+msgid "Maybe later."
+msgstr "Vielleicht später."
+
+msgid "Maybe next week."
+msgstr "Vielleicht nächste Woche."
+
+msgid "Missing ingredients."
+msgstr "Zutaten fehlen."
+
+msgid "Music"
+msgstr "Musik"
+
+msgid "Need %d %s."
+msgstr "Es fehlen %d %s."
+
+msgid "No"
+msgstr "Nein"
+
+msgid "No gift yet"
+msgstr "Noch kein Geschenk"
+
+msgid "No room in your pack."
+msgstr "Kein Platz im Rucksack."
+
+msgid "No thanks"
+msgstr "Nein danke"
+
+msgid "Nobody has explored it in years."
+msgstr "Seit Jahren war niemand dort."
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "North: Whisperwood. Restore the Grove Shrine there."
+msgstr "Norden: Whisperwood. Stell dort den Hain-Schrein wieder her."
+
+msgid "Not enough gold."
+msgstr "Nicht genug Gold."
+
+msgid "Not enough money."
+msgstr "Nicht genug Geld."
+
+msgid "Not now"
+msgstr "Nicht jetzt"
+
+msgid "Not ready"
+msgstr "Nicht bereit"
+
+msgid "Not talked"
+msgstr "Nicht gesprochen"
+
+msgid "Not this week"
+msgstr "Nicht diese Woche"
+
+msgid "Not today"
+msgstr "Nicht heute"
+
+msgid "Not yet"
+msgstr "Noch nicht"
+
+msgid "Nothing yet."
+msgstr "Noch nichts."
+
+msgid "Nothing yet. Add items or Wildlings."
+msgstr "Noch nichts. Leg Gegenstände oder Wildlings dazu."
+
+msgid "Off"
+msgstr "Aus"
+
+msgid "On"
+msgstr "An"
+
+msgid "Open"
+msgstr "Öffnen"
+
+msgid "Open your farm to friends. They join with their own character and help with everything; the farm, money and Wildlings stay yours and save on your computer."
+msgstr "Öffne deinen Hof für Freunde. Sie kommen mit ihrer eigenen Figur und helfen bei allem; Hof, Geld und Wildlings bleiben deine und werden auf deinem Computer gespeichert."
+
+msgid "Owned ✓"
+msgstr "Im Besitz ✓"
+
+msgid "Party"
+msgstr "Team"
+
+msgid "Password (8+ characters)"
+msgstr "Passwort (mindestens 8 Zeichen)"
+
+msgid "Pause time while in menus (solo)"
+msgstr "Zeit in Menüs anhalten (allein)"
+
+msgid "Put a crop or fruit in."
+msgstr "Leg eine Feldfrucht oder Frucht hinein."
+
+msgid "ROT"
+msgstr "WRZ"
+
+msgid "Rain"
+msgstr "Regen"
+
+msgid "Rain started to pour!"
+msgstr "Es fängt an zu gießen!"
+
+msgid "Refilled!"
+msgstr "Aufgefüllt!"
+
+msgid "Rematch!"
+msgstr "Revanche!"
+
+msgid "Requests"
+msgstr "Aufträge"
+
+msgid "Rest (no job)"
+msgstr "Ruhe (keine Arbeit)"
+
+msgid "Resting"
+msgstr "Ruht"
+
+msgid "Romanceable"
+msgstr "Für eine Romanze"
+
+msgid "Roots drain %s's energy!"
+msgstr "Wurzeln rauben %s Kraft!"
+
+msgid "Run"
+msgstr "Flucht"
+
+msgid "SLP"
+msgstr "SLF"
+
+msgid "SOK"
+msgstr "NAS"
+
+msgid "Screen shake"
+msgstr "Bildschirmwackeln"
+
+msgid "Send crash and error reports (no personal data)"
+msgstr "Absturz- und Fehlerberichte senden (keine persönlichen Daten)"
+
+msgid "Set up"
+msgstr "Aufbauen"
+
+msgid "Share anonymous play stats (session length, progress)"
+msgstr "Anonyme Spielstatistiken teilen (Spieldauer, Fortschritt)"
+
+msgid "Shrine awake ✓"
+msgstr "Schrein wach ✓"
+
+msgid "Shrine ready to wake"
+msgstr "Schrein kann geweckt werden"
+
+msgid "Sign in to keep your farms in the cloud and play co-op online. Offline play always works."
+msgstr "Melde dich an, damit deine Höfe in der Cloud bleiben und du online zusammen spielen kannst. Offline geht es immer."
+
+msgid "Sleep"
+msgstr "Schlafen"
+
+msgid "Snow"
+msgstr "Schnee"
+
+msgid "Snow began to fall!"
+msgstr "Es beginnt zu schneien!"
+
+msgid "Snow is falling."
+msgstr "Es schneit."
+
+msgid "So close! %s almost came over!"
+msgstr "Fast! %s wäre beinahe gekommen!"
+
+msgid "Sound effects"
+msgstr "Geräusche"
+
+msgid "South: Hollow Meadow. Wild Wildlings live here!"
+msgstr "Süden: Hollow Meadow. Hier leben wilde Wildlings!"
+
+msgid "Split half"
+msgstr "Hälfte abteilen"
+
+msgid "Split one"
+msgstr "Eins abteilen"
+
+msgid "Star"
+msgstr "Stern"
+
+msgid "Stay"
+msgstr "Bleiben"
+
+msgid "Still the best in the valley. Same time next week?"
+msgstr "Immer noch die Besten im Tal. Gleiche Zeit nächste Woche?"
+
+msgid "Still waiting for you: %s"
+msgstr "Warten noch auf dich: %s"
+
+msgid "Storm"
+msgstr "Sturm"
+
+msgid "Story"
+msgstr "Geschichte"
+
+msgid "Sure"
+msgstr "Klar"
+
+msgid "System"
+msgstr "System"
+
+msgid "Talk instead"
+msgstr "Lieber reden"
+
+msgid "Talk to Elder Barley in the village."
+msgstr "Sprich im Dorf mit Elder Barley."
+
+msgid "Text size"
+msgstr "Textgröße"
+
+msgid "That can't be shipped."
+msgstr "Das kann nicht verschickt werden."
+
+msgid "That can't be turned into seeds."
+msgstr "Daraus werden keine Samen."
+
+msgid "That tool is already the best it can be."
+msgstr "Das Werkzeug ist schon so gut, wie es sein kann."
+
+msgid "That won't work."
+msgstr "Das geht nicht."
+
+msgid "That's not a machine."
+msgstr "Das ist keine Maschine."
+
+msgid "That's not for sale right now."
+msgstr "Das ist gerade nicht zu kaufen."
+
+msgid "The Creature Show ring. Every Saturday the judges hold a show, and the village gathers here for its festivals."
+msgstr "Die Arena der Kreaturenschau. Jeden Samstag richten die Preisrichter eine Schau aus, und das Dorf feiert hier seine Feste."
+
+msgid "The Hatchery is full."
+msgstr "Die Brutstätte ist voll."
+
+msgid "The cave is blocked."
+msgstr "Die Höhle ist versperrt."
+
+msgid "The connection to the farm was lost."
+msgstr "Die Verbindung zum Hof ist abgebrochen."
+
+msgid "The fog is thick."
+msgstr "Der Nebel ist dicht."
+
+msgid "The fog lifted."
+msgstr "Der Nebel lichtet sich."
+
+msgid "The furnace needs Coal."
+msgstr "Der Ofen braucht Kohle."
+
+msgid "The furnace only accepts ore."
+msgstr "Der Ofen nimmt nur Erz."
+
+msgid "The other player left."
+msgstr "Der andere Spieler ist gegangen."
+
+msgid "The rain stopped."
+msgstr "Der Regen hört auf."
+
+msgid "The shrine glows!"
+msgstr "Der Schrein leuchtet!"
+
+msgid "The shrine is still dark."
+msgstr "Der Schrein ist noch dunkel."
+
+msgid "The snow stopped."
+msgstr "Der Schnee hört auf."
+
+msgid "The storm passed."
+msgstr "Der Sturm zieht vorbei."
+
+msgid "The sunlight faded."
+msgstr "Das Sonnenlicht lässt nach."
+
+msgid "The sunlight is harsh."
+msgstr "Das Sonnenlicht ist grell."
+
+msgid "The sunlight turned harsh!"
+msgstr "Das Sonnenlicht wird grell!"
+
+msgid "The way is blocked."
+msgstr "Der Weg ist versperrt."
+
+msgid "The weekly Creature Show is held on Saturdays."
+msgstr "Die wöchentliche Kreaturenschau findet samstags statt."
+
+msgid "The wild "
+msgstr "Das wilde "
+
+msgid "There's no Warden there."
+msgstr "Dort gibt es keinen Hüter."
+
+msgid "There's no festival today."
+msgstr "Heute ist kein Fest."
+
+msgid "There's no room there."
+msgstr "Dort ist kein Platz."
+
+msgid "These two don't seem interested in each other."
+msgstr "Die beiden scheinen kein Interesse aneinander zu haben."
+
+msgid "They won't buy that."
+msgstr "Das kaufen sie nicht."
+
+msgid "This isn't the right moment."
+msgstr "Das ist nicht der richtige Moment."
+
+msgid "This week"
+msgstr "Diese Woche"
+
+msgid "To host, load your farm, then press O (or Esc > Play together). Friends' progress is saved on the host's farm."
+msgstr "Zum Gastgeben lädst du deinen Hof und drückst O (oder Esc > Zusammen spielen). Der Fortschritt deiner Freunde wird auf dem Hof des Gastgebers gespeichert."
+
+msgid "Touch controls"
+msgstr "Touch-Steuerung"
+
+msgid "Trash"
+msgstr "Wegwerfen"
+
+msgid "Unknown offer."
+msgstr "Unbekanntes Angebot."
+
+msgid "Unknown."
+msgstr "Unbekannt."
+
+msgid "Upgrade"
+msgstr "Verbessern"
+
+msgid "Villagers"
+msgstr "Dorfbewohner"
+
+msgid "Waiting for friends to join..."
+msgstr "Warte auf Freunde..."
+
+msgid "Wake it"
+msgstr "Wecken"
+
+msgid "Wildlings"
+msgstr "Wildlings"
+
+msgid "Worker"
+msgstr "Helfer"
+
+msgid "You can't run from a trainer battle!"
+msgstr "Aus einem Trainerkampf kannst du nicht fliehen!"
+
+msgid "You don't know that recipe yet."
+msgstr "Das Rezept kennst du noch nicht."
+
+msgid "You found %s."
+msgstr "Du findest %s."
+
+msgid "You got away safely!"
+msgstr "Du bist entkommen!"
+
+msgid "You have nothing to display. Bring crops, artisan goods or gems."
+msgstr "Du hast nichts zum Ausstellen. Bring Feldfrüchte, Handwerkswaren oder Edelsteine."
+
+msgid "You haven't been that deep yet."
+msgstr "So tief warst du noch nicht."
+
+msgid "You haven't found any eggs yet."
+msgstr "Du hast noch keine Eier gefunden."
+
+msgid "You held up the %s!"
+msgstr "Du hältst %s hoch!"
+
+msgid "You need %d %s."
+msgstr "Du brauchst %d %s."
+
+msgid "You need a Wildling to enter."
+msgstr "Du brauchst ein Wildling, um mitzumachen."
+
+msgid "You need a kitchen to cook."
+msgstr "Zum Kochen brauchst du eine Küche."
+
+msgid "You offer"
+msgstr "Du bietest an"
+
+msgid "You offered the %s %s."
+msgstr "Du bietest %s %s an."
+
+msgid "You spend the day laughing with the village. Everyone feels a little closer."
+msgstr "Du verbringst den Tag lachend im Dorf. Alle rücken ein Stück näher zusammen."
+
+msgid "You've already given %s a gift today."
+msgstr "Du hast %s heute schon ein Geschenk gegeben."
+
+msgid "You've already shown a Wildling today. Come back next Saturday!"
+msgstr "Du hast heute schon ein Wildling gezeigt. Komm nächsten Samstag wieder!"
+
+msgid "You've beaten every Warden this week!"
+msgstr "Du hast diese Woche jeden Hüter besiegt!"
+
+msgid "Your %s isn't strong enough. Upgrade it at the Forge."
+msgstr "Dein %s ist nicht stark genug. Verbessere es an der Schmiede."
+
+msgid "Your Farm"
+msgstr "Dein Hof"
+
+msgid "Your Farm. Clear the land, plant seeds, and let your Wildlings help!"
+msgstr "Dein Hof. Rode das Land, pflanze Samen, und lass deine Wildlings helfen!"
+
+msgid "Your name"
+msgstr "Dein Name"
+
+msgid "Your pack is full."
+msgstr "Dein Rucksack ist voll."
+
+msgid "Your watering can is empty. Refill it at water."
+msgstr "Deine Gießkanne ist leer. Füll sie am Wasser auf."
+
+msgid "bars smelted"
+msgstr "Barren geschmolzen"
+
+msgid "crops harvested"
+msgstr "Pflanzen geerntet"
+
+msgid "crops nudged to grow"
+msgstr "Pflanzen beim Wachsen geholfen"
+
+msgid "crops pollinated"
+msgstr "Pflanzen bestäubt"
+
+msgid "debris cleared"
+msgstr "Unrat weggeräumt"
+
+msgid "fall"
+msgstr "Herbst"
+
+msgid "goods preserved"
+msgstr "Waren eingelegt"
+
+msgid "machine goods collected"
+msgstr "Maschinen geleert"
+
+msgid "machines refilled"
+msgstr "Maschinen befüllt"
+
+msgid "produce gathered"
+msgstr "Ernte gesammelt"
+
+msgid "spring"
+msgstr "Frühling"
+
+msgid "summer"
+msgstr "Sommer"
+
+msgid "the guardian"
+msgstr "der Wächter"
+
+msgid "the trainer"
+msgstr "der Trainer"
+
+msgid "tiles watered"
+msgstr "Felder gegossen"
+
+msgid "today!"
+msgstr "heute!"
+
+msgid "tomorrow!"
+msgstr "morgen!"
+
+msgid "winter"
+msgstr "Winter"
+
+msgid "★ Starry "
+msgstr "★ Sternen-"
+
+msgid "Master volume"
+msgstr "Gesamtlautstärke"
+
+msgid "Farm code, e.g. K7QM2D"
+msgstr "Hofcode, z. B. K7QM2D"
+
+msgid "Host address"
+msgstr "Adresse des Gastgebers"
+
+msgid "Say something..."
+msgstr "Sag etwas..."
+
+msgid "leafy"
+msgstr "blättrig"
+
+msgid "damp"
+msgstr "feucht"
+
+msgid "warm"
+msgstr "warm"
+
+msgid "heavy"
+msgstr "schwer"
+
+msgid "light"
+msgstr "leicht"
+
+msgid "tingly"
+msgstr "kribbelig"
+
+msgid "chilly"
+msgstr "kühl"
+
+msgid "shadowy"
+msgstr "schattig"
+
+msgid "glowy"
+msgstr "leuchtend"
+
+msgid "fuzzy"
+msgstr "flauschig"
+
+msgid "odd"
+msgstr "seltsam"
+
+msgid "1st"
+msgstr "1."
+
+msgid "2nd"
+msgstr "2."
+
+msgid "3rd"
+msgstr "3."
+
+msgid "4th"
+msgstr "4."
+

@@ -104,7 +104,7 @@ func _on_state(s: Dictionary) -> void:
 	match str(s.status):
 		"done":
 			Audio.sfx("coin")
-			EventBus.toast.emit("Trade complete!", "gift")
+			EventBus.toast.emit(tr("Trade complete!"), "gift")
 			closed.emit()
 			return
 		"closed":
@@ -118,13 +118,13 @@ func _render() -> void:
 	var other_name: String = str(state.get("b_name" if str(state.get("a", "")) == _me() else "a_name", "Friend"))
 	_their_title.text = tr("%s offers") % other_name
 	var views: Dictionary = state.get("views", {})
-	_fill(_mine, views.get(_me(), []), "Nothing yet. Add items or Wildlings.")
+	_fill(_mine, views.get(_me(), []), tr("Nothing yet. Add items or Wildlings."))
 	var waiting := str(state.get("status", "")) == "invite"
-	_fill(_theirs, views.get(_other(), []), (tr("Waiting for %s to accept...") % other_name) if waiting else "Nothing yet.")
+	_fill(_theirs, views.get(_other(), []), (tr("Waiting for %s to accept...") % other_name) if waiting else tr("Nothing yet."))
 	var they_ok := bool(state.get("ok", {}).get(_other(), false))
 	_their_ready.text = "✓ Ready" if they_ok else ""
 	_my_ready.text = "✓ Ready" if _am_ready() else ""
-	_ready_btn.text = "Not ready" if _am_ready() else "Ready"
+	_ready_btn.text = tr("Not ready") if _am_ready() else tr("Ready")
 	_ready_btn.disabled = waiting
 	_status.text = str(state.get("msg", ""))
 

@@ -9,6 +9,7 @@ const STARTERS := ["sproutle", "puddlop", "embercub"]
 var world: Dictionary = {}
 var grids: Dictionary = {}            # persistent FarmGrids
 var farm_chest: Inventory
+var shipping_bin: Inventory
 var ranch: Array = []                 # Array[Creature] living at the farm (workers)
 var sanctuary: Array = []             # overflow storage (unlimited)
 var players: Dictionary = {}          # id -> PlayerData
@@ -53,6 +54,7 @@ func new_game(opts: Dictionary) -> void:
 	for m in PERSISTENT_MAPS:
 		grids[m] = MapBuilder.build_authored(Data.get_map(m)).grid
 	farm_chest = Inventory.new(10, 8)
+	shipping_bin = _new_shipping_bin()
 	ranch.clear()
 	sanctuary.clear()
 	players.clear()
@@ -204,7 +206,7 @@ func add_farm_xp(n: int, at: Vector2 = Vector2.INF) -> void:
 		return
 	var ups := Progression.add_farm_xp(world.farm, n)
 	if at != Vector2.INF:
-		EventBus.popup.emit(at + Vector2(0, -10), "+%d XP" % n, Color("#8fe36b"))
+		EventBus.popup.emit(at + Vector2(0, -10), tr("+%d XP") % n, Color("#8fe36b"))
 	for lv in ups:
 		var info := Progression.level_reward(lv)
 		grant(info.get("reward", {}), local_player())
@@ -321,9 +323,9 @@ func set_pair(a_uid: String, b_uid: String) -> Dictionary:
 	var a := find_creature(a_uid)
 	var b := find_creature(b_uid)
 	if a == null or b == null or not a in ranch or not b in ranch:
-		return {"ok": false, "reason": "Both Wildlings must live in the Den."}
+		return {"ok": false, "reason": tr("Both Wildlings must live in the Den.")}
 	if not Breeding.compatible(a, b):
-		return {"ok": false, "reason": "These two don't seem interested in each other."}
+		return {"ok": false, "reason": tr("These two don't seem interested in each other.")}
 	world.pairs = [[a_uid, b_uid]] if world.pairs.size() < 1 + int(has_building("big_den")) else world.pairs.slice(1) + [[a_uid, b_uid]]
 	return {"ok": true, "reason": "", "chance": Breeding.egg_chance(a, b)}
 
@@ -381,6 +383,10 @@ func end_day(passed_out: bool = false) -> Dictionary:
 			if cat in ["crop", "fruit", "artisan", "produce", "forage", "gem"]:
 				world.shipping.append({"id": e.id, "n": int(e.n), "q": int(e.q)})
 				farm_chest.remove(e.id, int(e.n))
+	# Whatever is sitting in the bin sells with the overnight queue.
+	for e in shipping_bin.entries.duplicate():
+		world.shipping.append({"id": e.id, "n": int(e.n), "q": int(e.q)})
+	shipping_bin.entries.clear()
 	# Shipping
 	var total := 0
 	for s in world.shipping:
@@ -532,15 +538,21 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 				g.till(t)
 				r.ok = true
 				r.sfx = "hoe"
+			elif g.is_tilled(t) and g.crop_at(t).is_empty():
+				if not _spend_energy(p, base_cost):
+					return r
+				g.until(t)
+				r.ok = true
+				r.sfx = "hoe"
 		"watering_can":
 			if g.get_ground(t) in Tiles.WATER_TILES or g.object_at(t).get("id", "") == "birdbath":
 				p.water_left = p.water_capacity()
 				r.ok = true
 				r.sfx = "refill"
-				r.fx.append(["Refilled!", Color("#7ac8ff")])
+				r.fx.append([tr("Refilled!"), Color("#7ac8ff")])
 			elif g.is_tilled(t):
 				if p.water_left <= 0:
-					r.reason = "Your watering can is empty. Refill it at water."
+					r.reason = tr("Your watering can is empty. Refill it at water.")
 					return r
 				if not _spend_energy(p, base_cost * 0.5):
 					return r
@@ -598,8 +610,7 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 				add_farm_xp(Progression.XP.clear)
 				p.stat_add("cleared")
 				EventBus.shake.emit(1.5 if d in [24, 25, 30, 33] else 0.5)
-			elif tool == "pickaxe" and g.is_tilled(t) and g.crop_at(t).is_empty():
-				g.soil.erase(Tiles.key(t))
+			elif tool == "pickaxe" and g.until(t):
 				r.ok = true
 				r.sfx = "hoe"
 			elif tool == "axe" and g.object_at(t).get("kind", "") == "tree" and int(g.object_at(t).age) < int(Data.trees[g.object_at(t).tree].days):
@@ -626,13 +637,13 @@ func pick_up_object(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 		var inv := Inventory.new(8, 6)
 		inv.from_dict(o.inv)
 		if not inv.is_empty():
-			r.reason = "Empty the chest first."
+			r.reason = tr("Empty the chest first.")
 			return r
 	if o.kind == "machine" and Machines.is_busy(o):
-		r.reason = "It's busy."
+		r.reason = tr("It's busy.")
 		return r
 	if not p.inventory.can_add(o.id, 1):
-		r.reason = "No room in your pack."
+		r.reason = tr("No room in your pack.")
 		return r
 	g.remove_object(t)
 	give_item(p, o.id, 1)
@@ -660,7 +671,7 @@ func use_item(pid: String, map_id: String, t: Vector2i, uid: String) -> Dictiona
 				r.sfx = "plant"
 				add_farm_xp(Progression.XP.plant)
 			elif g.is_tilled(t) and g.crop_at(t).is_empty():
-				r.reason = "%s can't grow in %s." % [Data.item_name(e.id), season().capitalize()]
+				r.reason = tr("%s can't grow in %s.") % [Data.item_name(e.id), Data.season_name(season())]
 		elif it.has("fert"):
 			if g.fertilize(t, it.fert):
 				f.inv.take(uid, 1)
@@ -673,7 +684,7 @@ func use_item(pid: String, map_id: String, t: Vector2i, uid: String) -> Dictiona
 				r.sfx = "place"
 				EventBus.objects_changed.emit(map_id)
 			else:
-				r.reason = "Can't place that here."
+				r.reason = tr("Can't place that here.")
 	if r.ok:
 		EventBus.inventory_changed.emit()
 		EventBus.tile_changed.emit(map_id, t)
@@ -689,7 +700,7 @@ func harvest_at(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 		var c: Dictionary = g.crop_at(t)
 		var cid: String = c.id
 		if not p.inventory.can_add(cid, 1):
-			r.reason = "Your pack is full."
+			r.reason = tr("Your pack is full.")
 			return r
 		var h := g.harvest(t, rng, luck(), int(p.skills.get("farming", 0)))
 		give_item(p, h.id, int(h.n), int(h.q))
@@ -759,18 +770,46 @@ func load_machine(pid: String, map_id: String, t: Vector2i, uid: String) -> Dict
 	EventBus.objects_changed.emit(map_id)
 	return r
 
+func _new_shipping_bin() -> Inventory:
+	return Inventory.new(8, 6, [], false, true)
+
+## Older saves kept the bin as a flat list on the world. Pull that into the grid once.
+func _load_shipping_bin(d: Dictionary) -> void:
+	shipping_bin = _new_shipping_bin()
+	shipping_bin.from_dict(d.get("shipping_bin", {}))
+	var queued: Array = world.get("shipping", []).duplicate(true)
+	world.shipping = []
+	for s in queued:
+		if typeof(s) != TYPE_DICTIONARY:
+			continue
+		var id := str(s.get("id", ""))
+		if id == "":
+			continue
+		var n := int(s.get("n", 1))
+		var q := int(s.get("q", 0))
+		var left := n
+		if shipping_bin.accepts(id):
+			left = shipping_bin.add(id, n, q)
+		if left > 0:
+			world.shipping.append({"id": id, "n": left, "q": q})
+
 func ship(pid: String, uid: String, n: int = -1) -> Dictionary:
 	var p := player(pid)
 	var r := _res(false)
 	var f := p.inventory.find(uid)
 	if f.is_empty():
 		return r
-	if Data.sell_price(f.entry.id, 0) <= 0:
-		r.reason = "That can't be shipped."
+	if not shipping_bin.accepts(f.entry.id):
+		r.reason = tr("That can't be shipped.")
 		return r
 	var amount: int = int(f.entry.n) if n < 0 else mini(n, int(f.entry.n))
 	var taken: Dictionary = f.inv.take(uid, amount)
-	world.shipping.append({"id": taken.id, "n": int(taken.n), "q": int(taken.q)})
+	var left := shipping_bin.add(taken.id, int(taken.n), int(taken.q), taken.meta)
+	if left > 0:
+		p.inventory.add(taken.id, left, int(taken.q), taken.meta)
+		if left == int(taken.n):
+			r.reason = tr("The shipping bin is full.")
+			return r
 	r.ok = true
 	r.sfx = "ship"
 	EventBus.inventory_changed.emit()
@@ -786,19 +825,59 @@ func buy(pid: String, shop_id: String, item_id: String, n: int = 1) -> Dictionar
 		if s.id == item_id and not s.locked:
 			price = int(s.price)
 	if price < 0:
-		r.reason = "That's not for sale right now."
+		r.reason = tr("That's not for sale right now.")
 		return r
-	if not p.inventory.can_add(item_id, n):
-		r.reason = "Your pack is full."
+	# Prefer the backpack grid. Matching bags (seed pouch, treat tin, gem case)
+	# only catch what doesn't fit, so a purchase doesn't vanish inside one.
+	if not p.inventory.can_add(item_id, n, 0, false):
+		r.reason = tr("Your pack is full.")
 		return r
 	if not spend(price * n):
-		r.reason = "Not enough gold."
+		r.reason = tr("Not enough gold.")
 		return r
-	give_item(p, item_id, n)
+	var before := p.inventory.homes_of(item_id)
+	var left := p.inventory.add(item_id, n, 0, {}, false)
+	var chest_gain := 0
+	if left > 0:
+		var still := farm_chest.add(item_id, left)
+		chest_gain = left - still
+		if still > 0:
+			add_money(price * still)
+			n -= still
+	if n <= 0:
+		r.reason = tr("Your pack is full.")
+		EventBus.inventory_changed.emit()
+		return r
+	EventBus.inventory_changed.emit()
 	bump_stat("spent", price * n)
 	r.ok = true
 	r.sfx = "coin"
+	r.note = _purchase_note(item_id, n, before, p.inventory.homes_of(item_id), chest_gain)
 	return r
+
+func _purchase_note(item_id: String, n: int, before: Dictionary, after: Dictionary, chest_gain: int) -> String:
+	var name := Data.item_name(item_id)
+	var stashed: Array = []
+	for b in after.get("bags", []):
+		var prev := 0
+		for a in before.get("bags", []):
+			if str(a.uid) == str(b.uid):
+				prev = int(a.n)
+				break
+		var gain := int(b.n) - prev
+		if gain > 0:
+			stashed.append({"n": gain, "where": str(b.name)})
+	if chest_gain > 0:
+		stashed.append({"n": chest_gain, "where": tr("the farm chest")})
+	if stashed.is_empty():
+		return tr("Bought %d %s") % [n, name]
+	var top_gain := int(after.get("top", 0)) - int(before.get("top", 0))
+	if stashed.size() == 1 and top_gain <= 0:
+		return tr("Bought %d %s (in %s)") % [n, name, stashed[0].where]
+	var parts: PackedStringArray = []
+	for s in stashed:
+		parts.append(tr("%d in %s") % [int(s.n), s.where])
+	return tr("Bought %d %s (%s)") % [n, name, ", ".join(parts)]
 
 ## Sells straight to a shopkeeper (instant, unlike the shipping bin).
 func sell(pid: String, uid: String, n: int = -1) -> Dictionary:
@@ -809,7 +888,7 @@ func sell(pid: String, uid: String, n: int = -1) -> Dictionary:
 		return r
 	var price := Data.sell_price(f.entry.id, int(f.entry.q))
 	if price <= 0 or Data.get_item(f.entry.id).get("cat", "") in ["tool", "key"]:
-		r.reason = "They won't buy that."
+		r.reason = tr("They won't buy that.")
 		return r
 	var amount: int = int(f.entry.n) if n < 0 else mini(n, int(f.entry.n))
 	f.inv.take(uid, amount)
@@ -833,17 +912,17 @@ func craft(pid: String, kind: String, recipe_id: String) -> Dictionary:
 	var c := ctx()
 	c["recipes"] = p.recipes
 	if not recipe_id in Economy.known_recipes(kind, c):
-		r.reason = "You don't know that recipe yet."
+		r.reason = tr("You don't know that recipe yet.")
 		return r
 	if kind == "cooking" and not has_building("kitchen"):
-		r.reason = "You need a kitchen to cook."
+		r.reason = tr("You need a kitchen to cook.")
 		return r
 	var srcs := craft_sources(p)
 	if not Economy.can_make(kind, recipe_id, srcs):
-		r.reason = "Missing ingredients."
+		r.reason = tr("Missing ingredients.")
 		return r
 	if not Economy.make(kind, recipe_id, srcs):
-		r.reason = "Your pack is full."
+		r.reason = tr("Your pack is full.")
 		return r
 	bump_stat("cook" if kind == "cooking" else "craft")
 	add_farm_xp(3 if kind == "cooking" else 2)
@@ -881,14 +960,14 @@ func upgrade_tool(pid: String, tool: String) -> Dictionary:
 		return r
 	var spec := Economy.upgrade_spec(p.tool_level(tool) + 1)
 	if spec.is_empty():
-		r.reason = "That tool is already the best it can be."
+		r.reason = tr("That tool is already the best it can be.")
 		return r
 	var srcs := craft_sources(p)
 	if Economy.count_in(srcs, spec.bar) < int(spec.n):
-		r.reason = "Bring %d %s." % [int(spec.n), Data.item_name(spec.bar)]
+		r.reason = tr("Bring %d %s.") % [int(spec.n), Data.item_name(spec.bar)]
 		return r
 	if not spend(int(spec.price)):
-		r.reason = "Not enough gold."
+		r.reason = tr("Not enough gold.")
 		return r
 	Economy.consume(srcs, {spec.bar: int(spec.n)})
 	p.tool_levels[tool] = int(spec.level)
@@ -910,7 +989,7 @@ func buy_backpack(pid: String, level: int) -> Dictionary:
 		r.reason = Economy.req_text(spec.requires)
 		return r
 	if not spend(int(spec.price)):
-		r.reason = "Not enough gold."
+		r.reason = tr("Not enough gold.")
 		return r
 	p.set_backpack(level)
 	EventBus.inventory_changed.emit()
@@ -926,10 +1005,10 @@ func deliver_board(pid: String, idx: int) -> Dictionary:
 		return r
 	var b: Dictionary = world.board[idx]
 	if b.get("done", false):
-		r.reason = "Already delivered."
+		r.reason = tr("Already delivered.")
 		return r
 	if p.inventory.count(b.item) < int(b.n):
-		r.reason = "You need %d %s." % [int(b.n), Data.item_name(b.item)]
+		r.reason = tr("You need %d %s.") % [int(b.n), Data.item_name(b.item)]
 		return r
 	p.inventory.remove(b.item, int(b.n))
 	b.done = true
@@ -952,24 +1031,24 @@ func clear_pair_act(_pid: String, uid: String) -> Dictionary:
 
 func incubate(pid: String, egg_uid: String) -> Dictionary:
 	var ok := add_egg_to_hatchery(player(pid), egg_uid)
-	return _res(ok, "" if ok else "The Hatchery is full.")
+	return _res(ok, "" if ok else tr("The Hatchery is full."))
 
 func set_job_act(_pid: String, uid: String, job_id: String) -> Dictionary:
 	return _res(set_job(uid, job_id))
 
 func move_creature_act(pid: String, uid: String, dest: String) -> Dictionary:
 	var ok := move_creature(uid, dest, player(pid))
-	return _res(ok, "" if ok else "There's no room there.")
+	return _res(ok, "" if ok else tr("There's no room there."))
 
 ## A co-op client befriended a Wildling in its own battle; the host files it (dex, den, farm XP).
 func befriend_act(pid: String, creature_json: String) -> Dictionary:
 	var p := player(pid)
 	var d = JSON.parse_string(creature_json)
 	if p == null or not d is Dictionary:
-		return _res(false, "Bad creature.")
+		return _res(false, tr("Bad creature."))
 	var c := Creature.from_dict(d)
 	if find_creature(c.uid) != null:
-		return _res(false, "Already on the farm.")
+		return _res(false, tr("Already on the farm."))
 	var r := _res(true, add_creature(p, c))
 	bump_stat("befriend")
 	return r
@@ -1001,7 +1080,7 @@ func earn(amount: int) -> void:
 
 func warden_won_act(_pid: String, region: String) -> Dictionary:
 	if Adventure.warden_of(region) == "" or not region_unlocked(region):
-		return _res(false, "There's no Warden there.")
+		return _res(false, tr("There's no Warden there."))
 	world.flags["warden:" + region] = true
 	EventBus.quest_updated.emit()
 	return _res(true)
@@ -1010,7 +1089,7 @@ func warden_won_act(_pid: String, region: String) -> Dictionary:
 func guardian_result_act(pid: String, region: String, befriended: bool) -> Dictionary:
 	var state := Adventure.shrine_state(world, region)
 	if state == "dark":
-		return _res(false, "The shrine is still dark.")
+		return _res(false, tr("The shrine is still dark."))
 	if befriended:
 		world.flags["guardian_home:" + region] = true
 	var r := _res(true)
@@ -1024,7 +1103,7 @@ func guardian_result_act(pid: String, region: String, befriended: bool) -> Dicti
 		world.regions.append(next)
 	add_farm_xp(Progression.XP.shrine)
 	bump_stat("shrine")
-	r["text"] = rw.get("text", "The shrine glows!")
+	r["text"] = tr(str(rw.get("text", tr("The shrine glows!"))))
 	r.sfx = "levelup"
 	EventBus.shrine_restored.emit(region)
 	return r
@@ -1039,10 +1118,10 @@ func legend_result_act(_pid: String, legend_id: String) -> Dictionary:
 ## Records reaching a mine floor; you can only go one floor deeper than your best.
 func mine_floor_act(_pid: String, region: String, floor_n: int) -> Dictionary:
 	if not Data.regions.get(region, {}).has("mine") or not region_unlocked(region) or floor_n < 1:
-		return _res(false, "The cave is blocked.")
+		return _res(false, tr("The cave is blocked."))
 	var deep := Adventure.deepest(world, region)
 	if floor_n > deep + 1 and not floor_n in Adventure.elevator_floors(world, region):
-		return _res(false, "You haven't been that deep yet.")
+		return _res(false, tr("You haven't been that deep yet."))
 	var r := _res(true)
 	if floor_n > deep:
 		world.mine_depth[region] = floor_n
@@ -1084,7 +1163,7 @@ func festival_act(pid: String, op: String) -> Dictionary:
 	var fest := Adventure.festival_today(day())
 	var p := player(pid)
 	if fest.is_empty() or p == null:
-		return _res(false, "There's no festival today.")
+		return _res(false, tr("There's no festival today."))
 	if Adventure.festival_done(world, day(), fest.id, pid):
 		return _res(false, tr("You've already joined this year's %s.") % tr(str(fest.name)))
 	var r := _res(true)
@@ -1098,14 +1177,14 @@ func festival_act(pid: String, op: String) -> Dictionary:
 		"eggs":
 			var n := p.inventory.count("festival_egg")
 			if n <= 0:
-				return _res(false, "You haven't found any eggs yet.")
+				return _res(false, tr("You haven't found any eggs yet."))
 			p.inventory.remove("festival_egg", n)
 			r["eggs"] = n
 			reward = Adventure.egg_hunt_reward(n, fest)
 		"show":
 			var lead := p.lead()
 			if lead == null:
-				return _res(false, "You need a Wildling to enter.")
+				return _res(false, tr("You need a Wildling to enter."))
 			var mine: int = Progression.show_score(lead, frng).score
 			var rivals := Progression.rival_show_scores(frng, world.shrines.size() / 2)
 			var place := 1
@@ -1120,7 +1199,7 @@ func festival_act(pid: String, op: String) -> Dictionary:
 		"fair":
 			var picks := Adventure.fair_pick(p.inventory.all_entries())
 			if picks.is_empty():
-				return _res(false, "You have nothing to display. Bring crops, artisan goods or gems.")
+				return _res(false, tr("You have nothing to display. Bring crops, artisan goods or gems."))
 			var mine2 := Adventure.fair_score(picks)
 			var rivals2 := Adventure.fair_rivals(frng, Calendar.year(day()))
 			var place2 := 1
@@ -1172,12 +1251,12 @@ func chain_act(pid: String, species: String) -> Dictionary:
 func show_act(pid: String, uid: String) -> Dictionary:
 	var p := player(pid)
 	if p == null or not Endless.show_open(day()):
-		return _res(false, "The weekly Creature Show is held on Saturdays.")
+		return _res(false, tr("The weekly Creature Show is held on Saturdays."))
 	if int(world.flags.get("show:" + pid, -1)) == day():
-		return _res(false, "You've already shown a Wildling today. Come back next Saturday!")
+		return _res(false, tr("You've already shown a Wildling today. Come back next Saturday!"))
 	var c := find_creature(uid)
 	if c == null or not c in p.party:
-		return _res(false, "Bring the Wildling along in your party.")
+		return _res(false, tr("Bring the Wildling along in your party."))
 	var srng := RandomNumberGenerator.new()
 	srng.seed = hash([int(world.seed), day(), pid, "show"])
 	var res := Endless.judge(c, srng)
@@ -1204,7 +1283,7 @@ func rematch_won_act(pid: String, vid: String) -> Dictionary:
 	if not Data.villagers.get(vid, {}).get("trainer", {}).has("warden"):
 		return _res(false)
 	if not rematch_ready(pid, vid):
-		return _res(false, "%s only takes one rematch a week." % Data.villager_name(vid))
+		return _res(false, tr("%s only takes one rematch a week.") % Data.villager_name(vid))
 	world.flags["rematch:%s:%s" % [vid, pid]] = Calendar.week_number(day())
 	var tier := Endless.rematch_tier(world)
 	var reward := Endless.rematch_reward(vid, tier)
@@ -1248,16 +1327,16 @@ func validate_offer(p: PlayerData, offer: Array) -> String:
 		if o.kind == "item":
 			var f := p.inventory.find(str(o.uid))
 			if f.is_empty() or int(f.entry.n) < int(o.n) or int(o.n) <= 0:
-				return "%s no longer has that item." % p.name
+				return tr("%s no longer has that item.") % p.name
 		elif o.kind == "creature":
 			var c := find_creature(str(o.uid))
 			if c == null or not c in p.party:
-				return "%s no longer has that Wildling." % p.name
+				return tr("%s no longer has that Wildling.") % p.name
 			giving += 1
 		else:
-			return "Unknown offer."
+			return tr("Unknown offer.")
 	if giving > 0 and giving >= p.party.size():
-		return "%s has to keep at least one Wildling." % p.name
+		return tr("%s has to keep at least one Wildling.") % p.name
 	return ""
 
 ## Swaps both offers at once. Both must validate first.
@@ -1295,6 +1374,7 @@ func apply_meta(d: Dictionary) -> void:
 	var before := _ranch_signature()
 	world = d.world.duplicate(true)
 	farm_chest.from_dict(d.get("farm_chest", {}))
+	_load_shipping_bin(d)
 	ranch.clear()
 	for c in d.get("ranch", []):
 		ranch.append(Creature.from_dict(c))
@@ -1378,7 +1458,7 @@ func to_dict() -> Dictionary:
 	var sn: Array = []
 	for c in sanctuary:
 		sn.append(c.to_dict())
-	return {"world": world.duplicate(true), "grids": g, "farm_chest": farm_chest.to_dict(), "ranch": rn, "sanctuary": sn, "players": pl}
+	return {"world": world.duplicate(true), "grids": g, "farm_chest": farm_chest.to_dict(), "shipping_bin": shipping_bin.to_dict(), "ranch": rn, "sanctuary": sn, "players": pl}
 
 func from_dict(d: Dictionary) -> void:
 	world = d.world.duplicate(true)
@@ -1395,6 +1475,7 @@ func from_dict(d: Dictionary) -> void:
 			grids[m] = MapBuilder.build_authored(Data.get_map(m)).grid
 	farm_chest = Inventory.new(10, 8)
 	farm_chest.from_dict(d.get("farm_chest", {}))
+	_load_shipping_bin(d)
 	ranch.clear()
 	for c in d.get("ranch", []):
 		ranch.append(Creature.from_dict(c))

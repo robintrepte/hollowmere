@@ -13,6 +13,8 @@ var objects: Dictionary = {}   # key -> {id, kind, ...}
 var fences: Dictionary = {}    # expansion id -> Array of keys
 var tillable: Array = []
 var greenhouse: bool = false
+## Chance an empty, unwatered, unfertilized tile reverts overnight (not in the greenhouse, and not on a rainy night).
+const BARE_SOIL_REVERT := 0.5
 
 func setup(width: int, height: int) -> void:
 	w = width
@@ -69,6 +71,13 @@ func till(p: Vector2i) -> bool:
 	if not can_till(p):
 		return false
 	soil[Tiles.key(p)] = {"watered": false, "fert": ""}
+	return true
+
+## Clears tilled soil that has nothing planted. A crop stays put.
+func until(p: Vector2i) -> bool:
+	if not is_tilled(p) or not crop_at(p).is_empty():
+		return false
+	soil.erase(Tiles.key(p))
 	return true
 
 func water(p: Vector2i) -> bool:
@@ -160,7 +169,7 @@ func clear_debris(p: Vector2i, tool: String, tool_level: int, rng: RandomNumberG
 	if info.tool != tool and not (d == 31):
 		return {"ok": false, "reason": ""}
 	if tool_level < int(info.min):
-		return {"ok": false, "reason": "Your %s isn't strong enough. Upgrade it at the Forge." % tool.replace("_", " ")}
+		return {"ok": false, "reason": tr("Your %s isn't strong enough. Upgrade it at the Forge.") % Data.item_name(tool)}
 	var drops: Array = []
 	for dr in info.drops:
 		var n := rng.randi_range(int(dr[1]), int(dr[2]))
@@ -260,7 +269,7 @@ func new_day(season: String, prev_season: String, weather: String, rng: RandomNu
 				else:
 					s.erase("crop")
 					report.withered += 1
-		elif not s.watered and not rained and s.fert == "" and rng.randf() < 0.08 and not greenhouse:
+		elif not s.watered and not rained and s.fert == "" and rng.randf() < BARE_SOIL_REVERT and not greenhouse:
 			soil.erase(k)
 			continue
 		s.watered = false
