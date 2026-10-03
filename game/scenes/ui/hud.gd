@@ -220,9 +220,9 @@ func _refresh_quest() -> void:
 	var bits: Array = []
 	var fest := Adventure.festival_today(GameState.day())
 	if not fest.is_empty():
-		bits.append(tr("Today: %s at the Show Ring") % fest.name)
+		bits.append(tr("Today: %s at the Show Ring") % tr(str(fest.name)))
 	elif Endless.show_open(GameState.day()):
-		bits.append("Today: Creature Show at the Show Ring")
+		bits.append(tr("Today: Creature Show at the Show Ring"))
 	var t := Adventure.tracker(GameState.world, GameState.local_player())
 	if t != "":
 		bits.append("» " + t)

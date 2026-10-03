@@ -73,11 +73,11 @@ func _ready() -> void:
 		for l in lines:
 			body.add_child(UITheme.label("· " + l, 9))
 	for h in report.get("hatched", []):
-		body.add_child(UITheme.label(tr("An egg hatched: %s%s!") % ["Starry " if h.starry else "", Data.get_species(h.species).get("name", h.species)], 10, UITheme.LEAF.darkened(0.3)))
+		body.add_child(UITheme.label(tr("An egg hatched: %s%s!") % [tr("Starry ") if h.starry else "", tr(str(Data.get_species(h.species).get("name", h.species)))], 10, UITheme.LEAF.darkened(0.3)))
 	for ev in report.get("evolved", []):
-		body.add_child(UITheme.label(tr("%s evolved into %s overnight!") % [ev.from, Data.get_species(ev.to).get("name", ev.to)], 10, UITheme.LEAF.darkened(0.3)))
+		body.add_child(UITheme.label(tr("%s evolved into %s overnight!") % [tr(str(ev.from)), tr(str(Data.get_species(ev.to).get("name", ev.to)))], 10, UITheme.LEAF.darkened(0.3)))
 	if int(report.get("eggs", 0)) > 0:
-		body.add_child(UITheme.label(tr("%d new egg%s in the farm chest!") % [int(report.eggs), "s" if int(report.eggs) > 1 else ""], 10, UITheme.LEAF.darkened(0.3)))
+		body.add_child(UITheme.label(tr("%d new eggs in the farm chest!") % int(report.eggs), 10, UITheme.LEAF.darkened(0.3)))
 	var farm: Dictionary = report.get("farm", {})
 	if int(farm.get("crow", 0)) > 0:
 		body.add_child(UITheme.label(tr("A crow ate %d crop. A scarecrow would help!") % int(farm.crow), 9, UITheme.HEART))

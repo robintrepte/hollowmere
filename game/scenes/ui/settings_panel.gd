@@ -106,7 +106,7 @@ func _choice(parent: Control, text: String, options: Array, selected: int, cb: C
 	var ob := OptionButton.new()
 	ob.add_theme_font_size_override("font_size", UITheme.fs(9))
 	for o in options:
-		ob.add_item(str(o))
+		ob.add_item(tr(str(o)))
 	ob.select(maxi(0, selected))
 	ob.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	ob.item_selected.connect(cb)
@@ -114,7 +114,7 @@ func _choice(parent: Control, text: String, options: Array, selected: int, cb: C
 
 func _check(parent: Control, text: String, value: bool, cb: Callable) -> void:
 	var c := CheckBox.new()
-	c.text = text
+	c.text = tr(text)
 	c.button_pressed = value
 	c.add_theme_font_size_override("font_size", UITheme.fs(9))
 	c.toggled.connect(cb)

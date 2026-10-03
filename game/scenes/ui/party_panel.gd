@@ -144,8 +144,8 @@ func _move_chip(mid: String, picked: bool, on_press: Callable) -> Button:
 		var m: Dictionary = Data.get_move(mid)
 		base = Data.type_color(m.type).lightened(0.35)
 		edge = Data.type_color(m.type).darkened(0.3)
-		b.text = tr("%s  %s%s") % [m.name, tr("[%s] ") % Data.type_name(m.type) if Settings.colorblind else "", (tr("· %d") % int(m.power)) if int(m.power) > 0 else "· status"]
-		b.tooltip_text = tr("%s · %s\n%s") % [Data.type_name(m.type), "Physical" if m.cat == "phys" else "Special" if m.cat == "spec" else "Status", m.get("desc", "")]
+		b.text = tr("%s  %s%s") % [tr(str(m.name)), tr("[%s] ") % Data.type_name(m.type) if Settings.colorblind else "", (tr("· %d") % int(m.power)) if int(m.power) > 0 else tr("· status")]
+		b.tooltip_text = tr("%s · %s\n%s") % [Data.type_name(m.type), tr("Physical") if m.cat == "phys" else tr("Special") if m.cat == "spec" else tr("Status"), tr(str(m.get("desc", "")))]
 	else:
 		b.text = "+ empty slot"
 	var normal := UITheme.box(base, Color("#ffd447") if picked else edge, 2 if picked else 1, 3, 3, false)
@@ -193,7 +193,7 @@ func _show_detail() -> void:
 	var hearts := int(c.happiness / 51)
 	info.add_child(UITheme.label("Happiness " + "♥".repeat(hearts) + "♡".repeat(5 - hearts), 9, UITheme.HEART))
 	info.add_child(UITheme.label(tr("Grooming %d%%  ·  Show class %s%s") % [c.grooming, Endless.rank_name(c.show_rank),
-		tr("  ·  %d ribbon%s") % [c.ribbons, "" if c.ribbons == 1 else "s"] if c.ribbons > 0 else ""], 8, UITheme.MUTED))
+		tr("  ·  %d ribbons") % c.ribbons if c.ribbons > 0 else ""], 8, UITheme.MUTED))
 	if trd.has("desc"):
 		var td := UITheme.label(trd.desc, 8, UITheme.MUTED)
 		td.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -204,7 +204,7 @@ func _show_detail() -> void:
 	grid.add_theme_constant_override("h_separation", 10)
 	_detail.add_child(grid)
 	for s in Data.STATS:
-		grid.add_child(UITheme.label(s.capitalize(), 8, UITheme.MUTED))
+		grid.add_child(UITheme.label(tr(s.capitalize()), 8, UITheme.MUTED))
 	for s in Data.STATS:
 		var val := c.max_hp() if s == "hp" else c.stat(s)
 		var mult := c.nature_mult(s)
@@ -233,7 +233,7 @@ func _show_detail() -> void:
 			_show_detail()))
 	if not spare.is_empty():
 		if _swap_slot < 0:
-			_detail.add_child(UITheme.label(tr("%d more known move%s. Click a slot to swap.") % [spare.size(), "" if spare.size() == 1 else "s"], 8, UITheme.MUTED))
+			_detail.add_child(UITheme.label(tr("%d more known moves. Click a slot to swap.") % spare.size(), 8, UITheme.MUTED))
 		else:
 			_detail.add_child(UITheme.label("Swap in:", 9, UITheme.WOOD))
 			var sg := GridContainer.new()

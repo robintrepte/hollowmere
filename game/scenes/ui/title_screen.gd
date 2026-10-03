@@ -76,26 +76,8 @@ func _ready() -> void:
 	_menu.add_theme_constant_override("separation", 5)
 	panel.add_child(_menu)
 	_menu.minimum_size_changed.connect(func(): panel.set_deferred("offset_top", panel.offset_bottom))
-	var latest := _latest_slot()
-	if latest >= 0:
-		var cont := UITheme.button("Continue", func(): load_requested.emit(latest))
-		_menu.add_child(cont)
-		cont.call_deferred("grab_focus")
-	var ng := UITheme.button("New Farm", func(): ui.open(NewGamePanel.new(self)))
-	_menu.add_child(ng)
-	if latest < 0:
-		ng.call_deferred("grab_focus")
-	_load_btn = UITheme.button("Load", _open_load)
-	_load_btn.disabled = latest < 0 and not Net.has_session()
-	_menu.add_child(_load_btn)
-	_menu.add_child(UITheme.button("Co-op", func():
-		if Net.has_session():
-			coop_requested.emit()
-		else:
-			ui.open(AccountPanel.new())))
-	_menu.add_child(UITheme.button("Settings", func(): ui.open(SettingsPanel.new())))
-	if OS.get_name() != "Web":
-		_menu.add_child(UITheme.button("Quit", func(): get_tree().quit()))
+	_fill_menu()
+	Settings.locale_changed.connect(_fill_menu)
 	var ver := UITheme.label(tr("v%s") % ProjectSettings.get_setting("application/config/version"), 8, UITheme.CREAM, true)
 	ver.anchor_top = 1
 	ver.anchor_bottom = 1
@@ -117,8 +99,35 @@ func _ready() -> void:
 		Net.try_restore_session()
 	Audio.music("title")
 
+func _fill_menu() -> void:
+	for c in _menu.get_children():
+		_menu.remove_child(c)
+		c.free()
+	var latest := _latest_slot()
+	if latest >= 0:
+		var cont := UITheme.button("Continue", func(): load_requested.emit(latest))
+		_menu.add_child(cont)
+		cont.call_deferred("grab_focus")
+	var ng := UITheme.button("New Farm", func(): ui.open(NewGamePanel.new(self)))
+	_menu.add_child(ng)
+	if latest < 0:
+		ng.call_deferred("grab_focus")
+	_load_btn = UITheme.button("Load", _open_load)
+	_load_btn.disabled = latest < 0 and not Net.has_session()
+	_menu.add_child(_load_btn)
+	_menu.add_child(UITheme.button("Co-op", func():
+		if Net.has_session():
+			coop_requested.emit()
+		else:
+			ui.open(AccountPanel.new())))
+	_menu.add_child(UITheme.button("Settings", func(): ui.open(SettingsPanel.new())))
+	if OS.get_name() != "Web":
+		_menu.add_child(UITheme.button("Quit", func(): get_tree().quit()))
+	if is_instance_valid(_account):
+		_on_session(Net.has_session())
+
 func _on_session(signed_in: bool) -> void:
-	_account.text = (tr("● %s") % Net.display_name) if signed_in else "Sign in"
+	_account.text = (tr("● %s") % Net.display_name) if signed_in else tr("Sign in")
 	if signed_in:
 		_load_btn.disabled = false
 

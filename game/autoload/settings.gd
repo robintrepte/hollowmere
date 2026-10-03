@@ -3,6 +3,7 @@ extends Node
 
 signal text_scale_changed
 signal input_device_changed(pad: bool)
+signal locale_changed
 
 const PATH := "user://settings.cfg"
 const TEXT_SCALES := [1.0, 1.2, 1.4]
@@ -93,13 +94,17 @@ func _ready() -> void:
 
 ## Registers every gettext catalog (<locale>.po) shipped in res://i18n.
 func load_translations() -> void:
-	if not DirAccess.dir_exists_absolute(I18N_DIR):
+	var dir := DirAccess.open(I18N_DIR)
+	if dir == null:
 		return
-	for f in ResourceLoader.list_directory(I18N_DIR):
-		if f.ends_with(".po"):
+	dir.list_dir_begin()
+	var f := dir.get_next()
+	while f != "":
+		if not dir.current_is_dir() and f.ends_with(".po"):
 			var t: Translation = load(I18N_DIR.path_join(f))
 			if t:
 				TranslationServer.add_translation(t)
+		f = dir.get_next()
 
 ## Locales the player can pick: English plus every shipped catalog.
 func available_locales() -> Array:
@@ -175,7 +180,11 @@ func key_name(action: String) -> String:
 	return "?"
 
 func apply() -> void:
-	TranslationServer.set_locale(locale if locale != "" else OS.get_locale_language())
+	var next := locale if locale != "" else OS.get_locale_language()
+	var prev := TranslationServer.get_locale()
+	TranslationServer.set_locale(next)
+	if prev != TranslationServer.get_locale():
+		locale_changed.emit()
 	_set_bus("Master", master_volume)
 	_set_bus("Music", music_volume)
 	_set_bus("SFX", sfx_volume)

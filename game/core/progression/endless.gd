@@ -32,7 +32,17 @@ static func show_key(day_index: int, pid: String) -> String:
 	return "show:%d:%s" % [day_index, pid]
 
 static func rank_name(rank: int) -> String:
-	return SHOW_RANKS[clampi(rank, 0, SHOW_RANKS.size() - 1)].name
+	match clampi(rank, 0, SHOW_RANKS.size() - 1):
+		0:
+			return str(TranslationServer.translate("Novice"))
+		1:
+			return str(TranslationServer.translate("Bronze"))
+		2:
+			return str(TranslationServer.translate("Silver"))
+		3:
+			return str(TranslationServer.translate("Gold"))
+		_:
+			return str(TranslationServer.translate("Master"))
 
 static func show_rivals(rng: RandomNumberGenerator, rank: int) -> Array:
 	var out: Array = []

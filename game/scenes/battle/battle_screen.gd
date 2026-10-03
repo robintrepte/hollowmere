@@ -756,7 +756,7 @@ func _show_moves() -> void:
 		_cmd.columns = 3
 	for i in c.moves.size():
 		var m: Dictionary = Data.get_move(c.moves[i])
-		var label := tr("%s\n%s%s") % [m.name, Data.type_name(m.type), (tr(" · %d") % int(m.power)) if int(m.power) > 0 else " · status"]
+		var label := tr("%s\n%s%s") % [tr(str(m.name)), Data.type_name(m.type), (tr(" · %d") % int(m.power)) if int(m.power) > 0 else tr(" · status")]
 		var idx := i
 		var b := _cmd_button(label, func(): _picked.emit({"k": "move", "i": idx}), Data.type_color(m.type).darkened(0.25))
 		b.add_theme_font_size_override("font_size", UITheme.fs(10))

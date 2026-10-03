@@ -307,12 +307,72 @@ func item_name(id: String, quality: int = 0) -> String:
 	var it := get_item(id)
 	if it.is_empty():
 		return id
+	var nm := _display_item_name(id, it)
 	if quality > 0:
-		return "%s %s" % [tr(QUALITY_NAMES[quality]), tr(it.name)]
-	return tr(it.name)
+		return "%s %s" % [tr(QUALITY_NAMES[quality]), nm]
+	return nm
+
+func _display_item_name(id: String, it: Dictionary) -> String:
+	if it.get("cat") == "seed" and it.has("crop") and crops.has(it.crop):
+		return tr("%s Seeds") % tr(str(crops[it.crop].name))
+	if it.get("cat") == "sapling" and it.has("tree") and trees.has(it.tree):
+		return tr("%s Sapling") % tr(str(trees[it.tree].name))
+	if ":" in id:
+		var parts := id.split(":")
+		var base: Dictionary = get_item(parts[1]) if parts.size() > 1 else {}
+		var base_name := tr(str(base.get("name", parts[1]))) if not base.is_empty() else parts[1]
+		match parts[0]:
+			"juice":
+				return tr("%s Juice") % base_name
+			"jam":
+				return tr("%s Jam") % base_name
+			"preserved":
+				return tr("Frozen %s") % base_name
+	return tr(str(it.name))
+
+func season_name(season: String) -> String:
+	match season:
+		"spring":
+			return tr("Spring")
+		"summer":
+			return tr("Summer")
+		"fall":
+			return tr("Fall")
+		"winter":
+			return tr("Winter")
+	return season
+
+func season_list(seasons: Array) -> String:
+	var names: PackedStringArray = []
+	for s in seasons:
+		names.append(season_name(str(s)))
+	return ", ".join(names)
 
 func item_desc(id: String) -> String:
-	return tr(str(get_item(id).get("desc", "")))
+	var it := get_item(id)
+	if it.is_empty():
+		return ""
+	if it.get("cat") == "crop" and it.has("crop") and crops.has(it.crop):
+		var c: Dictionary = crops[it.crop]
+		return tr("A fresh %s. Grows in %s.") % [tr(str(c.name)).to_lower(), season_list(c.seasons)]
+	if it.get("cat") == "seed" and it.has("crop") and crops.has(it.crop):
+		var c: Dictionary = crops[it.crop]
+		var extra := tr(", then regrows every %d days") % int(c.regrow) if int(c.regrow) > 0 else ""
+		return tr("Plant in %s. Takes %d days to grow%s.") % [season_list(c.seasons), int(c.days), extra]
+	if it.get("cat") == "sapling" and it.has("tree") and trees.has(it.tree):
+		var t: Dictionary = trees[it.tree]
+		return tr("Plant on open farmland. Grows into a tree in %d days, then gives fruit every day in %s.") % [int(t.days), season_list(t.seasons)]
+	if it.get("cat") == "fruit":
+		return tr("Fresh from the orchard.")
+	if ":" in id:
+		match id.split(":")[0]:
+			"juice":
+				return tr("Fresh-pressed juice.")
+			"jam":
+				return tr("Sweet preserves.")
+			"preserved":
+				return tr("Preserved by a Frost Wildling.")
+	return tr(str(it.get("desc", "")))
 
 func sell_price(id: String, quality: int = 0) -> int:
 	var it := get_item(id)

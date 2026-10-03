@@ -74,7 +74,7 @@ Browser: a current Chrome, Edge, Firefox or Safari with WebGL 2.
 
 ## Languages
 
-English (interface, text). The game ships a translation template (`game/i18n/hollowmere.pot`) for community translations.
+English and German (interface, text). The game ships a translation template (`game/i18n/hollowmere.pot`) for further community translations.
 
 ## Content descriptors
 
