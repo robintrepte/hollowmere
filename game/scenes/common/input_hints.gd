@@ -1,11 +1,11 @@
 class_name InputHints
 extends RefCounted
-## Fills {move}, {use}, {interact}, {run}, {inventory}, {party}, {craft}, {map}, {journal} and {menu}
+## Fills {move}, {use}, {interact}, {run}, {inventory}, {party}, {craft}, {map}, {journal}, {skills} and {menu}
 ## in hint texts with what the player actually presses: keys, gamepad buttons or touch buttons.
 
-const TOKENS := ["move", "use", "interact", "run", "inventory", "party", "craft", "map", "journal", "menu"]
+const TOKENS := ["move", "use", "interact", "run", "inventory", "party", "craft", "map", "journal", "skills", "menu"]
 const ACTION := {"use": "use_tool", "move": "", "interact": "interact", "run": "run", "inventory": "inventory",
-	"party": "party", "craft": "craft", "map": "map", "journal": "journal", "menu": "menu"}
+	"party": "party", "craft": "craft", "map": "map", "journal": "journal", "skills": "skills", "menu": "menu"}
 const PAD_BUTTONS := {JOY_BUTTON_A: "A", JOY_BUTTON_B: "B", JOY_BUTTON_X: "X", JOY_BUTTON_Y: "Y",
 	JOY_BUTTON_BACK: "Select", JOY_BUTTON_START: "Start", JOY_BUTTON_LEFT_SHOULDER: "LB", JOY_BUTTON_RIGHT_SHOULDER: "RB"}
 

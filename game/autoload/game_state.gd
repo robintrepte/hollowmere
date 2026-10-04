@@ -26,6 +26,7 @@ func _ready() -> void:
 	EventBus.shrine_restored.connect(_queue_story.unbind(1))
 	TimeService.tick.connect(_on_time_tick)
 	Modifiers.register("backpack", func(p): return p.pack_mods() if p else {})
+	Modifiers.register("skills", func(p): return Skills.mods(p) if p else {})
 
 func _queue_story() -> void:
 	check_story.call_deferred()
@@ -140,11 +141,13 @@ func has_building(id: String) -> bool:
 	return id in world.buildings
 
 func den_capacity() -> int:
+	var base := 4
 	if has_building("deluxe_den"):
-		return 16
-	if has_building("big_den"):
-		return 8
-	return 4
+		base = 16
+	elif has_building("big_den"):
+		base = 8
+	var p := local_player()
+	return base + (int(Modifiers.value(p, "den_slots")) if p else 0)
 
 func hatchery_capacity() -> int:
 	if has_building("big_hatchery"):
@@ -420,6 +423,7 @@ func idle_advance(to: float, offline: bool = false) -> Dictionary:
 	var rep := {"jobs": FarmJobs.new_report(), "hatched": [], "evolved": [], "eggs": 0, "ripe": 0, "seconds": to - from}
 	var p := local_player()
 	var mult := Modifiers.mult(p, "crop_growth") if p else 1.0
+	_apply_relief(p)
 	var acc := float(world.time.get("job_acc", 0.0)) + (to - from)
 	var ticks := int(acc / FarmJobs.TICK_SECONDS)
 	world.time.job_acc = acc - ticks * FarmJobs.TICK_SECONDS
@@ -439,6 +443,11 @@ func idle_advance(to: float, offline: bool = false) -> Dictionary:
 	world.time.last = to
 	_merge_idle(rep)
 	return rep
+
+func _apply_relief(p: PlayerData) -> void:
+	var rv := Modifiers.value(p, "season_relief") if p else 0.0
+	for m in grids:
+		grids[m].relief = rv
 
 func _grow_all(from: float, to: float, mult: float, rep: Dictionary) -> void:
 	if to <= from:
@@ -463,11 +472,12 @@ func _job_tick(now: float, scale: float, eff: float, rep: Dictionary) -> void:
 	var trng := RandomNumberGenerator.new()
 	trng.seed = hash([int(world.seed), int(now), "jobs"])
 	var season_now := season_at(now)
-	var jr: Dictionary = FarmJobs.run(ranch, {"grids": farm_grids(), "chest": farm_chest, "rng": trng, "season": season_now, "scale": scale, "efficiency": eff, "now": now})
-	FarmJobs.collect_produce(ranch, farm_chest, trng, jr, scale * eff)
-	FarmJobs.rest(ranch, has_building("wildling_spa"), scale)
+	var mods := Modifiers.collect(local_player()) if local_player() else {}
+	var jr: Dictionary = FarmJobs.run(ranch, {"grids": farm_grids(), "chest": farm_chest, "rng": trng, "season": season_now, "scale": scale, "efficiency": eff, "now": now, "mods": mods})
+	FarmJobs.collect_produce(ranch, farm_chest, trng, jr, scale * eff * (1.0 + float(mods.get("produce", 0.0))))
+	FarmJobs.rest(ranch, has_building("wildling_spa"), scale, 1.0 + float(mods.get("wildling_regen", 0.0)))
 	Machines.apply_power(farm_grids(), int(jr.powered))
-	Machines.automate(farm_grids(), farm_chest, now, int(jr.machine_slots), jr)
+	Machines.automate(farm_grids(), farm_chest, now, int(jr.machine_slots), jr, 1.0 + float(mods.get("machine_speed", 0.0)))
 	FarmJobs.merge_report(rep.jobs, jr)
 	for c: Creature in ranch:
 		if c.can_evolve() != "":
@@ -476,7 +486,7 @@ func _job_tick(now: float, scale: float, eff: float, rep: Dictionary) -> void:
 			c.evolve()
 			Progression.mark(world.dex, c.species_id, true, c.starry)
 			rep.evolved.append({"from": from_name, "from_species": from_species, "to": c.species_id})
-	var breed_f: float = scale * eff * FarmJobs.TICK_SECONDS / float(FarmJobs.BREED_PERIOD)
+	var breed_f: float = scale * eff * FarmJobs.TICK_SECONDS / float(FarmJobs.BREED_PERIOD) * (1.0 + float(mods.get("breed_speed", 0.0)))
 	for pair in world.pairs:
 		var a := find_creature(pair[0])
 		var b := find_creature(pair[1])
@@ -541,8 +551,21 @@ func catch_up() -> Dictionary:
 		rep["ship_total"] = ship.total
 		for pid in players:
 			var pl: PlayerData = players[pid]
-			pl.energy = minf(pl.max_energy, pl.energy + pl.max_energy * clampf(away / (8.0 * 3600.0), 0.0, 1.0))
+			var cap := pl.energy_cap()
+			pl.energy = minf(cap, pl.energy + cap * clampf(away * Modifiers.mult(pl, "energy_regen") / (8.0 * 3600.0), 0.0, 1.0))
 	return rep
+
+## What a shopkeeper pays this player for one item, with their sell bonus.
+func sell_value(p: PlayerData, id: String, q: int, shipping: bool = false) -> int:
+	var base := Data.sell_price(id, q)
+	if base <= 0:
+		return 0
+	var bonus := Modifiers.value(p, "sell_price") + (Modifiers.value(p, "ship_bonus") if shipping else 0.0)
+	return maxi(1, int(round(base * (1.0 + bonus))))
+
+## A shop price after this player's discount (at most half off).
+func buy_value(p: PlayerData, price: int) -> int:
+	return maxi(1, int(round(price * (1.0 - clampf(Modifiers.value(p, "shop_discount"), 0.0, 0.5)))))
 
 func _pay_shipping() -> Dictionary:
 	if has_building("auto_shipper"):
@@ -556,8 +579,9 @@ func _pay_shipping() -> Dictionary:
 	shipping_bin.entries.clear()
 	var shipped: Array = []
 	var total := 0
+	var owner := local_player()
 	for sh in world.shipping:
-		var v := Data.sell_price(sh.id, int(sh.q)) * int(sh.n)
+		var v := sell_value(owner, sh.id, int(sh.q), true) * int(sh.n)
 		total += v
 		shipped.append({"id": sh.id, "n": int(sh.n), "q": int(sh.q), "v": v})
 		if Data.get_item(sh.id).get("cat", "") == "crop":
@@ -625,7 +649,7 @@ func end_day(slept: bool = true) -> Dictionary:
 		var p: PlayerData = players[pid]
 		p.heal_party()
 		if slept:
-			p.energy = p.max_energy
+			p.energy = p.energy_cap()
 			p.map_id = "farm"
 			var spawn: Array = Data.get_map("farm").spawn
 			p.pos = tile_center(Vector2i(int(spawn[0]), int(spawn[1])))
@@ -671,14 +695,15 @@ func _anyone_has(id: String) -> bool:
 func _res(ok: bool, reason: String = "") -> Dictionary:
 	return {"ok": ok, "fx": [], "sfx": "", "reason": reason, "energy": 0.0}
 
-func _spend_energy(p: PlayerData, n: float) -> bool:
+func _spend_energy(p: PlayerData, n: float, farm_tool: bool = false) -> bool:
 	if n <= 0:
 		return true
+	n *= Modifiers.mult(p, "energy_cost", 0.3) * (Modifiers.mult(p, "farm_energy", 0.3) if farm_tool else 1.0)
 	if p.energy <= 0.0:
 		EventBus.toast.emit("You're too tired. Eat something or go to bed.", "zzz")
 		return false
 	p.energy = maxf(0.0, p.energy - n)
-	EventBus.energy_changed.emit(p.energy, p.max_energy)
+	EventBus.energy_changed.emit(p.energy, p.energy_cap())
 	return true
 
 func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictionary:
@@ -694,14 +719,14 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 	match tool:
 		"hoe":
 			if g.can_till(t):
-				if not _spend_energy(p, base_cost):
+				if not _spend_energy(p, base_cost, true):
 					return r
 				g.till(t)
 				r.ok = true
 				r.sfx = "hoe"
 				p.stat_add("till")
 			elif g.is_tilled(t) and g.crop_at(t).is_empty():
-				if not _spend_energy(p, base_cost):
+				if not _spend_energy(p, base_cost, true):
 					return r
 				g.until(t)
 				r.ok = true
@@ -716,28 +741,35 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 				if p.water_left <= 0:
 					r.reason = tr("Your watering can is empty. Refill it at water.")
 					return r
-				if not _spend_energy(p, base_cost * 0.5):
+				if not _spend_energy(p, base_cost * 0.5, true):
 					return r
+				var reach := lvl + 2 * int(Modifiers.value(p, "water_range"))
 				var area: Array = [t]
-				if lvl >= 2:
+				if reach >= 2:
 					area = [t, t + Vector2i(1, 0), t + Vector2i(-1, 0)]
-				if lvl >= 4:
+				if reach >= 4:
 					area = [t, t + Vector2i(1, 0), t + Vector2i(-1, 0), t + Vector2i(0, 1), t + Vector2i(0, -1)]
+				if reach >= 6:
+					area = []
+					for dy in [-1, 0, 1]:
+						for dx in [-1, 0, 1]:
+							area.append(t + Vector2i(dx, dy))
+				var secs := CropGrowth.WATER_SECONDS * Modifiers.mult(p, "water_duration")
 				for a in area:
-					if g.water(a):
+					if g.water(a, -1.0, secs):
 						p.water_left -= 1
 						p.stat_add("water")
 				r.ok = true
 				r.sfx = "water"
 		"shovel":
 			if g.is_trench(t):
-				if not _spend_energy(p, base_cost):
+				if not _spend_energy(p, base_cost, true):
 					return r
 				g.fill_trench(t)
 				r.ok = true
 				r.sfx = "hoe"
 			elif g.can_dig_trench(t):
-				if not _spend_energy(p, base_cost * 1.5):
+				if not _spend_energy(p, base_cost * 1.5, true):
 					return r
 				g.dig_trench(t)
 				r.ok = true
@@ -768,7 +800,14 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 		"pickaxe", "axe", "scythe":
 			if tool == "scythe":
 				if g.crop_ready(t):
-					return harvest_at(pid, map_id, t)
+					if not Skills.has_unlock(p, "harvest_sweep"):
+						return harvest_at(pid, map_id, t)
+					var sweep := harvest_at(pid, map_id, t)
+					for dy in [-1, 0, 1]:
+						for dx in [-1, 0, 1]:
+							if (dx != 0 or dy != 0) and g.crop_ready(t + Vector2i(dx, dy)):
+								harvest_at(pid, map_id, t + Vector2i(dx, dy))
+					return sweep
 				if g.get_ground(t) == Tiles.GROUND.tallgrass:
 					g.ground[g.idx(t)] = Tiles.GROUND.grass if map_id == "farm" else g.ground[g.idx(t)]
 					if map_id == "farm":
@@ -779,6 +818,8 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 			var d := g.get_deco(t)
 			if Tiles.DEBRIS.has(d) and (Tiles.DEBRIS[d].tool == tool or d == Tiles.DECO.weed):
 				var cost := float(Tiles.DEBRIS[d].energy) * maxf(0.4, 1.0 - 0.15 * lvl)
+				if tool == "pickaxe":
+					cost /= Modifiers.mult(p, "mine_speed")
 				var res := g.clear_debris(t, tool, lvl, rng)
 				if not res.ok:
 					r.reason = res.reason
@@ -788,10 +829,11 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 					return r
 				if d == Tiles.DECO.ore:
 					var ore: String = info.get("ore_types", {}).get(Tiles.key(t), "copper_ore")
-					res.drops = [[ore, rng.randi_range(1, 3)]]
+					var ol := Modifiers.value(p, "ore_luck")
+					res.drops = [[ore, rng.randi_range(1, 3) + (1 if rng.randf() < ol else 0)]]
 					if rng.randf() < 0.1 + luck():
 						res.drops.append(["coal", 1])
-					if rng.randf() < 0.05 + luck():
+					if rng.randf() < 0.05 + luck() + ol * 0.5:
 						var gems := ["quartz", "amethyst", "topaz"]
 						res.drops.append([gems[rng.randi() % 3], 1])
 				if d == Tiles.DECO.rock and info.get("mine", false):
@@ -912,10 +954,13 @@ func harvest_at(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 		if not p.inventory.can_add(cid, 1):
 			r.reason = tr("Your pack is full.")
 			return r
-		var h := g.harvest(t, rng, luck() + Modifiers.value(p, "crop_quality"), int(p.skills.get("farming", 0)), season(), Modifiers.mult(p, "crop_yield"))
+		var h := g.harvest(t, rng, luck() + Modifiers.value(p, "crop_quality"), 0, season(), Modifiers.mult(p, "crop_yield"))
 		give_item(p, h.id, int(h.n), int(h.q))
 		if h.spent:
 			r.fx.append([tr("The plant is spent."), Color("#c0a080")])
+			if Data.items.has(cid + "_seeds") and rng.randf() < Modifiers.value(p, "seed_return"):
+				give_item(p, cid + "_seeds", 1)
+				r.fx.append(["+1 %s" % Data.item_name(cid + "_seeds"), Color("#a0e080")])
 		r.ok = true
 		r.sfx = "harvest"
 		var qname: String = Data.QUALITY_NAMES[int(h.q)]
@@ -945,11 +990,13 @@ func harvest_at(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 			add_farm_xp(Progression.XP.craft, at)
 		elif o.get("kind", "") == "forage":
 			g.remove_object(t)
-			var q := FarmGrid.roll_quality("", false, 0, luck(), int(p.skills.get("foraging", 0)), rng)
-			give_item(p, o.id, 1, q)
+			var fl := Modifiers.value(p, "forage_luck")
+			var q := FarmGrid.roll_quality("", false, 0, luck() + fl * 0.5, 0, rng)
+			var fn := 2 if rng.randf() < fl else 1
+			give_item(p, o.id, fn, q)
 			r.ok = true
 			r.sfx = "pickup"
-			r.fx.append(["+1 %s" % Data.item_name(o.id), Color.WHITE])
+			r.fx.append(["+%d %s" % [fn, Data.item_name(o.id)], Color.WHITE])
 			p.stat_add("foraged")
 	if r.ok:
 		EventBus.tile_changed.emit(map_id, t)
@@ -979,7 +1026,7 @@ func load_machine(pid: String, map_id: String, t: Vector2i, uid: String) -> Dict
 			p.inventory.remove(k, int(chk.consume[k]))
 	o.input = f.entry.id
 	o.output = chk.output
-	o.ready_at = TimeService.now() + Machines.seconds_for(int(chk.time))
+	o.ready_at = TimeService.now() + Machines.seconds_for(int(chk.time), Modifiers.mult(p, "machine_speed"))
 	r.ok = true
 	r.sfx = "machine"
 	EventBus.inventory_changed.emit()
@@ -1040,7 +1087,7 @@ func buy(pid: String, shop_id: String, item_id: String, n: int = 1) -> Dictionar
 	var price := -1
 	for s in Economy.shop_stock(shop_id, season(), ctx(), day(), int(world.seed)):
 		if s.id == item_id and not s.locked:
-			price = int(s.price)
+			price = buy_value(p, int(s.price))
 	if price < 0:
 		r.reason = tr("That's not for sale right now.")
 		return r
@@ -1103,7 +1150,7 @@ func sell(pid: String, uid: String, n: int = -1) -> Dictionary:
 	var f := p.inventory.find(uid) if p else {}
 	if f.is_empty():
 		return r
-	var price := Data.sell_price(f.entry.id, int(f.entry.q))
+	var price := sell_value(p, f.entry.id, int(f.entry.q))
 	if price <= 0 or Data.get_item(f.entry.id).get("cat", "") in ["tool", "key"]:
 		r.reason = tr("They won't buy that.")
 		return r
@@ -1141,6 +1188,9 @@ func craft(pid: String, kind: String, recipe_id: String) -> Dictionary:
 	if not Economy.make(kind, recipe_id, srcs):
 		r.reason = tr("Your pack is full.")
 		return r
+	if rng.randf() < Modifiers.value(p, "craft_extra") and p.inventory.can_add(recipe_id, 1):
+		p.inventory.add(recipe_id, 1)
+		r["extra"] = true
 	var kind_key := "cook" if kind == "cooking" else "craft"
 	bump_stat(kind_key, 1, pid)
 	p.stat_add(kind_key + ":" + recipe_id)
@@ -1249,7 +1299,7 @@ func deliver_board(pid: String, idx: int) -> Dictionary:
 	p.inventory.remove(b.item, int(b.n))
 	b.done = true
 	add_money(int(b.money), Vector2.INF, "Request board")
-	Relationships.add_points(b.from, p.relationship(b.from), 40)
+	p.add_friendship(b.from, 40)
 	bump_stat("board")
 	add_farm_xp(20)
 	EventBus.inventory_changed.emit()
@@ -1389,6 +1439,11 @@ func open_treasure_act(pid: String, map_id: String, x: int, y: int) -> Dictionar
 	var trng := RandomNumberGenerator.new()
 	trng.seed = hash([int(world.seed), key])
 	var loot := Adventure.treasure_loot(str(info.region), int(info.get("floor", 1)), trng, chest.get("grand", false))
+	var cl := Modifiers.value(player(pid), "chest_luck")
+	if cl > 0.0:
+		for k in loot:
+			if loot[k] is int:
+				loot[k] = CropGrowth.roll_amount(float(loot[k]) * (1.0 + cl), trng)
 	grant(loot, player(pid))
 	r["loot"] = loot
 	r.sfx = "chest"
@@ -1412,7 +1467,7 @@ func festival_act(pid: String, op: String) -> Dictionary:
 	match op:
 		"social":
 			for vid in Data.villagers:
-				Relationships.add_points(vid, p.relationship(vid), int(fest.get("friendship", 20)))
+				p.add_friendship(vid, int(fest.get("friendship", 20)))
 		"eggs":
 			var n := p.inventory.count("festival_egg")
 			if n <= 0:
@@ -1549,6 +1604,7 @@ func claim_quest_act(pid: String, qid: String) -> Dictionary:
 	var r := _res(true)
 	r["reward"] = Quests.reward_of(p, qid)
 	grant_quest_reward(p, r.reward)
+	p.gain_xp(int(Skills.QUEST_XP.get(str(Quests.def_of(p, qid).get("type", "side")), 40)))
 	if qid.begins_with("daily:"):
 		var bonus := Quests.daily_finished(p)
 		if not bonus.is_empty():
@@ -1559,6 +1615,31 @@ func claim_quest_act(pid: String, qid: String) -> Dictionary:
 	EventBus.inventory_changed.emit()
 	return r
 
+## Buys the next rank of a skill node with a free point.
+func invest_skill_act(pid: String, node_id: String) -> Dictionary:
+	var p := player(pid)
+	if p == null:
+		return _res(false)
+	var why := Skills.blocker(p, world, node_id)
+	if why != "":
+		return _res(false, why)
+	Skills.invest(p, world, node_id)
+	EventBus.skills_changed.emit(pid)
+	var r := _res(true)
+	r.sfx = "levelup"
+	return r
+
+## Clears the skill tree for a rising gold fee.
+func respec_skills_act(pid: String) -> Dictionary:
+	var p := player(pid)
+	if p == null or p.tree.is_empty():
+		return _res(false)
+	if not spend(Skills.respec_cost(p), "Skill reset"):
+		return _res(false, tr("Not enough gold."))
+	Skills.respec(p)
+	EventBus.skills_changed.emit(pid)
+	return _res(true)
+
 ## Quest rewards: money, items, recipe, friendship {villager: points}, skill points, emotes, chips, flags.
 func grant_quest_reward(p: PlayerData, reward: Dictionary) -> void:
 	var rest := {}
@@ -1566,7 +1647,7 @@ func grant_quest_reward(p: PlayerData, reward: Dictionary) -> void:
 		match k:
 			"friendship":
 				for vid in reward[k]:
-					Relationships.add_points(vid, p.relationship(vid), int(reward[k][vid]))
+					p.add_friendship(vid, int(reward[k][vid]))
 			"skill_points":
 				p.skill_points += int(reward[k])
 			"emote":
@@ -1688,8 +1769,8 @@ func eat(pid: String, uid: String) -> Dictionary:
 	if e_gain <= 0:
 		return r
 	f.inv.take(uid, 1)
-	p.energy = minf(p.max_energy, p.energy + e_gain)
-	EventBus.energy_changed.emit(p.energy, p.max_energy)
+	p.energy = minf(p.energy_cap(), p.energy + e_gain)
+	EventBus.energy_changed.emit(p.energy, p.energy_cap())
 	EventBus.inventory_changed.emit()
 	r.ok = true
 	r.sfx = "eat"

@@ -187,9 +187,14 @@ func _show_detail() -> void:
 	var b5 := UITheme.button("x5", func(): _make(5))
 	b5.disabled = not can
 	acts.add_child(b5)
+	if Skills.has_unlock(player, "craft_x10"):
+		var b10 := UITheme.button("x10", func(): _make(10))
+		b10.disabled = not can
+		acts.add_child(b10)
 
 func _make(n: int) -> void:
 	var made := 0
+	var extra := 0
 	for i in n:
 		var res: Dictionary = Coop.act("craft", [kind, _sel])
 		if not res.ok:
@@ -198,8 +203,13 @@ func _make(n: int) -> void:
 				EventBus.toast.emit(res.reason, "")
 			break
 		made += 1
+		if res.get("extra", false):
+			extra += 1
 	if made > 0:
 		Audio.sfx("chest")
-		EventBus.toast.emit(tr("Made %d %s") % [made, Data.item_name(_sel)], "")
+		var msg := tr("Made %d %s") % [made + extra, Data.item_name(_sel)]
+		if extra > 0:
+			msg += " " + tr("(%d of them free)") % extra
+		EventBus.toast.emit(msg, "")
 	await get_tree().process_frame
 	_refresh()

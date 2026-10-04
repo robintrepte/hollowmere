@@ -55,6 +55,9 @@ var result: String = ""
 var befriended: Creature = null
 var participants: Dictionary = {}
 var xp_mult: float = 1.0
+## Per-side bonuses from the trainer's skill tree: battle_damage, battle_guard, battle_heal,
+## befriend, dmg_<type>. Empty in PvP so both sides fight even.
+var side_mods: Array = [{}, {}]
 var run_attempts: int = 0
 var weather: String = ""
 var weather_turns: int = -1            # -1 = lasts the whole battle
@@ -477,6 +480,9 @@ func _damage_core(side: int, move_id: String) -> Dictionary:
 	if m.type == "spark" and target.status == "soak":
 		mult *= 1.5
 	mult *= float(Data.traits.get(target.trait_id, {}).get("damage_taken_mult", 1.0))
+	var sm: Dictionary = side_mods[side]
+	mult *= 1.0 + float(sm.get("battle_damage", 0.0)) + float(sm.get("dmg_" + str(m.type), 0.0))
+	mult *= maxf(0.5, 1.0 - float(side_mods[target_side].get("battle_guard", 0.0)))
 	return {"base": base, "mult": mult, "raw": base * mult, "eff": eff}
 
 func calc_damage(side: int, move_id: String, force_no_random: bool = false) -> Dictionary:
@@ -600,6 +606,7 @@ func _heal(side: int, amount: int, ev: Array) -> void:
 	if c.is_fainted():
 		return
 	var before := c.hp
+	amount = int(round(amount * (1.0 + float(side_mods[side].get("battle_heal", 0.0)))))
 	c.hp = mini(c.max_hp(), c.hp + amount)
 	if c.hp > before:
 		ev.append({"t": "heal", "side": side, "amount": c.hp - before, "hp": c.hp, "max": c.max_hp()})
@@ -628,7 +635,7 @@ func _use_item(side: int, item_id: String, target: int, ev: Array) -> void:
 		return
 	if it.has("heal"):
 		var before := c.hp
-		c.hp = mini(c.max_hp(), c.hp + int(it.heal))
+		c.hp = mini(c.max_hp(), c.hp + int(round(int(it.heal) * (1.0 + float(side_mods[side].get("battle_heal", 0.0))))))
 		if target == sides[side].active:
 			ev.append({"t": "heal", "side": side, "amount": c.hp - before, "hp": c.hp, "max": c.max_hp()})
 		ev.append({"t": "text", "msg": tr("%s recovered %d HP.") % [c.display_name(), c.hp - before]})
@@ -655,6 +662,7 @@ func befriend_chance(item_id: String) -> float:
 	var status_bonus := 2.0 if foe.status == "sleep" else (1.5 if foe.status != "" else 1.0)
 	var trait_mult := float(Data.traits.get(foe.trait_id, {}).get("befriend_mult", 1.0))
 	var a := float(sp.rate) * hp_factor * bonus * status_bonus * trait_mult / 255.0
+	a *= 1.0 + float(side_mods[0].get("befriend", 0.0))
 	return clampf(a, 0.0, 1.0)
 
 func _try_befriend(item_id: String, ev: Array) -> void:

@@ -324,7 +324,7 @@ func _offer_battle(vid: String) -> void:
 	})
 	var res: Dictionary = await EventBus.battle_finished
 	if res.get("result", "") == "win":
-		Relationships.add_points(vid, p.relationship(vid), 30)
+		p.add_friendship(vid, 30)
 
 # --- Villagers ------------------------------------------------------------------------
 
@@ -351,7 +351,7 @@ func _talk(npc: Npc) -> void:
 		var rw: Dictionary = Data.villagers[vid].get("event_rewards", {}).get(ev, {})
 		if not rw.is_empty():
 			GameState.grant(rw, p)
-		Relationships.add_points(vid, st, 60)
+		p.add_friendship(vid, 60)
 		Audio.sfx("heart")
 	else:
 		var before := Relationships.hearts(st)

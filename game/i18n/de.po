@@ -9187,3 +9187,654 @@ msgstr "Verkauft"
 msgid "Tool upgrade"
 msgstr "Werkzeug-Upgrade"
 
+msgid "Farming"
+msgstr "Farmen"
+
+msgid "Wildling Care"
+msgstr "Wildling-Pflege"
+
+msgid "Exploration"
+msgstr "Erkundung"
+
+msgid "Craftsmanship"
+msgstr "Crafting"
+
+msgid "Deep Roots"
+msgstr "Tiefe Wurzeln"
+
+msgid "Gentle Hands"
+msgstr "Sanfte Hände"
+
+msgid "Light Hoe"
+msgstr "Leichte Hacke"
+
+msgid "Wide Spray"
+msgstr "Weiter Strahl"
+
+msgid "Soaked Soil"
+msgstr "Satter Boden"
+
+msgid "Seed Saver"
+msgstr "Saatsparer"
+
+msgid "Season Wise"
+msgstr "Saisonkundig"
+
+msgid "Bountiful"
+msgstr "Reiche Ernte"
+
+msgid "Fertile Ground"
+msgstr "Fruchtbarer Boden"
+
+msgid "Prize Grower"
+msgstr "Preiszüchter"
+
+msgid "Downpour"
+msgstr "Wolkenbruch"
+
+msgid "Tireless Farmer"
+msgstr "Unermüdlich"
+
+msgid "Evergreen"
+msgstr "Immergrün"
+
+msgid "Harvest Moon"
+msgstr "Erntemond"
+
+msgid "Quick Sprout"
+msgstr "Schnellkeimer"
+
+msgid "Harvest Sweep"
+msgstr "Ernteschwung"
+
+msgid "Kind Words"
+msgstr "Liebe Worte"
+
+msgid "Work Song"
+msgstr "Arbeitslied"
+
+msgid "Cozy Den"
+msgstr "Gemütlicher Hof"
+
+msgid "Light Load"
+msgstr "Leichte Last"
+
+msgid "Matchmaker"
+msgstr "Kuppler"
+
+msgid "Warm Nest"
+msgstr "Warmes Nest"
+
+msgid "Roomy Den"
+msgstr "Geräumiger Hof"
+
+msgid "Fresh Produce"
+msgstr "Frische Erzeugnisse"
+
+msgid "Foreman"
+msgstr "Vorarbeiter"
+
+msgid "Spa Day"
+msgstr "Wellnesstag"
+
+msgid "Big Family"
+msgstr "Großfamilie"
+
+msgid "Best Friends"
+msgstr "Beste Freunde"
+
+msgid "Night Shift"
+msgstr "Nachtschicht"
+
+msgid "Golden Eggs"
+msgstr "Goldene Eier"
+
+msgid "Open Range"
+msgstr "Freilauf"
+
+msgid "Pack Leader"
+msgstr "Rudelführer"
+
+msgid "Sharp Mind"
+msgstr "Scharfer Verstand"
+
+msgid "Field Medic"
+msgstr "Feldsanitäter"
+
+msgid "Soft Voice"
+msgstr "Sanfte Stimme"
+
+msgid "Veteran"
+msgstr "Veteran"
+
+msgid "Leaf Lore"
+msgstr "Blattkunde"
+
+msgid "Tide Lore"
+msgstr "Flutkunde"
+
+msgid "Ember Lore"
+msgstr "Glutkunde"
+
+msgid "Stone Lore"
+msgstr "Steinkunde"
+
+msgid "Gale Lore"
+msgstr "Sturmkunde"
+
+msgid "Spark Lore"
+msgstr "Funkenkunde"
+
+msgid "Frost Lore"
+msgstr "Frostkunde"
+
+msgid "Shade Lore"
+msgstr "Schattenkunde"
+
+msgid "Glow Lore"
+msgstr "Lichtkunde"
+
+msgid "Wild Lore"
+msgstr "Wildkunde"
+
+msgid "Thick Skin"
+msgstr "Dickes Fell"
+
+msgid "Trusted"
+msgstr "Vertrauensperson"
+
+msgid "Mentor"
+msgstr "Mentor"
+
+msgid "Champion"
+msgstr "Champion"
+
+msgid "Light Feet"
+msgstr "Leichtfüßig"
+
+msgid "Stamina"
+msgstr "Ausdauer"
+
+msgid "Second Wind"
+msgstr "Zweiter Atem"
+
+msgid "Treasure Nose"
+msgstr "Schatznase"
+
+msgid "Efficient"
+msgstr "Effizient"
+
+msgid "Trailblazer"
+msgstr "Pfadfinder"
+
+msgid "Wild Harvest"
+msgstr "Wilde Ernte"
+
+msgid "Deep Breath"
+msgstr "Tiefer Atem"
+
+msgid "Map Reader"
+msgstr "Kartenleser"
+
+msgid "Lucky Find"
+msgstr "Glücksfund"
+
+msgid "Night Walker"
+msgstr "Nachtwandler"
+
+msgid "Gatherer"
+msgstr "Wildsammler"
+
+msgid "Endurance"
+msgstr "Durchhaltevermögen"
+
+msgid "Wayfarer"
+msgstr "Weltenbummler"
+
+msgid "Steady Hands"
+msgstr "Ruhige Hände"
+
+msgid "Prospector"
+msgstr "Prospektor"
+
+msgid "Strong Swing"
+msgstr "Kräftiger Schlag"
+
+msgid "Patient Angler"
+msgstr "Geduldiger Angler"
+
+msgid "Tinkerer"
+msgstr "Tüftler"
+
+msgid "Calm Reel"
+msgstr "Ruhige Rolle"
+
+msgid "Gem Eye"
+msgstr "Edelsteinblick"
+
+msgid "Bulk Crafter"
+msgstr "Massenfertigung"
+
+msgid "Lucky Line"
+msgstr "Glücksschnur"
+
+msgid "Deep Miner"
+msgstr "Tiefenbergmann"
+
+msgid "Arcane Study"
+msgstr "Arkanes Studium"
+
+msgid "Well Oiled"
+msgstr "Gut geölt"
+
+msgid "Master Angler"
+msgstr "Meisterangler"
+
+msgid "Motherlode"
+msgstr "Hauptader"
+
+msgid "Artisan"
+msgstr "Kunsthandwerker"
+
+msgid "Spellwright"
+msgstr "Zauberschmied"
+
+msgid "Master Artisan"
+msgstr "Meisterhandwerker"
+
+msgid "Haggler"
+msgstr "Feilscher"
+
+msgid "Regular"
+msgstr "Stammkunde"
+
+msgid "Express Crate"
+msgstr "Expresskiste"
+
+msgid "Absentee Owner"
+msgstr "Abwesender Besitzer"
+
+msgid "Market Sense"
+msgstr "Marktgespür"
+
+msgid "Lucky Chip"
+msgstr "Glückschip"
+
+msgid "Bulk Buyer"
+msgstr "Großeinkäufer"
+
+msgid "Export Deal"
+msgstr "Exportvertrag"
+
+msgid "Socialite"
+msgstr "Gesellschaftslöwe"
+
+msgid "Passive Income"
+msgstr "Passives Einkommen"
+
+msgid "Merchant"
+msgstr "Kaufmann"
+
+msgid "High Roller"
+msgstr "High Roller"
+
+msgid "Bee Friend"
+msgstr "Bienenfreund"
+
+msgid "Compost"
+msgstr "Kompost"
+
+msgid "Treat Maker"
+msgstr "Leckerli-Bäcker"
+
+msgid "Tough Workers"
+msgstr "Zähe Arbeiter"
+
+msgid "Battle Hymn"
+msgstr "Kampfhymne"
+
+msgid "Scout"
+msgstr "Späher"
+
+msgid "Sprinter"
+msgstr "Sprinter"
+
+msgid "Bargain Hunter"
+msgstr "Schnäppchenjäger"
+
+msgid "Gift Wrap"
+msgstr "Geschenkpapier"
+
+msgid "Wholesale"
+msgstr "Großhandel"
+
+msgid "Loyal Customer"
+msgstr "Treuer Kunde"
+
+msgid "Tycoon"
+msgstr "Tycoon"
+
+#, c-format
+msgid "%d skill points free"
+msgstr "%d Skillpunkte frei"
+
+msgid "1 skill point free"
+msgstr "1 Skillpunkt frei"
+
+#, c-format
+msgid "%d skill points to spend ({skills})"
+msgstr "%d Skillpunkte zu vergeben ({skills})"
+
+msgid "1 skill point to spend ({skills})"
+msgstr "1 Skillpunkt zu vergeben ({skills})"
+
+#, c-format
+msgid "%s / %s XP"
+msgstr "%s / %s EP"
+
+#, c-format
+msgid "%s Ember damage"
+msgstr "%s Glut-Schaden"
+
+#, c-format
+msgid "%s Frost damage"
+msgstr "%s Frost-Schaden"
+
+#, c-format
+msgid "%s Gale damage"
+msgstr "%s Sturm-Schaden"
+
+#, c-format
+msgid "%s Glow damage"
+msgstr "%s Licht-Schaden"
+
+#, c-format
+msgid "%s Leaf damage"
+msgstr "%s Blatt-Schaden"
+
+#, c-format
+msgid "%s Shade damage"
+msgstr "%s Schatten-Schaden"
+
+#, c-format
+msgid "%s Spark damage"
+msgstr "%s Funken-Schaden"
+
+#, c-format
+msgid "%s Stone damage"
+msgstr "%s Stein-Schaden"
+
+#, c-format
+msgid "%s Tide damage"
+msgstr "%s Flut-Schaden"
+
+#, c-format
+msgid "%s Wild damage"
+msgstr "%s Wild-Schaden"
+
+#, c-format
+msgid "%s Wildling energy recovery"
+msgstr "%s Energie-Erholung der Wildlinge"
+
+#, c-format
+msgid "%s Wildling happiness"
+msgstr "%s Zufriedenheit der Wildlinge"
+
+#, c-format
+msgid "%s Wildling produce"
+msgstr "%s Erzeugnisse der Wildlinge"
+
+#, c-format
+msgid "%s battle XP"
+msgstr "%s Kampf-EP"
+
+#, c-format
+msgid "%s befriend chance"
+msgstr "%s Befreundungschance"
+
+#, c-format
+msgid "%s chance to craft an extra one"
+msgstr "%s Chance, ein Extra-Exemplar zu craften"
+
+#, c-format
+msgid "%s chance to get a seed back on the last harvest"
+msgstr "%s Chance, bei der letzten Ernte Saat zurückzubekommen"
+
+#, c-format
+msgid "%s chest loot"
+msgstr "%s Truhen-Loot"
+
+#, c-format
+msgid "%s crop growth"
+msgstr "%s Pflanzenwachstum"
+
+#, c-format
+msgid "%s crop quality"
+msgstr "%s Erntequalität"
+
+#, c-format
+msgid "%s crop yield"
+msgstr "%s Ernteertrag"
+
+#, c-format
+msgid "%s daily chip bonus"
+msgstr "%s täglicher Chip-Bonus"
+
+#, c-format
+msgid "%s damage in battle"
+msgstr "%s Schaden im Kampf"
+
+#, c-format
+msgid "%s egg chance for pairs"
+msgstr "%s Ei-Chance für Paare"
+
+#, c-format
+msgid "%s enchanting cost"
+msgstr "%s Verzauberungskosten"
+
+#, c-format
+msgid "%s energy for all tools"
+msgstr "%s Energie für alle Werkzeuge"
+
+#, c-format
+msgid "%s energy for hoe, can and shovel"
+msgstr "%s Energie für Hacke, Gießkanne und Schaufel"
+
+#, c-format
+msgid "%s energy recovery while away"
+msgstr "%s Energie-Erholung während der Abwesenheit"
+
+#, c-format
+msgid "%s farm job energy"
+msgstr "%s Energie für Hof-Jobs"
+
+#, c-format
+msgid "%s farm job output"
+msgstr "%s Leistung der Hof-Jobs"
+
+#, c-format
+msgid "%s farm slots"
+msgstr "%s Hof-Plätze"
+
+#, c-format
+msgid "%s farm work while away"
+msgstr "%s Hof-Arbeit während der Abwesenheit"
+
+#, c-format
+msgid "%s faster bites"
+msgstr "%s schnellere Bisse"
+
+#, c-format
+msgid "%s fishing treasure"
+msgstr "%s Angelschätze"
+
+#, c-format
+msgid "%s forage finds"
+msgstr "%s Sammelfunde"
+
+#, c-format
+msgid "%s friendship gain"
+msgstr "%s Freundschaftsgewinn"
+
+#, c-format
+msgid "%s hatching speed"
+msgstr "%s Brutgeschwindigkeit"
+
+#, c-format
+msgid "%s healing in battle"
+msgstr "%s Heilung im Kampf"
+
+#, c-format
+msgid "%s larger catch zone"
+msgstr "%s größere Fangzone"
+
+#, c-format
+msgid "%s less damage taken"
+msgstr "%s weniger erlittener Schaden"
+
+#, c-format
+msgid "%s less off-season slowdown"
+msgstr "%s weniger Verlangsamung außerhalb der Saison"
+
+#, c-format
+msgid "%s machine speed"
+msgstr "%s Maschinentempo"
+
+#, c-format
+msgid "%s max energy"
+msgstr "%s maximale Energie"
+
+#, c-format
+msgid "%s mining speed"
+msgstr "%s Abbautempo"
+
+#, c-format
+msgid "%s ore finds"
+msgstr "%s Erzfunde"
+
+#, c-format
+msgid "%s sell prices"
+msgstr "%s Verkaufspreise"
+
+#, c-format
+msgid "%s shipping bin payout"
+msgstr "%s Auszahlung der Versandkiste"
+
+#, c-format
+msgid "%s shop discount"
+msgstr "%s Shop-Rabatt"
+
+#, c-format
+msgid "%s walking speed"
+msgstr "%s Laufgeschwindigkeit"
+
+#, c-format
+msgid "%s watering duration"
+msgstr "%s Bewässerungsdauer"
+
+#, c-format
+msgid "%s watering reach"
+msgstr "%s Gieß-Reichweite"
+
+#, c-format
+msgid "(%d of them free)"
+msgstr "(%d davon gratis)"
+
+#, c-format
+msgid "Capstone: needs %d points in %s."
+msgstr "Meisterknoten: braucht %d Punkte in %s."
+
+msgid "Center"
+msgstr "Zentrieren"
+
+#, c-format
+msgid "Confirm: learn %s"
+msgstr "Bestätigen: %s lernen"
+
+msgid "Learn (1 point)"
+msgstr "Lernen (1 Punkt)"
+
+msgid "Learn"
+msgstr "Lernen"
+
+#, c-format
+msgid "Level %d"
+msgstr "Level %d"
+
+#, c-format
+msgid "Level %d! You earned a skill point."
+msgstr "Level %d! Du hast einen Skillpunkt bekommen."
+
+msgid "Map Reader: click an open place to travel there."
+msgstr "Kartenleser: Klick auf einen offenen Ort, um dorthin zu reisen."
+
+msgid "Mastered"
+msgstr "Gemeistert"
+
+#, c-format
+msgid "Needs %d points in this branch."
+msgstr "Braucht %d Punkte in diesem Zweig."
+
+msgid "Next rank"
+msgstr "Nächster Rang"
+
+msgid "Now"
+msgstr "Jetzt"
+
+msgid "Pick a skill to see what it does."
+msgstr "Wähle einen Skill, um zu sehen, was er bewirkt."
+
+#, c-format
+msgid "Rank %d / %d"
+msgstr "Rang %d / %d"
+
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+msgid "Reset tree"
+msgstr "Baum zurücksetzen"
+
+#, c-format
+msgid "Reset your whole skill tree for %s? You get every point back."
+msgstr "Den ganzen Skilltree für %s zurücksetzen? Du bekommst alle Punkte zurück."
+
+msgid "Skill reset"
+msgstr "Skill-Reset"
+
+msgid "Skill tree"
+msgstr "Skilltree"
+
+#, c-format
+msgid "Travel to %s"
+msgstr "Reise nach %s"
+
+msgid "Unlocks: craft ×10 at once"
+msgstr "Schaltet frei: ×10 auf einmal craften"
+
+msgid "Unlocks: the scythe harvests a 3×3 area"
+msgstr "Schaltet frei: Die Sense erntet eine 3×3-Fläche"
+
+msgid "Unlocks: travel from the Map to any open region"
+msgstr "Schaltet frei: Reisen von der Map in jede offene Region"
+
+msgid "Your skill tree is already empty."
+msgstr "Dein Skilltree ist schon leer."
+
+msgid "Already maxed."
+msgstr "Bereits gemeistert."
+
+msgid "Learn a connected skill first."
+msgstr "Lerne zuerst einen verbundenen Skill."
+
+msgid "No skill points left."
+msgstr "Keine Skillpunkte mehr."
+
+msgid "Unknown skill."
+msgstr "Unbekannter Skill."
+
+msgid "Commerce"
+msgstr "Handel"
+
+msgid "Level 1"
+msgstr "Level 1"
+

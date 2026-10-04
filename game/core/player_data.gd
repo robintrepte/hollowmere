@@ -20,7 +20,16 @@ var bucket_full: bool = false
 var chips: int = 0
 ## Side, daily and tutorial quest state (see Quests).
 var quests: Dictionary = {}
+## Bonus skill points from quest rewards (levels, chapters and shrines are counted by Skills).
 var skill_points: int = 0
+## Player level and XP toward the next one (separate from the farm level).
+var level: int = 1
+var xp: int = 0
+## Skill tree: node id -> invested ranks.
+var tree: Dictionary = {}
+var respecs: int = 0
+var mods_cache: Dictionary = {}
+var mods_dirty: bool = true
 var emotes: Array = []
 var energy: float = 270.0
 var max_energy: float = 270.0
@@ -32,7 +41,6 @@ var recipes: Array = []
 var cosmetics: Array = []
 var map_id: String = "farm"
 var pos: Vector2 = Vector2(7 * 32 + 16, 6 * 32)
-var skills: Dictionary = {"farming": 0, "foraging": 0, "mining": 0, "taming": 0}
 var stats: Dictionary = {}
 
 func _init() -> void:
@@ -150,6 +158,19 @@ func hearts_dict() -> Dictionary:
 
 func stat_add(key: String, n: int = 1) -> void:
 	stats[key] = int(stats.get(key, 0)) + n
+	gain_xp(Skills.xp_for_stat(key, n))
+
+func gain_xp(n: int) -> void:
+	if Skills.add_xp(self, n) > 0:
+		EventBus.player_leveled.emit(id, level)
+
+## Max energy with skill and item bonuses.
+func energy_cap() -> float:
+	return max_energy * Modifiers.mult(self, "max_energy")
+
+## Villager friendship, with the friendship bonus.
+func add_friendship(vid: String, n: int) -> void:
+	Relationships.add_points(vid, relationship(vid), int(round(n * Modifiers.mult(self, "friendship"))) if n > 0 else n)
 
 func to_dict() -> Dictionary:
 	var p: Array = []
@@ -157,10 +178,10 @@ func to_dict() -> Dictionary:
 		p.append(c.to_dict())
 	return {
 		"id": id, "name": name, "look": look, "hat": hat, "inventory": inventory.to_dict(), "hotbar": hotbar,
-		"selected": selected, "party": p, "tool_levels": tool_levels, "water_left": water_left, "bucket_full": bucket_full, "chips": chips, "quests": quests, "skill_points": skill_points, "emotes": emotes,
+		"selected": selected, "party": p, "tool_levels": tool_levels, "water_left": water_left, "bucket_full": bucket_full, "chips": chips, "quests": quests, "skill_points": skill_points, "emotes": emotes, "level": level, "xp": xp, "tree": tree, "respecs": respecs,
 		"energy": energy, "max_energy": max_energy, "backpack": backpack, "packs": packs,
 		"relationships": relationships, "recipes": recipes, "cosmetics": cosmetics, "map_id": map_id,
-		"pos": [pos.x, pos.y], "skills": skills, "stats": stats,
+		"pos": [pos.x, pos.y], "stats": stats,
 	}
 
 static func from_dict(d: Dictionary) -> PlayerData:
@@ -185,6 +206,10 @@ static func from_dict(d: Dictionary) -> PlayerData:
 	p.chips = int(d.get("chips", 0))
 	p.quests = d.get("quests", {})
 	p.skill_points = int(d.get("skill_points", 0))
+	p.level = clampi(int(d.get("level", 1)), 1, Skills.MAX_LEVEL)
+	p.xp = int(d.get("xp", 0))
+	p.tree = d.get("tree", {})
+	p.respecs = int(d.get("respecs", 0))
 	p.emotes = d.get("emotes", [])
 	p.energy = float(d.get("energy", 270))
 	p.max_energy = float(d.get("max_energy", 270))
@@ -206,6 +231,5 @@ static func from_dict(d: Dictionary) -> PlayerData:
 	p.map_id = d.get("map_id", "farm")
 	var pp: Array = d.get("pos", [p.pos.x, p.pos.y])
 	p.pos = Vector2(float(pp[0]), float(pp[1]))
-	p.skills = d.get("skills", p.skills)
 	p.stats = d.get("stats", {})
 	return p

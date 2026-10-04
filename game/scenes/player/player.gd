@@ -26,6 +26,8 @@ var target := Vector2i.ZERO
 var _talk_tile := Vector2i.ZERO
 var _name_label: Label
 var _mouse_mode := false
+var _speed_mult := 1.0
+var _speed_t := 0.0
 var _last_mouse := Vector2.ZERO
 var _step_t := 0.0
 var _remote_target := Vector2.ZERO
@@ -97,7 +99,11 @@ func _physics_process(delta: float) -> void:
 		var pushed := dir.length()
 		running = Input.is_action_pressed("run") and pushed >= 0.6
 		var speed := SLOW_SPEED if pushed < 0.6 else (RUN_SPEED if running else WALK_SPEED)
-		var step := dir.normalized() * speed * delta
+		_speed_t -= delta
+		if _speed_t <= 0.0:
+			_speed_t = 0.5
+			_speed_mult = clampf(Modifiers.mult(GameState.player(pid), "move_speed"), 0.5, 1.6)
+		var step := dir.normalized() * speed * _speed_mult * delta
 		_move(step)
 		_step_t += delta
 		if _step_t > 0.32 * WALK_SPEED / speed:

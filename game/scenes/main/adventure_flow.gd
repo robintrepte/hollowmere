@@ -84,7 +84,7 @@ func warden_battle(vid: String) -> void:
 		return
 	await Coop.act_async("warden_won_act", [region])
 	GameState.world.flags["warden:" + region] = true
-	Relationships.add_points(vid, p.relationship(vid), 80)
+	p.add_friendship(vid, 80)
 	await _say(["...You're the real thing.", "Lay your hand on the shrine. It will answer you now."], vid)
 
 ## Post-game: once all eight shrines are awake, each Warden takes one rematch a week.
@@ -111,7 +111,7 @@ func rematch(vid: String) -> void:
 	var r: Dictionary = await Coop.act_async("rematch_won_act", [vid])
 	if not r.get("ok", false):
 		return
-	Relationships.add_points(vid, p.relationship(vid), 40)
+	p.add_friendship(vid, 40)
 	var lines: Array = ["Still the best in the valley. Same time next week?", TranslationServer.translate("Prize: %s.") % loot_text(r.get("reward", {}))]
 	if r.get("tier_up", false):
 		lines.append(TranslationServer.translate("Word spreads. Every Warden is training harder: their teams now reach level %d.") % int(r.level))

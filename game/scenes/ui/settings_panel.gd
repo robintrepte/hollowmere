@@ -7,7 +7,7 @@ signal closed
 ## Shown as a tab inside the MenuShell: no frame and no close button of its own.
 var embedded := false
 
-const REBINDABLE := ["move_up", "move_down", "move_left", "move_right", "use_tool", "interact", "inventory", "party", "journal", "quests", "craft", "map", "menu", "coop", "chat", "hotbar_next", "hotbar_prev", "run", "rotate_item"]
+const REBINDABLE := ["move_up", "move_down", "move_left", "move_right", "use_tool", "interact", "inventory", "party", "journal", "quests", "skills", "craft", "map", "menu", "coop", "chat", "hotbar_next", "hotbar_prev", "run", "rotate_item"]
 
 var _waiting_action := ""
 var _bind_buttons: Dictionary = {}
@@ -94,6 +94,7 @@ func _control_label(a: String) -> String:
 	match a:
 		"craft": return tr("Crafting")
 		"quests": return tr("Quest log")
+		"skills": return tr("Skill tree")
 		"map": return tr("Valley map")
 		"menu": return tr("Menu")
 		"coop": return tr("Co-op")

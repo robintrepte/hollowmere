@@ -326,7 +326,7 @@ func _on_hover(view: GridView, e: Dictionary) -> void:
 	var it: Dictionary = Data.get_item(e.id)
 	_info_name.text = Data.item_name(e.id, int(e.get("q", 0))) + (tr("  x%d") % int(e.n) if int(e.n) > 1 else "")
 	var bits: Array = [Data.item_desc(e.id)]
-	var price := Data.sell_price(e.id, int(e.get("q", 0)))
+	var price := GameState.sell_value(player, e.id, int(e.get("q", 0)))
 	if price > 0:
 		bits.append(tr("Sells for %s") % CoinLabel.text(price))
 	if float(it.get("energy", 0)) > 0:
@@ -356,9 +356,9 @@ func _refresh_ship() -> void:
 		return
 	var total := 0
 	for e in GameState.shipping_bin.entries:
-		total += Data.sell_price(e.id, int(e.q)) * int(e.n)
+		total += GameState.sell_value(GameState.local_player(), e.id, int(e.q), true) * int(e.n)
 	for s in GameState.world.get("shipping", []):
-		total += Data.sell_price(s.id, int(s.q)) * int(s.n)
+		total += GameState.sell_value(GameState.local_player(), s.id, int(s.q), true) * int(s.n)
 	_ship_total.text = tr("In the bin: %s") % CoinLabel.text(total)
 
 func rotate_held_or_hovered() -> void:

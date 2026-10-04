@@ -38,6 +38,9 @@ var progression: Dictionary = {}
 var quests: Dictionary = {}
 var quest_order: Array = []
 var quest_daily: Array = []
+## Skill tree (data/skills.json): branch id -> {name, icon, color, angle}, and every node.
+var skill_branches: Dictionary = {}
+var skill_nodes: Array = []
 var _maps: Dictionary = {}
 var _prev_evo: Dictionary = {}
 
@@ -56,10 +59,15 @@ func load_all() -> void:
 	_load_crops()
 	progression = _load_json("res://data/progression.json")
 	var qd: Dictionary = _load_json("res://data/quests.json")
+	quests = {}
+	quest_order = []
 	for q in qd.get("quests", []):
 		quests[q.id] = q
 		quest_order.append(q.id)
 	quest_daily = qd.get("daily", [])
+	var sk: Dictionary = _load_json("res://data/skills.json")
+	skill_branches = sk.get("branches", {})
+	skill_nodes = sk.get("nodes", [])
 	items = _load_json("res://data/items.json")
 	trees = _load_json("res://data/trees.json")
 	_derive_items()

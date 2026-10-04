@@ -10,7 +10,7 @@ var embedded := false
 
 const TABS := [["story", "Story"], ["people", "Villagers"], ["dex", "Wildlings"], ["ledger", "Ledger"]]
 ## Reasons GameState.add_money records, listed so the catalog picks them up.
-const LEDGER_LABELS := ["Story", "Reward", "Shipping bin", "Shop", "Sold", "Building", "Tool upgrade", "Backpack", "Request board", "Battle", "Show prize", "Fountain", "Casino"]
+const LEDGER_LABELS := ["Story", "Reward", "Shipping bin", "Shop", "Sold", "Building", "Tool upgrade", "Backpack", "Request board", "Battle", "Show prize", "Fountain", "Casino", "Skill reset"]
 
 var player: PlayerData
 var tab := "story"

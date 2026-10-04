@@ -320,6 +320,8 @@ func run() -> Dictionary:
 	var kind: int = BattleEngine.Kind.TRAINER if setup.get("kind", "wild") != "wild" else BattleEngine.Kind.WILD
 	engine = BattleEngine.new(player.party, foe_team, kind, randi(), setup.get("foe_name", ""), player.name)
 	engine.set_field_weather(setup.get("weather", ""))
+	engine.side_mods[0] = Modifiers.collect(player)
+	engine.xp_mult *= Modifiers.mult(player, "battle_xp")
 	engine.sides[1].items = setup.get("items", {}).duplicate()
 	if setup.has("ai"):
 		engine.sides[1].ai_level = int(setup.ai)

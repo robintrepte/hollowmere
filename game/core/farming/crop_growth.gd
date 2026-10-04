@@ -41,20 +41,23 @@ static func season_distance(crop_id: String, season: String) -> int:
 		best = mini(best, mini(d, 4 - d))
 	return best
 
-static func season_rate(crop_id: String, season: String, greenhouse: bool) -> float:
+## `relief` (0..1) closes part of the off-season gap (skill tree).
+static func season_rate(crop_id: String, season: String, greenhouse: bool, relief: float = 0.0) -> float:
 	if greenhouse:
 		return GREENHOUSE_RATE
-	return SEASON_RATE[season_distance(crop_id, season)]
+	var r: float = SEASON_RATE[season_distance(crop_id, season)]
+	return r + (1.0 - r) * clampf(relief, 0.0, 1.0)
 
-static func season_yield(crop_id: String, season: String, greenhouse: bool) -> float:
+static func season_yield(crop_id: String, season: String, greenhouse: bool, relief: float = 0.0) -> float:
 	if greenhouse:
 		return GREENHOUSE_YIELD
-	return SEASON_YIELD[season_distance(crop_id, season)]
+	var y: float = SEASON_YIELD[season_distance(crop_id, season)]
+	return y + (1.0 - y) * clampf(relief, 0.0, 1.0)
 
 ## Progress per real second.
-static func rate(crop_id: String, season: String, watered: bool, fert: String, greenhouse: bool, mult: float = 1.0) -> float:
+static func rate(crop_id: String, season: String, watered: bool, fert: String, greenhouse: bool, mult: float = 1.0, relief: float = 0.0) -> float:
 	var r := 1.0 / (grow_minutes(crop_id) * 60.0)
-	r *= season_rate(crop_id, season, greenhouse)
+	r *= season_rate(crop_id, season, greenhouse, relief)
 	if not watered:
 		r /= WATER_BOOST
 	if fert == "speed":
@@ -62,8 +65,8 @@ static func rate(crop_id: String, season: String, watered: bool, fert: String, g
 	return r * mult
 
 ## Seconds until ripe from `progress` under steady conditions.
-static func eta(crop_id: String, progress: float, season: String, watered: bool, fert: String, greenhouse: bool, mult: float = 1.0) -> float:
-	return maxf(0.0, 1.0 - progress) / rate(crop_id, season, watered, fert, greenhouse, mult)
+static func eta(crop_id: String, progress: float, season: String, watered: bool, fert: String, greenhouse: bool, mult: float = 1.0, relief: float = 0.0) -> float:
+	return maxf(0.0, 1.0 - progress) / rate(crop_id, season, watered, fert, greenhouse, mult, relief)
 
 static func harvests_for_tier(tier: int) -> int:
 	return TIER_HARVESTS[clampi(tier, 1, 4) - 1]

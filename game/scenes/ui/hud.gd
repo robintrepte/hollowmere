@@ -14,6 +14,8 @@ var _money_shown := 0.0
 var _coin_icon: TextureRect
 var _energy: EnergyPips
 var _level: Label
+var _plevel: Label
+var _pxp: ProgressBar
 var _xp: ProgressBar
 var _slots: Array = []
 var _toasts: VBoxContainer
@@ -76,6 +78,15 @@ func _ready() -> void:
 	var lvv := VBoxContainer.new()
 	lvv.add_theme_constant_override("separation", 2)
 	lv.add_child(lvv)
+	var prow := HBoxContainer.new()
+	prow.add_theme_constant_override("separation", 4)
+	lvv.add_child(prow)
+	_plevel = UITheme.label("Level 1", 9)
+	prow.add_child(_plevel)
+	_pxp = _bar(UITheme.LEAF)
+	_pxp.custom_minimum_size = Vector2(60, 4)
+	_pxp.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	prow.add_child(_pxp)
 	var lrow := HBoxContainer.new()
 	lrow.add_theme_constant_override("separation", 4)
 	lvv.add_child(lrow)
@@ -207,6 +218,14 @@ func _ready() -> void:
 		Juice.burst(self, _lv_panel.position + Vector2(_lv_panel.size.x / 2.0, _lv_panel.size.y), "levelup"))
 	EventBus.weather_changed.connect(func(_w): _refresh_clock())
 	EventBus.quest_updated.connect(_refresh_quest)
+	EventBus.skills_changed.connect(func(_pid): _refresh_quest())
+	EventBus.player_leveled.connect(func(pid: String, lvl: int):
+		var me := GameState.local_player()
+		if me and pid == me.id:
+			Audio.sfx("levelup")
+			toast(tr("Level %d! You earned a skill point.") % lvl, "star")
+			_refresh_level()
+			_refresh_quest())
 	EventBus.story_advanced.connect(func(_c): _refresh_quest())
 	EventBus.creature_befriended.connect(func(_c): _refresh_quest.call_deferred())
 	EventBus.map_changed.connect(func(_m): _refresh_quest())
@@ -259,6 +278,9 @@ func _refresh_quest() -> void:
 	elif Endless.show_open(GameState.day()):
 		bits.append(tr("Today: Creature Show at the Show Ring"))
 	var p := GameState.local_player()
+	var free := Skills.points_free(p, GameState.world)
+	if free > 0:
+		bits.append("★ " + InputHints.fill(tr("%d skill points to spend ({skills})") % free if free != 1 else tr("1 skill point to spend ({skills})")))
 	var t := Adventure.tracker(GameState.world, p)
 	if t != "":
 		bits.append("» " + t)
@@ -337,13 +359,18 @@ func _refresh_level() -> void:
 	var need := Progression.farm_xp_for(int(f.level))
 	_xp.max_value = need
 	_xp.value = int(f.xp)
+	var me := GameState.local_player()
+	if me:
+		_plevel.text = tr("Level %d") % me.level
+		_pxp.max_value = Skills.xp_to_next(me.level)
+		_pxp.value = me.xp if me.level < Skills.MAX_LEVEL else _pxp.max_value
 
 func _refresh_energy() -> void:
 	var p := GameState.local_player()
 	if p == null:
 		return
-	_energy.frac = clampf(p.energy / maxf(1.0, p.max_energy), 0.0, 1.0)
-	_energy.low = p.energy < p.max_energy * 0.2
+	_energy.frac = clampf(p.energy / maxf(1.0, p.energy_cap()), 0.0, 1.0)
+	_energy.low = p.energy < p.energy_cap() * 0.2
 	_energy.queue_redraw()
 
 func _refresh_hotbar() -> void:

@@ -13,6 +13,8 @@ var objects: Dictionary = {}   # key -> {id, kind, ...}
 var fences: Dictionary = {}    # expansion id -> Array of keys
 var tillable: Array = []
 var greenhouse: bool = false
+## Off-season relief from the owner's skills; set by GameState, not saved.
+var relief: float = 0.0
 var trenches: Dictionary = {}  # key -> true for tiles dug with the shovel (dry dirt or flowing water)
 var bucket_until: Dictionary = {}  # dry trench key -> unix time a poured bucket keeps it wet
 ## Tiles this close (Manhattan) to water or a wet trench never need watering.
@@ -162,7 +164,7 @@ func crop_eta(p: Vector2i, season: String, mult: float = 1.0, now: float = -1.0)
 	var c := crop_at(p)
 	if c.is_empty():
 		return 0.0
-	return CropGrowth.eta(c.id, float(c.progress), season, is_watered(p, now), str(soil_at(p).get("fert", "")), greenhouse, mult)
+	return CropGrowth.eta(c.id, float(c.progress), season, is_watered(p, now), str(soil_at(p).get("fert", "")), greenhouse, mult, relief)
 
 ## Harvests a ready crop. The plant stays and grows again until its seed tier's harvests are used up.
 ## Returns {id, n, q, spent} or {}.
@@ -171,7 +173,7 @@ func harvest(p: Vector2i, rng: RandomNumberGenerator, luck: float = 0.0, skill: 
 		return {}
 	var s: Dictionary = soil[Tiles.key(p)]
 	var c: Dictionary = s.crop
-	var yf := CropGrowth.season_yield(c.id, season, greenhouse) if season != "" else 1.0
+	var yf := CropGrowth.season_yield(c.id, season, greenhouse, relief) if season != "" else 1.0
 	var q := roll_quality(s.fert, bool(c.pollinated), int(c.get("quality_boost", 0)), (luck + 0.02) * yf - 0.02, skill, rng)
 	var n := CropGrowth.roll_amount((1.0 + 0.1 + luck) * yf * yield_mult, rng)
 	var left := int(c.get("harvests", -1))
@@ -315,8 +317,8 @@ func advance(from_t: float, to_t: float, ctx: Dictionary) -> Array:
 				var seg_end := minf(to_t, Seasons.next_change(t) if Seasons.override == "" else to_t)
 				var season: String = season_at.call(t)
 				var wet_s := (seg_end - t) if always else clampf(until - t, 0.0, seg_end - t)
-				prog += CropGrowth.rate(c.id, season, true, s.fert, greenhouse, mult) * wet_s
-				prog += CropGrowth.rate(c.id, season, false, s.fert, greenhouse, mult) * (seg_end - t - wet_s)
+				prog += CropGrowth.rate(c.id, season, true, s.fert, greenhouse, mult, relief) * wet_s
+				prog += CropGrowth.rate(c.id, season, false, s.fert, greenhouse, mult, relief) * (seg_end - t - wet_s)
 				t = seg_end
 			c.progress = minf(1.0, prog)
 			if stage_of(float(c.progress)) != before:

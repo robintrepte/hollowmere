@@ -45,6 +45,8 @@ func _ready() -> void:
 	for row in CROSS:
 		for id in row:
 			grid.add_child(_cell(str(id), here))
+	if Skills.has_unlock(GameState.local_player(), "map_travel"):
+		v.add_child(UITheme.label("Map Reader: click an open place to travel there.", 8, UITheme.LEAF.darkened(0.3)))
 	v.add_child(UITheme.label("Opened by restoring shrines", 10, UITheme.WOOD))
 	for rid in Data.region_order:
 		if rid in ["meadow", "whisperwood", "tidecove"]:
@@ -55,7 +57,10 @@ func _ready() -> void:
 		if open and rid in Quests.tracked_maps(GameState.local_player()):
 			mark = "! " + mark
 		var col := UITheme.LEAF.darkened(0.2) if _at(here, rid) else (UITheme.INK if open else UITheme.MUTED)
-		v.add_child(UITheme.label(mark + name, 9, col))
+		var row := UITheme.label(mark + name, 9, col)
+		v.add_child(row)
+		if open:
+			_travel_on_click(row, rid, here)
 
 func _here_id() -> String:
 	var p := GameState.local_player()
@@ -98,4 +103,19 @@ func _cell(id: String, here: String) -> Control:
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	b.add_child(l)
+	if open:
+		_travel_on_click(b, id, here)
 	return b
+
+## With the Map Reader skill, clicking an open place travels there (not from mines or indoors mid-fight).
+func _travel_on_click(c: Control, id: String, here: String) -> void:
+	if _at(here, id) or not Skills.has_unlock(GameState.local_player(), "map_travel"):
+		return
+	c.mouse_filter = Control.MOUSE_FILTER_STOP
+	c.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	c.tooltip_text = tr("Travel to %s") % (Data.region_name(id))
+	c.gui_input.connect(func(ev: InputEvent):
+		if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
+			Audio.sfx("sparkle")
+			closed.emit()
+			EventBus.map_change_requested.emit(id, AdventureFlow.wayshrine_arrival(id)))

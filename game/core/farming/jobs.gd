@@ -53,7 +53,8 @@ static func merge_report(into: Dictionary, rep: Dictionary) -> void:
 static func tick_cost(c: Creature, scale: float = 1.0) -> float:
 	return JOB_COST * float(TICK_SECONDS) / WORK_PERIOD * scale * float(Data.traits.get(c.trait_id, {}).get("energy_cost_mult", 1.0))
 
-## Runs all jobs for `ctx.scale` ticks (default 1). `ctx` = {grids, chest, rng, season, scale, efficiency}
+## Runs all jobs for `ctx.scale` ticks (default 1). `ctx` = {grids, chest, rng, season, scale, efficiency, mods}
+## `mods` are the farm owner's bonuses (job_power, job_energy, happiness).
 ## Returns a report dictionary.
 static func run(workers: Array, ctx: Dictionary) -> Dictionary:
 	var rng: RandomNumberGenerator = ctx.rng
@@ -61,6 +62,10 @@ static func run(workers: Array, ctx: Dictionary) -> Dictionary:
 	var grids: Array = ctx.grids
 	var scale := float(ctx.get("scale", 1.0))
 	var eff := float(ctx.get("efficiency", 1.0))
+	var mods: Dictionary = ctx.get("mods", {})
+	var power_mult := maxf(0.1, 1.0 + float(mods.get("job_power", 0.0)))
+	var cost_mult := maxf(0.3, 1.0 + float(mods.get("job_energy", 0.0)))
+	var happy_mult := maxf(0.0, 1.0 + float(mods.get("happiness", 0.0)))
 	ctx["scale"] = scale
 	var rep := new_report()
 	# Order matters: harvest first (frees ripe crops), then water/grow.
@@ -74,19 +79,19 @@ static func run(workers: Array, ctx: Dictionary) -> Dictionary:
 		by_job[c.job].append(c)
 	for job in order:
 		for c in by_job.get(job, []):
-			var cost := tick_cost(c, scale)
+			var cost := tick_cost(c, scale) * cost_mult
 			if c.energy < cost:
 				rep.tired += 1
 				continue
 			c.energy -= cost
 			rep.workers += 1
 			var power: int = c.job_power(job)
-			_do_job(job, c, power, grids, chest, rng, rep, ctx, scale * eff)
+			_do_job(job, c, power, grids, chest, rng, rep, ctx, scale * eff * power_mult)
 			c.xp_progress += (3 + power) * scale / 18.0
 			if c.xp_progress >= 1.0:
 				c.gain_xp(int(c.xp_progress))
 				c.xp_progress -= int(c.xp_progress)
-			if rng.randf() < scale / 18.0:
+			if rng.randf() < scale * happy_mult / 18.0:
 				c.change_happiness(1)
 			if int(Data.traits.get(c.trait_id, {}).get("forage_bonus", 0)) > 0 and rng.randf() < 0.5 * scale * eff / 18.0:
 				_give(chest, _random_forage(ctx.season, rng), 1, 0, rep)
@@ -241,8 +246,8 @@ static func collect_produce(residents: Array, chest: Inventory, rng: RandomNumbe
 				rep.produce[pid] = int(rep.produce.get(pid, 0)) + 1
 
 ## Energy recovery for everyone at the farm over `k` ticks (a REST_PERIOD gives the old night's worth).
-static func rest(residents: Array, spa: bool, k: float = REST_PERIOD / float(TICK_SECONDS)) -> void:
-	var f := k * TICK_SECONDS / float(REST_PERIOD)
+static func rest(residents: Array, spa: bool, k: float = REST_PERIOD / float(TICK_SECONDS), regen_mult: float = 1.0) -> void:
+	var f := k * TICK_SECONDS / float(REST_PERIOD) * regen_mult
 	for c in residents:
 		var regen := 40.0 + float(Data.traits.get(c.trait_id, {}).get("energy_regen_bonus", 0))
 		if spa:

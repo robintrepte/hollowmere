@@ -36,6 +36,9 @@ REASON = re.compile(r'(?:\.reason|\.line)\s*=\s*' + STR)
 HELPER = re.compile(r'\b(?:_slider|_check|_choice|_column|_edit|_field)\([^,\n]*,\s*' + STR)
 HINT = re.compile(r'\b(?:_hint|_field)\(\s*' + STR)
 CONST_TEXT = re.compile(r'^const\s+\w*(?:HELP|TEXT|HINT|LABEL|TITLE)\w*\s*:?=\s*' + STR)
+# const EFFECT_TEXT := { "key": "Text %s", ... } — every value is UI text.
+CONST_TEXT_DICT = re.compile(r'^const\s+\w*(?:TEXT|LABEL|TITLE)\w*\s*:?=\s*\{')
+DICT_VALUE = re.compile(STR + r'\s*:\s*' + STR)
 BRACKET = re.compile(r'\[([^\[\]]*)\]')
 
 
@@ -86,6 +89,7 @@ def scan_gd(path, found):
     with io.open(path, encoding="utf-8") as f:
         lines = f.read().split("\n")
     in_list = False
+    in_text_dict = False
     for n, line in enumerate(lines, 1):
         s = line.strip()
         if s.startswith("#"):
@@ -112,6 +116,13 @@ def scan_gd(path, found):
                 if s in ("iOS", "macOS") or s.startswith("Economy sim"):
                     continue
                 add(found, s, ref)
+        if CONST_TEXT_DICT.match(line):
+            in_text_dict = True
+        if in_text_dict:
+            for m in DICT_VALUE.finditer(line):
+                add(found, unescape(m.group(2)), ref)
+            if line.rstrip().endswith("}"):
+                in_text_dict = False
         if in_list:
             m = LIST_LINE.match(line)
             if m:

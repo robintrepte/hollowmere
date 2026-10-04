@@ -51,8 +51,9 @@ static func can_load(machine_id: String, item_id: String, q: int, inv: Inventory
 		return {"ok": true, "consume": {item_id: 1}, "output": {"id": out_id, "n": 1, "q": q}, "time": int(spec.time)}
 	return {"ok": false, "reason": ""}
 
-static func seconds_for(minutes: int) -> float:
-	return minutes * CropGrowth.MACHINE_SECONDS_PER_MINUTE
+## Real seconds for a recipe; `speed` is the owner's machine speed multiplier.
+static func seconds_for(minutes: int, speed: float = 1.0) -> float:
+	return minutes * CropGrowth.MACHINE_SECONDS_PER_MINUTE / maxf(0.1, speed)
 
 static func is_ready(obj: Dictionary, now: float) -> bool:
 	return not obj.get("output", {}).is_empty() and now >= float(obj.get("ready_at", 0))
@@ -67,7 +68,7 @@ static func remaining(obj: Dictionary, now: float) -> float:
 ## Spark workers run the machine line: finished goods go into the farm chest, then idle
 ## machines are refilled from it with whatever earns the most. Seed makers are left to the player
 ## because they eat crops at a loss. `slots` = machines the workers can service.
-static func automate(grids: Array, chest: Inventory, now: float, slots: int, rep: Dictionary) -> void:
+static func automate(grids: Array, chest: Inventory, now: float, slots: int, rep: Dictionary, speed: float = 1.0) -> void:
 	for g in grids:
 		for k in g.objects:
 			if slots <= 0:
@@ -98,7 +99,7 @@ static func automate(grids: Array, chest: Inventory, now: float, slots: int, rep
 							chest.remove(c, int(pick.consume[c]))
 					o.input = pick.id
 					o.output = pick.output
-					o.ready_at = now + seconds_for(int(pick.time))
+					o.ready_at = now + seconds_for(int(pick.time), speed)
 					rep.machines_loaded = int(rep.get("machines_loaded", 0)) + 1
 					served = true
 			if served:

@@ -21,6 +21,7 @@ const DEFAULT_KEYS := {
 	"craft": [KEY_C],
 	"journal": [KEY_J],
 	"quests": [KEY_L],
+	"skills": [KEY_K],
 	"map": [KEY_M],
 	"menu": [KEY_ESCAPE],
 	"rotate_item": [KEY_R],

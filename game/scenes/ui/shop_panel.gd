@@ -88,7 +88,7 @@ func _refresh() -> void:
 		if stock.is_empty():
 			_list.add_child(UITheme.label("Sold out for today.", 10, UITheme.MUTED))
 		for s in stock:
-			_list.add_child(_row(s.id, int(s.price), bool(s.locked), str(s.get("req", "")), true))
+			_list.add_child(_row(s.id, GameState.buy_value(GameState.local_player(), int(s.price)), bool(s.locked), str(s.get("req", "")), true))
 	elif _tab == "build":
 		_build_list()
 	elif _tab == "upgrades":
@@ -141,7 +141,7 @@ func _sell_row(e: Dictionary) -> Control:
 	var n := UITheme.label(tr("%s  x%d") % [Data.item_name(e.id, int(e.q)), int(e.n)], 10)
 	n.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	h.add_child(n)
-	var price := Data.sell_price(e.id, int(e.q))
+	var price := GameState.sell_value(GameState.local_player(), e.id, int(e.q))
 	var sell := CoinLabel.button(price, func(): _sell(e.uid, 1), tr("Sell 1"))
 	sell.remove_theme_color_override("font_color")
 	h.add_child(sell)
