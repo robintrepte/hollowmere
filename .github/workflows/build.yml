@@ -23,25 +23,39 @@ jobs:
       - name: Import project
         run: godot --headless --path game --import || true
       - name: Compile all scripts
-        run: godot --headless --path game res://tests/check_scripts.tscn
+        env:
+          GODOT_OK: ", 0 failed"
+        run: tools/ci/godot.sh --headless --path game res://tests/check_scripts.tscn
       - name: Unit tests
-        run: godot --headless --path game -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json -gjunit_xml_file=res://../test-results.xml
+        env:
+          GODOT_OK: "All tests passed"
+        run: tools/ci/godot.sh --headless --path game -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json -gjunit_xml_file=res://../test-results.xml
       - name: Translation template is current
         run: python3 tools/content/extract_strings.py --check
       - name: Balance simulation
-        run: godot --headless --path game res://tests/sim/balance_sim.tscn -- --days=112
+        env:
+          GODOT_OK: "Sim finished.+OK"
+        run: tools/ci/godot.sh --headless --path game res://tests/sim/balance_sim.tscn -- --days=112
       - name: Casino return-to-player simulation (1M rounds)
-        run: godot --headless --path game res://tests/sim/casino_rtp.tscn -- --rounds=1000000
+        env:
+          GODOT_OK: "Casino sim.+OK"
+        run: tools/ci/godot.sh --headless --path game res://tests/sim/casino_rtp.tscn -- --rounds=1000000
       - name: Start Nakama
         run: |
           docker compose -f server/docker-compose.yml up -d --build
           for i in $(seq 1 60); do curl -sf http://127.0.0.1:7350/healthcheck && break; sleep 2; done
       - name: Server integration test
-        run: godot --headless --path game res://tests/net/server_test.tscn -- --require-server
+        env:
+          GODOT_OK: "SERVER TEST DONE, 0 failures"
+        run: tools/ci/godot.sh --headless --path game res://tests/net/server_test.tscn -- --require-server
       - name: Co-op network test
-        run: godot --headless --path game res://tests/net/net_test.tscn
+        env:
+          GODOT_OK: "NET TEST DONE, 0 failures"
+        run: tools/ci/godot.sh --headless --path game res://tests/net/net_test.tscn
       - name: Desync test (host + 3 clients)
-        run: godot --headless --path game res://tests/net/desync_test.tscn
+        env:
+          GODOT_OK: "DESYNC TEST DONE, 0 failures"
+        run: tools/ci/godot.sh --headless --path game res://tests/net/desync_test.tscn
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -73,7 +87,15 @@ jobs:
       - name: Export
         run: |
           mkdir -p build/windows build/macos build/web
+          set +e
           godot --headless --path game --export-release "${{ matrix.preset }}"
+          code=$?
+          set -e
+          case "${{ matrix.preset }}" in
+            "Windows Desktop") test -f build/windows/Hollowmere.exe ;;
+            macOS) test -f build/macos/Hollowmere.zip ;;
+            Web) test -f build/web/index.html ;;
+          esac || exit "${code:-1}"
       - name: Inject OAuth client ids (web)
         if: matrix.preset == 'Web'
         run: |
