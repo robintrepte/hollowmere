@@ -125,3 +125,42 @@ func test_overnight_evolution_from_farm_xp() -> void:
 	var rep := GameState.end_day()
 	assert_eq(c.species_id, "bramblet")
 	assert_eq(rep.evolved.size(), 1)
+
+func test_farm_wildlings_start_their_own_job() -> void:
+	GameState.new_game({"seed": 8})
+	var p := GameState.local_player()
+	var c := Creature.create("puddlop", 10, rng)
+	p.party.append(c)
+	assert_true(GameState.move_creature(c.uid, "den", p))
+	assert_eq(c.job, "water", "a Tide Wildling waters as soon as it reaches the farm")
+	assert_true(GameState.move_creature(c.uid, "party", p))
+	assert_eq(c.job, "", "it stops working when it leaves")
+
+func test_resting_by_choice_survives_a_reload() -> void:
+	GameState.new_game({"seed": 9})
+	var c := Creature.create("embercub", 10, rng)
+	GameState.ranch.append(c)
+	assert_true(GameState.set_job(c.uid, ""))
+	var d: Dictionary = JSON.parse_string(JSON.stringify(GameState.to_dict()))
+	GameState.from_dict(d)
+	assert_eq(GameState.find_creature(c.uid).job, "", "a chosen rest is not overridden")
+
+func test_older_saves_put_idle_farm_wildlings_to_work() -> void:
+	GameState.new_game({"seed": 10})
+	var c := Creature.create("sproutle", 10, rng)
+	GameState.ranch.append(c)
+	var d: Dictionary = JSON.parse_string(JSON.stringify(GameState.to_dict()))
+	for r in d.ranch:
+		r.erase("job_manual")
+		r.job = ""
+	GameState.from_dict(d)
+	assert_eq(GameState.find_creature(c.uid).job, "grow")
+
+func test_befriended_overflow_goes_to_work_in_the_den() -> void:
+	GameState.new_game({"seed": 11})
+	var p := GameState.local_player()
+	while p.party.size() < PlayerData.PARTY_MAX:
+		p.party.append(Creature.create("mossbun", 5, rng))
+	var c := Creature.create("puddlop", 5, rng)
+	assert_eq(GameState.add_creature(p, c), "den")
+	assert_eq(c.job, "water")

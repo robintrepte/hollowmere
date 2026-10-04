@@ -267,7 +267,7 @@ func _show_detail() -> void:
 				_refresh()))
 		var send := UITheme.button("Send to farm", func():
 			if Coop.act("move_creature_act", [c.uid, "den"]).ok:
-				EventBus.toast.emit(tr("%s moved to the farm.") % c.display_name(), "")
+				EventBus.toast.emit(tr("%s moved to the farm and started working: %s.") % [c.display_name(), tr(str(Data.job_info(c.job_type()).get("job_name", "")))], "")
 				_sel = null
 				_refresh()
 			else:

@@ -267,6 +267,7 @@ func add_creature(p: PlayerData, c: Creature) -> String:
 		return "party"
 	if ranch.size() < den_capacity():
 		ranch.append(c)
+		c.start_default_job()
 		return "den"
 	sanctuary.append(c)
 	return "sanctuary"
@@ -303,9 +304,12 @@ func move_creature(uid: String, dest: String, p: PlayerData) -> bool:
 		players[pid].party.erase(c)
 	if dest != "den":
 		c.job = ""
+		c.job_manual = false
 	match dest:
 		"party": p.party.append(c)
-		"den": ranch.append(c)
+		"den":
+			ranch.append(c)
+			c.start_default_job()
 		_: sanctuary.append(c)
 	EventBus.party_changed.emit()
 	return true
@@ -317,6 +321,7 @@ func set_job(uid: String, job_id: String) -> bool:
 	if job_id != "" and not c.can_do_job(job_id):
 		return false
 	c.job = job_id
+	c.job_manual = true
 	return true
 
 func set_pair(a_uid: String, b_uid: String) -> Dictionary:
@@ -1480,7 +1485,9 @@ func from_dict(d: Dictionary) -> void:
 	_load_shipping_bin(d)
 	ranch.clear()
 	for c in d.get("ranch", []):
-		ranch.append(Creature.from_dict(c))
+		var cr := Creature.from_dict(c)
+		cr.start_default_job()
+		ranch.append(cr)
 	sanctuary.clear()
 	for c in d.get("sanctuary", []):
 		sanctuary.append(Creature.from_dict(c))

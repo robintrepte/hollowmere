@@ -316,8 +316,8 @@ msgstr "%s hält sich in der Nähe auf. Vielleicht würde es sich dir anschließ
 
 #: scenes/ui/party_panel.gd:269
 #, c-format
-msgid "%s moved to the farm."
-msgstr "%s ist auf den Hof gezogen."
+msgid "%s moved to the farm and started working: %s."
+msgstr "%s ist auf den Hof gezogen und arbeitet jetzt als %s."
 
 #: scenes/main/adventure_flow.gd:340
 #, c-format

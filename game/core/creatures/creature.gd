@@ -26,6 +26,7 @@ var happiness: int = 70
 var energy: int = 100
 var grooming: int = 0
 var job: String = ""
+var job_manual: bool = false     ## the player picked this job (or rest) by hand
 var owner: String = ""
 var met: String = ""
 var starry_lineage: int = 0
@@ -268,13 +269,20 @@ func can_do_job(job_id: String) -> bool:
 			return true
 	return false
 
+## Puts an idle farm Wildling to work at its own type's job, unless the player chose rest for it.
+func start_default_job() -> bool:
+	if job != "" or job_manual:
+		return false
+	job = job_type()
+	return true
+
 func to_dict() -> Dictionary:
 	return {
 		"uid": uid, "species": species_id, "nickname": nickname, "level": level, "xp": xp,
 		"genes": genes.duplicate(), "nature": nature, "trait": trait_id, "moves": moves.duplicate(),
 		"learned": learned.duplicate(), "hp": hp, "status": status, "status_turns": status_turns,
 		"starry": starry, "morph": morph, "happiness": happiness, "energy": energy, "grooming": grooming,
-		"job": job, "owner": owner, "met": met, "starry_lineage": starry_lineage,
+		"job": job, "job_manual": job_manual, "owner": owner, "met": met, "starry_lineage": starry_lineage,
 		"show_rank": show_rank, "ribbons": ribbons,
 	}
 
@@ -305,6 +313,7 @@ static func from_dict(d: Dictionary) -> Creature:
 	c.energy = int(d.get("energy", 100))
 	c.grooming = int(d.get("grooming", 0))
 	c.job = d.get("job", "")
+	c.job_manual = bool(d.get("job_manual", false))
 	c.owner = d.get("owner", "")
 	c.met = d.get("met", "")
 	c.starry_lineage = int(d.get("starry_lineage", 0))
