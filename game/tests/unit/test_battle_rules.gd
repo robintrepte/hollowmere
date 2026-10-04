@@ -3,6 +3,12 @@ extends GutTest
 
 var rng := RandomNumberGenerator.new()
 
+func before_all() -> void:
+	TranslationServer.set_locale("en")
+
+func after_all() -> void:
+	Settings.apply()
+
 func before_each() -> void:
 	rng.seed = 99
 

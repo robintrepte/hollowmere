@@ -8,6 +8,8 @@ const SOON := 1.0
 ## Position updates every frame and has no signal of its own.
 const HEARTBEAT := 10.0
 
+## Tests point this elsewhere so they never touch the player's farms.
+var dir := DIR
 var current_slot: int = -1
 ## True only while a farm is on screen. Tests and the title screen stay quiet.
 var live := false
@@ -62,7 +64,7 @@ func checkpoint() -> void:
 	_writing = false
 
 func slot_path(slot: int) -> String:
-	return "%s/slot_%d.json" % [DIR, slot]
+	return "%s/slot_%d.json" % [dir, slot]
 
 func list_slots() -> Array:
 	var out: Array = []

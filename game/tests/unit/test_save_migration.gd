@@ -5,9 +5,21 @@ const FIXTURES := ["res://tests/fixtures/save_v0_m1.json", "res://tests/fixtures
 
 var _slot := -1
 
+func before_all() -> void:
+	SaveManager.dir = "user://test_saves"
+	DirAccess.make_dir_recursive_absolute(SaveManager.dir)
+
+func after_all() -> void:
+	SaveManager.dir = SaveManager.DIR
+
 func after_each() -> void:
+	_remove()
+
+## Local files only: SaveManager.delete_slot would also delete that slot from a signed-in cloud.
+func _remove() -> void:
 	if _slot >= 0:
-		SaveManager.delete_slot(_slot)
+		for suffix in ["", ".bak", ".tmp"]:
+			DirAccess.remove_absolute(SaveManager.slot_path(_slot) + suffix)
 		_slot = -1
 
 func _install(path: String) -> Dictionary:
@@ -32,8 +44,7 @@ func test_old_saves_load_and_keep_progress() -> void:
 		assert_gt(GameState.grid("farm").planted_tiles().size(), 0, "%s: crops kept" % path)
 		for k in GameState.default_world():
 			assert_true(GameState.world.has(k), "%s: world.%s filled in" % [path, k])
-		SaveManager.delete_slot(_slot)
-		_slot = -1
+		_remove()
 
 func test_old_saves_play_every_system() -> void:
 	for path in FIXTURES:
@@ -50,8 +61,7 @@ func test_old_saves_play_every_system() -> void:
 		for i in 7:
 			GameState.end_day()
 		assert_eq(GameState.local_player().party.size(), p.party.size(), "%s: a week of days later the party is intact" % path)
-		SaveManager.delete_slot(_slot)
-		_slot = -1
+		_remove()
 
 func test_migrated_save_roundtrips() -> void:
 	for path in FIXTURES:
@@ -67,5 +77,4 @@ func test_migrated_save_roundtrips() -> void:
 		assert_eq(int(after.world.money), int(before.world.money))
 		assert_eq(after.players.keys(), before.players.keys())
 		assert_eq(after.grids.farm.soil.size(), before.grids.farm.soil.size(), "%s: soil survives a save" % path)
-		SaveManager.delete_slot(_slot)
-		_slot = -1
+		_remove()

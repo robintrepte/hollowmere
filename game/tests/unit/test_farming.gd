@@ -89,6 +89,7 @@ func test_sprinkler_waters_neighbors() -> void:
 		for y in range(3, 6):
 			if not (x == 4 and y == 4):
 				g.till(Vector2i(x, y))
+				g.plant(Vector2i(x, y), "parsnip_seeds", "spring")
 	assert_true(g.place_object(Vector2i(4, 4), "sprinkler"))
 	g.new_day("spring", "spring", "sun", rng, 0, true)
 	var watered := 0
