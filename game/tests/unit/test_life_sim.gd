@@ -150,8 +150,8 @@ func test_gifts_and_talk_raise_friendship() -> void:
 		assert_gt(int(st.pts), before)
 		assert_false(Relationships.give_gift(vid, st, loves[0], 0, false).ok, "one gift a day")
 
-func test_season_rollover_and_weather() -> void:
+func test_game_days_leave_the_real_season_alone() -> void:
 	for i in Calendar.DAYS_PER_SEASON:
 		GameState.end_day()
-	assert_eq(GameState.season(), "summer")
+	assert_eq(GameState.season(), "spring", "seasons follow the calendar, not the day counter")
 	assert_true(GameState.world.weather in ["sun", "rain", "storm", "snow", "fog", "cloudy"])

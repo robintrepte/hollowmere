@@ -1,9 +1,12 @@
 {
-  "dirs": ["res://tests/unit"],
+  "dirs": [
+    "res://tests/unit"
+  ],
   "include_subdirs": true,
   "prefix": "test_",
   "suffix": ".gd",
   "log_level": 1,
   "should_exit": true,
-  "should_exit_on_success": true
+  "should_exit_on_success": true,
+  "pre_run_script": "res://tests/pre_run_hook.gd"
 }

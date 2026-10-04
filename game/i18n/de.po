@@ -8015,3 +8015,27 @@ msgstr "Sehr effektiv %s"
 msgid "Won't help right now."
 msgstr "Bringt gerade nichts."
 
+#, c-format
+msgid "%d d"
+msgstr "%d T"
+
+#, c-format
+msgid "%d d %d h"
+msgstr "%d T %d Std."
+
+#, c-format
+msgid "%d h"
+msgstr "%d Std."
+
+#, c-format
+msgid "%d h %d min"
+msgstr "%d Std. %d Min."
+
+#, c-format
+msgid "%d min"
+msgstr "%d Min."
+
+#, c-format
+msgid "%d s"
+msgstr "%d Sek."
+

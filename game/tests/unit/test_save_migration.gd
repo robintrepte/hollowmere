@@ -18,7 +18,7 @@ func after_each() -> void:
 ## Local files only: SaveManager.delete_slot would also delete that slot from a signed-in cloud.
 func _remove() -> void:
 	if _slot >= 0:
-		for suffix in ["", ".bak", ".tmp"]:
+		for suffix in ["", ".bak", ".tmp", ".v0.bak", ".v1.bak"]:
 			DirAccess.remove_absolute(SaveManager.slot_path(_slot) + suffix)
 		_slot = -1
 
@@ -44,6 +44,17 @@ func test_old_saves_load_and_keep_progress() -> void:
 		assert_gt(GameState.grid("farm").planted_tiles().size(), 0, "%s: crops kept" % path)
 		for k in GameState.default_world():
 			assert_true(GameState.world.has(k), "%s: world.%s filled in" % [path, k])
+		_remove()
+
+func test_migration_backs_up_the_old_file_and_reaches_the_current_version() -> void:
+	for path in FIXTURES:
+		var d := _install(path)
+		var old_v := int(d.get("version", 0))
+		assert_true(SaveManager.load_game(_slot))
+		assert_true(FileAccess.file_exists("%s.v%d.bak" % [SaveManager.slot_path(_slot), old_v]), "%s: the old file is kept" % path)
+		assert_gt(float(GameState.world.time.last), 0.0, "%s: the real-time clock starts from the load" % path)
+		var payload := SaveManager.make_payload()
+		assert_eq(int(payload.version), GameState.SAVE_VERSION)
 		_remove()
 
 func test_old_saves_play_every_system() -> void:

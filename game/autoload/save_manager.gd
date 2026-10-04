@@ -172,6 +172,9 @@ func load_game(slot: int) -> bool:
 		d = _read_json(slot_path(slot) + ".bak")
 		if not d is Dictionary or not d.has("state"):
 			return false
+	var v := int(d.get("version", 0))
+	if v < GameState.SAVE_VERSION and FileAccess.file_exists(slot_path(slot)):
+		DirAccess.copy_absolute(slot_path(slot), "%s.v%d.bak" % [slot_path(slot), v])
 	return load_payload(d, slot)
 
 func load_payload(d: Dictionary, slot: int) -> bool:
@@ -187,18 +190,54 @@ func delete_slot(slot: int) -> void:
 	if Net.has_session():
 		Net.cloud_delete(slot)
 
-## Upgrades older save formats in place.
+## Upgrades older save formats in place, one version step at a time.
 func migrate(d: Dictionary) -> Dictionary:
 	var v: int = int(d.get("version", 0))
-	if v < 1:
-		var w: Dictionary = d.state.world
-		if not w.has("farm"):
-			w["farm"] = {"level": 1, "xp": 0}
-		if not w.has("pairs"):
-			w["pairs"] = []
-		v = 1
+	var steps := [_migrate_0_to_1, _migrate_1_to_2]
+	while v < GameState.SAVE_VERSION and v < steps.size():
+		steps[v].call(d.state)
+		v += 1
 	d.version = v
 	return d
+
+func _migrate_0_to_1(state: Dictionary) -> void:
+	var w: Dictionary = state.world
+	if not w.has("farm"):
+		w["farm"] = {"level": 1, "xp": 0}
+	if not w.has("pairs"):
+		w["pairs"] = []
+
+## Version 2 runs the economy on the real clock. The real-time systems pick up from "now".
+func _migrate_1_to_2(state: Dictionary) -> void:
+	var w: Dictionary = state.world
+	if not w.has("time"):
+		w["time"] = {"last": TimeService.now()}
+	for k in ["quests", "skills", "fishing", "mining", "casino", "tutorial"]:
+		if not w.has(k):
+			w[k] = {}
+
+## Cloud copies carry the state gzipped and base64-encoded under "z" to stay far below the server limit.
+static func pack_cloud(payload: Dictionary) -> Dictionary:
+	if not payload.has("state"):
+		return payload
+	var raw := JSON.stringify(payload.state).to_utf8_buffer()
+	var out := payload.duplicate()
+	out.erase("state")
+	out["z"] = Marshalls.raw_to_base64(raw.compress(FileAccess.COMPRESSION_GZIP))
+	out["zlen"] = raw.size()
+	return out
+
+static func unpack_cloud(payload: Dictionary) -> Dictionary:
+	if not payload.has("z"):
+		return payload
+	var raw := Marshalls.base64_to_raw(str(payload.z)).decompress(int(payload.get("zlen", 0)), FileAccess.COMPRESSION_GZIP)
+	var state = JSON.parse_string(raw.get_string_from_utf8())
+	var out := payload.duplicate()
+	out.erase("z")
+	out.erase("zlen")
+	if state is Dictionary:
+		out["state"] = state
+	return out
 
 func _read_json(path: String) -> Variant:
 	if not FileAccess.file_exists(path):

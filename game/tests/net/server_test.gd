@@ -31,6 +31,8 @@ func _ready() -> void:
 	var list: Array = await Net.cloud_list()
 	_ok(list.size() == 1 and int(list[0].slot) == 2 and list[0].payload.state.x == 1, "cloud list returns the save")
 	_ok(SaveManager.newer_in_cloud(list).size() >= 0, "newer_in_cloud runs")
+	await TimeService.sync_server()
+	_ok(absf(TimeService.offset) < 120.0, "server clock offset is sane: %.1f s" % TimeService.offset)
 
 	# Server-side validation rejects junk.
 	var bad := NakamaWriteStorageObject.new("loot", "slot_0", 1, 1, "{}", "")

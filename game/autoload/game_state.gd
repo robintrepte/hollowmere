@@ -2,7 +2,7 @@ extends Node
 ## The whole simulation state. The host is authoritative; actions here are
 ## called directly offline or via Net RPCs in co-op.
 
-const SAVE_VERSION := 1
+const SAVE_VERSION := 2
 const PERSISTENT_MAPS := ["farm", "greenhouse", "terrace"]
 const STARTERS := ["sproutle", "puddlop", "embercub"]
 
@@ -40,6 +40,7 @@ static func default_world() -> Dictionary:
 		"flags": {}, "quest": 0, "legends": [], "festival_done": [], "hatchery": [], "shipping": [],
 		"pairs": [], "luck": 0.0, "created": 0.0, "played": 0.0,
 		"chains": {}, "bounty": {}, "bounty_week": -1,
+		"time": {"last": 0.0}, "quests": {}, "skills": {}, "fishing": {}, "mining": {}, "casino": {}, "tutorial": {},
 	}
 
 func new_game(opts: Dictionary) -> void:
@@ -49,6 +50,7 @@ func new_game(opts: Dictionary) -> void:
 	world.seed = seed_v
 	world.farm_name = opts.get("farm_name", "Sunny")
 	world.created = Time.get_unix_time_from_system()
+	world.time = {"last": TimeService.now()}
 	grids.clear()
 	_map_cache.clear()
 	for m in PERSISTENT_MAPS:
@@ -113,8 +115,11 @@ static func to_tile(pos: Vector2) -> Vector2i:
 func day() -> int:
 	return int(world.day)
 
+## The real-world season. In co-op everyone sees the host's, which travels with the world sync.
 func season() -> String:
-	return Calendar.season(day())
+	if Net.is_authority() or not world.has("season"):
+		world["season"] = Seasons.current(TimeService.now(), Settings.hemisphere)
+	return str(world.season)
 
 func minute() -> int:
 	return int(world.minute)

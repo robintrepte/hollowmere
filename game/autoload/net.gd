@@ -206,6 +206,7 @@ func _finish_login(s: NakamaSession) -> String:
 	await _load_account()
 	session_changed.emit(true)
 	Settings.sync_profile()
+	TimeService.sync_server()
 	return ""
 
 var is_guest: bool = false
@@ -266,6 +267,7 @@ func try_restore_session() -> bool:
 	await _load_account()
 	session_changed.emit(true)
 	Settings.sync_profile()
+	TimeService.sync_server()
 	return true
 
 func logout() -> void:
@@ -303,7 +305,7 @@ signal cloud_synced(ok: bool, message: String)
 func cloud_save(slot: int, payload: Dictionary) -> bool:
 	if not has_session():
 		return false
-	var obj := NakamaWriteStorageObject.new("saves", "slot_%d" % slot, 1, 1, JSON.stringify(payload), "")
+	var obj := NakamaWriteStorageObject.new("saves", "slot_%d" % slot, 1, 1, JSON.stringify(SaveManager.pack_cloud(payload)), "")
 	var res = await client.write_storage_objects_async(session, [obj])
 	if res.is_exception():
 		var msg := friendly_error(res.get_exception())
@@ -324,6 +326,8 @@ func cloud_list() -> Array:
 	for o in res.objects:
 		var j = JSON.parse_string(o.value)
 		var key: String = o.key
+		if j is Dictionary:
+			j = SaveManager.unpack_cloud(j)
 		if j is Dictionary and key.begins_with("slot_"):
 			out.append({"slot": int(key.trim_prefix("slot_")), "meta": j.get("meta", {}), "payload": j})
 	return out
