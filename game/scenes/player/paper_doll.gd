@@ -14,6 +14,11 @@ var _sprites: Dictionary = {}
 var _t := 0.0
 var _tool_t := -1.0
 var _look: Dictionary = {}
+## The emote playing right now ("" for none) and how long it has been going.
+var emote := ""
+var _emote_t := 0.0
+
+signal emote_finished
 
 func _ready() -> void:
 	for l in LAYERS:
@@ -61,7 +66,19 @@ func set_pack(tint: Color) -> void:
 	_sprites.pack.visible = tint.a > 0.0
 	_sprites.pack.modulate = tint
 
+## Plays an emote from the catalogue; walking or swinging a tool ends it.
+func play_emote(id: String) -> void:
+	emote = id if Emotes.exists(id) else ""
+	_emote_t = 0.0
+
+func stop_emote() -> void:
+	if emote == "":
+		return
+	emote = ""
+	emote_finished.emit()
+
 func swing() -> void:
+	stop_emote()
 	_tool_t = 0.0
 
 func is_swinging() -> bool:
@@ -69,6 +86,8 @@ func is_swinging() -> bool:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if emote != "" and moving:
+		stop_emote()
 	var col := 0
 	if _tool_t >= 0.0:
 		_tool_t += delta
@@ -77,22 +96,46 @@ func _process(delta: float) -> void:
 			_tool_t = -1.0
 	elif moving:
 		col = 1 + int(_t * (RUN_FPS if running else WALK_FPS)) % 4
-	var row := 0
-	var flip := false
-	if absf(facing.x) > absf(facing.y) + 0.01:
-		row = 2
-		flip = facing.x < 0
-	elif facing.y < 0:
-		row = 1
+	var face := facing
 	var hop := 0.0
 	var lean := 0.0
+	var hat_lift := 0.0
+	if emote != "" and _tool_t < 0.0:
+		_emote_t += delta
+		var e := Emotes.info(emote)
+		var fps := float(e.get("fps", 1.0))
+		col = Emotes.frame_col(emote, _emote_t)
+		match str(e.get("motion", "")):
+			"hop":
+				hop = -absf(sin(_emote_t * fps * PI)) * 3.0
+			"giggle":
+				hop = -absf(sin(_emote_t * 18.0)) * 1.5
+			"bow", "tip":
+				var dip := minf(1.0, _emote_t * 5.0) * minf(1.0, maxf(0.0, Emotes.duration(emote) - _emote_t) * 5.0)
+				if absf(face.x) > absf(face.y):
+					lean = signf(face.x) * 0.22 * dip
+				if e.motion == "tip":
+					hat_lift = -4.0 * dip
+			"spin":
+				face = [Vector2.DOWN, Vector2.RIGHT, Vector2.UP, Vector2.LEFT][int(_emote_t * fps * 0.5) % 4]
+				lean = sin(_emote_t * PI) * 0.08
+				hop = -absf(sin(_emote_t * fps * PI * 0.5)) * 2.0
+		if _emote_t >= Emotes.duration(emote):
+			stop_emote()
+	var row := 0
+	var flip := false
+	if absf(face.x) > absf(face.y) + 0.01:
+		row = 2
+		flip = face.x < 0
+	elif face.y < 0:
+		row = 1
 	if moving and running and _tool_t < 0.0:
 		hop = -absf(sin(_t * RUN_FPS * PI * 0.5)) * 3.0
-		if absf(facing.x) > absf(facing.y):
-			lean = signf(facing.x) * 0.1
+		if absf(face.x) > absf(face.y):
+			lean = signf(face.x) * 0.1
 	rotation = lean
 	for l in _sprites:
 		var s: Sprite2D = _sprites[l]
 		s.frame = row * Art.DOLL_COLS + col
 		s.flip_h = flip
-		s.offset = Vector2(-16, -46.0 + hop)
+		s.offset = Vector2(-16, -46.0 + hop + (hat_lift if l == "hat" else 0.0))

@@ -35,6 +35,8 @@ var _warp_cooldown := 0.3
 var _use_held := 0.0
 var _net_t := 0.0
 var _remote_stamp := 0.0
+var bubble: SpeechBubble
+var _drift_t := 0.0
 
 func _ready() -> void:
 	add_to_group("players")
@@ -52,6 +54,8 @@ func _ready() -> void:
 	if not local and p:
 		_name_label.text = p.name
 	_remote_target = position
+	bubble = SpeechBubble.new()
+	add_child(bubble)
 
 var _pack_shown := ""
 var _hat_shown := ""
@@ -69,6 +73,64 @@ func _sync_hat() -> void:
 		return
 	_hat_shown = p.hat
 	doll.set_hat(p.hat)
+
+## Plays an emote with its bubble, particles and sound. Farm Wildlings close by dance along.
+func play_emote(id: String) -> void:
+	var e := Emotes.info(id)
+	if e.is_empty():
+		return
+	doll.play_emote(id)
+	bubble.show_icon(Emotes.icon(id), 2.0)
+	_drift_t = 0.6
+	if e.has("fx"):
+		Juice.burst(get_parent(), position + Vector2(0, -30), str(e.fx))
+	if e.has("sfx"):
+		Audio.sfx(str(e.sfx), 0.0)
+	if e.get("dance", false):
+		_dance_along()
+
+func _dance_along() -> void:
+	if world == null:
+		return
+	for c in world.creatures:
+		if is_instance_valid(c) and c.pet and c.position.distance_to(position) < 120.0:
+			c.dance(4.0)
+
+func _process(delta: float) -> void:
+	if doll == null or doll.emote == "":
+		return
+	var drift := str(Emotes.info(doll.emote).get("drift", ""))
+	if drift == "":
+		return
+	_drift_t -= delta
+	if _drift_t > 0.0:
+		return
+	_drift_t = 1.4
+	_float_up(drift)
+	if Emotes.info(doll.emote).get("dance", false):
+		_dance_along()
+
+## A note or "z" that rises from the head and fades.
+func _float_up(what: String) -> void:
+	var n: CanvasItem
+	if what.length() <= 2:
+		var l := UITheme.label(what, 9, UITheme.CREAM, true)
+		l.position = Vector2(4, -56)
+		n = l
+	else:
+		var sp := Sprite2D.new()
+		sp.texture = Art.item(what)
+		sp.scale = Vector2(0.75, 0.75)
+		sp.position = Vector2(8, -50)
+		n = sp
+	n.z_as_relative = false
+	n.z_index = 85
+	add_child(n)
+	var side := 1.0 if randf() < 0.5 else -1.0
+	var tw := n.create_tween().set_parallel()
+	tw.tween_property(n, "position", n.position + Vector2(side * 10.0, -18.0), 1.3)
+	tw.tween_property(n, "modulate:a", 0.0, 1.3).set_delay(0.5)
+	tw.chain().tween_callback(n.queue_free)
 
 func set_remote_state(pos: Vector2, face: Vector2, mov: bool) -> void:
 	var now := Time.get_ticks_msec() * 0.001

@@ -29,6 +29,7 @@ const DEFAULT_KEYS := {
 	"hotbar_next": [KEY_PERIOD],
 	"hotbar_prev": [KEY_COMMA],
 	"chat": [KEY_ENTER],
+	"emote": [KEY_G],
 	"coop": [KEY_O],
 }
 const DEFAULT_MOUSE := {
@@ -46,6 +47,7 @@ const DEFAULT_JOY := {
 	"hotbar_next": [JOY_BUTTON_RIGHT_SHOULDER],
 	"hotbar_prev": [JOY_BUTTON_LEFT_SHOULDER],
 	"rotate_item": [JOY_BUTTON_B],
+	"emote": [JOY_BUTTON_RIGHT_STICK],
 	"move_up": [JOY_BUTTON_DPAD_UP],
 	"move_down": [JOY_BUTTON_DPAD_DOWN],
 	"move_left": [JOY_BUTTON_DPAD_LEFT],
@@ -79,17 +81,18 @@ var analytics_asked: bool = false
 var touch_controls: String = "auto"     ## auto (touchscreens) | on | off
 var hemisphere: String = "auto"         ## auto (from the locale) | north | south
 var casino_daily_limit: int = 0        ## chips a day the player may stake; 0 = no limit
+var chat_filter: bool = true           ## masks rude words in chat and bubbles
 var hide_casino: bool = false          ## keeps the Grand Casino closed and its quests hidden
 var profile: Dictionary = {}           ## free-form per-account data: tutorials seen, emote wheel, window spots
 var stamps: Dictionary = {}            ## key -> unix time of the last change, for merging with the account copy
 
 const SAVED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind", "easy_fishing", "screen_shake",
 	"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves",
-	"custom_keys", "locale", "error_reports", "analytics", "analytics_asked", "touch_controls", "hemisphere", "casino_daily_limit", "hide_casino", "profile", "stamps"]
+	"custom_keys", "locale", "error_reports", "analytics", "analytics_asked", "touch_controls", "hemisphere", "casino_daily_limit", "hide_casino", "chat_filter", "profile", "stamps"]
 ## Follows the account to every device. The rest belongs to this device (screen, server, input hardware).
 const SYNCED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind", "easy_fishing",
 	"screen_shake", "twelve_hour", "auto_pause_menus", "custom_keys", "locale", "error_reports", "analytics",
-	"analytics_asked", "hemisphere", "casino_daily_limit", "hide_casino", "profile"]
+	"analytics_asked", "hemisphere", "casino_daily_limit", "hide_casino", "chat_filter", "profile"]
 const PROFILE_UPLOAD_DELAY := 3.0
 
 var _saved_snapshot: Dictionary = {}
@@ -256,7 +259,8 @@ func load_settings() -> void:
 func synced_values() -> Dictionary:
 	var out := {}
 	for k in SYNCED:
-		out[k] = get(k)
+		var v: Variant = get(k)
+		out[k] = v.duplicate(true) if v is Dictionary or v is Array else v
 	return out
 
 ## Every setting that changed since the last save gets a fresh stamp, then the account copy follows.

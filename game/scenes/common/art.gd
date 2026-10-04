@@ -4,7 +4,7 @@ extends RefCounted
 
 const HAIR_STYLES := ["short", "long", "ponytail", "spiky", "bob", "buzz", "curly", "bun"]
 const FRAME := Vector2i(32, 48)
-const DOLL_COLS := 7
+const DOLL_COLS := 15
 const SEASON_ROW_COUNT := 22
 
 static var _cache: Dictionary = {}

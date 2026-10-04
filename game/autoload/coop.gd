@@ -7,6 +7,8 @@ signal snapshot_loaded()
 signal remote_moved(pid: String, map_id: String, pos: Vector2, facing: Vector2, moving: bool)
 signal remote_left(pid: String)
 signal act_result(result: Dictionary)
+signal chat_said(pid: String, text: String)
+signal emote_played(pid: String, id: String)
 
 const CHUNK := 3000
 const ACTIONS := ["use_tool", "use_item", "harvest_at", "load_machine", "ship", "eat", "pick_up_object", "buy", "sell",
@@ -24,6 +26,9 @@ var _pos_timer := 0.0
 var _push_timer := 0.0
 var _meta_dirty := false
 var _meta_timer := 0.0
+## This session's chat, newest last: {pid, name, text}.
+var chat_log: Array = []
+const CHAT_LOG_MAX := 50
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -336,17 +341,52 @@ func pos_sync(pid: String, map_id: String, pos: Vector2, facing: Vector2, moving
 # --- Chat + trades ------------------------------------------------------------------------------------
 
 func send_chat(text: String) -> void:
-	text = text.strip_edges().substr(0, 200)
+	text = Chat.clean(text, false)
 	if text == "":
 		return
+	if not Chat.allow(Net.local_id()):
+		EventBus.toast.emit(tr("Slow down a little, the chat needs a breather."), "chat")
+		return
 	var nm := GameState.local_player().name
-	Net.chat_received.emit(nm, text)
+	_show_chat(Net.local_id(), nm, text)
 	if Net.is_online():
-		rpc("chat", nm, text)
+		rpc("chat", Net.local_id(), nm, text)
+
+## The sender's id comes from the connection, so nobody can speak for someone else.
+@rpc("any_peer", "reliable")
+func chat(pid: String, from_name: String, text: String) -> void:
+	var sender := _pid_of(multiplayer.get_remote_sender_id())
+	if sender != "":
+		pid = sender
+	if Chat.muted(pid) or not Chat.allow("in:" + pid):
+		return
+	_show_chat(pid, from_name.substr(0, 24), Chat.clean(text, false))
+
+func _show_chat(pid: String, from_name: String, text: String) -> void:
+	text = Chat.clean(text, Settings.chat_filter)
+	if text == "":
+		return
+	chat_log.append({"pid": pid, "name": from_name, "text": text})
+	if chat_log.size() > CHAT_LOG_MAX:
+		chat_log.pop_front()
+	Net.chat_received.emit(from_name, text)
+	chat_said.emit(pid, text)
+
+## Plays an emote the local player knows and shows it to everyone on the farm.
+func send_emote(id: String) -> void:
+	if not Emotes.knows(GameState.local_player(), id):
+		return
+	emote_played.emit(Net.local_id(), id)
+	if Net.is_online():
+		rpc("emote_sync", Net.local_id(), id)
 
 @rpc("any_peer", "reliable")
-func chat(from_name: String, text: String) -> void:
-	Net.chat_received.emit(from_name, text.substr(0, 200))
+func emote_sync(pid: String, id: String) -> void:
+	var sender := _pid_of(multiplayer.get_remote_sender_id())
+	if sender != "":
+		pid = sender
+	if Emotes.exists(id) and Chat.allow("emote:" + pid):
+		emote_played.emit(pid, id)
 
 ## Gift/trade an item or Wildling to another player (host applies).
 func send_gift(to_pid: String, kind: String, ref: String, n: int) -> void:

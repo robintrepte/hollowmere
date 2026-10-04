@@ -28,6 +28,7 @@ var _notice_cd := 1.5
 var _emote: Label
 var _working := false
 var _stuck := 0.0
+var _dance := 0.0
 var _rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
@@ -86,6 +87,13 @@ func emote(text: String, seconds: float = 1.2) -> void:
 	tw.tween_interval(seconds)
 	tw.tween_property(_emote, "modulate:a", 0.0, 0.3)
 
+## Hops on the spot for a while, e.g. when its farmer dances nearby.
+func dance(seconds: float) -> void:
+	if _dance <= 0.0:
+		emote("la")
+	_dance = maxf(_dance, seconds)
+	_target = position
+
 func _local_player() -> Player:
 	for p in get_tree().get_nodes_in_group("players"):
 		if p.local:
@@ -102,6 +110,11 @@ func _process(delta: float) -> void:
 		sprite.visible = int(_stun * 8.0) % 2 == 0
 		return
 	sprite.visible = true
+	if _dance > 0.0:
+		_dance -= delta
+		sprite.position.y = -absf(sin(_t * 7.0)) * 5.0
+		sprite.flip_h = int(_t * 2.0) % 2 == 0
+		return
 	var pl := _local_player()
 	var d := INF
 	if pl and not pet:

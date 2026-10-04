@@ -7,7 +7,7 @@ signal closed
 ## Shown as a tab inside the MenuShell: no frame and no close button of its own.
 var embedded := false
 
-const REBINDABLE := ["move_up", "move_down", "move_left", "move_right", "use_tool", "interact", "inventory", "party", "journal", "quests", "skills", "craft", "map", "menu", "coop", "chat", "hotbar_next", "hotbar_prev", "run", "rotate_item"]
+const REBINDABLE := ["move_up", "move_down", "move_left", "move_right", "use_tool", "interact", "inventory", "party", "journal", "quests", "skills", "craft", "map", "menu", "coop", "chat", "emote", "hotbar_next", "hotbar_prev", "run", "rotate_item"]
 
 var _waiting_action := ""
 var _bind_buttons: Dictionary = {}
@@ -48,6 +48,7 @@ func _ready() -> void:
 	_slider(body, "Day length (relaxed ->)", inverse_lerp(0.7, 2.0, Settings.clock_speed), func(x): Settings.clock_speed = lerpf(0.7, 2.0, x))
 	_check(body, "12-hour clock", Settings.twelve_hour, func(on): Settings.twelve_hour = on)
 	_check(body, "Pause time while in menus (solo)", Settings.auto_pause_menus, func(on): Settings.auto_pause_menus = on)
+	_check(body, "Filter rude words in chat", Settings.chat_filter, func(on): Settings.chat_filter = on)
 	_choice(body, "Seasons follow", ["Your region", "Northern hemisphere", "Southern hemisphere"], ["auto", "north", "south"].find(Settings.hemisphere), func(i: int):
 		Settings.hemisphere = ["auto", "north", "south"][i])
 	if Casino.built_in():
@@ -109,6 +110,7 @@ func _control_label(a: String) -> String:
 		"menu": return tr("Menu")
 		"coop": return tr("Co-op")
 		"chat": return tr("Chat")
+		"emote": return tr("Emote wheel")
 		"hotbar_next": return tr("Next item slot")
 		"hotbar_prev": return tr("Previous item slot")
 		_: return a.replace("_", " ").capitalize()

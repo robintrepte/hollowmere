@@ -46,8 +46,11 @@ func _ready() -> void:
 	EventBus.shake.connect(func(s: float):
 		if Settings.screen_shake:
 			_shake = maxf(_shake, s * 2.0))
+	add_to_group("main")
 	Coop.remote_moved.connect(_on_remote_moved)
 	Coop.remote_left.connect(_remove_remote)
+	Coop.emote_played.connect(_on_emote)
+	Coop.chat_said.connect(_on_chat_said)
 	Coop.snapshot_loaded.connect(_on_snapshot)
 	Coop.pvp_challenge.connect(_on_pvp_challenge)
 	Coop.pvp_started.connect(_on_pvp_started)
@@ -342,13 +345,45 @@ func _unhandled_input(event: InputEvent) -> void:
 		Audio.sfx("open")
 		ui.open(CoopPanel.new(ui, true))
 		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("chat") and Net.is_online():
+	elif event.is_action_pressed("emote"):
+		_toggle_emote_wheel()
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("chat") and (Net.is_online() or AgentBridge.has_agents()):
 		_open_chat()
 		get_viewport().set_input_as_handled()
 
 ## Opens the menu shell on the tab for a hotkey action (or a tab id).
 func open_menu(tab: String) -> void:
 	ui.open(MenuShell.new(ui, tab))
+
+var _wheel: EmoteWheel
+
+func _toggle_emote_wheel() -> void:
+	if is_instance_valid(_wheel):
+		_wheel.queue_free()
+		_wheel = null
+		return
+	_wheel = EmoteWheel.new()
+	_wheel.closed.connect(func():
+		if is_instance_valid(_wheel):
+			_wheel.queue_free()
+		_wheel = null)
+	ui.root.add_child(_wheel)
+
+func _on_emote(pid: String, id: String) -> void:
+	var n := _player_node(pid)
+	if n:
+		n.play_emote(id)
+
+func _on_chat_said(pid: String, text: String) -> void:
+	var n := _player_node(pid)
+	if n and n.bubble:
+		n.bubble.say(text)
+
+func _player_node(pid: String) -> Player:
+	if player and (pid == Net.local_id() or pid == player.pid or pid == "local"):
+		return player
+	return remotes.get(pid)
 
 func _open_chat() -> void:
 	var bar := PanelContainer.new()

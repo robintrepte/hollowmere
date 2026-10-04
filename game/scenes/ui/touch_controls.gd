@@ -64,6 +64,7 @@ func buttons() -> Array:
 		{"id": "use", "action": "use_tool", "c": Vector2(s.x - 40, s.y - 88 - btm), "r": 22.0},
 		{"id": "talk", "action": "interact", "c": Vector2(s.x - 92, s.y - 66 - btm), "r": 16.0},
 		{"id": "bag", "action": "inventory", "c": Vector2(s.x - 94, s.y - 116 - btm), "r": 14.0},
+		{"id": "emote", "action": "emote", "c": Vector2(s.x - 40, s.y - 148 - btm), "r": 13.0},
 		menu,
 	]
 

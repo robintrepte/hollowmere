@@ -175,6 +175,23 @@ func _ready() -> void:
 	_hotbar_name.offset_top = -SLOT - 28
 	_hotbar_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	root.add_child(_hotbar_name)
+	var emote_btn := UITheme.button("", func():
+		var main := get_tree().get_first_node_in_group("main")
+		if main and main.has_method("_toggle_emote_wheel"):
+			main._toggle_emote_wheel())
+	emote_btn.icon = Art.item("emote_wave")
+	emote_btn.expand_icon = true
+	emote_btn.tooltip_text = tr("Emotes")
+	emote_btn.custom_minimum_size = Vector2(28, 28)
+	emote_btn.anchor_left = 0.5
+	emote_btn.anchor_right = 0.5
+	emote_btn.anchor_top = 1
+	emote_btn.anchor_bottom = 1
+	emote_btn.offset_left = w / 2.0 + 8
+	emote_btn.offset_right = w / 2.0 + 36
+	emote_btn.offset_top = -SLOT - 10
+	emote_btn.offset_bottom = -SLOT + 18
+	root.add_child(emote_btn)
 
 	# Tutorial hint (above the hotbar)
 	_hint = PanelContainer.new()
@@ -239,6 +256,21 @@ func _ready() -> void:
 	EventBus.creature_befriended.connect(func(_c): _refresh_quest.call_deferred())
 	EventBus.map_changed.connect(func(_m): _refresh_quest(); _refresh_chips())
 	EventBus.chips_changed.connect(_refresh_chips)
+	var spec := PanelContainer.new()
+	spec.add_theme_stylebox_override("panel", UITheme.box(Color(0.1, 0.08, 0.12, 0.82), UITheme.COIN, 1, 4, 6, false))
+	spec.anchor_left = 0.5
+	spec.anchor_right = 0.5
+	spec.offset_left = -160
+	spec.offset_right = 160
+	spec.offset_top = 8
+	spec.visible = false
+	spec.name = "SpectatorBanner"
+	root.add_child(spec)
+	var spec_v := VBoxContainer.new()
+	spec.add_child(spec_v)
+	spec_v.add_child(UITheme.label("An agent is playing. You are watching.", 9, UITheme.CREAM))
+	spec_v.add_child(UITheme.button("Take control back", func(): AgentBridge.take_back()))
+	AgentBridge.mode_changed.connect(func(): spec.visible = AgentBridge.spectator)
 	_refresh_all()
 
 func _pill(pad: int) -> StyleBoxFlat:
