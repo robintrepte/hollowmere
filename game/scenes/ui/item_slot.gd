@@ -12,6 +12,18 @@ var hint := ""
 var dim := false
 var bar := -1.0
 var bg := true
+## Enchanted tools shimmer.
+var glint := false:
+	set(v):
+		glint = v
+		set_process(v)
+		queue_redraw()
+
+func _ready() -> void:
+	set_process(glint)
+
+func _process(_dt: float) -> void:
+	queue_redraw()
 
 func set_item(id: String, n: int = 1, q: int = 0) -> void:
 	item_id = id
@@ -45,6 +57,18 @@ static func draw_quality(ci: CanvasItem, at: Vector2, q: int) -> void:
 		ci.draw_rect(Rect2(p, Vector2(5, 5)), UITheme.OUTLINE)
 		ci.draw_rect(Rect2(p + Vector2(1, 1), Vector2(3, 3)), c)
 
+func _draw_glint(pos: Vector2, isz: Vector2, tex: Texture2D) -> void:
+	var t := Time.get_ticks_msec() / 1000.0
+	draw_texture_rect(tex, Rect2(pos.floor(), isz), false, Color(0.75, 0.45, 1.0, 0.26 + 0.16 * sin(t * 3.0)))
+	var s := maxf(1.0, isz.x / 16.0)
+	for i in 3:
+		var ph := fmod(t * 0.7 + i / 3.0, 1.0)
+		var p := (pos + Vector2(isz.x * fmod(0.2 + i * 0.37, 1.0), isz.y * (1.0 - ph))).floor()
+		var a := sin(ph * PI)
+		draw_rect(Rect2(p, Vector2(s, s)), Color(1, 0.95, 1, a))
+		draw_rect(Rect2(p + Vector2(-s, 0), Vector2(s, s)), Color(0.8, 0.55, 1, a * 0.6))
+		draw_rect(Rect2(p + Vector2(s, 0), Vector2(s, s)), Color(0.8, 0.55, 1, a * 0.6))
+
 func _draw() -> void:
 	var r := Rect2(Vector2.ZERO, size)
 	if bg:
@@ -55,6 +79,8 @@ func _draw() -> void:
 			var isz := Vector2(32, 32) if size.x >= 32 and size.y >= 32 else Vector2(16, 16)
 			var pos := (size - isz) / 2.0
 			draw_texture_rect(tex, Rect2(pos.floor(), isz), false, Color(1, 1, 1, 0.45 if dim else 1.0))
+			if glint:
+				_draw_glint(pos, isz, tex)
 		var f := UITheme.font()
 		if count > 1:
 			var t := str(count)

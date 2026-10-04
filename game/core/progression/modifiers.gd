@@ -8,7 +8,7 @@ extends RefCounted
 ##   crop_growth, crop_yield, crop_quality, water_range, water_duration, job_power, job_energy,
 ##   wildling_regen, breed_speed, hatch_speed, den_slots, battle_damage, battle_heal, befriend,
 ##   battle_xp, move_speed, max_energy, energy_cost, forage_luck, chest_luck, mine_speed, ore_luck,
-##   fish_bite, fish_zone, fish_luck, craft_cost, enchant_cost, sell_price, shop_discount,
+##   chop_speed, fish_bite, fish_zone, fish_luck, craft_cost, enchant_cost, sell_price, shop_discount,
 ##   ship_bonus, offline_efficiency, casino_daily, light_radius
 
 ## name -> Callable(PlayerData) -> Dictionary

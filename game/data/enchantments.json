@@ -1,0 +1,28 @@
+{
+ "tools": ["hoe", "watering_can", "pickaxe", "axe", "scythe", "fishing_rod", "shovel", "bucket"],
+ "enchants": {
+  "efficiency": {"name": "Efficiency", "tools": ["pickaxe", "axe"], "max": 3, "weight": 10, "desc": "Breaks rock and wood faster.", "mods": {"pickaxe": {"mine_speed": 0.25}, "axe": {"chop_speed": 0.25}}},
+  "fortune": {"name": "Fortune", "tools": ["pickaxe"], "max": 3, "weight": 6, "desc": "More ore from every vein.", "mods": {"pickaxe": {"ore_luck": 0.15}}},
+  "gentle": {"name": "Gentle Touch", "tools": ["pickaxe"], "max": 1, "weight": 3, "desc": "Crystals and gems come out whole: one extra from each."},
+  "lumberjack": {"name": "Lumberjack", "tools": ["axe"], "max": 2, "weight": 5, "desc": "More wood and sap from every tree, and a chance of hardwood."},
+  "wide_furrow": {"name": "Wide Furrow", "tools": ["hoe"], "max": 1, "weight": 5, "desc": "Tills a row of three tiles at once."},
+  "fertility": {"name": "Fertility", "tools": ["hoe"], "max": 3, "weight": 6, "desc": "Better-quality harvests.", "mods": {"hoe": {"crop_quality": 0.05}}},
+  "abundance": {"name": "Abundance", "tools": ["watering_can"], "max": 3, "weight": 8, "desc": "Holds 15 more water per level."},
+  "mist": {"name": "Mist", "tools": ["watering_can"], "max": 1, "weight": 4, "desc": "Every pour waters a 3×3 patch."},
+  "long_rain": {"name": "Long Rain", "tools": ["watering_can"], "max": 3, "weight": 6, "desc": "Soil stays wet longer.", "mods": {"watering_can": {"water_duration": 0.2}}},
+  "sweep": {"name": "Sweep", "tools": ["scythe"], "max": 1, "weight": 6, "desc": "Harvests a 3×3 patch of ripe crops in one swing."},
+  "lure": {"name": "Lure", "tools": ["fishing_rod"], "max": 3, "weight": 8, "desc": "Fish bite sooner.", "mods": {"fishing_rod": {"fish_bite": 0.12}}},
+  "sea_luck": {"name": "Luck of the Sea", "tools": ["fishing_rod"], "max": 3, "weight": 6, "desc": "Treasure turns up more often.", "mods": {"fishing_rod": {"fish_luck": 0.06}}},
+  "steady": {"name": "Steady Hand", "tools": ["fishing_rod"], "max": 3, "weight": 6, "desc": "A larger catch zone while reeling.", "mods": {"fishing_rod": {"fish_zone": 0.08}}},
+  "deep_dig": {"name": "Deep Dig", "tools": ["shovel"], "max": 2, "weight": 6, "desc": "Trenches cost 20% less energy per level."},
+  "big_splash": {"name": "Big Splash", "tools": ["bucket"], "max": 1, "weight": 5, "desc": "A full bucket soaks a 5×5 patch."},
+  "thrift": {"name": "Thrift", "tools": ["hoe", "watering_can", "pickaxe", "axe", "scythe", "fishing_rod", "shovel", "bucket"], "max": 3, "weight": 7, "desc": "This tool uses 10% less energy per level."}
+ },
+ "offers": {
+  "essence": [1, 2, 3],
+  "dust": [2, 4, 6],
+  "extra": [0.0, 0.25, 0.55]
+ },
+ "anvil": {"essence_per_level": 1},
+ "grindstone": {"refund": 0.5}
+}

@@ -15,6 +15,8 @@ var hotbar: Array = []          # [{uid, id}] or {} per slot
 var selected: int = 0
 var party: Array = []           # Array[Creature]; party[0] is the lead
 var tool_levels: Dictionary = {"hoe": 0, "watering_can": 0, "pickaxe": 0, "axe": 0, "scythe": 0, "shovel": 0, "bucket": 0}
+## Enchantments per tool: {tool: {enchant_id: level}} (see Enchanting).
+var tool_enchants: Dictionary = {}
 var water_left: int = 40
 var bucket_full: bool = false
 var chips: int = 0
@@ -108,7 +110,7 @@ func tool_level(tool: String) -> int:
 	return int(tool_levels.get(tool, 0))
 
 func water_capacity() -> int:
-	return 40 + 15 * tool_level("watering_can")
+	return 40 + 15 * tool_level("watering_can") + 15 * int(tool_enchants.get("watering_can", {}).get("abundance", 0))
 
 func lead() -> Creature:
 	for c in party:
@@ -182,7 +184,7 @@ func to_dict() -> Dictionary:
 		p.append(c.to_dict())
 	return {
 		"id": id, "name": name, "look": look, "hat": hat, "inventory": inventory.to_dict(), "hotbar": hotbar,
-		"selected": selected, "party": p, "tool_levels": tool_levels, "water_left": water_left, "bucket_full": bucket_full, "chips": chips, "quests": quests, "skill_points": skill_points, "emotes": emotes, "level": level, "xp": xp, "tree": tree, "respecs": respecs,
+		"selected": selected, "party": p, "tool_levels": tool_levels, "tool_enchants": tool_enchants, "water_left": water_left, "bucket_full": bucket_full, "chips": chips, "quests": quests, "skill_points": skill_points, "emotes": emotes, "level": level, "xp": xp, "tree": tree, "respecs": respecs,
 		"fishing": fishing, "flags": flags,
 		"energy": energy, "max_energy": max_energy, "backpack": backpack, "packs": packs,
 		"relationships": relationships, "recipes": recipes, "cosmetics": cosmetics, "map_id": map_id,
@@ -206,6 +208,11 @@ static func from_dict(d: Dictionary) -> PlayerData:
 		p.party.append(Creature.from_dict(c))
 	for k in d.get("tool_levels", {}):
 		p.tool_levels[k] = int(d.tool_levels[k])
+	for tool in d.get("tool_enchants", {}):
+		var ench := {}
+		for id in d.tool_enchants[tool]:
+			ench[str(id)] = int(d.tool_enchants[tool][id])
+		p.tool_enchants[str(tool)] = ench
 	p.water_left = int(d.get("water_left", 40))
 	p.bucket_full = bool(d.get("bucket_full", false))
 	p.chips = int(d.get("chips", 0))

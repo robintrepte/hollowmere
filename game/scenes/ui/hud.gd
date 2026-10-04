@@ -381,6 +381,7 @@ func _refresh_hotbar() -> void:
 		var s: ItemSlot = _slots[i]
 		var e := p.hotbar_entry(i)
 		s.selected = i == p.selected
+		s.glint = not e.is_empty() and Enchanting.has_any(p, e.id)
 		if e.is_empty():
 			s.set_item("", 0, 0)
 			s.bar = -1.0

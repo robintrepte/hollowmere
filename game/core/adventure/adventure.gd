@@ -84,6 +84,8 @@ static func treasure_loot(region: String, floor_n: int, rng: RandomNumberGenerat
 	if rng.randf() < 0.35 + floor_n * 0.02:
 		var g: String = gems[mini(gems.size() - 1, rng.randi_range(0, mini(gems.size() - 1, order)))]
 		loot[g] = int(loot.get(g, 0)) + 1
+	if grand or rng.randf() < 0.1 + floor_n * 0.005:
+		loot[Enchanting.random_book(rng, 3 if grand else 2)] = 1
 	if grand:
 		loot["money"] = int(loot.money) * 5
 		loot["star_shard"] = 1

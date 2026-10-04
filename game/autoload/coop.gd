@@ -14,7 +14,7 @@ const ACTIONS := ["use_tool", "use_item", "harvest_at", "load_machine", "ship", 
 	"befriend_act", "dex_seen_act", "reward_act", "warden_won_act", "guardian_result_act", "legend_result_act",
 	"mine_floor_act", "open_treasure_act", "festival_act", "story_seen_act", "chain_act", "show_act", "rematch_won_act", "claim_quest_act",
 	"invest_skill_act", "respec_skills_act", "fish_cast_act", "fish_result_act", "equip_tackle_act", "unequip_tackle_act", "upgrade_rod_act", "first_gift_act",
-	"deep_enter_act", "deep_boss_act", "crack_geode_act", "donate_museum_act"]
+	"deep_enter_act", "deep_boss_act", "crack_geode_act", "donate_museum_act", "enchant_act", "anvil_act", "grindstone_act", "battle_spoils_act"]
 
 var _chunks: Dictionary = {}       # transfer id -> Array
 var _ready_to_sleep: Dictionary = {}

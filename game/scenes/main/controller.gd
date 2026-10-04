@@ -34,6 +34,9 @@ func _feedback(r: Dictionary, t: Vector2i) -> void:
 		if r.get("sfx", "") != "":
 			Audio.sfx(r.sfx)
 			Juice.burst(world, GameState.tile_center(t) + Vector2(0, -4), r.sfx)
+			var tool := _pdata().selected_id() if _pdata() else ""
+			if tool != "" and Data.get_item(tool).get("cat", "") == "tool" and Enchanting.has_any(_pdata(), "pickaxe" if tool == "drill" else tool):
+				Juice.burst(world, GameState.tile_center(t) + Vector2(0, -6), "sparkle")
 	elif r.get("reason", "") != "":
 		EventBus.toast.emit(r.reason, "")
 		Audio.sfx("error")
@@ -183,6 +186,9 @@ func _interact_object(t: Vector2i, o: Dictionary) -> bool:
 			return true
 		"crab_pot":
 			_act("harvest_at", [world.map_id, t])
+			return true
+		"station":
+			ui.open(EnchantPanel.new(_pdata(), str(o.id), world.map_id, t))
 			return true
 	return false
 

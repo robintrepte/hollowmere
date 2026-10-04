@@ -28,6 +28,7 @@ func _ready() -> void:
 	TimeService.tick.connect(_on_time_tick)
 	Modifiers.register("backpack", func(p): return p.pack_mods() if p else {})
 	Modifiers.register("skills", func(p): return Skills.mods(p) if p else {})
+	Modifiers.register("enchantments", func(p): return Enchanting.mods(p) if p else {})
 
 func _queue_story() -> void:
 	check_story.call_deferred()
@@ -720,10 +721,13 @@ func _anyone_has(id: String) -> bool:
 func _res(ok: bool, reason: String = "") -> Dictionary:
 	return {"ok": ok, "fx": [], "sfx": "", "reason": reason, "energy": 0.0}
 
+## Enchantment energy factor for the tool in use (Thrift); 1.0 outside tool use.
+var _energy_scale := 1.0
+
 func _spend_energy(p: PlayerData, n: float, farm_tool: bool = false) -> bool:
 	if n <= 0:
 		return true
-	n *= Modifiers.mult(p, "energy_cost", 0.3) * (Modifiers.mult(p, "farm_energy", 0.3) if farm_tool else 1.0)
+	n *= _energy_scale * Modifiers.mult(p, "energy_cost", 0.3) * (Modifiers.mult(p, "farm_energy", 0.3) if farm_tool else 1.0)
 	if p.energy <= 0.0:
 		EventBus.toast.emit("You're too tired. Eat something or go to bed.", "zzz")
 		return false
@@ -732,6 +736,12 @@ func _spend_energy(p: PlayerData, n: float, farm_tool: bool = false) -> bool:
 	return true
 
 func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictionary:
+	_energy_scale = Enchanting.energy_scale(player(pid), "pickaxe" if tool == "drill" else tool)
+	var r := _use_tool(pid, map_id, t, tool)
+	_energy_scale = 1.0
+	return r
+
+func _use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictionary:
 	var p := player(pid)
 	var g := grid(map_id)
 	var info := map_info(map_id)
@@ -750,6 +760,12 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 				r.ok = true
 				r.sfx = "hoe"
 				p.stat_add("till")
+				if Enchanting.level(p, "hoe", "wide_furrow") > 0:
+					for side in [t + Vector2i(1, 0), t + Vector2i(-1, 0)]:
+						if g.can_till(side) and _spend_energy(p, base_cost * 0.5, true):
+							g.till(side)
+							p.stat_add("till")
+							EventBus.tile_changed.emit(map_id, side)
 			elif g.is_tilled(t) and g.crop_at(t).is_empty():
 				if not _spend_energy(p, base_cost, true):
 					return r
@@ -769,6 +785,8 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 				if not _spend_energy(p, base_cost * 0.5, true):
 					return r
 				var reach := lvl + 2 * int(Modifiers.value(p, "water_range"))
+				if Enchanting.level(p, "watering_can", "mist") > 0:
+					reach = maxi(reach, 6)
 				var area: Array = [t]
 				if reach >= 2:
 					area = [t, t + Vector2i(1, 0), t + Vector2i(-1, 0)]
@@ -814,7 +832,7 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 					r.sfx = "water"
 					_trench_redraw(map_id, t)
 			elif g.is_tilled(t) and p.bucket_full:
-				var reach := 2 if lvl >= 4 else (1 if lvl >= 2 else 0)
+				var reach := 2 if lvl >= 4 or Enchanting.level(p, "bucket", "big_splash") > 0 else (1 if lvl >= 2 else 0)
 				var splash: Array = [t, t + Vector2i(1, 0), t + Vector2i(-1, 0), t + Vector2i(0, 1), t + Vector2i(0, -1)]
 				if reach > 0:
 					splash.clear()
@@ -834,7 +852,7 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 		"pickaxe", "axe", "scythe":
 			if tool == "scythe":
 				if g.crop_ready(t):
-					if not Skills.has_unlock(p, "harvest_sweep"):
+					if not Skills.has_unlock(p, "harvest_sweep") and Enchanting.level(p, "scythe", "sweep") == 0:
 						return harvest_at(pid, map_id, t)
 					var sweep := harvest_at(pid, map_id, t)
 					for dy in [-1, 0, 1]:
@@ -856,6 +874,8 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 				var cost := float(Tiles.DEBRIS[d].energy) * maxf(0.4, 1.0 - 0.15 * lvl)
 				if tool == "pickaxe":
 					cost /= Modifiers.mult(p, "mine_speed")
+				elif tool == "axe":
+					cost /= Modifiers.mult(p, "chop_speed")
 				var res := g.clear_debris(t, tool, lvl, rng)
 				if not res.ok:
 					r.reason = res.reason
@@ -879,6 +899,14 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 						res.drops.append(["quartz", 1])
 					if rng.randf() < 0.04:
 						res.drops.append(["clay", 1])
+				var lj := Enchanting.level(p, "axe", "lumberjack") if tool == "axe" else 0
+				if lj > 0 and d in [24, 25, 27]:
+					for dr in res.drops:
+						dr[1] = int(ceil(int(dr[1]) * (1.0 + 0.25 * lj)))
+					if rng.randf() < 0.15 * lj:
+						res.drops.append(["hardwood", 1])
+				if tool == "pickaxe":
+					_gentle(p, res.drops)
 				for dr in res.drops:
 					give_item(p, dr[0], int(dr[1]))
 					r.fx.append(["+%d %s" % [int(dr[1]), Data.item_name(dr[0])], Color.WHITE])
@@ -895,7 +923,7 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 				give_item(p, o.id, 1)
 				r.ok = true
 				r.sfx = "chop"
-			elif tool == "pickaxe" and not g.object_at(t).is_empty() and g.object_at(t).kind in ["machine", "sprinkler", "scarecrow", "decor", "chest", "crab_pot"]:
+			elif tool == "pickaxe" and not g.object_at(t).is_empty() and g.object_at(t).kind in ["machine", "sprinkler", "scarecrow", "decor", "chest", "crab_pot", "station"]:
 				return pick_up_object(pid, map_id, t)
 	if r.ok:
 		EventBus.tile_changed.emit(map_id, t)
@@ -1480,6 +1508,124 @@ func mine_floor_act(pid: String, region: String, floor_n: int) -> Dictionary:
 		r["new_elevator"] = floor_n % Adventure.ELEVATOR_STEP == 0
 	return r
 
+# --- Enchanting ---------------------------------------------------------------------
+
+## Gentle Touch keeps crystals and gems whole: one extra of each.
+func _gentle(p: PlayerData, drops: Array) -> void:
+	if Enchanting.level(p, "pickaxe", "gentle") <= 0:
+		return
+	for dr in drops:
+		if str(Data.get_item(str(dr[0])).get("cat", "")) == "gem":
+			dr[1] = int(dr[1]) + 1
+
+func _station_at(map_id: String, x: int, y: int, id: String) -> bool:
+	var g := grid(map_id)
+	return g != null and g.object_at(Vector2i(x, y)).get("id", "") == id
+
+func _owns_tool(p: PlayerData, tool: String) -> bool:
+	return tool in Enchanting.tools() and p.inventory.count(tool) > 0
+
+## The three offers the table at (x, y) shows this player for a tool.
+func enchant_offers(pid: String, map_id: String, x: int, y: int, tool: String) -> Array:
+	var p := player(pid)
+	if p == null or not _station_at(map_id, x, y, "enchanting_table"):
+		return []
+	return Enchanting.offers(p, tool, Enchanting.shelves_near(grid(map_id), Vector2i(x, y)), Modifiers.mult(p, "enchant_cost", 0.3))
+
+func enchant_act(pid: String, map_id: String, x: int, y: int, tool: String, slot: int) -> Dictionary:
+	var p := player(pid)
+	if p == null or not _station_at(map_id, x, y, "enchanting_table"):
+		return _res(false)
+	if not _owns_tool(p, tool):
+		return _res(false, tr("You need the tool in your pack."))
+	if Enchanting.has_any(p, tool):
+		return _res(false, tr("This tool is already enchanted. Use books at an anvil, or clear it at a grindstone."))
+	var offers := enchant_offers(pid, map_id, x, y, tool)
+	if slot < 0 or slot >= offers.size():
+		return _res(false)
+	var o: Dictionary = offers[slot]
+	if p.inventory.count("arcane_essence") < int(o.essence) or p.inventory.count("glimmer_dust") < int(o.dust):
+		return _res(false, tr("You need %d Arcane Essence and %d Glimmer Dust.") % [int(o.essence), int(o.dust)])
+	p.inventory.remove("arcane_essence", int(o.essence))
+	p.inventory.remove("glimmer_dust", int(o.dust))
+	p.tool_enchants[tool] = o.enchants.duplicate()
+	p.flags["enchant_seed"] = int(p.flags.get("enchant_seed", 0)) + 1
+	p.stat_add("enchant")
+	EventBus.inventory_changed.emit()
+	EventBus.hotbar_changed.emit()
+	var r := _res(true)
+	r["enchants"] = p.tool_enchants[tool]
+	r.sfx = "sparkle"
+	return r
+
+## Anvil: "apply" a book to a tool, or "combine" two equal books into a stronger one.
+func anvil_act(pid: String, map_id: String, x: int, y: int, mode: String, tool: String, book: String) -> Dictionary:
+	var p := player(pid)
+	if p == null or not _station_at(map_id, x, y, "anvil"):
+		return _res(false)
+	var b := Enchanting.parse_book(book)
+	if b.is_empty() or p.inventory.count(book) < (2 if mode == "combine" else 1):
+		return _res(false, tr("You don't have that book."))
+	var cost := Enchanting.anvil_cost(int(b[1]))
+	if p.inventory.count("arcane_essence") < cost:
+		return _res(false, tr("You need %d Arcane Essence.") % cost)
+	var r := _res(true)
+	match mode:
+		"apply":
+			if not _owns_tool(p, tool):
+				return _res(false, tr("You need the tool in your pack."))
+			var res := Enchanting.apply_book(Enchanting.on_tool(p, tool), tool, str(b[0]), int(b[1]))
+			if not res.ok:
+				return _res(false, str(res.reason))
+			p.inventory.remove(book, 1)
+			p.tool_enchants[tool] = res.enchants
+			r["enchants"] = res.enchants
+		"combine":
+			var next := Enchanting.combine_books(book)
+			if next == "":
+				return _res(false, tr("That book is already as strong as it gets."))
+			p.inventory.remove(book, 2)
+			give_item(p, next, 1)
+			r["book"] = next
+		_:
+			return _res(false)
+	p.inventory.remove("arcane_essence", cost)
+	EventBus.inventory_changed.emit()
+	EventBus.hotbar_changed.emit()
+	r.sfx = "sparkle"
+	return r
+
+## Grindstone: strips a tool's enchantments and gives back part of the essence.
+func grindstone_act(pid: String, map_id: String, x: int, y: int, tool: String) -> Dictionary:
+	var p := player(pid)
+	if p == null or not _station_at(map_id, x, y, "grindstone"):
+		return _res(false)
+	if not Enchanting.has_any(p, tool):
+		return _res(false, tr("That tool has no enchantments."))
+	var back := Enchanting.refund(Enchanting.on_tool(p, tool))
+	p.tool_enchants.erase(tool)
+	if back > 0:
+		give_item(p, "arcane_essence", back)
+	EventBus.inventory_changed.emit()
+	EventBus.hotbar_changed.emit()
+	var r := _res(true)
+	r["refund"] = back
+	r.sfx = "rock"
+	return r
+
+## After a won battle: a chance of Arcane Essence, better against trainers.
+func battle_spoils_act(pid: String, kind: String, level: int) -> Dictionary:
+	var p := player(pid)
+	var r := _res(true)
+	if p == null:
+		return r
+	var chance := 0.35 if kind != "wild" else 0.06 + level / 500.0
+	if rng.randf() < chance:
+		var n := 1 + (1 if kind != "wild" and rng.randf() < 0.3 else 0)
+		give_item(p, "arcane_essence", n)
+		r["essence"] = n
+	return r
+
 # --- Mining -------------------------------------------------------------------------
 
 ## Crack damage per map {map_id: {"x,y": 0..1}}; not saved, a half-cracked rock heals overnight.
@@ -1536,7 +1682,11 @@ func _break_block(p: PlayerData, map_id: String, g: FarmGrid, info: Dictionary, 
 	var d := g.get_deco(t)
 	var what := str(info.get("ore_types", {}).get(Tiles.key(t), ""))
 	g.set_deco(t, 0)
-	for dr in Mining.drops(d, what, rng, Modifiers.value(p, "ore_luck"), luck(), info.get("fossils", [])):
+	var drops := Mining.drops(d, what, rng, Modifiers.value(p, "ore_luck"), luck(), info.get("fossils", []))
+	_gentle(p, drops)
+	if d == Tiles.DECO.crystal and rng.randf() < 0.12:
+		drops.append(["arcane_essence", 1])
+	for dr in drops:
 		give_item(p, dr[0], int(dr[1]))
 		r.fx.append(["+%d %s" % [int(dr[1]), Data.item_name(dr[0])], Color.WHITE])
 	p.stat_add("mined")
@@ -1990,7 +2140,7 @@ func fish_cast_act(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 		r.reason = tr("Cast into water.")
 		return r
 	var rod := p.tool_level("fishing_rod")
-	if not _spend_energy(p, Fishing.energy_cost(rod)):
+	if not _spend_energy(p, Fishing.energy_cost(rod) * Enchanting.energy_scale(p, "fishing_rod")):
 		return r
 	var bait := str(p.fishing.get("bait", ""))
 	if bait != "":
@@ -2067,6 +2217,11 @@ func fish_result_act(pid: String, outcome: String, got_treasure: bool = false) -
 			if Fishing.fish(id).get("legendary", false):
 				p.stat_add("fish_legend")
 				EventBus.toast.emit(tr("You caught the legendary %s!") % Data.item_name(id), "star")
+				give_item(p, "arcane_essence", 3)
+				r.fx.append(["+3 %s" % Data.item_name("arcane_essence"), Color("#c890ff")])
+			elif int(Fishing.fish(id).get("price", 0)) >= 250 and rng.randf() < 0.2:
+				give_item(p, "arcane_essence", 1)
+				r.fx.append(["+1 %s" % Data.item_name("arcane_essence"), Color("#c890ff")])
 			add_farm_xp(Progression.XP.harvest * 2)
 			if got_treasure and c.treasure:
 				var loot := Fishing.treasure_loot(rng, Modifiers.value(p, "fish_luck"))

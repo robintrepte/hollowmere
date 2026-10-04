@@ -367,7 +367,7 @@ Das ist der tiefste Eingriff in den Kern. Er muss vor Quests, Skilltree und Bala
 - [x] Regionsspezifische Erze und Kristalle.
 
 ### G4 Neue Crafting-Rezepte und bessere Werkzeuge · M
-- [x] Neue Werkzeugstufe(n) über Mystic hinaus (z. B. „Kristall“) aus Mining-Ressourcen. Neue Rezepte: Bohrer (3×1-Abbau), Bomben, Helmlampe, verstärkte Angelrute, verbesserte Sprinkler, Eimer- und Schaufel-Stufen, **Verzauberungstisch**, **Amboss**, Schleifstein, Krabbenkörbe. (Kristall-Stufe, Bohrer, Kirsch- und Megabombe, Kristall-Sprinkler, Schaufel-/Eimer-Stufen beim Schmied; die Helmlampe verkauft Tobin, Rutenstufen und Krabbenkörbe kamen mit Phase F, Verzauberungstisch, Amboss und Schleifstein folgen mit Phase H.)
+- [x] Neue Werkzeugstufe(n) über Mystic hinaus (z. B. „Kristall“) aus Mining-Ressourcen. Neue Rezepte: Bohrer (3×1-Abbau), Bomben, Helmlampe, verstärkte Angelrute, verbesserte Sprinkler, Eimer- und Schaufel-Stufen, **Verzauberungstisch**, **Amboss**, Schleifstein, Krabbenkörbe. (Kristall-Stufe, Bohrer, Kirsch- und Megabombe, Kristall-Sprinkler, Schaufel-/Eimer-Stufen beim Schmied; die Helmlampe verkauft Tobin, Rutenstufen und Krabbenkörbe kamen mit Phase F, Verzauberungstisch, Amboss und Schleifstein kamen mit Phase H.)
 - [x] Rezepte in `recipes.json`, Crafting-Tab mit Kategorien und Suchfeld.
 
 ---
@@ -375,11 +375,11 @@ Das ist der tiefste Eingriff in den Kern. Er muss vor Quests, Skilltree und Bala
 ## Phase H – Verzaubern
 
 ### H1 Verzauberungs-System (Minecraft-Stil) · L → A4, G1
-- [ ] **Verzauberungstisch** (craftbar). Bücherregale in der Nähe erhöhen die maximale Stufe.
-- [ ] Ressourcen: **Arkane Essenz** (aus Kristallen, seltenen Fischen und Wildling-Kämpfen) und **Glimmerstaub** (Kosten pro Versuch).
-- [ ] Pro Werkzeug 3 Angebote mit Seed pro Spieler und Werkzeug (wie in Minecraft, neu gewürfelt nach jeder Verzauberung). Die Vorschau zeigt nur die erste Verzauberung, weitere sind Überraschung.
-- [ ] Speicherung `PlayerData.tool_enchants = {tool: {enchant_id: level}}`, da Werkzeuge Stufen pro Spieler sind.
-- [ ] Verzauberungen (`enchantments.json`), Beispiele:
+- [x] **Verzauberungstisch** (craftbar). Bücherregale in der Nähe erhöhen die maximale Stufe. (Je 3 Regale im Umkreis von 3 Feldern +1 Stufe, maximal III.)
+- [x] Ressourcen: **Arkane Essenz** (aus Kristallen, seltenen Fischen und Wildling-Kämpfen) und **Glimmerstaub** (Kosten pro Versuch). (Im Spiel „Glitzerstaub“: aus Quarz craftbar oder bei Opal; Essenz zusätzlich aus Amethyst craftbar.)
+- [x] Pro Werkzeug 3 Angebote mit Seed pro Spieler und Werkzeug (wie in Minecraft, neu gewürfelt nach jeder Verzauberung). Die Vorschau zeigt nur die erste Verzauberung, weitere sind Überraschung.
+- [x] Speicherung `PlayerData.tool_enchants = {tool: {enchant_id: level}}`, da Werkzeuge Stufen pro Spieler sind.
+- [x] Verzauberungen (`enchantments.json`), Beispiele: (16 Verzauberungen, dazu Tiefgraben für die Schaufel und Großer Schwall für den Eimer. Holzfäller gibt mehr Holz und Hartholz, weil Bäume schon mit einem Schlag fallen.)
   - Hacke: Weite Furche (3×1), Fruchtbarkeit (+Qualität)
   - Gießkanne: Ergiebigkeit (+Kapazität), Sprühnebel (3×3), Langer Regen (+Bewässerungsdauer)
   - Spitzhacke: Effizienz, Glück (mehr Erz), Behutsamkeit (Kristalle intakt)
@@ -387,9 +387,9 @@ Das ist der tiefste Eingriff in den Kern. Er muss vor Quests, Skilltree und Bala
   - Sense: Schwung (Fläche)
   - Angelrute: Köder (schneller Biss), Glück des Meeres (Schätze), Ruhige Hand (größere Zone)
   - Universal: Sparsamkeit (weniger Energie)
-- [ ] **Amboss**: Verzauberungsbücher anwenden und kombinieren. **Schleifstein**: Verzauberung entfernen und Teil der Essenz zurück.
-- [ ] Verzauberte Werkzeuge schimmern im Paper-Doll und in der Hotbar.
-- [ ] Bücher als Loot in Truhen, beim Angeln und im Casino-Shop.
+- [x] **Amboss**: Verzauberungsbücher anwenden und kombinieren. **Schleifstein**: Verzauberung entfernen und Teil der Essenz zurück.
+- [x] Verzauberte Werkzeuge schimmern im Paper-Doll und in der Hotbar. (Hotbar und Inventar schimmern violett, beim Schwingen sprühen Funken.)
+- [ ] Bücher als Loot in Truhen, beim Angeln und im Casino-Shop. (Truhen und Angeln erledigt, Casino-Shop folgt mit Phase I.)
 
 ---
 

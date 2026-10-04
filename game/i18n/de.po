@@ -11483,3 +11483,260 @@ msgstr "Du bist der Einzige, der mir interessantes Erz bringt."
 msgid "Your pickaxe looks tired. Let me see it."
 msgstr "Deine Spitzhacke sieht müde aus. Lass mal sehen."
 
+#, c-format
+msgid "%d Arcane Essence"
+msgstr "%d Arkane Essenz"
+
+#, c-format
+msgid "%d Arcane Essence · %d Glimmer Dust"
+msgstr "%d Arkane Essenz · %d Glitzerstaub"
+
+#, c-format
+msgid "%s Apply it to a tool at an anvil."
+msgstr "%s Am Amboss auf ein Werkzeug anwenden."
+
+#, c-format
+msgid "%s ×%d"
+msgstr "%s ×%d"
+
+#, c-format
+msgid "+3 %s"
+msgstr "+3 %s"
+
+msgid "A full bucket soaks a 5×5 patch."
+msgstr "Ein voller Eimer wässert ein 5×5-Feld."
+
+msgid "A larger catch zone while reeling."
+msgstr "Größere Fangzone beim Einholen."
+
+msgid "A tool can hold at most three enchantments."
+msgstr "Ein Werkzeug trägt höchstens drei Verzauberungen."
+
+msgid "Abundance"
+msgstr "Fülle"
+
+msgid "Already enchanted. Add books at an anvil, or clear it at a grindstone first."
+msgstr "Schon verzaubert. Füge am Amboss Bücher hinzu oder schleif es vorher am Schleifstein ab."
+
+msgid "Anvil"
+msgstr "Amboss"
+
+msgid "Apply"
+msgstr "Anwenden"
+
+msgid "Apply enchanted books to tools, or combine two equal books into a stronger one."
+msgstr "Wende verzauberte Bücher auf Werkzeuge an oder kombiniere zwei gleiche Bücher zu einem stärkeren."
+
+msgid "Arcane Essence"
+msgstr "Arkane Essenz"
+
+msgid "Better-quality harvests."
+msgstr "Ernten in besserer Qualität."
+
+msgid "Big Splash"
+msgstr "Großer Schwall"
+
+#, c-format
+msgid "Book: %s"
+msgstr "Buch: %s"
+
+msgid "Bookshelf"
+msgstr "Bücherregal"
+
+#, c-format
+msgid "Bookshelves nearby: %d · strongest level: %s"
+msgstr "Bücherregale in der Nähe: %d · höchste Stufe: %s"
+
+msgid "Breaks rock and wood faster."
+msgstr "Baut Stein und Holz schneller ab."
+
+msgid "Bring a tool in your pack."
+msgstr "Bring ein Werkzeug im Rucksack mit."
+
+msgid "Combine"
+msgstr "Kombinieren"
+
+msgid "Crystals and gems come out whole: one extra from each."
+msgstr "Kristalle und Edelsteine bleiben heil: je einer extra."
+
+msgid "Deep Dig"
+msgstr "Tiefgraben"
+
+msgid "Efficiency"
+msgstr "Effizienz"
+
+msgid "Enchant"
+msgstr "Verzaubern"
+
+msgid "Enchanting Table"
+msgstr "Verzauberungstisch"
+
+#, c-format
+msgid "Enchantments: %s"
+msgstr "Verzauberungen: %s"
+
+msgid "Every pour waters a 3×3 patch."
+msgstr "Jeder Guss wässert ein 3×3-Feld."
+
+msgid "Every three within three tiles of an enchanting table raise its strength."
+msgstr "Je drei Regale im Umkreis von drei Feldern um einen Verzauberungstisch erhöhen seine Stärke."
+
+msgid "Fertility"
+msgstr "Fruchtbarkeit"
+
+msgid "Fish bite sooner."
+msgstr "Fische beißen schneller an."
+
+msgid "Fortune"
+msgstr "Glück"
+
+#, c-format
+msgid "Found %d Arcane Essence."
+msgstr "%d Arkane Essenz gefunden."
+
+msgid "Gentle Touch"
+msgstr "Sanfte Hand"
+
+msgid "Glimmer Dust"
+msgstr "Glitzerstaub"
+
+msgid "Grind it off"
+msgstr "Abschleifen"
+
+msgid "Grindstone"
+msgstr "Schleifstein"
+
+#, c-format
+msgid "Ground clean. +%d Arcane Essence."
+msgstr "Sauber abgeschliffen. +%d Arkane Essenz."
+
+msgid "Ground quartz that sparkles in the dark. Every enchantment takes a pinch."
+msgstr "Gemahlener Quarz, der im Dunkeln glitzert. Jede Verzauberung braucht eine Prise."
+
+msgid "Harvests a 3×3 patch of ripe crops in one swing."
+msgstr "Erntet ein 3×3-Feld reifer Pflanzen mit einem Schwung."
+
+msgid "Holds 15 more water per level."
+msgstr "Fasst pro Stufe 15 Wasser mehr."
+
+msgid "I"
+msgstr "I"
+
+msgid "II"
+msgstr "II"
+
+msgid "III"
+msgstr "III"
+
+msgid "IV"
+msgstr "IV"
+
+msgid "Long Rain"
+msgstr "Langer Regen"
+
+msgid "Luck of the Sea"
+msgstr "Meeresglück"
+
+msgid "Lumberjack"
+msgstr "Holzfäller"
+
+msgid "Lure"
+msgstr "Köder"
+
+#, c-format
+msgid "Made %s."
+msgstr "%s hergestellt."
+
+msgid "Magic"
+msgstr "Magie"
+
+msgid "Mist"
+msgstr "Nebel"
+
+msgid "More ore from every vein."
+msgstr "Mehr Erz aus jeder Ader."
+
+msgid "More wood and sap from every tree, and a chance of hardwood."
+msgstr "Mehr Holz und Harz von jedem Baum und eine Chance auf Hartholz."
+
+msgid "Only the first enchantment is shown. Stronger offers may hold a surprise."
+msgstr "Nur die erste Verzauberung wird angezeigt. Stärkere Angebote halten vielleicht eine Überraschung bereit."
+
+msgid "Place it, then use it to enchant a tool. Bookshelves nearby unlock stronger enchantments."
+msgstr "Aufstellen und damit ein Werkzeug verzaubern. Bücherregale in der Nähe schalten stärkere Verzauberungen frei."
+
+msgid "Raw magic from crystals, rare fish and hard-won battles. Enchanting runs on it."
+msgstr "Rohe Magie aus Kristallen, seltenen Fischen und hart erkämpften Siegen. Damit wird verzaubert."
+
+msgid "Soil stays wet longer."
+msgstr "Der Boden bleibt länger feucht."
+
+msgid "Steady Hand"
+msgstr "Ruhige Hand"
+
+#, c-format
+msgid "Strip every enchantment from this tool and get %d Arcane Essence back."
+msgstr "Entfernt alle Verzauberungen von diesem Werkzeug und gibt dir %d Arkane Essenz zurück."
+
+msgid "Strips a tool's enchantments and gives back half of the essence."
+msgstr "Entfernt die Verzauberungen eines Werkzeugs und gibt die Hälfte der Essenz zurück."
+
+msgid "Sweep"
+msgstr "Rundumschlag"
+
+msgid "That book doesn't work on this tool."
+msgstr "Dieses Buch passt nicht zu diesem Werkzeug."
+
+msgid "That book is already as strong as it gets."
+msgstr "Dieses Buch ist schon so stark wie möglich."
+
+msgid "That tool has no enchantments."
+msgstr "Dieses Werkzeug hat keine Verzauberungen."
+
+msgid "The tool already has that enchantment at this strength."
+msgstr "Das Werkzeug hat diese Verzauberung schon in dieser Stärke."
+
+msgid "This tool has nothing to grind off."
+msgstr "An diesem Werkzeug gibt es nichts abzuschleifen."
+
+msgid "This tool is already enchanted. Use books at an anvil, or clear it at a grindstone."
+msgstr "Dieses Werkzeug ist schon verzaubert. Nutze Bücher am Amboss oder schleif es am Schleifstein ab."
+
+msgid "This tool uses 10% less energy per level."
+msgstr "Dieses Werkzeug verbraucht pro Stufe 10 % weniger Energie."
+
+msgid "Thrift"
+msgstr "Sparsamkeit"
+
+msgid "Tills a row of three tiles at once."
+msgstr "Hackt eine Reihe aus drei Feldern auf einmal."
+
+msgid "Treasure turns up more often."
+msgstr "Schätze tauchen öfter auf."
+
+msgid "Trenches cost 20% less energy per level."
+msgstr "Gräben kosten pro Stufe 20 % weniger Energie."
+
+msgid "V"
+msgstr "V"
+
+msgid "Wide Furrow"
+msgstr "Breite Furche"
+
+msgid "You don't have that book."
+msgstr "Du hast dieses Buch nicht."
+
+msgid "You have no enchanted books. Look for them in treasure chests and while fishing."
+msgstr "Du hast keine verzauberten Bücher. Halte in Schatztruhen und beim Angeln Ausschau danach."
+
+#, c-format
+msgid "You need %d Arcane Essence and %d Glimmer Dust."
+msgstr "Du brauchst %d Arkane Essenz und %d Glitzerstaub."
+
+#, c-format
+msgid "You need %d Arcane Essence."
+msgstr "Du brauchst %d Arkane Essenz."
+
+msgid "You need the tool in your pack."
+msgstr "Das Werkzeug muss in deinem Rucksack sein."
+

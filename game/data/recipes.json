@@ -66,7 +66,13 @@
     "minecart":          {"in": {"iron_bar": 4, "silver_bar": 2, "wood": 20}, "unlock": "depth:2"},
     "mega_bomb":         {"in": {"gold_ore": 4, "coal": 2, "obsidian": 1}, "unlock": "depth:4"},
     "drill":             {"in": {"mithril_bar": 3, "silver_bar": 5, "iron_bar": 10}, "unlock": "depth:4"},
-    "crystal_sprinkler": {"in": {"crystal_bar": 1, "mithril_bar": 2, "glimmer_crystal": 1}, "unlock": "depth:5"}
+    "crystal_sprinkler": {"in": {"crystal_bar": 1, "mithril_bar": 2, "glimmer_crystal": 1}, "unlock": "depth:5"},
+    "glimmer_dust":      {"in": {"quartz": 1}, "n": 3, "unlock": "depth:1"},
+    "arcane_essence":    {"in": {"amethyst": 2}, "unlock": "depth:1"},
+    "enchanting_table":  {"in": {"hardwood": 10, "iron_bar": 3, "amethyst": 2}, "unlock": "depth:1"},
+    "bookshelf":         {"in": {"wood": 20, "fiber": 15}, "unlock": "depth:1"},
+    "anvil":             {"in": {"iron_bar": 8}, "unlock": "depth:1"},
+    "grindstone":        {"in": {"stone": 30, "wood": 10}, "unlock": "depth:1"}
   },
   "machines": {
     "furnace": {

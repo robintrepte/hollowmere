@@ -480,6 +480,10 @@ func _on_battle_requested(s: Dictionary) -> void:
 		var br: Dictionary = await Coop.act_async("deep_boss_act", [])
 		if br.has("text"):
 			after.append(str(br.text))
+	if res.result in ["befriend", "win"] and not s.get("friendly", false):
+		var sp: Dictionary = await Coop.act_async("battle_spoils_act", [str(s.kind), int(s.get("level", 10))])
+		if int(sp.get("essence", 0)) > 0:
+			EventBus.toast.emit(tr("Found %d Arcane Essence.") % int(sp.essence), "")
 	if s.kind == "wild" and res.result in ["befriend", "win"] and not s.get("boss", false):
 		var cr: Dictionary = await Coop.act_async("chain_act", [s.species])
 		var n := int(cr.get("chain", {}).get("n", 0))

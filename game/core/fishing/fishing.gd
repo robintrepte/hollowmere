@@ -172,6 +172,8 @@ static func treasure_loot(rng: RandomNumberGenerator, luck: float) -> Array:
 			if e[0] == id:
 				out.append([id, rng.randi_range(int(e[2]), int(e[3]))])
 				break
+	if rng.randf() < 0.08 + luck * 0.5:
+		out.append([Enchanting.random_book(rng), 1])
 	return out
 
 static func energy_cost(rod: int) -> float:

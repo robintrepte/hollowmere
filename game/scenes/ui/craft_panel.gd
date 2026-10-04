@@ -23,8 +23,9 @@ const CATEGORIES := {
 	"mining": ["mining", "bomb", "tool"],
 	"fishing": ["tackle", "bait"],
 	"wildlings": ["treat", "medicine", "charm"],
+	"magic": ["magic", "enchanting", "book"],
 }
-const CATEGORY_LABELS := {"all": "All", "farm": "Farm", "mining": "Mining", "fishing": "Fishing", "wildlings": "Wildlings"}
+const CATEGORY_LABELS := {"all": "All", "farm": "Farm", "mining": "Mining", "fishing": "Fishing", "wildlings": "Wildlings", "magic": "Magic"}
 
 func _init(p: PlayerData = null, k: String = "crafting") -> void:
 	player = p

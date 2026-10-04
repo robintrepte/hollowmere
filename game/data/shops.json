@@ -90,7 +90,7 @@
   "geologist": {
     "name": "Opal's Finds", "owner": "opal", "open": [800, 1900],
     "stock": [
-      {"id": "geode", "price": 200}, {"id": "quartz", "price": 150}, {"id": "amethyst", "price": 500, "requires": "depth:2"}, {"id": "gem_case", "price": 3000}
+      {"id": "geode", "price": 200}, {"id": "quartz", "price": 150}, {"id": "glimmer_dust", "price": 45, "requires": "depth:1"}, {"id": "amethyst", "price": 500, "requires": "depth:2"}, {"id": "gem_case", "price": 3000}
     ],
     "buys": {"gem": 0.25, "artifact": 0.25}
   }

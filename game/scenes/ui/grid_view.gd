@@ -167,6 +167,10 @@ static func draw_item(ci: CanvasItem, e: Dictionary, r: Rect2, alpha: float = 1.
 			ci.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 		else:
 			ci.draw_texture_rect(tex, Rect2((c - isz / 2.0).floor(), isz), false, Color(1, 1, 1, alpha))
+		var me := GameState.local_player()
+		if me and Enchanting.has_any(me, str(e.id)):
+			ci.draw_rect(r.grow(-1), Color(0.78, 0.5, 1.0, 0.9 * alpha), false, 1.0)
+			ci.draw_texture_rect(tex, Rect2((c - isz / 2.0).floor(), isz), false, Color(0.75, 0.45, 1.0, 0.25 * alpha))
 	var f := UITheme.font()
 	if int(e.n) > 1:
 		var t := str(e.n)

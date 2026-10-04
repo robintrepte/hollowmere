@@ -45,6 +45,7 @@ var shellfish: Dictionary = {}
 var fish_meta: Dictionary = {}
 var skill_branches: Dictionary = {}
 ## Deep mine layers (data/mine_layers.json), top to bottom.
+var enchants: Dictionary = {}
 var mine_layers: Array = []
 var skill_nodes: Array = []
 var _maps: Dictionary = {}
@@ -87,6 +88,7 @@ func load_all() -> void:
 	shops = _load_json("res://data/shops.json")
 	villagers = _load_json("res://data/villagers.json")
 	mine_layers = _load_json("res://data/mine_layers.json").get("layers", [])
+	enchants = _load_json("res://data/enchantments.json")
 	var reg: Dictionary = _load_json("res://data/regions.json")
 	legends = reg.get("legends", {})
 	reg.erase("legends")
@@ -294,7 +296,7 @@ const STACKS := {
 	"seed": 99, "crop": 24, "forage": 24, "fruit": 24, "material": 99, "ore": 50, "bar": 20, "gem": 10, "produce": 20,
 	"food": 10, "treat": 20, "fish": 20, "bait": 99, "tackle": 1, "junk": 20, "charm": 20, "medicine": 10, "artisan": 10, "fertilizer": 50, "placeable": 10,
 	"key": 1, "gift": 5, "cosmetic": 1, "tool": 1, "egg": 1, "container": 1, "sapling": 5,
-	"artifact": 10, "mining": 99, "bomb": 20,
+	"artifact": 10, "mining": 99, "bomb": 20, "book": 10, "magic": 99, "enchanting": 10,
 }
 
 func item_size(id: String) -> Vector2i:
@@ -320,6 +322,13 @@ func has_item(id: String) -> bool:
 func get_item(id: String) -> Dictionary:
 	if items.has(id):
 		return items[id]
+	if id.begins_with("book:"):
+		var b := Enchanting.parse_book(id)
+		if b.is_empty():
+			return {}
+		var bd := {"name": "Enchanted Book", "cat": "book", "sell": 150 * int(b[1]), "base": "enchanted_book", "enchant": b[0], "level": int(b[1]), "desc": Enchanting.spec(b[0]).get("desc", "")}
+		items[id] = bd
+		return bd
 	if ":" in id:
 		var parts := id.split(":")
 		var prefix := parts[0]
@@ -362,6 +371,8 @@ func _display_item_name(id: String, it: Dictionary) -> String:
 		return tr("%s Seeds") % tr(str(crops[it.crop].name))
 	if it.get("cat") == "sapling" and it.has("tree") and trees.has(it.tree):
 		return tr("%s Sapling") % tr(str(trees[it.tree].name))
+	if it.get("cat") == "book":
+		return tr("Book: %s") % Enchanting.title(str(it.enchant), int(it.level))
 	if ":" in id:
 		var parts := id.split(":")
 		var base: Dictionary = get_item(parts[1]) if parts.size() > 1 else {}
@@ -412,6 +423,8 @@ func item_desc(id: String) -> String:
 		return tr("Plant on open farmland. Grows into a tree in %s, then gives fruit every %s in %s.") % [TimeService.duration_text(float(t.days) * CropGrowth.TREE_DAY_SECONDS), TimeService.duration_text(CropGrowth.FRUIT_SECONDS), season_list(t.seasons)]
 	if it.get("cat") == "fruit":
 		return tr("Fresh from the orchard.")
+	if it.get("cat") == "book":
+		return tr("%s Apply it to a tool at an anvil.") % tr(str(it.desc))
 	if ":" in id:
 		match id.split(":")[0]:
 			"juice":

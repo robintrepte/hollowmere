@@ -11,6 +11,7 @@ const STYLES := {
 	"dig": {"color": Color("#8a5a3a"), "n": 8, "speed": 50.0, "gravity": 220.0, "size": 1.8},
 	"clink": {"color": Color("#e0b060"), "n": 10, "speed": 75.0, "gravity": 260.0, "size": 1.6},
 	"crystal": {"color": Color("#a8f0ff"), "n": 12, "speed": 60.0, "gravity": 60.0, "size": 1.4, "life": 0.6, "spread": 180.0},
+	"sparkle": {"color": Color("#d8a8ff"), "n": 10, "speed": 40.0, "gravity": -30.0, "size": 1.2, "life": 0.7, "spread": 180.0},
 	"boom": {"color": Color("#ffb040"), "n": 26, "speed": 120.0, "gravity": 160.0, "size": 2.5, "life": 0.6, "spread": 180.0},
 	"chop": {"color": Color("#b07a48"), "n": 9, "speed": 65.0, "gravity": 240.0, "size": 2.0},
 	"scythe": {"color": Color("#6fbf4a"), "n": 9, "speed": 50.0, "gravity": 120.0, "size": 1.5},

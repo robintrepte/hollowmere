@@ -475,6 +475,7 @@ func _refresh_hotbar() -> void:
 	for i in _hotbar.size():
 		var e := player.hotbar_entry(i)
 		var s: ItemSlot = _hotbar[i]
+		s.glint = not e.is_empty() and Enchanting.has_any(player, e.id)
 		if e.is_empty():
 			s.set_item("", 0, 0)
 		else:
