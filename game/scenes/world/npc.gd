@@ -9,6 +9,7 @@ var world: World
 var doll: PaperDoll
 var _path: Array = []
 var _bubble: Label
+var _marker: Label
 var _idle_t := 0.0
 
 func _ready() -> void:
@@ -28,6 +29,12 @@ func _ready() -> void:
 	_bubble.size = Vector2(80, 10)
 	_bubble.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	add_child(_bubble)
+	_marker = UITheme.label("", 14, UITheme.COIN, true)
+	_marker.position = Vector2(-10, -74)
+	_marker.size = Vector2(20, 16)
+	_marker.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_marker.z_index = 50
+	add_child(_marker)
 
 static func _shadow() -> Sprite2D:
 	var img := Image.create(16, 6, false, Image.FORMAT_RGBA8)
@@ -53,6 +60,17 @@ func show_heart_hint(text: String) -> void:
 	var tw := create_tween()
 	tw.tween_interval(2.0)
 	tw.tween_callback(func(): _bubble.text = "")
+
+## "!" for a new quest, "?" for something to hand in, "" for nothing.
+func set_marker(m: String) -> void:
+	if _marker == null or _marker.text == m:
+		return
+	_marker.text = m
+	_marker.add_theme_color_override("font_color", UITheme.COIN if m == "!" else Color("#8fe3ff"))
+	if m != "":
+		var tw := _marker.create_tween().set_loops()
+		tw.tween_property(_marker, "position:y", -77.0, 0.5).set_trans(Tween.TRANS_SINE)
+		tw.tween_property(_marker, "position:y", -74.0, 0.5).set_trans(Tween.TRANS_SINE)
 
 func face(dir: Vector2) -> void:
 	doll.facing = dir

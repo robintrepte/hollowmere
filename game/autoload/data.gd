@@ -34,6 +34,10 @@ var regions: Dictionary = {}
 var region_order: Array = []
 var legends: Dictionary = {}
 var progression: Dictionary = {}
+## Side, tutorial, seasonal and event quests by id (data/quests.json), in file order.
+var quests: Dictionary = {}
+var quest_order: Array = []
+var quest_daily: Array = []
 var _maps: Dictionary = {}
 var _prev_evo: Dictionary = {}
 
@@ -51,6 +55,11 @@ func load_all() -> void:
 	_load_species()
 	_load_crops()
 	progression = _load_json("res://data/progression.json")
+	var qd: Dictionary = _load_json("res://data/quests.json")
+	for q in qd.get("quests", []):
+		quests[q.id] = q
+		quest_order.append(q.id)
+	quest_daily = qd.get("daily", [])
 	items = _load_json("res://data/items.json")
 	trees = _load_json("res://data/trees.json")
 	_derive_items()

@@ -8,6 +8,7 @@ var world: World
 var player: Player
 var busy := false
 var adventure: AdventureFlow
+var quests: QuestFlow
 
 func setup(m: Node, u: UIRoot, w: World, p: Player) -> void:
 	main = m
@@ -16,6 +17,8 @@ func setup(m: Node, u: UIRoot, w: World, p: Player) -> void:
 	player = p
 	adventure = AdventureFlow.new(self)
 	add_child(adventure)
+	quests = QuestFlow.new(self)
+	add_child(quests)
 	player.use_pressed.connect(_on_use)
 	player.interact_pressed.connect(_on_interact)
 	Coop.act_result.connect(_feedback)
@@ -338,6 +341,8 @@ func _talk(npc: Npc) -> void:
 	var ev := Relationships.pending_event(vid, st)
 	var name := Data.villager_name(vid)
 	if await adventure.story_talk(vid):
+		pass
+	elif await quests.talk(vid):
 		pass
 	elif ev != "":
 		var lines: Array = Data.villagers[vid].events[ev].get("lines", [])

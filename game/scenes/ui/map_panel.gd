@@ -52,6 +52,8 @@ func _ready() -> void:
 		var open := GameState.region_unlocked(rid)
 		var name := Data.region_name(rid) if open else tr("Closed")
 		var mark := "● " if _at(here, rid) else ""
+		if open and rid in Quests.tracked_maps(GameState.local_player()):
+			mark = "! " + mark
 		var col := UITheme.LEAF.darkened(0.2) if _at(here, rid) else (UITheme.INK if open else UITheme.MUTED)
 		v.add_child(UITheme.label(mark + name, 9, col))
 
@@ -89,6 +91,9 @@ func _cell(id: String, here: String) -> Control:
 	var text := Data.region_name(id) if open else tr("Closed")
 	if here_now:
 		text = "● " + text
+	if open and id in Quests.tracked_maps(GameState.local_player()):
+		text = "! " + text
+		b.add_theme_stylebox_override("panel", UITheme.box(UITheme.PARCHMENT_DK, UITheme.COIN, 2, 3, 4, false))
 	var l := UITheme.label(text, 8, UITheme.INK if open else UITheme.MUTED)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

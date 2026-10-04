@@ -23,6 +23,10 @@ var _hotbar_name: Label
 var _name_t := 0.0
 var _quest: Label
 var _lv_panel: PanelContainer
+var _hint: PanelContainer
+var _hint_text: Label
+var _hint_qid := ""
+var _hotbar_panel: PanelContainer
 
 func _ready() -> void:
 	layer = 10
@@ -128,6 +132,7 @@ func _ready() -> void:
 	hb.offset_top = -SLOT - 12
 	hb.offset_bottom = -4
 	root.add_child(hb)
+	_hotbar_panel = hb
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 2)
 	hb.add_child(row)
@@ -148,6 +153,33 @@ func _ready() -> void:
 	_hotbar_name.offset_top = -SLOT - 28
 	_hotbar_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	root.add_child(_hotbar_name)
+
+	# Tutorial hint (top center)
+	_hint = PanelContainer.new()
+	_hint.add_theme_stylebox_override("panel", UITheme.box(Color(0.12, 0.09, 0.1, 0.88), UITheme.COIN, 1, 4, 6, false))
+	_hint.anchor_left = 0.5
+	_hint.anchor_right = 0.5
+	_hint.anchor_top = 1
+	_hint.anchor_bottom = 1
+	_hint.offset_left = -140
+	_hint.offset_right = 140
+	_hint.offset_bottom = -SLOT - 34
+	_hint.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	_hint.mouse_filter = Control.MOUSE_FILTER_PASS
+	_hint.visible = false
+	root.add_child(_hint)
+	var hrow := HBoxContainer.new()
+	hrow.add_theme_constant_override("separation", 6)
+	_hint.add_child(hrow)
+	_hint_text = UITheme.label("", 8, UITheme.CREAM)
+	_hint_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_hint_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_hint_text.custom_minimum_size = Vector2(230, 0)
+	hrow.add_child(_hint_text)
+	var hx := UITheme.button("×", _dismiss_hint)
+	hx.tooltip_text = tr("Hide this hint")
+	hx.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	hrow.add_child(hx)
 
 	# Toasts (left)
 	_toasts = VBoxContainer.new()
@@ -223,11 +255,66 @@ func _refresh_quest() -> void:
 		bits.append(tr("Today: %s at the Show Ring") % tr(str(fest.name)))
 	elif Endless.show_open(GameState.day()):
 		bits.append(tr("Today: Creature Show at the Show Ring"))
-	var t := Adventure.tracker(GameState.world, GameState.local_player())
+	var p := GameState.local_player()
+	var t := Adventure.tracker(GameState.world, p)
 	if t != "":
 		bits.append("» " + t)
+	var st := Quests.state(p)
+	for qid in st.tracked:
+		if not Quests.is_active(p, qid) or str(Quests.def_of(p, qid).get("type", "")) == "tutorial":
+			continue
+		var pr := Quests.progress(p, GameState.world, qid)
+		var line := "» %s: %s" % [Quests.title(p, qid), InputHints.fill(Quests.step_text(p, qid))]
+		if int(pr[1]) > 1:
+			line += " (%d/%d)" % [int(pr[0]), int(pr[1])]
+		bits.append(line)
 	_quest.text = "\n".join(bits)
 	_quest.visible = not bits.is_empty()
+	_refresh_hint(p, st)
+
+## The open tutorial step as a short hint box, with the matching keys / buttons / touch controls.
+func _refresh_hint(p: PlayerData, st: Dictionary) -> void:
+	_hint_qid = ""
+	if st.tutorial == "playing":
+		for qid in st.active:
+			if str(Quests.def_of(p, qid).get("type", "")) == "tutorial" and not st.get("hint_hidden", {}).has(qid):
+				_hint_qid = qid
+				break
+	_hint.visible = _hint_qid != ""
+	if _hint_qid == "":
+		_spotlight("")
+		return
+	var pr := Quests.progress(p, GameState.world, _hint_qid)
+	var text := "%s\n%s" % [Quests.title(p, _hint_qid), InputHints.fill(Quests.step_text(p, _hint_qid))]
+	if int(pr[1]) > 1:
+		text += "  (%d/%d)" % [int(pr[0]), int(pr[1])]
+	_hint_text.text = text
+	_spotlight(str(Quests.def_of(p, _hint_qid).get("spot", "")))
+
+func _dismiss_hint() -> void:
+	var st := Quests.state(GameState.local_player())
+	if _hint_qid != "":
+		st["hint_hidden"] = st.get("hint_hidden", {})
+		st.hint_hidden[_hint_qid] = true
+	_hint.visible = false
+	_spotlight("")
+
+var _spot_tween: Tween
+var _spot_what := ""
+
+## Pulses the HUD element a tutorial step is about.
+func _spotlight(what: String) -> void:
+	if what == _spot_what:
+		return
+	_spot_what = what
+	if _spot_tween:
+		_spot_tween.kill()
+		_spot_tween = null
+	_hotbar_panel.modulate = Color.WHITE
+	if what == "hotbar":
+		_spot_tween = create_tween().set_loops()
+		_spot_tween.tween_property(_hotbar_panel, "modulate", Color(1.35, 1.25, 0.8), 0.6).set_trans(Tween.TRANS_SINE)
+		_spot_tween.tween_property(_hotbar_panel, "modulate", Color.WHITE, 0.6).set_trans(Tween.TRANS_SINE)
 
 func _refresh_clock() -> void:
 	if not GameState.started:
@@ -336,6 +423,8 @@ func _process(delta: float) -> void:
 	_energy.modulate.a = 0.55 + 0.45 * absf(sin(Time.get_ticks_msec() / 250.0)) if _energy.low else 1.0
 	if Engine.get_process_frames() % 30 == 0:
 		_refresh_lead()
+	if Engine.get_process_frames() % 60 == 15:
+		_refresh_quest()
 
 func toast(text: String, _icon: String = "") -> void:
 	var pc := PanelContainer.new()

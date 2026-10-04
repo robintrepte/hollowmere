@@ -1,13 +1,14 @@
 class_name JournalPanel
 extends PanelContainer
-## Journal: villagers (hearts, birthdays, gifts), Village Board requests, the Wildling dex and weekly challenges.
+## Journal: the valley (story so far, shrines), villagers (hearts, birthdays, gifts) and the Wildling dex.
+## Quests, Village Board requests and weekly challenges live in the QuestLogPanel.
 
 signal closed
 
 ## Shown as a tab inside the MenuShell: no frame and no close button of its own.
 var embedded := false
 
-const TABS := [["story", "Story"], ["people", "Villagers"], ["board", "Requests"], ["dex", "Wildlings"], ["weekly", "This week"]]
+const TABS := [["story", "Story"], ["people", "Villagers"], ["dex", "Wildlings"]]
 
 var player: PlayerData
 var tab := "story"
@@ -52,14 +53,20 @@ func _ready() -> void:
 func _refresh() -> void:
 	for c in _tabs.get_children():
 		c.queue_free()
-	for t in TABS:
+	for t in _tab_list():
 		var b := UITheme.button(t[1], func(): tab = t[0]; Audio.sfx("tick", 0.0); _refresh())
 		b.disabled = tab == t[0]
 		_tabs.add_child(b)
 	for c in _body.get_children():
 		c.queue_free()
 	_scroll.scroll_vertical = 0
-	match tab:
+	_render(tab)
+
+func _tab_list() -> Array:
+	return TABS
+
+func _render(id: String) -> void:
+	match id:
 		"story": _story()
 		"people": _people()
 		"board": _board()

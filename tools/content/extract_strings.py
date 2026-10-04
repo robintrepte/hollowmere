@@ -23,7 +23,7 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 GAME = os.path.join(ROOT, "game")
 OUT = os.path.join(GAME, "i18n", "hollowmere.pot")
 
-TEXT_KEYS = {"name", "desc", "hint", "lines", "text", "title", "goal_text", "job_name", "job_desc", "role"}
+TEXT_KEYS = {"name", "desc", "hint", "lines", "text", "title", "goal_text", "job_name", "job_desc", "role", "intro", "done"}
 TABLE_COLUMNS = {"name", "desc"}
 DIALOGUE_FILES = {"villagers.json"}
 SKIP_KEYS = {"id", "icon", "color", "schedule", "music", "biome", "type", "types", "season", "kind"}

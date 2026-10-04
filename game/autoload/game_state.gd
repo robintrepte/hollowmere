@@ -219,8 +219,12 @@ func add_farm_xp(n: int, at: Vector2 = Vector2.INF) -> void:
 		grant(info.get("reward", {}), local_player())
 		EventBus.farm_level_up.emit(lv, info)
 
-func bump_stat(key: String, n: int = 1) -> void:
+## Farm-wide counter (weekly challenges); with a player id it also counts for that player's quests.
+func bump_stat(key: String, n: int = 1, pid: String = "") -> void:
 	world.stats[key] = int(world.stats.get(key, 0)) + n
+	var p := player(pid) if pid != "" else null
+	if p:
+		p.stat_add(key, n)
 	for c in Progression.bump(world.weekly, key, n):
 		add_money(int(c.reward_money))
 		EventBus.toast.emit(tr("Weekly challenge complete: %s (+%s)") % [tr(c.text), CoinLabel.text(int(c.reward_money))], "star")
@@ -686,6 +690,7 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 				g.till(t)
 				r.ok = true
 				r.sfx = "hoe"
+				p.stat_add("till")
 			elif g.is_tilled(t) and g.crop_at(t).is_empty():
 				if not _spend_energy(p, base_cost):
 					return r
@@ -712,6 +717,7 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 				for a in area:
 					if g.water(a):
 						p.water_left -= 1
+						p.stat_add("water")
 				r.ok = true
 				r.sfx = "water"
 		"shovel":
@@ -860,6 +866,7 @@ func use_item(pid: String, map_id: String, t: Vector2i, uid: String) -> Dictiona
 		if cat == "seed":
 			if g.plant(t, e.id, season(), int(e.q) + 1):
 				f.inv.take(uid, 1)
+				p.stat_add("plant")
 				r.ok = true
 				r.sfx = "plant"
 				add_farm_xp(Progression.XP.plant)
@@ -905,7 +912,8 @@ func harvest_at(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 		var qname: String = Data.QUALITY_NAMES[int(h.q)]
 		r.fx.append(["+%d %s%s" % [int(h.n), (qname + " ") if qname != "" else "", Data.item_name(h.id)], [Color.WHITE, Color("#d8e0f0"), Color("#ffd447"), Color("#c890ff")][int(h.q)]])
 		add_farm_xp(Progression.XP.harvest * int(h.n), at)
-		bump_stat("harvest", int(h.n))
+		bump_stat("harvest", int(h.n), pid)
+		p.stat_add("harvest:" + str(h.id), int(h.n))
 		p.stat_add("harvested", int(h.n))
 	else:
 		var o := g.object_at(t)
@@ -916,7 +924,7 @@ func harvest_at(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 			r.sfx = "harvest"
 			r.fx.append(["+%d %s" % [int(fr.n), Data.item_name(fr.id)], Color.WHITE])
 			add_farm_xp(Progression.XP.fruit * int(fr.n), at)
-			bump_stat("harvest", int(fr.n))
+			bump_stat("harvest", int(fr.n), pid)
 		elif o.get("kind", "") == "machine" and Machines.is_ready(o, TimeService.now()):
 			var out: Dictionary = o.output
 			give_item(p, out.id, int(out.n), int(out.q))
@@ -1011,6 +1019,7 @@ func ship(pid: String, uid: String, n: int = -1) -> Dictionary:
 			return r
 	r.ok = true
 	r.sfx = "ship"
+	p.stat_add("ship", int(taken.n) - left)
 	EventBus.inventory_changed.emit()
 	return r
 
@@ -1123,7 +1132,9 @@ func craft(pid: String, kind: String, recipe_id: String) -> Dictionary:
 	if not Economy.make(kind, recipe_id, srcs):
 		r.reason = tr("Your pack is full.")
 		return r
-	bump_stat("cook" if kind == "cooking" else "craft")
+	var kind_key := "cook" if kind == "cooking" else "craft"
+	bump_stat(kind_key, 1, pid)
+	p.stat_add(kind_key + ":" + recipe_id)
 	add_farm_xp(3 if kind == "cooking" else 2)
 	EventBus.inventory_changed.emit()
 	r.ok = true
@@ -1249,8 +1260,11 @@ func incubate(pid: String, egg_uid: String) -> Dictionary:
 	var ok := add_egg_to_hatchery(player(pid), egg_uid)
 	return _res(ok, "" if ok else tr("The Hatchery is full."))
 
-func set_job_act(_pid: String, uid: String, job_id: String) -> Dictionary:
-	return _res(set_job(uid, job_id))
+func set_job_act(pid: String, uid: String, job_id: String) -> Dictionary:
+	var ok := set_job(uid, job_id)
+	if ok and player(pid):
+		player(pid).stat_add("job_set")
+	return _res(ok)
 
 func move_creature_act(pid: String, uid: String, dest: String) -> Dictionary:
 	var ok := move_creature(uid, dest, player(pid))
@@ -1266,7 +1280,7 @@ func befriend_act(pid: String, creature_json: String) -> Dictionary:
 	if find_creature(c.uid) != null:
 		return _res(false, tr("Already on the farm."))
 	var r := _res(true, add_creature(p, c))
-	bump_stat("befriend")
+	bump_stat("befriend", 1, pid)
 	return r
 
 func dex_seen_act(_pid: String, species_id: String, owned: bool = false, starry: bool = false) -> Dictionary:
@@ -1332,7 +1346,7 @@ func legend_result_act(_pid: String, legend_id: String) -> Dictionary:
 	return _res(true)
 
 ## Records reaching a mine floor; you can only go one floor deeper than your best.
-func mine_floor_act(_pid: String, region: String, floor_n: int) -> Dictionary:
+func mine_floor_act(pid: String, region: String, floor_n: int) -> Dictionary:
 	if not Data.regions.get(region, {}).has("mine") or not region_unlocked(region) or floor_n < 1:
 		return _res(false, tr("The cave is blocked."))
 	var deep := Adventure.deepest(world, region)
@@ -1342,7 +1356,7 @@ func mine_floor_act(_pid: String, region: String, floor_n: int) -> Dictionary:
 	if floor_n > deep:
 		world.mine_depth[region] = floor_n
 		add_farm_xp(Progression.XP.mine_floor)
-		bump_stat("mine_floor")
+		bump_stat("mine_floor", 1, pid)
 		r["new_elevator"] = floor_n % Adventure.ELEVATOR_STEP == 0
 	return r
 
@@ -1512,6 +1526,50 @@ func rematch_won_act(pid: String, vid: String) -> Dictionary:
 	r.sfx = "levelup"
 	EventBus.inventory_changed.emit()
 	return r
+
+## Pays out a finished quest once. Finishing the last daily of the day may add a streak bonus.
+func claim_quest_act(pid: String, qid: String) -> Dictionary:
+	var p := player(pid)
+	if p == null:
+		return _res(false)
+	var st := Quests.state(p)
+	var d: Dictionary = st.done.get(qid, {})
+	if d.is_empty() or d.get("claimed", false):
+		return _res(false)
+	d.claimed = true
+	var r := _res(true)
+	r["reward"] = Quests.reward_of(p, qid)
+	grant_quest_reward(p, r.reward)
+	if qid.begins_with("daily:"):
+		var bonus := Quests.daily_finished(p)
+		if not bonus.is_empty():
+			grant_quest_reward(p, bonus)
+			r["streak"] = int(st.daily.streak)
+			r["bonus"] = bonus
+	r.sfx = "levelup"
+	EventBus.inventory_changed.emit()
+	return r
+
+## Quest rewards: money, items, recipe, friendship {villager: points}, skill points, emotes, chips, flags.
+func grant_quest_reward(p: PlayerData, reward: Dictionary) -> void:
+	var rest := {}
+	for k in reward:
+		match k:
+			"friendship":
+				for vid in reward[k]:
+					Relationships.add_points(vid, p.relationship(vid), int(reward[k][vid]))
+			"skill_points":
+				p.skill_points += int(reward[k])
+			"emote":
+				if not reward[k] in p.emotes:
+					p.emotes.append(reward[k])
+			"chips":
+				Casino.add_chips(p, int(reward[k]))
+			"flag":
+				world.flags[str(reward[k])] = true
+			_:
+				rest[k] = reward[k]
+	grant(rest, p)
 
 func story_seen_act(_pid: String, chapter_id: String) -> Dictionary:
 	world.flags["story_seen:" + chapter_id] = true

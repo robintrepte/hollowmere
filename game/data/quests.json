@@ -1,0 +1,2035 @@
+{
+ "quests": [
+  {
+   "id": "tut_move",
+   "type": "tutorial",
+   "title": "First steps",
+   "steps": [
+    {
+     "text": "Walk around your farm with {move}. Hold {run} to run.",
+     "goal": {
+      "stat": "walk",
+      "n": 20
+     }
+    }
+   ],
+   "reward": {
+    "money": 50
+   },
+   "spot": "move"
+  },
+  {
+   "id": "tut_till",
+   "type": "tutorial",
+   "title": "Break ground",
+   "requires": {
+    "quests": [
+     "tut_move"
+    ]
+   },
+   "steps": [
+    {
+     "text": "Pick the hoe on the hotbar and press {use} on dirt to till 3 tiles.",
+     "goal": {
+      "stat": "till",
+      "n": 3
+     }
+    }
+   ],
+   "reward": {
+    "parsnip_seeds": 5
+   },
+   "spot": "hotbar"
+  },
+  {
+   "id": "tut_plant",
+   "type": "tutorial",
+   "title": "Seeds in the soil",
+   "requires": {
+    "quests": [
+     "tut_till"
+    ]
+   },
+   "steps": [
+    {
+     "text": "Select your seeds and press {use} on tilled soil to plant 3 of them.",
+     "goal": {
+      "stat": "plant",
+      "n": 3
+     }
+    }
+   ],
+   "reward": {
+    "money": 50
+   },
+   "spot": "hotbar"
+  },
+  {
+   "id": "tut_water",
+   "type": "tutorial",
+   "title": "A good soak",
+   "requires": {
+    "quests": [
+     "tut_plant"
+    ]
+   },
+   "steps": [
+    {
+     "text": "Water 3 planted tiles with the watering can. Watered crops grow faster for a few hours.",
+     "goal": {
+      "stat": "water",
+      "n": 3
+     }
+    }
+   ],
+   "reward": {
+    "basic_fertilizer": 3
+   },
+   "spot": "hotbar"
+  },
+  {
+   "id": "tut_harvest",
+   "type": "tutorial",
+   "title": "First harvest",
+   "requires": {
+    "quests": [
+     "tut_water"
+    ]
+   },
+   "steps": [
+    {
+     "text": "Crops grow in real time, even while the game is closed. Harvest one when it's ripe.",
+     "goal": {
+      "stat": "harvest",
+      "n": 1
+     }
+    }
+   ],
+   "reward": {
+    "money": 100
+   }
+  },
+  {
+   "id": "tut_ship",
+   "type": "tutorial",
+   "title": "Selling",
+   "requires": {
+    "quests": [
+     "tut_harvest"
+    ]
+   },
+   "steps": [
+    {
+     "text": "Put something into the shipping bin by the house. It pays out when the game day turns over.",
+     "goal": {
+      "stat": "ship",
+      "n": 1
+     }
+    }
+   ],
+   "reward": {
+    "money": 100
+   }
+  },
+  {
+   "id": "tut_befriend",
+   "type": "tutorial",
+   "title": "A Wildling friend",
+   "requires": {
+    "quests": [
+     "tut_ship"
+    ]
+   },
+   "steps": [
+    {
+     "text": "Walk into tall grass in the Meadow, then befriend a wild Wildling.",
+     "goal": {
+      "stat": "befriend",
+      "n": 1
+     }
+    }
+   ],
+   "reward": {
+    "lure_charm": 3
+   }
+  },
+  {
+   "id": "tut_battle",
+   "type": "tutorial",
+   "title": "Battle basics",
+   "requires": {
+    "quests": [
+     "tut_befriend"
+    ]
+   },
+   "steps": [
+    {
+     "text": "Win a battle. The menu shows how much damage each move would do.",
+     "goal": {
+      "stat": "win_battle",
+      "n": 1
+     }
+    }
+   ],
+   "reward": {
+    "potion": 3
+   }
+  },
+  {
+   "id": "tut_jobs",
+   "type": "tutorial",
+   "title": "Farm hands",
+   "requires": {
+    "quests": [
+     "tut_battle"
+    ]
+   },
+   "steps": [
+    {
+     "text": "Open the Party tab with {party} and give a farm Wildling a job.",
+     "goal": {
+      "stat": "job_set",
+      "n": 1
+     }
+    }
+   ],
+   "reward": {
+    "basic_treat": 5
+   },
+   "spot": "menu"
+  },
+  {
+   "id": "tut_craft",
+   "type": "tutorial",
+   "title": "Crafting",
+   "requires": {
+    "quests": [
+     "tut_jobs"
+    ]
+   },
+   "steps": [
+    {
+     "text": "Open Crafting with {craft} and craft anything, for example a Basic Treat.",
+     "goal": {
+      "stat": "craft",
+      "n": 1
+     }
+    }
+   ],
+   "reward": {
+    "money": 150
+   },
+   "spot": "menu"
+  },
+  {
+   "id": "tut_travel",
+   "type": "tutorial",
+   "title": "Into the village",
+   "requires": {
+    "quests": [
+     "tut_craft"
+    ]
+   },
+   "steps": [
+    {
+     "text": "Open the Map with {map}, then walk to the village east of your farm.",
+     "goal": {
+      "visit": "town"
+     }
+    }
+   ],
+   "reward": {
+    "money": 200
+   },
+   "spot": "menu"
+  },
+  {
+   "id": "mira_restock",
+   "type": "side",
+   "title": "Empty shelves",
+   "giver": "mira",
+   "intro": [
+    "The spring rush cleaned me out. Could you bring me some Parsnips?"
+   ],
+   "steps": [
+    {
+     "text": "Bring Mira 10 Parsnips.",
+     "goal": {
+      "deliver": "parsnip",
+      "n": 10,
+      "to": "mira"
+     },
+     "done": [
+      "Perfect! These will sell before lunch."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 400,
+    "friendship": {
+     "mira": 80
+    }
+   }
+  },
+  {
+   "id": "mira_sweet",
+   "type": "side",
+   "title": "A sweet idea",
+   "giver": "mira",
+   "intro": [
+    "Customers keep asking for something sweet. Could you bake a Honey Cake for me to try?"
+   ],
+   "requires": {
+    "quests": [
+     "mira_restock"
+    ],
+    "hearts": {
+     "mira": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Cook a Honey Cake.",
+     "goal": {
+      "stat": "cook:honey_cake",
+      "n": 1
+     }
+    },
+    {
+     "text": "Bring the Honey Cake to Mira.",
+     "goal": {
+      "deliver": "honey_cake",
+      "n": 1,
+      "to": "mira"
+     },
+     "done": [
+      "Oh, it's still warm! I'll put it on the counter as a sample."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 600,
+    "friendship": {
+     "mira": 120
+    },
+    "recipe": "cream_pudding"
+   }
+  },
+  {
+   "id": "bram_lumber",
+   "type": "side",
+   "title": "Lumber for the bridge",
+   "giver": "bram",
+   "intro": [
+    "The old footbridge creaks something awful. Got wood to spare?"
+   ],
+   "steps": [
+    {
+     "text": "Bring Bram 40 Wood.",
+     "goal": {
+      "deliver": "wood",
+      "n": 40,
+      "to": "bram"
+     },
+     "done": [
+      "Good straight logs. The bridge will hold for another hundred years."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 500,
+    "friendship": {
+     "bram": 80
+    }
+   }
+  },
+  {
+   "id": "bram_hardwood",
+   "type": "side",
+   "title": "The good stuff",
+   "giver": "bram",
+   "intro": [
+    "I need Hardwood for a roof beam. Big stumps have it, if your axe is up to it."
+   ],
+   "requires": {
+    "quests": [
+     "bram_lumber"
+    ],
+    "hearts": {
+     "bram": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Collect 10 Hardwood.",
+     "goal": {
+      "have": "hardwood",
+      "n": 10
+     }
+    },
+    {
+     "text": "Bring the Hardwood to Bram.",
+     "goal": {
+      "deliver": "hardwood",
+      "n": 10,
+      "to": "bram"
+     },
+     "done": [
+      "Now that's timber. I'll make you something nice with the offcuts."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 900,
+    "wooden_bench": 1,
+    "friendship": {
+     "bram": 120
+    }
+   }
+  },
+  {
+   "id": "greta_ore",
+   "type": "side",
+   "title": "Fuel for the forge",
+   "giver": "greta",
+   "intro": [
+    "My supplier's late again. Dig me up some Copper Ore."
+   ],
+   "requires": {
+    "shrines": 1
+   },
+   "steps": [
+    {
+     "text": "Bring Greta 15 Copper Ore.",
+     "goal": {
+      "deliver": "copper_ore",
+      "n": 15,
+      "to": "greta"
+     },
+     "done": [
+      "Hmph. Decent ore. Here, for your trouble."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 450,
+    "copper_bar": 3,
+    "friendship": {
+     "greta": 80
+    }
+   }
+  },
+  {
+   "id": "greta_gold",
+   "type": "side",
+   "title": "A blacksmith's pride",
+   "giver": "greta",
+   "intro": [
+    "I want to make something special. I need Gold Bars, and I don't trust the merchant's."
+   ],
+   "requires": {
+    "quests": [
+     "greta_ore"
+    ],
+    "hearts": {
+     "greta": 3
+    }
+   },
+   "steps": [
+    {
+     "text": "Smelt 3 Gold Bars.",
+     "goal": {
+      "have": "gold_bar",
+      "n": 3
+     }
+    },
+    {
+     "text": "Bring the Gold Bars to Greta.",
+     "goal": {
+      "deliver": "gold_bar",
+      "n": 3,
+      "to": "greta"
+     },
+     "done": [
+      "These are for a ring. For my mother. Don't tell anyone."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1500,
+    "friendship": {
+     "greta": 150
+    }
+   }
+  },
+  {
+   "id": "fern_survey",
+   "type": "side",
+   "title": "Field survey",
+   "giver": "fern",
+   "intro": [
+    "I'm studying how Wildlings bond with people. Could you befriend a few more and tell me how it went?"
+   ],
+   "steps": [
+    {
+     "text": "Befriend 3 Wildlings.",
+     "goal": {
+      "stat": "befriend",
+      "n": 3
+     }
+    },
+    {
+     "text": "Report back to Dr. Fern.",
+     "goal": {
+      "talk": "fern"
+     },
+     "done": [
+      "Wonderful data! Their temperaments vary more than I thought."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 400,
+    "great_charm": 2,
+    "friendship": {
+     "fern": 80
+    }
+   }
+  },
+  {
+   "id": "fern_dex",
+   "type": "side",
+   "title": "A growing dex",
+   "giver": "fern",
+   "requires": {
+    "quests": [
+     "fern_survey"
+    ]
+   },
+   "steps": [
+    {
+     "text": "Have 20 Wildlings in your dex.",
+     "goal": {
+      "dex": 20
+     }
+    },
+    {
+     "text": "Show Dr. Fern your dex.",
+     "goal": {
+      "talk": "fern"
+     },
+     "done": [
+      "Twenty! That's more than my whole first year of fieldwork."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1200,
+    "ultra_charm": 2,
+    "friendship": {
+     "fern": 120
+    }
+   }
+  },
+  {
+   "id": "theo_menu",
+   "type": "side",
+   "title": "Fresh from the farm",
+   "giver": "theo",
+   "intro": [
+    "I want a farm-fresh stew on the menu. Can you supply the veggies?"
+   ],
+   "steps": [
+    {
+     "text": "Bring Theo 5 Potatoes.",
+     "goal": {
+      "deliver": "potato",
+      "n": 5,
+      "to": "theo"
+     }
+    },
+    {
+     "text": "Bring Theo 5 Kale.",
+     "goal": {
+      "deliver": "kale",
+      "n": 5,
+      "to": "theo"
+     },
+     "done": [
+      "That's tonight's stew sorted. You're a lifesaver."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 500,
+    "veggie_stew": 2,
+    "friendship": {
+     "theo": 80
+    }
+   }
+  },
+  {
+   "id": "theo_soup",
+   "type": "side",
+   "title": "Pumpkin season",
+   "giver": "theo",
+   "requires": {
+    "quests": [
+     "theo_menu"
+    ],
+    "hearts": {
+     "theo": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Cook 3 Pumpkin Soups.",
+     "goal": {
+      "stat": "cook:pumpkin_soup",
+      "n": 3
+     }
+    },
+    {
+     "text": "Bring 3 Pumpkin Soups to Theo.",
+     "goal": {
+      "deliver": "pumpkin_soup",
+      "n": 3,
+      "to": "theo"
+     },
+     "done": [
+      "Mm. Better than mine. Don't tell anyone that either."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 900,
+    "friendship": {
+     "theo": 120
+    }
+   }
+  },
+  {
+   "id": "lila_flowers",
+   "type": "side",
+   "title": "A painter's palette",
+   "giver": "lila",
+   "intro": [
+    "I've run out of colors. Real flowers make the best reference."
+   ],
+   "steps": [
+    {
+     "text": "Bring Lila 3 Tulips.",
+     "goal": {
+      "deliver": "tulip",
+      "n": 3,
+      "to": "lila"
+     }
+    },
+    {
+     "text": "Bring Lila 3 Blue Jazz.",
+     "goal": {
+      "deliver": "blue_jazz",
+      "n": 3,
+      "to": "lila"
+     },
+     "done": [
+      "Red and blue... now I can finally paint that sunset."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 350,
+    "flower_bed": 1,
+    "friendship": {
+     "lila": 80
+    }
+   }
+  },
+  {
+   "id": "lila_rose",
+   "type": "side",
+   "title": "The impossible rose",
+   "giver": "lila",
+   "requires": {
+    "quests": [
+     "lila_flowers"
+    ],
+    "hearts": {
+     "lila": 3
+    }
+   },
+   "steps": [
+    {
+     "text": "Grow and bring Lila a Fairy Rose.",
+     "goal": {
+      "deliver": "fairy_rose",
+      "n": 1,
+      "to": "lila"
+     },
+     "done": [
+      "It glows! I'll never get that on canvas. I'll try anyway."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 800,
+    "bouquet": 1,
+    "friendship": {
+     "lila": 150
+    }
+   }
+  },
+  {
+   "id": "juniper_rival",
+   "type": "side",
+   "title": "Research rivals",
+   "giver": "juniper",
+   "intro": [
+    "Fern thinks battling teaches Wildlings trust. Prove it: win five battles."
+   ],
+   "steps": [
+    {
+     "text": "Win 5 battles.",
+     "goal": {
+      "stat": "win_battle",
+      "n": 5
+     }
+    },
+    {
+     "text": "Tell Juniper how it went.",
+     "goal": {
+      "talk": "juniper"
+     },
+     "done": [
+      "Five? Fine. Your Wildlings are... adequate. Very adequate."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 500,
+    "super_potion": 3,
+    "friendship": {
+     "juniper": 80
+    }
+   }
+  },
+  {
+   "id": "juniper_glow",
+   "type": "side",
+   "title": "Glow paper",
+   "giver": "juniper",
+   "requires": {
+    "quests": [
+     "juniper_rival"
+    ],
+    "hearts": {
+     "juniper": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Bring Juniper 2 Glow Teas.",
+     "goal": {
+      "deliver": "glow_tea",
+      "n": 2,
+      "to": "juniper"
+     },
+     "done": [
+      "For science. And because I like it. Mostly science."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1000,
+    "star_shard": 1,
+    "friendship": {
+     "juniper": 120
+    }
+   }
+  },
+  {
+   "id": "rowan_corn",
+   "type": "side",
+   "title": "Taller corn",
+   "giver": "rowan",
+   "intro": [
+    "Bet you can't out-farm me this season. Bring your best Corn and we'll see."
+   ],
+   "steps": [
+    {
+     "text": "Harvest 30 crops.",
+     "goal": {
+      "stat": "harvest",
+      "n": 30
+     }
+    },
+    {
+     "text": "Bring Rowan 5 Corn to compare.",
+     "goal": {
+      "deliver": "corn",
+      "n": 5,
+      "to": "rowan"
+     },
+     "done": [
+      "...Okay. Yours is taller. Lunch is on me."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 600,
+    "farmer_lunch": 2,
+    "friendship": {
+     "rowan": 100
+    }
+   }
+  },
+  {
+   "id": "rowan_battle",
+   "type": "side",
+   "title": "Loser buys lunch",
+   "giver": "rowan",
+   "requires": {
+    "quests": [
+     "rowan_corn"
+    ],
+    "hearts": {
+     "rowan": 3
+    }
+   },
+   "steps": [
+    {
+     "text": "Win 10 battles.",
+     "goal": {
+      "stat": "win_battle",
+      "n": 10
+     }
+    },
+    {
+     "text": "Find Rowan.",
+     "goal": {
+      "talk": "rowan"
+     },
+     "done": [
+      "Ten wins? Grandpa would've liked you. Here, his old charm."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 800,
+    "heirloom_charm": 1,
+    "friendship": {
+     "rowan": 120
+    }
+   }
+  },
+  {
+   "id": "barley_history",
+   "type": "side",
+   "title": "Stories of old",
+   "giver": "barley",
+   "intro": [
+    "When the first shrine wakes, come and tell an old man. I'd like to hear it from you."
+   ],
+   "steps": [
+    {
+     "text": "Wake a shrine.",
+     "goal": {
+      "shrines": 1
+     }
+    },
+    {
+     "text": "Tell Old Barley.",
+     "goal": {
+      "talk": "barley"
+     },
+     "done": [
+      "Ah, I felt it this morning. The valley breathes a little easier."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 500,
+    "hazelnut": 5,
+    "friendship": {
+     "barley": 80
+    }
+   }
+  },
+  {
+   "id": "barley_pudding",
+   "type": "side",
+   "title": "A taste of home",
+   "giver": "barley",
+   "requires": {
+    "quests": [
+     "barley_history"
+    ],
+    "hearts": {
+     "barley": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Cook a Cream Pudding.",
+     "goal": {
+      "stat": "cook:cream_pudding",
+      "n": 1
+     }
+    },
+    {
+     "text": "Bring it to Old Barley.",
+     "goal": {
+      "deliver": "cream_pudding",
+      "n": 1,
+      "to": "barley"
+     },
+     "done": [
+      "Hazel used to make this every winter. Thank you, child."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 700,
+    "friendship": {
+     "barley": 150
+    }
+   }
+  },
+  {
+   "id": "pip_rocks",
+   "type": "side",
+   "title": "Shiny rocks",
+   "giver": "pip",
+   "intro": [
+    "I collect shiny rocks! Do you have one? A real shiny one?"
+   ],
+   "steps": [
+    {
+     "text": "Bring Pip a Quartz.",
+     "goal": {
+      "deliver": "quartz",
+      "n": 1,
+      "to": "pip"
+     },
+     "done": [
+      "WOW. It's the shiniest one yet! It's mine now. Thank you!"
+     ]
+    }
+   ],
+   "reward": {
+    "money": 200,
+    "wild_berry": 5,
+    "friendship": {
+     "pip": 80
+    }
+   }
+  },
+  {
+   "id": "pip_warden",
+   "type": "side",
+   "title": "Future Warden",
+   "giver": "pip",
+   "requires": {
+    "quests": [
+     "pip_rocks"
+    ]
+   },
+   "steps": [
+    {
+     "text": "Wake 3 shrines.",
+     "goal": {
+      "shrines": 3
+     }
+    },
+    {
+     "text": "Tell Pip about the Wardens.",
+     "goal": {
+      "talk": "pip"
+     },
+     "done": [
+      "Three Wardens?! You're basically a legend. Can I have your autograph?"
+     ]
+    }
+   ],
+   "reward": {
+    "money": 600,
+    "berry_tart": 3,
+    "friendship": {
+     "pip": 120
+    }
+   }
+  },
+  {
+   "id": "sable_rare",
+   "type": "side",
+   "title": "A buyer in a far valley",
+   "giver": "sable",
+   "intro": [
+    "I have a buyer who wants a Truffle. Pigs or Wildlings find them, I'm told."
+   ],
+   "steps": [
+    {
+     "text": "Bring Sable a Truffle.",
+     "goal": {
+      "deliver": "truffle",
+      "n": 1,
+      "to": "sable"
+     },
+     "done": [
+      "A fine specimen. My buyer pays well, and so do I."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1200,
+    "friendship": {
+     "sable": 80
+    }
+   }
+  },
+  {
+   "id": "sable_gems",
+   "type": "side",
+   "title": "Gems for the road",
+   "giver": "sable",
+   "requires": {
+    "quests": [
+     "sable_rare"
+    ],
+    "hearts": {
+     "sable": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Bring Sable an Emerald.",
+     "goal": {
+      "deliver": "emerald",
+      "n": 1,
+      "to": "sable"
+     }
+    },
+    {
+     "text": "Bring Sable a Ruby.",
+     "goal": {
+      "deliver": "ruby",
+      "n": 1,
+      "to": "sable"
+     },
+     "done": [
+      "Green and red. A merchant's colors. Take this, I have no use for it."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 2000,
+    "star_charm": 1,
+    "friendship": {
+     "sable": 120
+    }
+   }
+  },
+  {
+   "id": "cora_books",
+   "type": "side",
+   "title": "Overdue",
+   "giver": "cora",
+   "intro": [
+    "Pip borrowed a book and says it's 'somewhere in the Meadow'. Could you check?"
+   ],
+   "steps": [
+    {
+     "text": "Visit the Meadow.",
+     "goal": {
+      "visit": "meadow"
+     }
+    },
+    {
+     "text": "Return to Cora.",
+     "goal": {
+      "talk": "cora"
+     },
+     "done": [
+      "Pip left the book in the grass again? Of course. Thank you for looking."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 300,
+    "friendship": {
+     "cora": 80
+    }
+   }
+  },
+  {
+   "id": "cora_museum",
+   "type": "side",
+   "title": "For the museum",
+   "giver": "cora",
+   "requires": {
+    "quests": [
+     "cora_books"
+    ],
+    "hearts": {
+     "cora": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Bring Cora an Amethyst.",
+     "goal": {
+      "deliver": "amethyst",
+      "n": 1,
+      "to": "cora"
+     }
+    },
+    {
+     "text": "Bring Cora an Aquamarine.",
+     "goal": {
+      "deliver": "aquamarine",
+      "n": 1,
+      "to": "cora"
+     },
+     "done": [
+      "The display case finally looks complete. I'll put your name on the card."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 900,
+    "friendship": {
+     "cora": 120
+    }
+   }
+  },
+  {
+   "id": "ivy_help",
+   "type": "side",
+   "title": "The quiet wood",
+   "giver": "ivy",
+   "intro": [
+    "The wood is waking up again. Help it along: bring me Mushrooms for the old stumps."
+   ],
+   "requires": {
+    "region": "whisperwood",
+    "shrines": 1
+   },
+   "steps": [
+    {
+     "text": "Bring Ivy 10 Mushrooms.",
+     "goal": {
+      "deliver": "mushroom",
+      "n": 10,
+      "to": "ivy"
+     },
+     "done": [
+      "They'll spread by spring. The wood thanks you."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 600,
+    "friendship": {
+     "ivy": 100
+    }
+   }
+  },
+  {
+   "id": "ivy_rematch",
+   "type": "side",
+   "title": "The quiet wood: the rematch",
+   "giver": "ivy",
+   "requires": {
+    "quests": [
+     "ivy_help"
+    ],
+    "hearts": {
+     "ivy": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Win 10 battles to sharpen your team.",
+     "goal": {
+      "stat": "win_battle",
+      "n": 10
+     }
+    },
+    {
+     "text": "Visit Ivy again.",
+     "goal": {
+      "talk": "ivy"
+     },
+     "done": [
+      "You've grown. I can feel it in your Wildlings."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1000,
+    "super_potion": 3,
+    "friendship": {
+     "ivy": 120
+    }
+   }
+  },
+  {
+   "id": "marina_help",
+   "type": "side",
+   "title": "Tide pools",
+   "giver": "marina",
+   "intro": [
+    "The tide pools need Seaweed to shelter the little ones. Could you gather some?"
+   ],
+   "requires": {
+    "region": "tidecove",
+    "shrines": 2
+   },
+   "steps": [
+    {
+     "text": "Bring Marina 10 Seaweed.",
+     "goal": {
+      "deliver": "seaweed",
+      "n": 10,
+      "to": "marina"
+     },
+     "done": [
+      "The little Tidelings will love this."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 800,
+    "friendship": {
+     "marina": 100
+    }
+   }
+  },
+  {
+   "id": "marina_rematch",
+   "type": "side",
+   "title": "Tide pools: the rematch",
+   "giver": "marina",
+   "requires": {
+    "quests": [
+     "marina_help"
+    ],
+    "hearts": {
+     "marina": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Win 10 battles to sharpen your team.",
+     "goal": {
+      "stat": "win_battle",
+      "n": 10
+     }
+    },
+    {
+     "text": "Visit Marina again.",
+     "goal": {
+      "talk": "marina"
+     },
+     "done": [
+      "You've grown. I can feel it in your Wildlings."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1300,
+    "super_potion": 3,
+    "friendship": {
+     "marina": 120
+    }
+   }
+  },
+  {
+   "id": "ash_help",
+   "type": "side",
+   "title": "Embers",
+   "giver": "ash",
+   "intro": [
+    "The ridge fires are low. Bring me Coal and I'll keep them burning."
+   ],
+   "requires": {
+    "region": "cinder_ridge",
+    "shrines": 3
+   },
+   "steps": [
+    {
+     "text": "Bring Ash 10 Coal.",
+     "goal": {
+      "deliver": "coal",
+      "n": 10,
+      "to": "ash"
+     },
+     "done": [
+      "Ha! That'll keep the Embers warm all season."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1000,
+    "friendship": {
+     "ash": 100
+    }
+   }
+  },
+  {
+   "id": "ash_rematch",
+   "type": "side",
+   "title": "Embers: the rematch",
+   "giver": "ash",
+   "requires": {
+    "quests": [
+     "ash_help"
+    ],
+    "hearts": {
+     "ash": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Win 10 battles to sharpen your team.",
+     "goal": {
+      "stat": "win_battle",
+      "n": 10
+     }
+    },
+    {
+     "text": "Visit Ash again.",
+     "goal": {
+      "talk": "ash"
+     },
+     "done": [
+      "You've grown. I can feel it in your Wildlings."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1600,
+    "super_potion": 3,
+    "friendship": {
+     "ash": 120
+    }
+   }
+  },
+  {
+   "id": "gideon_help",
+   "type": "side",
+   "title": "Stone and patience",
+   "giver": "gideon",
+   "intro": [
+    "The canyon path crumbles. Stone, and plenty of it."
+   ],
+   "requires": {
+    "region": "stonehollow",
+    "shrines": 4
+   },
+   "steps": [
+    {
+     "text": "Bring Gideon 10 Stone.",
+     "goal": {
+      "deliver": "stone",
+      "n": 10,
+      "to": "gideon"
+     },
+     "done": [
+      "Good. Patience and stone. That's all a canyon needs."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1200,
+    "friendship": {
+     "gideon": 100
+    }
+   }
+  },
+  {
+   "id": "gideon_rematch",
+   "type": "side",
+   "title": "Stone and patience: the rematch",
+   "giver": "gideon",
+   "requires": {
+    "quests": [
+     "gideon_help"
+    ],
+    "hearts": {
+     "gideon": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Win 10 battles to sharpen your team.",
+     "goal": {
+      "stat": "win_battle",
+      "n": 10
+     }
+    },
+    {
+     "text": "Visit Gideon again.",
+     "goal": {
+      "talk": "gideon"
+     },
+     "done": [
+      "You've grown. I can feel it in your Wildlings."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1900,
+    "super_potion": 3,
+    "friendship": {
+     "gideon": 120
+    }
+   }
+  },
+  {
+   "id": "kai_help",
+   "type": "side",
+   "title": "Seeds on the wind",
+   "giver": "kai",
+   "intro": [
+    "The peak's birds are hungry. Wheat, please, as much as you can spare."
+   ],
+   "requires": {
+    "region": "galepeak",
+    "shrines": 5
+   },
+   "steps": [
+    {
+     "text": "Bring Kai 10 Wheat.",
+     "goal": {
+      "deliver": "wheat",
+      "n": 10,
+      "to": "kai"
+     },
+     "done": [
+      "Listen, they're singing already."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1400,
+    "friendship": {
+     "kai": 100
+    }
+   }
+  },
+  {
+   "id": "kai_rematch",
+   "type": "side",
+   "title": "Seeds on the wind: the rematch",
+   "giver": "kai",
+   "requires": {
+    "quests": [
+     "kai_help"
+    ],
+    "hearts": {
+     "kai": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Win 10 battles to sharpen your team.",
+     "goal": {
+      "stat": "win_battle",
+      "n": 10
+     }
+    },
+    {
+     "text": "Visit Kai again.",
+     "goal": {
+      "talk": "kai"
+     },
+     "done": [
+      "You've grown. I can feel it in your Wildlings."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 2200,
+    "super_potion": 3,
+    "friendship": {
+     "kai": 120
+    }
+   }
+  },
+  {
+   "id": "volta_help",
+   "type": "side",
+   "title": "Charged up",
+   "giver": "volta",
+   "intro": [
+    "My lamps run on Spark Dust. Got any? Bring it and I'll light your way."
+   ],
+   "requires": {
+    "region": "sparkmarsh",
+    "shrines": 6
+   },
+   "steps": [
+    {
+     "text": "Bring Volta 5 Spark Dust.",
+     "goal": {
+      "deliver": "spark_dust",
+      "n": 5,
+      "to": "volta"
+     },
+     "done": [
+      "Zap! Full power. Thanks, farmer."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1600,
+    "friendship": {
+     "volta": 100
+    }
+   }
+  },
+  {
+   "id": "volta_rematch",
+   "type": "side",
+   "title": "Charged up: the rematch",
+   "giver": "volta",
+   "requires": {
+    "quests": [
+     "volta_help"
+    ],
+    "hearts": {
+     "volta": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Win 10 battles to sharpen your team.",
+     "goal": {
+      "stat": "win_battle",
+      "n": 10
+     }
+    },
+    {
+     "text": "Visit Volta again.",
+     "goal": {
+      "talk": "volta"
+     },
+     "done": [
+      "You've grown. I can feel it in your Wildlings."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 2500,
+    "super_potion": 3,
+    "friendship": {
+     "volta": 120
+    }
+   }
+  },
+  {
+   "id": "nils_help",
+   "type": "side",
+   "title": "Warm wool",
+   "giver": "nils",
+   "intro": [
+    "Winter nights are long up here. A few bundles of Wool would help the little ones."
+   ],
+   "requires": {
+    "region": "frostmere",
+    "shrines": 7
+   },
+   "steps": [
+    {
+     "text": "Bring Nils 5 Wool.",
+     "goal": {
+      "deliver": "wool",
+      "n": 5,
+      "to": "nils"
+     },
+     "done": [
+      "They'll sleep warm tonight. Thank you."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1800,
+    "friendship": {
+     "nils": 100
+    }
+   }
+  },
+  {
+   "id": "nils_rematch",
+   "type": "side",
+   "title": "Warm wool: the rematch",
+   "giver": "nils",
+   "requires": {
+    "quests": [
+     "nils_help"
+    ],
+    "hearts": {
+     "nils": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Win 10 battles to sharpen your team.",
+     "goal": {
+      "stat": "win_battle",
+      "n": 10
+     }
+    },
+    {
+     "text": "Visit Nils again.",
+     "goal": {
+      "talk": "nils"
+     },
+     "done": [
+      "You've grown. I can feel it in your Wildlings."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 2800,
+    "super_potion": 3,
+    "friendship": {
+     "nils": 120
+    }
+   }
+  },
+  {
+   "id": "selene_help",
+   "type": "side",
+   "title": "Moonlit offering",
+   "giver": "selene",
+   "intro": [
+    "The glade remembers the stars. A Star Shard would remind it."
+   ],
+   "requires": {
+    "region": "umbral_glade",
+    "shrines": 8
+   },
+   "steps": [
+    {
+     "text": "Bring Selene 1 Star Shard.",
+     "goal": {
+      "deliver": "star_shard",
+      "n": 1,
+      "to": "selene"
+     },
+     "done": [
+      "Do you see? The glade glows again."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 2000,
+    "friendship": {
+     "selene": 100
+    }
+   }
+  },
+  {
+   "id": "selene_rematch",
+   "type": "side",
+   "title": "Moonlit offering: the rematch",
+   "giver": "selene",
+   "requires": {
+    "quests": [
+     "selene_help"
+    ],
+    "hearts": {
+     "selene": 2
+    }
+   },
+   "steps": [
+    {
+     "text": "Win 10 battles to sharpen your team.",
+     "goal": {
+      "stat": "win_battle",
+      "n": 10
+     }
+    },
+    {
+     "text": "Visit Selene again.",
+     "goal": {
+      "talk": "selene"
+     },
+     "done": [
+      "You've grown. I can feel it in your Wildlings."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 3100,
+    "super_potion": 3,
+    "friendship": {
+     "selene": 120
+    }
+   }
+  },
+  {
+   "id": "season_spring",
+   "type": "seasonal",
+   "title": "Spring cleaning",
+   "giver": "lila",
+   "intro": [
+    "Spring's here! Everyone's planting. Join in?"
+   ],
+   "requires": {
+    "season": "spring"
+   },
+   "steps": [
+    {
+     "text": "Plant 30 seeds this spring.",
+     "goal": {
+      "stat": "plant",
+      "n": 30
+     }
+    },
+    {
+     "text": "Tell Lila about your fields.",
+     "goal": {
+      "talk": "lila"
+     },
+     "done": [
+      "A whole field of green! I'll paint it before it grows."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 800,
+    "speed_gro": 5
+   }
+  },
+  {
+   "id": "season_summer",
+   "type": "seasonal",
+   "title": "Summer feast",
+   "giver": "theo",
+   "intro": [
+    "I'm planning a summer feast. Help me cook?"
+   ],
+   "requires": {
+    "season": "summer"
+   },
+   "steps": [
+    {
+     "text": "Cook 5 dishes.",
+     "goal": {
+      "stat": "cook",
+      "n": 5
+     }
+    },
+    {
+     "text": "Bring Theo a Melon.",
+     "goal": {
+      "deliver": "melon",
+      "n": 1,
+      "to": "theo"
+     },
+     "done": [
+      "Ice-cold melon for the whole village. Perfect."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 900,
+    "garden_salad": 3
+   }
+  },
+  {
+   "id": "season_fall",
+   "type": "seasonal",
+   "title": "Harvest moon",
+   "giver": "barley",
+   "intro": [
+    "The harvest moon rises soon. A good harvest honors the valley."
+   ],
+   "requires": {
+    "season": "fall"
+   },
+   "steps": [
+    {
+     "text": "Harvest 60 crops.",
+     "goal": {
+      "stat": "harvest",
+      "n": 60
+     }
+    },
+    {
+     "text": "Bring Old Barley a Pumpkin.",
+     "goal": {
+      "deliver": "pumpkin",
+      "n": 1,
+      "to": "barley"
+     },
+     "done": [
+      "For the lantern on the shrine path. Just like the old days."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1000,
+    "quality_fertilizer": 5
+   }
+  },
+  {
+   "id": "season_winter",
+   "type": "seasonal",
+   "title": "Winter lights",
+   "giver": "cora",
+   "intro": [
+    "Winter is for being kind to each other. Will you help me spread some cheer?"
+   ],
+   "requires": {
+    "season": "winter"
+   },
+   "steps": [
+    {
+     "text": "Gift something to 5 villagers.",
+     "goal": {
+      "stat": "gifts",
+      "n": 5
+     }
+    },
+    {
+     "text": "Tell Cora the village is ready.",
+     "goal": {
+      "talk": "cora"
+     },
+     "done": [
+      "Everyone's smiling. That's what the lights are for."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1000,
+    "string_lights": 2
+   }
+  },
+  {
+   "id": "event_new_year",
+   "type": "event",
+   "title": "A fresh start",
+   "giver": "barley",
+   "intro": [
+    "A new year! The old folks say your first harvest sets the tone."
+   ],
+   "requires": {
+    "dates": [
+     "12-31",
+     "01-07"
+    ]
+   },
+   "steps": [
+    {
+     "text": "Harvest 10 crops in the new year.",
+     "goal": {
+      "stat": "harvest",
+      "n": 10
+     }
+    },
+    {
+     "text": "Wish Old Barley a happy new year.",
+     "goal": {
+      "talk": "barley"
+     },
+     "done": [
+      "Another year in the valley. May it be kind to you."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1000,
+    "star_charm": 1
+   }
+  }
+ ],
+ "daily": [
+  {
+   "id": "harvest",
+   "title": "Harvest day",
+   "text": "Harvest %d crops.",
+   "goal": {
+    "stat": "harvest"
+   },
+   "n": [
+    8,
+    40
+   ],
+   "money": 100,
+   "money_per": 8
+  },
+  {
+   "id": "plant",
+   "title": "Sowing",
+   "text": "Plant %d seeds.",
+   "goal": {
+    "stat": "plant"
+   },
+   "n": [
+    6,
+    30
+   ],
+   "money": 80,
+   "money_per": 6
+  },
+  {
+   "id": "water",
+   "title": "Watering round",
+   "text": "Water %d tiles.",
+   "goal": {
+    "stat": "water"
+   },
+   "n": [
+    10,
+    50
+   ],
+   "money": 60,
+   "money_per": 4
+  },
+  {
+   "id": "ship",
+   "title": "Market day",
+   "text": "Put %d items into the shipping bin.",
+   "goal": {
+    "stat": "ship"
+   },
+   "n": [
+    5,
+    30
+   ],
+   "money": 100,
+   "money_per": 6
+  },
+  {
+   "id": "befriend",
+   "title": "New friends",
+   "text": "Befriend %d Wildlings.",
+   "goal": {
+    "stat": "befriend"
+   },
+   "n": [
+    1,
+    4
+   ],
+   "money": 150,
+   "money_per": 120
+  },
+  {
+   "id": "battle",
+   "title": "Training",
+   "text": "Win %d battles.",
+   "goal": {
+    "stat": "win_battle"
+   },
+   "n": [
+    2,
+    8
+   ],
+   "money": 150,
+   "money_per": 60
+  },
+  {
+   "id": "cook",
+   "title": "Home cooking",
+   "text": "Cook %d dishes.",
+   "goal": {
+    "stat": "cook"
+   },
+   "n": [
+    1,
+    5
+   ],
+   "money": 120,
+   "money_per": 80
+  },
+  {
+   "id": "craft",
+   "title": "Workshop",
+   "text": "Craft %d items.",
+   "goal": {
+    "stat": "craft"
+   },
+   "n": [
+    2,
+    10
+   ],
+   "money": 120,
+   "money_per": 40
+  },
+  {
+   "id": "gifts",
+   "title": "Good neighbor",
+   "text": "Give %d gifts to villagers.",
+   "goal": {
+    "stat": "gifts"
+   },
+   "n": [
+    1,
+    4
+   ],
+   "money": 100,
+   "money_per": 80
+  },
+  {
+   "id": "deliver",
+   "title": "Special order",
+   "text": "Bring %d %s to %s.",
+   "goal": {
+    "deliver": ""
+   },
+   "n": [
+    3,
+    12
+   ],
+   "money": 150,
+   "money_per": 30,
+   "items": [
+    "parsnip",
+    "potato",
+    "kale",
+    "tomato",
+    "blueberry",
+    "corn",
+    "pumpkin",
+    "cranberry",
+    "wheat",
+    "melon",
+    "radish",
+    "beet",
+    "frostberry",
+    "snow_yam"
+   ],
+   "to": [
+    "mira",
+    "theo",
+    "bram",
+    "lila",
+    "rowan",
+    "barley",
+    "cora"
+   ]
+  },
+  {
+   "id": "mine",
+   "title": "Down below",
+   "text": "Go down %d mine floors.",
+   "goal": {
+    "stat": "mine_floor"
+   },
+   "n": [
+    2,
+    8
+   ],
+   "money": 150,
+   "money_per": 60,
+   "requires": {
+    "shrines": 1
+   }
+  }
+ ]
+}

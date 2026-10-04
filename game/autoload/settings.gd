@@ -20,6 +20,7 @@ const DEFAULT_KEYS := {
 	"party": [KEY_P],
 	"craft": [KEY_C],
 	"journal": [KEY_J],
+	"quests": [KEY_L],
 	"map": [KEY_M],
 	"menu": [KEY_ESCAPE],
 	"rotate_item": [KEY_R],

@@ -10,6 +10,7 @@ const TABS := [
 	["inventory", "Inventory", "_tab_inventory", "inventory"],
 	["party", "Party", "_tab_party", "party"],
 	["craft", "Crafting", "_tab_craft", "craft"],
+	["quests", "Quests", "_tab_quests", "quests"],
 	["journal", "Journal", "_tab_journal", "journal"],
 	["skills", "Skills", "_tab_skills", "skills"],
 	["collection", "Collection", "_tab_collection", "collection"],
@@ -17,6 +18,8 @@ const TABS := [
 	["emotes", "Emotes", "_tab_emotes", "emotes"],
 	["settings", "Settings", "_tab_settings", ""],
 ]
+
+const HOTKEYS := ["inventory", "party", "craft", "quests", "journal", "skills", "map"]
 
 var ui: UIRoot
 var tab := "inventory"
@@ -89,6 +92,7 @@ func _make(id: String) -> Control:
 		"party": return PartyPanel.new(p)
 		"craft": return CraftPanel.new(p, "crafting")
 		"journal": return JournalPanel.new(p)
+		"quests": return QuestLogPanel.new(p)
 		"map": return MapPanel.new()
 		"settings": return SettingsPanel.new()
 		"skills": return load("res://scenes/ui/skill_panel.gd").new(p)

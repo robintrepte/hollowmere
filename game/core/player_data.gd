@@ -18,6 +18,10 @@ var tool_levels: Dictionary = {"hoe": 0, "watering_can": 0, "pickaxe": 0, "axe":
 var water_left: int = 40
 var bucket_full: bool = false
 var chips: int = 0
+## Side, daily and tutorial quest state (see Quests).
+var quests: Dictionary = {}
+var skill_points: int = 0
+var emotes: Array = []
 var energy: float = 270.0
 var max_energy: float = 270.0
 ## The equipped pack and every pack the player owns (switchable any time the contents fit).
@@ -153,7 +157,7 @@ func to_dict() -> Dictionary:
 		p.append(c.to_dict())
 	return {
 		"id": id, "name": name, "look": look, "hat": hat, "inventory": inventory.to_dict(), "hotbar": hotbar,
-		"selected": selected, "party": p, "tool_levels": tool_levels, "water_left": water_left, "bucket_full": bucket_full, "chips": chips,
+		"selected": selected, "party": p, "tool_levels": tool_levels, "water_left": water_left, "bucket_full": bucket_full, "chips": chips, "quests": quests, "skill_points": skill_points, "emotes": emotes,
 		"energy": energy, "max_energy": max_energy, "backpack": backpack, "packs": packs,
 		"relationships": relationships, "recipes": recipes, "cosmetics": cosmetics, "map_id": map_id,
 		"pos": [pos.x, pos.y], "skills": skills, "stats": stats,
@@ -179,6 +183,9 @@ static func from_dict(d: Dictionary) -> PlayerData:
 	p.water_left = int(d.get("water_left", 40))
 	p.bucket_full = bool(d.get("bucket_full", false))
 	p.chips = int(d.get("chips", 0))
+	p.quests = d.get("quests", {})
+	p.skill_points = int(d.get("skill_points", 0))
+	p.emotes = d.get("emotes", [])
 	p.energy = float(d.get("energy", 270))
 	p.max_energy = float(d.get("max_energy", 270))
 	if d.has("backpack"):

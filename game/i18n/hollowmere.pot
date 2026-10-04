@@ -45,15 +45,15 @@ msgstr ""
 msgid "  ·  fainted"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:160
+#: scenes/ui/journal_panel.gd:167
 msgid "  ♥ dating"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:160
+#: scenes/ui/journal_panel.gd:167
 msgid "  ♥ married"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:280
+#: scenes/ui/journal_panel.gd:287
 #, c-format
 msgid " (%d ribbons)"
 msgstr ""
@@ -63,11 +63,11 @@ msgstr ""
 msgid " (%s)"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:280
+#: scenes/ui/journal_panel.gd:287
 msgid " (1 ribbon)"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:135
+#: scenes/ui/journal_panel.gd:142
 #, c-format
 msgid " / %d"
 msgstr ""
@@ -97,12 +97,12 @@ msgstr ""
 msgid "\"Um... I'll find a use for it, I guess.\""
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:241
+#: scenes/ui/journal_panel.gd:248
 #, c-format
 msgid "#%03d %s%s"
 msgstr ""
 
-#: scenes/main/adventure_flow.gd:36 scenes/ui/day_report.gd:77
+#: scenes/main/adventure_flow.gd:36 scenes/main/quest_flow.gd:118 scenes/ui/day_report.gd:77
 #, c-format
 msgid "%d %s"
 msgstr ""
@@ -112,7 +112,7 @@ msgstr ""
 msgid "%d / %d"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:258
+#: scenes/ui/journal_panel.gd:265
 #, c-format
 msgid "%d / %d  ·  Reward %s"
 msgstr ""
@@ -122,7 +122,7 @@ msgstr ""
 msgid "%d Wildlings are tired and need rest"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:251
+#: scenes/main/quest_flow.gd:113 scenes/ui/shop_panel.gd:251
 #, c-format
 msgid "%d chips"
 msgstr ""
@@ -157,7 +157,7 @@ msgstr ""
 msgid "%d harvests"
 msgstr ""
 
-#: scenes/main/controller.gd:128
+#: scenes/main/controller.gd:131
 #, c-format
 msgid "%d harvests left"
 msgstr ""
@@ -167,7 +167,7 @@ msgstr ""
 msgid "%d hearts with %s"
 msgstr ""
 
-#: autoload/game_state.gd:1078
+#: autoload/game_state.gd:1087
 #, c-format
 msgid "%d in %s"
 msgstr ""
@@ -187,9 +187,24 @@ msgstr ""
 msgid "%d new eggs in the farm chest!"
 msgstr ""
 
+#: scenes/main/quest_flow.gd:71
+#, c-format
+msgid "%d quests complete · %s"
+msgstr ""
+
 #: autoload/time_service.gd:67
 #, c-format
 msgid "%d s"
+msgstr ""
+
+#: scenes/main/quest_flow.gd:111
+#, c-format
+msgid "%d skill points"
+msgstr ""
+
+#: scenes/main/quest_flow.gd:94
+#, c-format
+msgid "%d-day daily streak! Bonus: %s"
 msgstr ""
 
 #: scenes/ui/inventory_panel.gd:335
@@ -252,7 +267,7 @@ msgstr ""
 msgid "%s %s"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:280
+#: scenes/ui/journal_panel.gd:287
 #, c-format
 msgid "%s %s%s"
 msgstr ""
@@ -262,7 +277,7 @@ msgstr ""
 msgid "%s (%d/%d)"
 msgstr ""
 
-#: autoload/data.gd:316
+#: autoload/data.gd:325
 #, c-format
 msgid "%s (%s)"
 msgstr ""
@@ -272,37 +287,37 @@ msgstr ""
 msgid "%s (power %d)"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:135
+#: scenes/ui/journal_panel.gd:142
 #, c-format
 msgid "%s B%d%s"
 msgstr ""
 
-#: scenes/ui/map_panel.gd:66
+#: scenes/ui/map_panel.gd:68
 #, c-format
 msgid "%s B%s"
 msgstr ""
 
-#: autoload/data.gd:334
+#: autoload/data.gd:343
 #, c-format
 msgid "%s Jam"
 msgstr ""
 
-#: autoload/data.gd:332
+#: autoload/data.gd:341
 #, c-format
 msgid "%s Juice"
 msgstr ""
 
-#: scenes/ui/hud.gd:289
+#: scenes/ui/hud.gd:376
 #, c-format
 msgid "%s Lv%d"
 msgstr ""
 
-#: autoload/data.gd:325
+#: autoload/data.gd:334
 #, c-format
 msgid "%s Sapling"
 msgstr ""
 
-#: autoload/data.gd:323
+#: autoload/data.gd:332
 #, c-format
 msgid "%s Seeds"
 msgstr ""
@@ -342,12 +357,12 @@ msgstr ""
 msgid "%s can't battle right now."
 msgstr ""
 
-#: scenes/main/main.gd:467
+#: scenes/main/main.gd:483
 #, c-format
 msgid "%s chain x%d! Starry odds x%.1f%s"
 msgstr ""
 
-#: scenes/main/main.gd:358
+#: scenes/main/main.gd:374
 #, c-format
 msgid "%s challenges you to a friendly battle! (Nothing is lost, win or lose.)"
 msgstr ""
@@ -407,7 +422,7 @@ msgstr ""
 msgid "%s has received enough gifts this week."
 msgstr ""
 
-#: autoload/game_state.gd:1555
+#: autoload/game_state.gd:1613
 #, c-format
 msgid "%s has to keep at least one Wildling."
 msgstr ""
@@ -422,12 +437,12 @@ msgstr ""
 msgid "%s is chilled by the snow!"
 msgstr ""
 
-#: scenes/main/controller.gd:233
+#: scenes/main/controller.gd:236
 #, c-format
 msgid "%s is closed. Open %s - %s."
 msgstr ""
 
-#: scenes/main/controller.gd:285
+#: scenes/main/controller.gd:288
 #, c-format
 msgid "%s is enjoying the farm."
 msgstr ""
@@ -447,7 +462,7 @@ msgstr ""
 msgid "%s is hurt by its burn!"
 msgstr ""
 
-#: autoload/game_state.gd:1150
+#: autoload/game_state.gd:1161
 #, c-format
 msgid "%s is ready!"
 msgstr ""
@@ -477,7 +492,7 @@ msgstr ""
 msgid "%s isn't convinced yet."
 msgstr ""
 
-#: scenes/main/main.gd:436
+#: scenes/main/main.gd:452
 #, c-format
 msgid "%s joined %s!"
 msgstr ""
@@ -532,12 +547,12 @@ msgstr ""
 msgid "%s nature · %s"
 msgstr ""
 
-#: autoload/game_state.gd:1550
+#: autoload/game_state.gd:1608
 #, c-format
 msgid "%s no longer has that Wildling."
 msgstr ""
 
-#: autoload/game_state.gd:1546
+#: autoload/game_state.gd:1604
 #, c-format
 msgid "%s no longer has that item."
 msgstr ""
@@ -547,7 +562,7 @@ msgstr ""
 msgid "%s offers"
 msgstr ""
 
-#: autoload/game_state.gd:1502
+#: autoload/game_state.gd:1516
 #, c-format
 msgid "%s only takes one rematch a week."
 msgstr ""
@@ -612,7 +627,7 @@ msgstr ""
 msgid "%s used a %s."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:191
+#: scenes/ui/journal_panel.gd:198
 #, c-format
 msgid "%s wants %d %s"
 msgstr ""
@@ -627,7 +642,7 @@ msgstr ""
 msgid "%s wants to be your friend!"
 msgstr ""
 
-#: scenes/main/main.gd:375
+#: scenes/main/main.gd:391
 #, c-format
 msgid "%s wants to trade with you."
 msgstr ""
@@ -732,7 +747,7 @@ msgstr ""
 msgid "%s! Your most valuable goods go on display (you keep them). Variety helps!"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:161 scenes/ui/party_panel.gd:181
+#: scenes/ui/journal_panel.gd:168 scenes/ui/party_panel.gd:181
 #, c-format
 msgid "%s%s"
 msgstr ""
@@ -802,12 +817,12 @@ msgstr ""
 msgid "%s: \"Yes! I'd love to.\""
 msgstr ""
 
-#: autoload/coop.gd:38 core/social/relationships.gd:76 scenes/main/adventure_flow.gd:51
+#: autoload/coop.gd:38 core/social/relationships.gd:76 scenes/main/adventure_flow.gd:51 scenes/main/quest_flow.gd:147 ...
 #, c-format
 msgid "%s: %s"
 msgstr ""
 
-#: scenes/main/controller.gd:152
+#: scenes/main/controller.gd:155
 #, c-format
 msgid "%s: %s ready in %s."
 msgstr ""
@@ -822,7 +837,7 @@ msgstr ""
 msgid "%s: Not yet. Train with your Wildlings and come back tomorrow."
 msgstr ""
 
-#: scenes/main/controller.gd:320
+#: scenes/main/controller.gd:323
 #, c-format
 msgid "%s: Wow, you're good! Rematch tomorrow?"
 msgstr ""
@@ -855,17 +870,17 @@ msgstr ""
 msgid "+%d energy"
 msgstr ""
 
-#: autoload/game_state.gd:935
+#: autoload/game_state.gd:943
 #, c-format
 msgid "+1 %s"
 msgstr ""
 
-#: autoload/data.gd:367
+#: autoload/data.gd:376
 #, c-format
 msgid ", then again every %s"
 msgstr ""
 
-#: autoload/data.gd:244
+#: autoload/data.gd:253
 #, c-format
 msgid ", then regrows every %d days"
 msgstr ""
@@ -877,6 +892,10 @@ msgstr ""
 
 #: data/villagers.json
 msgid "...Cold, isn't it? You'll get used to it."
+msgstr ""
+
+#: data/quests.json
+msgid "...Okay. Yours is taller. Lunch is on me."
 msgstr ""
 
 #: scenes/main/adventure_flow.gd:88
@@ -924,6 +943,10 @@ msgstr ""
 msgid "A Stone Wildling clears land faster than any shovel."
 msgstr ""
 
+#: data/quests.json
+msgid "A Wildling friend"
+msgstr ""
+
 #: data/progression.json
 msgid "A bait box and a lucky lure: fish bite sooner and rarer ones show up."
 msgstr ""
@@ -948,6 +971,10 @@ msgstr ""
 msgid "A big yawn that may make the foe sleepy."
 msgstr ""
 
+#: data/quests.json
+msgid "A blacksmith's pride"
+msgstr ""
+
 #: data/moves.json
 msgid "A blade of air. High crit chance."
 msgstr ""
@@ -966,6 +993,10 @@ msgstr ""
 
 #: data/items.json
 msgid "A brilliant green gem."
+msgstr ""
+
+#: data/quests.json
+msgid "A buyer in a far valley"
 msgstr ""
 
 #: data/creatures.json
@@ -1049,6 +1080,10 @@ msgstr ""
 msgid "A fiery red gem."
 msgstr ""
 
+#: data/quests.json
+msgid "A fine specimen. My buyer pays well, and so do I."
+msgstr ""
+
 #: data/creatures.json
 msgid "A fluffy bunny with soft moss for ears."
 msgstr ""
@@ -1069,13 +1104,17 @@ msgstr ""
 msgid "A freezing bite. May slow the foe."
 msgstr ""
 
-#: autoload/data.gd:363
+#: autoload/data.gd:372
 #, c-format
 msgid "A fresh %s. Grows in %s."
 msgstr ""
 
 #: data/items.json
 msgid "A fresh egg from Cluckle."
+msgstr ""
+
+#: data/quests.json
+msgid "A fresh start"
 msgstr ""
 
 #: data/moves.json
@@ -1088,6 +1127,14 @@ msgstr ""
 
 #: data/items.json
 msgid "A golden gem."
+msgstr ""
+
+#: data/quests.json
+msgid "A good soak"
+msgstr ""
+
+#: data/quests.json
+msgid "A growing dex"
 msgstr ""
 
 #: data/traits.json
@@ -1119,7 +1166,7 @@ msgstr ""
 msgid "A master digger that can tunnel through solid rock."
 msgstr ""
 
-#: scenes/main/main.gd:268
+#: scenes/main/main.gd:284
 #, c-format
 msgid "A new day: the shipping bin paid %s."
 msgstr ""
@@ -1128,12 +1175,20 @@ msgstr ""
 msgid "A new life in Hollowmere"
 msgstr ""
 
+#: data/quests.json
+msgid "A new year! The old folks say your first harvest sets the tone."
+msgstr ""
+
 #: data/items.json
 msgid "A padded carrier that holds four Wildling eggs."
 msgstr ""
 
 #: data/items.json
 msgid "A painted egg from the Egg Hunt. Hand them in at the Show Ring."
+msgstr ""
+
+#: data/quests.json
+msgid "A painter's palette"
 msgstr ""
 
 #: data/creatures.json
@@ -1280,6 +1335,10 @@ msgstr ""
 msgid "A sudden gust of wind."
 msgstr ""
 
+#: data/quests.json
+msgid "A sweet idea"
+msgstr ""
+
 #: data/moves.json
 msgid "A swirling vortex. May soak the foe."
 msgstr ""
@@ -1290,6 +1349,10 @@ msgstr ""
 
 #: data/items.json
 msgid "A tart berry found on bushes."
+msgstr ""
+
+#: data/quests.json
+msgid "A taste of home"
 msgstr ""
 
 #: data/items.json
@@ -1328,6 +1391,10 @@ msgstr ""
 msgid "A wet jab."
 msgstr ""
 
+#: data/quests.json
+msgid "A whole field of green! I'll paint it before it grows."
+msgstr ""
+
 #: core/battle/battle_engine.gd:159
 #, c-format
 msgid "A wild %s%s appeared!"
@@ -1339,6 +1406,10 @@ msgstr ""
 
 #: data/progression.json
 msgid "Above the Clouds"
+msgstr ""
+
+#: scenes/main/quest_flow.gd:147
+msgid "Accept"
 msgstr ""
 
 #: scenes/battle/battle_screen.gd:900
@@ -1362,11 +1433,15 @@ msgstr ""
 msgid "Aero Blade"
 msgstr ""
 
+#: data/quests.json
+msgid "Ah, I felt it this morning. The valley breathes a little easier."
+msgstr ""
+
 #: data/villagers.json
 msgid "Ah, the new farmer. Your grandparent would be proud."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:149 scenes/ui/trade_panel.gd:201
+#: scenes/ui/quest_log_panel.gd:7 scenes/ui/shop_panel.gd:149 scenes/ui/trade_panel.gd:201
 msgid "All"
 msgstr ""
 
@@ -1386,11 +1461,11 @@ msgstr ""
 msgid "Already built."
 msgstr ""
 
-#: autoload/game_state.gd:1224
+#: autoload/game_state.gd:1235
 msgid "Already delivered."
 msgstr ""
 
-#: autoload/game_state.gd:1267
+#: autoload/game_state.gd:1281
 msgid "Already on the farm."
 msgstr ""
 
@@ -1415,7 +1490,7 @@ msgstr ""
 msgid "An electrified tackle. The user takes recoil."
 msgstr ""
 
-#: scenes/main/controller.gd:219
+#: scenes/main/controller.gd:222
 #, c-format
 msgid "An empty lot for the %s. Robin at the Carpenter's can build it."
 msgstr ""
@@ -1438,6 +1513,10 @@ msgstr ""
 
 #: data/progression.json
 msgid "Angler's Pack"
+msgstr ""
+
+#: data/quests.json
+msgid "Another year in the valley. May it be kind to you."
 msgstr ""
 
 #: data/trees.json
@@ -1522,7 +1601,7 @@ msgstr ""
 msgid "Backpacks"
 msgstr ""
 
-#: autoload/game_state.gd:1264
+#: autoload/game_state.gd:1278
 msgid "Bad creature."
 msgstr ""
 
@@ -1586,11 +1665,15 @@ msgstr ""
 msgid "Battle"
 msgstr ""
 
+#: data/quests.json
+msgid "Battle basics"
+msgstr ""
+
 #: data/progression.json
 msgid "Battle three village champions in a row!"
 msgstr ""
 
-#: scenes/main/adventure_flow.gd:72 scenes/main/main.gd:358
+#: scenes/main/adventure_flow.gd:72 scenes/main/main.gd:374
 msgid "Battle!"
 msgstr ""
 
@@ -1638,8 +1721,17 @@ msgstr ""
 msgid "Beet"
 msgstr ""
 
+#: data/quests.json
+#, c-format
+msgid "Befriend %d Wildlings."
+msgstr ""
+
 #: data/progression.json
 msgid "Befriend 3 Wildlings (walk into them in tall grass)."
+msgstr ""
+
+#: data/quests.json
+msgid "Befriend 3 Wildlings."
 msgstr ""
 
 #: data/progression.json
@@ -1655,12 +1747,12 @@ msgstr ""
 msgid "Befriend {n} {type} Wildlings"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:217
+#: scenes/ui/journal_panel.gd:224
 #, c-format
 msgid "Befriended %d · Seen %d · Total %d"
 msgstr ""
 
-#: scenes/main/main.gd:428
+#: scenes/main/main.gd:444
 #, c-format
 msgid "Befriended in %s at Lv%d"
 msgstr ""
@@ -1681,6 +1773,10 @@ msgstr ""
 msgid "Best neighbor I've ever had."
 msgstr ""
 
+#: data/quests.json
+msgid "Bet you can't out-farm me this season. Bring your best Corn and we'll see."
+msgstr ""
+
 #: data/buildings.json
 msgid "Big Den"
 msgstr ""
@@ -1697,7 +1793,7 @@ msgstr ""
 msgid "Birdbath"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:169
+#: scenes/ui/journal_panel.gd:176
 #, c-format
 msgid "Birthday: %s %d"
 msgstr ""
@@ -1754,21 +1850,21 @@ msgstr ""
 msgid "Born from the longest day of summer."
 msgstr ""
 
-#: autoload/game_state.gd:338
+#: autoload/game_state.gd:342
 msgid "Both Wildlings must live in the Den."
 msgstr ""
 
-#: autoload/game_state.gd:1072 scenes/ui/shop_panel.gd:273
+#: autoload/game_state.gd:1081 scenes/ui/shop_panel.gd:273
 #, c-format
 msgid "Bought %d %s"
 msgstr ""
 
-#: autoload/game_state.gd:1079
+#: autoload/game_state.gd:1088
 #, c-format
 msgid "Bought %d %s (%s)"
 msgstr ""
 
-#: autoload/game_state.gd:1075
+#: autoload/game_state.gd:1084
 #, c-format
 msgid "Bought %d %s (in %s)"
 msgstr ""
@@ -1781,7 +1877,7 @@ msgstr ""
 msgid "Bouldron"
 msgstr ""
 
-#: autoload/game_state.gd:270
+#: autoload/game_state.gd:274
 #, c-format
 msgid "Bounty complete: %s!"
 msgstr ""
@@ -1842,6 +1938,10 @@ msgstr ""
 msgid "Brave"
 msgstr ""
 
+#: data/quests.json
+msgid "Break ground"
+msgstr ""
+
 #: data/items.json
 msgid "Breaks rocks and ore."
 msgstr ""
@@ -1870,16 +1970,141 @@ msgstr ""
 msgid "Brews a thunderstorm for 5 turns. Spark and Gale moves surge."
 msgstr ""
 
-#: autoload/game_state.gd:1166
+#: data/quests.json
+#, c-format
+msgid "Bring %d %s to %s."
+msgstr ""
+
+#: autoload/game_state.gd:1177
 #, c-format
 msgid "Bring %d %s."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring 3 Pumpkin Soups to Theo."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Ash 10 Coal."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Bram 40 Wood."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Cora an Amethyst."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Cora an Aquamarine."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Gideon 10 Stone."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Greta 15 Copper Ore."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Ivy 10 Mushrooms."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Juniper 2 Glow Teas."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Kai 10 Wheat."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Lila 3 Blue Jazz."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Lila 3 Tulips."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Marina 10 Seaweed."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Mira 10 Parsnips."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Nils 5 Wool."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Old Barley a Pumpkin."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Pip a Quartz."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Rowan 5 Corn to compare."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Sable a Ruby."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Sable a Truffle."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Sable an Emerald."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Selene 1 Star Shard."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Theo 5 Kale."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Theo 5 Potatoes."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Theo a Melon."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring Volta 5 Spark Dust."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring it to Old Barley."
 msgstr ""
 
 #: data/villagers.json
 msgid "Bring ore, get bars. Bring bars, get better tools."
 msgstr ""
 
-#: autoload/game_state.gd:1475
+#: data/quests.json
+msgid "Bring the Gold Bars to Greta."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring the Hardwood to Bram."
+msgstr ""
+
+#: data/quests.json
+msgid "Bring the Honey Cake to Mira."
+msgstr ""
+
+#: autoload/game_state.gd:1489
 msgid "Bring the Wildling along in your party."
 msgstr ""
 
@@ -1907,7 +2132,7 @@ msgstr ""
 msgid "Bucket"
 msgstr ""
 
-#: autoload/game_state.gd:737
+#: autoload/game_state.gd:743
 msgid "Bucket filled"
 msgstr ""
 
@@ -1979,11 +2204,11 @@ msgstr ""
 msgid "Can't fall asleep. Farm: happiness never drops."
 msgstr ""
 
-#: autoload/game_state.gd:881
+#: autoload/game_state.gd:888
 msgid "Can't place that here."
 msgstr ""
 
-#: scenes/main/controller.gd:369 scenes/ui/party_panel.gd:351
+#: scenes/main/controller.gd:374 scenes/ui/party_panel.gd:351
 msgid "Cancel"
 msgstr ""
 
@@ -2004,7 +2229,7 @@ msgstr ""
 msgid "Challenge sent to %s."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:86
+#: scenes/ui/journal_panel.gd:93 scenes/ui/quest_log_panel.gd:79
 #, c-format
 msgid "Chapter %d · %s"
 msgstr ""
@@ -2018,6 +2243,14 @@ msgstr ""
 msgid "Charge Up"
 msgstr ""
 
+#: data/quests.json
+msgid "Charged up"
+msgstr ""
+
+#: data/quests.json
+msgid "Charged up: the rematch"
+msgstr ""
+
 #: data/moves.json
 msgid "Charges wrapped in fire."
 msgstr ""
@@ -2026,7 +2259,7 @@ msgstr ""
 msgid "Charmer"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:99
+#: scenes/ui/settings_panel.gd:100
 msgid "Chat"
 msgstr ""
 
@@ -2122,7 +2355,7 @@ msgstr ""
 msgid "Close farm"
 msgstr ""
 
-#: scenes/ui/map_panel.gd:53 scenes/ui/map_panel.gd:89
+#: scenes/ui/map_panel.gd:53 scenes/ui/map_panel.gd:91
 msgid "Closed"
 msgstr ""
 
@@ -2150,7 +2383,7 @@ msgstr ""
 msgid "Cluckle Egg"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:98 scenes/ui/title_screen.gd:125
+#: scenes/ui/settings_panel.gd:99 scenes/ui/title_screen.gd:125
 msgid "Co-op"
 msgstr ""
 
@@ -2166,7 +2399,11 @@ msgstr ""
 msgid "Coconut"
 msgstr ""
 
-#: scenes/ui/menu_shell.gd:15
+#: data/quests.json
+msgid "Collect 10 Hardwood."
+msgstr ""
+
+#: scenes/ui/menu_shell.gd:16
 msgid "Collection"
 msgstr ""
 
@@ -2180,6 +2417,10 @@ msgstr ""
 
 #: autoload/data.gd:10
 msgid "Common"
+msgstr ""
+
+#: scenes/ui/quest_log_panel.gd:6
+msgid "Completed"
 msgstr ""
 
 #: data/regions.json
@@ -2198,8 +2439,29 @@ msgstr ""
 msgid "Controls (click, then press a key)"
 msgstr ""
 
-#: scenes/main/controller.gd:240 scenes/ui/craft_panel.gd:170
+#: scenes/main/controller.gd:243 scenes/ui/craft_panel.gd:170
 msgid "Cook"
+msgstr ""
+
+#: data/quests.json
+#, c-format
+msgid "Cook %d dishes."
+msgstr ""
+
+#: data/quests.json
+msgid "Cook 3 Pumpkin Soups."
+msgstr ""
+
+#: data/quests.json
+msgid "Cook 5 dishes."
+msgstr ""
+
+#: data/quests.json
+msgid "Cook a Cream Pudding."
+msgstr ""
+
+#: data/quests.json
+msgid "Cook a Honey Cake."
 msgstr ""
 
 #: data/progression.json
@@ -2327,7 +2589,12 @@ msgstr ""
 msgid "Crackling dust from Voltick."
 msgstr ""
 
-#: scenes/ui/menu_shell.gd:12 scenes/ui/settings_panel.gd:95
+#: data/quests.json
+#, c-format
+msgid "Craft %d items."
+msgstr ""
+
+#: data/quests.json scenes/ui/menu_shell.gd:12 scenes/ui/settings_panel.gd:95
 msgid "Crafting"
 msgstr ""
 
@@ -2347,7 +2614,7 @@ msgstr ""
 msgid "Create account"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:273
+#: scenes/ui/journal_panel.gd:280
 msgid "Creature Show ladder · every Saturday at the Show Ring"
 msgstr ""
 
@@ -2362,6 +2629,10 @@ msgstr ""
 #: data/items.json
 #, c-format
 msgid "Crops grow 25% faster. Apply to tilled soil."
+msgstr ""
+
+#: data/quests.json
+msgid "Crops grow in real time, even while the game is closed. Harvest one when it's ripe."
 msgstr ""
 
 #: data/title_tips.json
@@ -2396,6 +2667,10 @@ msgstr ""
 msgid "Cures any status condition."
 msgstr ""
 
+#: data/quests.json
+msgid "Customers keep asking for something sweet. Could you bake a Honey Cake for me to try?"
+msgstr ""
+
 #: data/items.json
 msgid "Cuts weeds and harvests crops."
 msgstr ""
@@ -2414,6 +2689,10 @@ msgstr ""
 
 #: data/items.json
 msgid "Daffodil"
+msgstr ""
+
+#: scenes/ui/quest_log_panel.gd:30 scenes/ui/quest_log_panel.gd:6
+msgid "Daily"
 msgstr ""
 
 #: data/progression.json
@@ -2450,11 +2729,11 @@ msgstr ""
 msgid "Delete this farm forever?"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:198
+#: scenes/ui/journal_panel.gd:205
 msgid "Deliver"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:202
+#: scenes/ui/journal_panel.gd:209
 #, c-format
 msgid "Delivered! +%s"
 msgstr ""
@@ -2503,16 +2782,24 @@ msgstr ""
 msgid "Dives from the sky."
 msgstr ""
 
+#: data/quests.json
+msgid "Do you see? The glade glows again."
+msgstr ""
+
 #: scenes/ui/settings_panel.gd:34
 msgid "Done"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:195 scenes/ui/journal_panel.gd:260 scenes/ui/journal_panel.gd:272
+#: scenes/ui/journal_panel.gd:202 scenes/ui/journal_panel.gd:267 scenes/ui/journal_panel.gd:279
 msgid "Done ✓"
 msgstr ""
 
 #: scenes/ui/inventory_panel.gd:338
 msgid "Double-click to open"
+msgstr ""
+
+#: data/quests.json
+msgid "Down below"
 msgstr ""
 
 #: data/villagers.json
@@ -2579,11 +2866,11 @@ msgstr ""
 msgid "East: Tidecove."
 msgstr ""
 
-#: scenes/main/controller.gd:83 scenes/ui/inventory_panel.gd:404
+#: scenes/main/controller.gd:86 scenes/ui/inventory_panel.gd:404
 msgid "Eat"
 msgstr ""
 
-#: scenes/main/controller.gd:83
+#: scenes/main/controller.gd:86
 #, c-format
 msgid "Eat %s? (+%d energy)"
 msgstr ""
@@ -2664,19 +2951,31 @@ msgstr ""
 msgid "Embercub is warm. Do not hug in summer."
 msgstr ""
 
+#: data/quests.json
+msgid "Embers"
+msgstr ""
+
 #: data/progression.json
 msgid "Embers on the Ridge"
+msgstr ""
+
+#: data/quests.json
+msgid "Embers: the rematch"
 msgstr ""
 
 #: data/items.json
 msgid "Emerald"
 msgstr ""
 
-#: scenes/ui/menu_shell.gd:17
+#: scenes/ui/menu_shell.gd:18
 msgid "Emotes"
 msgstr ""
 
-#: autoload/game_state.gd:833
+#: data/quests.json
+msgid "Empty shelves"
+msgstr ""
+
+#: autoload/game_state.gd:839
 msgid "Empty the chest first."
 msgstr ""
 
@@ -2700,6 +2999,10 @@ msgstr ""
 msgid "Erupting roots. The user takes recoil."
 msgstr ""
 
+#: scenes/ui/quest_log_panel.gd:33
+msgid "Event"
+msgstr ""
+
 #: autoload/data.gd:10
 msgid "Everlasting"
 msgstr ""
@@ -2716,6 +3019,10 @@ msgstr ""
 msgid "Every painting I make has a little bit of you in it now."
 msgstr ""
 
+#: data/quests.json
+msgid "Everyone's smiling. That's what the lights are for."
+msgstr ""
+
 #: data/progression.json
 msgid "Explorer Pack"
 msgstr ""
@@ -2724,7 +3031,7 @@ msgstr ""
 msgid "Fairy Rose"
 msgstr ""
 
-#: autoload/data.gd:346
+#: autoload/data.gd:355
 msgid "Fall"
 msgstr ""
 
@@ -2743,12 +3050,12 @@ msgstr ""
 msgid "Farm Level %d!"
 msgstr ""
 
-#: scenes/ui/hud.gd:246
+#: scenes/ui/hud.gd:333
 #, c-format
 msgid "Farm Lv %d"
 msgstr ""
 
-#: scenes/ui/hud.gd:77
+#: scenes/ui/hud.gd:81
 msgid "Farm Lv 1"
 msgstr ""
 
@@ -2764,12 +3071,16 @@ msgstr ""
 msgid "Farm codes are 6 letters."
 msgstr ""
 
+#: data/quests.json
+msgid "Farm hands"
+msgstr ""
+
 #: scenes/ui/party_panel.gd:258
 #, c-format
 msgid "Farm job: %s. %s"
 msgstr ""
 
-#: scenes/ui/hud.gd:170
+#: scenes/ui/hud.gd:202
 #, c-format
 msgid "Farm level %d!"
 msgstr ""
@@ -2842,6 +3153,10 @@ msgstr ""
 msgid "Fern shows you an ancient carving of eight creatures."
 msgstr ""
 
+#: data/quests.json
+msgid "Fern thinks battling teaches Wildlings trust. Prove it: win five battles."
+msgstr ""
+
 #: data/villagers.json
 msgid "Fern: Here, take these charms for your research."
 msgstr ""
@@ -2878,6 +3193,10 @@ msgstr ""
 msgid "Fiber"
 msgstr ""
 
+#: data/quests.json
+msgid "Field survey"
+msgstr ""
+
 #: data/creatures.json
 msgid "Fields bloom wherever its wings pass."
 msgstr ""
@@ -2894,6 +3213,10 @@ msgstr ""
 msgid "Fill your Dex by befriending every Wildling."
 msgstr ""
 
+#: data/quests.json
+msgid "Find Rowan."
+msgstr ""
+
 #: data/progression.json
 msgid "Find a seasonal legend at its home shrine and befriend it."
 msgstr ""
@@ -2907,7 +3230,11 @@ msgstr ""
 msgid "Finish signing in with %s in the popup..."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:100
+#: scenes/ui/quest_log_panel.gd:181
+msgid "Finished quests show up here."
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:107
 #, c-format
 msgid "Finished: %s"
 msgstr ""
@@ -2916,8 +3243,20 @@ msgstr ""
 msgid "Fires sharp leaves."
 msgstr ""
 
+#: data/quests.json
+msgid "First harvest"
+msgstr ""
+
+#: data/quests.json
+msgid "First steps"
+msgstr ""
+
 #: data/creatures.json
 msgid "Fishers know to wear rubber boots near it."
+msgstr ""
+
+#: data/quests.json
+msgid "Five? Fine. Your Wildlings are... adequate. Very adequate."
 msgstr ""
 
 #: data/traits.json
@@ -2984,6 +3323,18 @@ msgstr ""
 msgid "Food restores energy. Snacks beat naps."
 msgstr ""
 
+#: data/quests.json
+msgid "For science. And because I like it. Mostly science."
+msgstr ""
+
+#: data/quests.json
+msgid "For the lantern on the shrine path. Just like the old days."
+msgstr ""
+
+#: data/quests.json
+msgid "For the museum"
+msgstr ""
+
 #: data/items.json
 msgid "Forage Basket"
 msgstr ""
@@ -3012,7 +3363,11 @@ msgstr ""
 msgid "Fresh and crunchy."
 msgstr ""
 
-#: autoload/data.gd:373
+#: data/quests.json
+msgid "Fresh from the farm"
+msgstr ""
+
+#: autoload/data.gd:382
 msgid "Fresh from the orchard."
 msgstr ""
 
@@ -3020,7 +3375,7 @@ msgstr ""
 msgid "Fresh milk from Meadowmoo."
 msgstr ""
 
-#: autoload/data.gd:377
+#: autoload/data.gd:386
 msgid "Fresh-pressed juice."
 msgstr ""
 
@@ -3081,7 +3436,7 @@ msgstr ""
 msgid "Frostpip"
 msgstr ""
 
-#: autoload/data.gd:336
+#: autoload/data.gd:345
 #, c-format
 msgid "Frozen %s"
 msgstr ""
@@ -3092,6 +3447,10 @@ msgstr ""
 
 #: data/items.json
 msgid "Fuel for furnaces."
+msgstr ""
+
+#: data/quests.json
+msgid "Fuel for the forge"
 msgstr ""
 
 #: scenes/ui/settings_panel.gd:55
@@ -3120,6 +3479,10 @@ msgstr ""
 
 #: data/items.json
 msgid "Furnace"
+msgstr ""
+
+#: data/quests.json
+msgid "Future Warden"
 msgstr ""
 
 #: data/types.json
@@ -3174,6 +3537,10 @@ msgstr ""
 msgid "Gem Case"
 msgstr ""
 
+#: data/quests.json
+msgid "Gems for the road"
+msgstr ""
+
 #: data/creatures.json
 msgid "Gems grow on its back like warts."
 msgstr ""
@@ -3226,20 +3593,29 @@ msgstr ""
 msgid "Gideon: I lived in the city once. Too loud. Stone is honest."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:177
+#: data/quests.json
+msgid "Gift something to 5 villagers."
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:184
 msgid "Gift ✓"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:170
+#: scenes/ui/journal_panel.gd:177
 #, c-format
 msgid "Gifts this week %d/2"
 msgstr ""
 
-#: scenes/main/controller.gd:369
+#: scenes/main/controller.gd:374
 msgid "Give"
 msgstr ""
 
-#: scenes/main/controller.gd:369
+#: data/quests.json
+#, c-format
+msgid "Give %d gifts to villagers."
+msgstr ""
+
+#: scenes/main/controller.gd:374
 #, c-format
 msgid "Give %s to %s?"
 msgstr ""
@@ -3296,6 +3672,10 @@ msgstr ""
 msgid "Glow moves hit 1.5x harder below 1/3 HP. Farm: +1 Charmer power."
 msgstr ""
 
+#: data/quests.json
+msgid "Glow paper"
+msgstr ""
+
 #: data/progression.json
 msgid "Glowing Wildlings gather at the shore tonight."
 msgstr ""
@@ -3306,6 +3686,11 @@ msgstr ""
 
 #: data/items.json
 msgid "Glows softly at night."
+msgstr ""
+
+#: data/quests.json
+#, c-format
+msgid "Go down %d mine floors."
 msgstr ""
 
 #: data/title_tips.json
@@ -3345,6 +3730,22 @@ msgstr ""
 msgid "Good morning!"
 msgstr ""
 
+#: data/quests.json
+msgid "Good neighbor"
+msgstr ""
+
+#: data/quests.json
+msgid "Good straight logs. The bridge will hold for another hundred years."
+msgstr ""
+
+#: data/quests.json
+msgid "Good. Patience and stone. That's all a canyon needs."
+msgstr ""
+
+#: scenes/main/quest_flow.gd:144
+msgid "Got a moment? I could use your help with something."
+msgstr ""
+
 #: data/crops.json
 msgid "Grape"
 msgstr ""
@@ -3363,6 +3764,10 @@ msgstr ""
 
 #: data/progression.json data/traits.json
 msgid "Green Thumb"
+msgstr ""
+
+#: data/quests.json
+msgid "Green and red. A merchant's colors. Take this, I have no use for it."
 msgstr ""
 
 #: data/buildings.json data/greenhouse.json
@@ -3434,6 +3839,10 @@ msgstr ""
 msgid "Grove Keeper"
 msgstr ""
 
+#: data/quests.json
+msgid "Grow and bring Lila a Fairy Rose."
+msgstr ""
+
 #: data/title_tips.json
 msgid "Grow your own salad, one pixel at a time."
 msgstr ""
@@ -3454,12 +3863,12 @@ msgstr ""
 msgid "Growl"
 msgstr ""
 
-#: autoload/data.gd:368
+#: autoload/data.gd:377
 #, c-format
 msgid "Grows fastest in %s: ripe in %s when watered%s. Grows slower in other seasons, and always well in the greenhouse."
 msgstr ""
 
-#: autoload/game_state.gd:868
+#: autoload/game_state.gd:875
 #, c-format
 msgid "Grows slowly in %s"
 msgstr ""
@@ -3521,6 +3930,10 @@ msgstr ""
 msgid "HP %d/%d%s"
 msgstr ""
 
+#: data/quests.json
+msgid "Ha! That'll keep the Embers warm all season."
+msgstr ""
+
 #: data/moves.json
 msgid "Hail Lance"
 msgstr ""
@@ -3553,8 +3966,33 @@ msgstr ""
 msgid "Hardy"
 msgstr ""
 
+#: data/quests.json
+#, c-format
+msgid "Harvest %d crops."
+msgstr ""
+
+#: data/quests.json
+msgid "Harvest 10 crops in the new year."
+msgstr ""
+
+#: data/quests.json
+msgid "Harvest 30 crops."
+msgstr ""
+
+#: data/quests.json
+msgid "Harvest 60 crops."
+msgstr ""
+
 #: data/progression.json
 msgid "Harvest Fair"
+msgstr ""
+
+#: data/quests.json
+msgid "Harvest day"
+msgstr ""
+
+#: data/quests.json
+msgid "Harvest moon"
 msgstr ""
 
 #: data/progression.json
@@ -3594,8 +4032,16 @@ msgstr ""
 msgid "Hatches in %s"
 msgstr ""
 
+#: data/quests.json
+msgid "Have 20 Wildlings in your dex."
+msgstr ""
+
 #: data/items.json
 msgid "Hay Bale"
+msgstr ""
+
+#: data/quests.json
+msgid "Hazel used to make this every winter. Thank you, child."
 msgstr ""
 
 #: data/progression.json
@@ -3638,7 +4084,7 @@ msgstr ""
 msgid "Heirloom Charm"
 msgstr ""
 
-#: scenes/main/main.gd:121
+#: scenes/main/main.gd:122
 msgid "Help make Hollowmere better? Share anonymous play stats: how long you play and how far your farm gets. Nothing personal, and you can change it in Settings."
 msgstr ""
 
@@ -3659,6 +4105,10 @@ msgstr ""
 msgid "Hibernox"
 msgstr ""
 
+#: scenes/ui/hud.gd:180
+msgid "Hide this hint"
+msgstr ""
+
 #: data/progression.json
 msgid "High Roller's Pack"
 msgstr ""
@@ -3671,11 +4121,15 @@ msgstr ""
 msgid "Hmph. Another farmer."
 msgstr ""
 
+#: data/quests.json
+msgid "Hmph. Decent ore. Here, for your trouble."
+msgstr ""
+
 #: data/items.json
 msgid "Hoe"
 msgstr ""
 
-#: scenes/main/controller.gd:158
+#: scenes/main/controller.gd:161
 #, c-format
 msgid "Hold an item and use it on the %s to load it."
 msgstr ""
@@ -3721,6 +4175,10 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
+#: data/quests.json
+msgid "Home cooking"
+msgstr ""
+
 #: data/items.json
 msgid "Honey"
 msgstr ""
@@ -3753,6 +4211,10 @@ msgstr ""
 msgid "I carved this bench myself. Took three weeks."
 msgstr ""
 
+#: data/quests.json
+msgid "I collect shiny rocks! Do you have one? A real shiny one?"
+msgstr ""
+
 #: data/villagers.json
 msgid "I collected shells for you. Don't laugh."
 msgstr ""
@@ -3781,12 +4243,20 @@ msgstr ""
 msgid "I found a shiny rock! It's mine though."
 msgstr ""
 
+#: data/quests.json
+msgid "I have a buyer who wants a Truffle. Pigs or Wildlings find them, I'm told."
+msgstr ""
+
 #: data/villagers.json
 msgid "I kept something special aside for you."
 msgstr ""
 
 #: data/villagers.json
 msgid "I named the cafe after a Sproutle that slept on my doorstep."
+msgstr ""
+
+#: data/quests.json
+msgid "I need Hardwood for a roof beam. Big stumps have it, if your axe is up to it."
 msgstr ""
 
 #: data/villagers.json
@@ -3813,6 +4283,14 @@ msgstr ""
 msgid "I think I'm falling for a farmer. Who knew?"
 msgstr ""
 
+#: data/quests.json
+msgid "I want a farm-fresh stew on the menu. Can you supply the veggies?"
+msgstr ""
+
+#: data/quests.json
+msgid "I want to make something special. I need Gold Bars, and I don't trust the merchant's."
+msgstr ""
+
 #: data/villagers.json
 msgid "I'd cook for you every day if you let me."
 msgstr ""
@@ -3837,8 +4315,16 @@ msgstr ""
 msgid "I'm gonna be a Warden when I grow up!"
 msgstr ""
 
+#: data/quests.json
+msgid "I'm planning a summer feast. Help me cook?"
+msgstr ""
+
 #: core/social/relationships.gd:93
 msgid "I'm so glad we're together. Let's make today a good one."
+msgstr ""
+
+#: data/quests.json
+msgid "I'm studying how Wildlings bond with people. Could you befriend a few more and tell me how it went?"
 msgstr ""
 
 #: data/villagers.json
@@ -3847,6 +4333,10 @@ msgstr ""
 
 #: data/villagers.json
 msgid "I'm writing a paper on Glow Wildlings. Want to help?"
+msgstr ""
+
+#: data/quests.json
+msgid "I've run out of colors. Real flowers make the best reference."
 msgstr ""
 
 #: data/villagers.json
@@ -3867,6 +4357,10 @@ msgstr ""
 
 #: data/moves.json
 msgid "Ice Shard"
+msgstr ""
+
+#: data/quests.json
+msgid "Ice-cold melon for the whole village. Perfect."
 msgstr ""
 
 #: data/regions.json
@@ -3912,6 +4406,10 @@ msgstr ""
 
 #: data/traits.json
 msgid "Intimidate"
+msgstr ""
+
+#: data/quests.json
+msgid "Into the village"
 msgstr ""
 
 #: scenes/ui/menu_shell.gd:10
@@ -3989,6 +4487,10 @@ msgstr ""
 
 #: data/creatures.json
 msgid "It glows faintly in damp, dark places."
+msgstr ""
+
+#: data/quests.json
+msgid "It glows! I'll never get that on canvas. I'll try anyway."
 msgstr ""
 
 #: data/creatures.json
@@ -4112,12 +4614,12 @@ msgstr ""
 msgid "It's %s's favorite food!"
 msgstr ""
 
-#: scenes/main/controller.gd:217
+#: scenes/main/controller.gd:220
 #, c-format
 msgid "It's blocked. (%s)"
 msgstr ""
 
-#: autoload/game_state.gd:836
+#: autoload/game_state.gd:842
 msgid "It's busy."
 msgstr ""
 
@@ -4129,7 +4631,7 @@ msgstr ""
 msgid "It's empty."
 msgstr ""
 
-#: scenes/main/controller.gd:271
+#: scenes/main/controller.gd:274
 msgid "It's locked."
 msgstr ""
 
@@ -4282,7 +4784,7 @@ msgstr ""
 msgid "Joltbeetle"
 msgstr ""
 
-#: scenes/ui/menu_shell.gd:13
+#: scenes/ui/menu_shell.gd:14
 msgid "Journal"
 msgstr ""
 
@@ -4365,6 +4867,10 @@ msgstr ""
 
 #: scenes/main/adventure_flow.gd:301
 msgid "Keep looking"
+msgstr ""
+
+#: scenes/ui/quest_log_panel.gd:72
+msgid "Keep playing"
 msgstr ""
 
 #: data/items.json
@@ -4464,7 +4970,7 @@ msgstr ""
 msgid "Leaf moves hit 1.5x harder below 1/3 HP. Farm: +1 Grower power."
 msgstr ""
 
-#: autoload/game_state.gd:237
+#: autoload/game_state.gd:241
 #, c-format
 msgid "Learned recipe: %s"
 msgstr ""
@@ -4477,11 +4983,11 @@ msgstr ""
 msgid "Legend of the Valley"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:140
+#: scenes/ui/journal_panel.gd:147
 msgid "Legends of the seasons: "
 msgstr ""
 
-#: scenes/main/controller.gd:310
+#: scenes/main/controller.gd:313
 msgid "Let's battle!"
 msgstr ""
 
@@ -4489,7 +4995,7 @@ msgstr ""
 msgid "Let's go!"
 msgstr ""
 
-#: scenes/main/main.gd:375
+#: scenes/main/main.gd:391
 msgid "Let's trade"
 msgstr ""
 
@@ -4550,6 +5056,10 @@ msgstr ""
 msgid "Lila: These are all the Wildlings I've ever met."
 msgstr ""
 
+#: data/quests.json
+msgid "Listen, they're singing already."
+msgstr ""
+
 #: data/creatures.json
 msgid "Little Ripplefin take shelter inside its shell."
 msgstr ""
@@ -4570,12 +5080,16 @@ msgstr ""
 msgid "Load a farm"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:129
+#: scenes/ui/journal_panel.gd:136
 msgid "Locked"
 msgstr ""
 
 #: data/villagers.json
 msgid "Long ago, Wildlings and people farmed side by side."
+msgstr ""
+
+#: data/quests.json
+msgid "Loser buys lunch"
 msgstr ""
 
 #: data/moves.json
@@ -4596,6 +5110,10 @@ msgstr ""
 
 #: data/moves.json
 msgid "Lull"
+msgstr ""
+
+#: data/quests.json
+msgid "Lumber for the bridge"
 msgstr ""
 
 #: data/creatures.json
@@ -4632,7 +5150,11 @@ msgstr ""
 msgid "Magma Vent"
 msgstr ""
 
-#: scenes/main/controller.gd:203
+#: scenes/ui/quest_log_panel.gd:28 scenes/ui/quest_log_panel.gd:7
+msgid "Main"
+msgstr ""
+
+#: scenes/main/controller.gd:206
 msgid "Make a wish"
 msgstr ""
 
@@ -4640,7 +5162,7 @@ msgstr ""
 msgid "Make lead"
 msgstr ""
 
-#: scenes/ui/menu_shell.gd:16
+#: scenes/ui/menu_shell.gd:17
 msgid "Map"
 msgstr ""
 
@@ -4662,6 +5184,10 @@ msgstr ""
 
 #: data/villagers.json
 msgid "Marina: You fight with your heart. I like that."
+msgstr ""
+
+#: data/quests.json
+msgid "Market day"
 msgstr ""
 
 #: core/progression/endless.gd:45
@@ -4704,7 +5230,7 @@ msgstr ""
 msgid "Melon"
 msgstr ""
 
-#: scenes/ui/pause_menu.gd:32 scenes/ui/settings_panel.gd:97
+#: scenes/ui/pause_menu.gd:32 scenes/ui/settings_panel.gd:98
 msgid "Menu"
 msgstr ""
 
@@ -4764,12 +5290,16 @@ msgstr ""
 msgid "Mira: She always said a valley grows as much as its people do."
 msgstr ""
 
-#: autoload/game_state.gd:1121
+#: autoload/game_state.gd:1130
 msgid "Missing ingredients."
 msgstr ""
 
 #: data/moves.json
 msgid "Mist Veil"
+msgstr ""
+
+#: data/quests.json
+msgid "Mm. Better than mine. Don't tell anyone that either."
 msgstr ""
 
 #: core/calendar/calendar.gd:35 core/calendar/calendar.gd:7
@@ -4790,6 +5320,14 @@ msgstr ""
 
 #: data/moves.json
 msgid "Moonlight"
+msgstr ""
+
+#: data/quests.json
+msgid "Moonlit offering"
+msgstr ""
+
+#: data/quests.json
+msgid "Moonlit offering: the rematch"
 msgstr ""
 
 #: data/creatures.json
@@ -4841,6 +5379,14 @@ msgstr ""
 msgid "My heart races like a gale when you're around."
 msgstr ""
 
+#: data/quests.json
+msgid "My lamps run on Spark Dust. Got any? Bring it and I'll light your way."
+msgstr ""
+
+#: data/quests.json
+msgid "My supplier's late again. Dig me up some Copper Ore."
+msgstr ""
+
 #: data/progression.json
 msgid "Mystic"
 msgstr ""
@@ -4882,8 +5428,25 @@ msgstr ""
 msgid "New Roots"
 msgstr ""
 
+#: scenes/main/quest_flow.gd:49
+msgid "New daily quests are on your list."
+msgstr ""
+
 #: data/villagers.json
 msgid "New farmers always buy too few parsnips. Just saying."
+msgstr ""
+
+#: data/quests.json
+msgid "New friends"
+msgstr ""
+
+#: scenes/main/quest_flow.gd:150
+#, c-format
+msgid "New quest: %s"
+msgstr ""
+
+#: scenes/ui/quest_log_panel.gd:161
+msgid "New task (once a day)"
 msgstr ""
 
 #: scenes/ui/title_screen.gd:265
@@ -4895,16 +5458,16 @@ msgstr ""
 msgid "Next festival: %s on %s %d."
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:100
+#: scenes/ui/settings_panel.gd:101
 msgid "Next item slot"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:224
+#: scenes/ui/journal_panel.gd:231
 #, c-format
 msgid "Next reward at %d befriended"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:284
+#: scenes/ui/journal_panel.gd:291
 #, c-format
 msgid "Next show: %s"
 msgstr ""
@@ -4941,7 +5504,7 @@ msgstr ""
 msgid "Nils: Wool from my Snowpaca. Make something warm."
 msgstr ""
 
-#: scenes/main/controller.gd:83
+#: scenes/main/controller.gd:86
 msgid "No"
 msgstr ""
 
@@ -4975,24 +5538,32 @@ msgstr ""
 msgid "No farms yet."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:177
+#: scenes/ui/journal_panel.gd:184
 msgid "No gift yet"
+msgstr ""
+
+#: scenes/ui/quest_log_panel.gd:98
+msgid "No quests right now. Villagers with a ! over their head have something for you."
 msgstr ""
 
 #: scenes/ui/craft_panel.gd:128
 msgid "No recipes yet."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:183
+#: scenes/ui/journal_panel.gd:190
 msgid "No requests pinned up right now."
 msgstr ""
 
-#: autoload/game_state.gd:839
+#: autoload/game_state.gd:845
 msgid "No room in your pack."
 msgstr ""
 
-#: scenes/main/main.gd:121 scenes/main/main.gd:375
+#: scenes/main/main.gd:122 scenes/main/main.gd:391
 msgid "No thanks"
+msgstr ""
+
+#: scenes/main/main.gd:135
+msgid "No, I know the basics"
 msgstr ""
 
 #: autoload/data.gd:10
@@ -5019,11 +5590,11 @@ msgstr ""
 msgid "Northern hemisphere"
 msgstr ""
 
-#: autoload/game_state.gd:1190
+#: autoload/game_state.gd:1201
 msgid "Not enough chips."
 msgstr ""
 
-#: autoload/game_state.gd:1035 autoload/game_state.gd:1169 autoload/game_state.gd:1193
+#: autoload/game_state.gd:1044 autoload/game_state.gd:1180 autoload/game_state.gd:1204
 msgid "Not enough gold."
 msgstr ""
 
@@ -5031,7 +5602,7 @@ msgstr ""
 msgid "Not enough money."
 msgstr ""
 
-#: scenes/main/controller.gd:310 scenes/main/main.gd:358
+#: scenes/main/controller.gd:313 scenes/main/main.gd:374 scenes/main/quest_flow.gd:147
 msgid "Not now"
 msgstr ""
 
@@ -5039,7 +5610,7 @@ msgstr ""
 msgid "Not ready"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:176
+#: scenes/ui/journal_panel.gd:183
 msgid "Not talked"
 msgstr ""
 
@@ -5047,7 +5618,7 @@ msgstr ""
 msgid "Not this week"
 msgstr ""
 
-#: scenes/main/controller.gd:203
+#: scenes/main/controller.gd:206
 msgid "Not today"
 msgstr ""
 
@@ -5076,6 +5647,10 @@ msgstr ""
 msgid "Novice"
 msgstr ""
 
+#: data/quests.json
+msgid "Now that's timber. I'll make you something nice with the offcuts."
+msgstr ""
+
 #: data/title_tips.json
 #, c-format
 msgid "Now with 100% more Wildlings!"
@@ -5099,6 +5674,10 @@ msgstr ""
 
 #: data/villagers.json
 msgid "Oh, hello! Mind the paint, it's still wet."
+msgstr ""
+
+#: data/quests.json
+msgid "Oh, it's still warm! I'll put it on the counter as a sample."
 msgstr ""
 
 #: data/villagers.json
@@ -5141,12 +5720,24 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
+#: data/quests.json
+msgid "Open Crafting with {craft} and craft anything, for example a Basic Treat."
+msgstr ""
+
 #: scenes/ui/coop_panel.gd:165
 msgid "Open farm on LAN"
 msgstr ""
 
 #: scenes/ui/coop_panel.gd:158
 msgid "Open farm online"
+msgstr ""
+
+#: data/quests.json
+msgid "Open the Map with {map}, then walk to the village east of your farm."
+msgstr ""
+
+#: data/quests.json
+msgid "Open the Party tab with {party} and give a farm Wildling a job."
 msgstr ""
 
 #: scenes/ui/coop_panel.gd:155
@@ -5185,6 +5776,10 @@ msgstr ""
 msgid "Overcharge"
 msgstr ""
 
+#: data/quests.json
+msgid "Overdue"
+msgstr ""
+
 #: data/traits.json
 msgid "Overgrow"
 msgstr ""
@@ -5198,7 +5793,7 @@ msgstr ""
 msgid "Own type +50%"
 msgstr ""
 
-#: autoload/game_state.gd:247
+#: autoload/game_state.gd:251
 #, c-format
 msgid "Pack full: %d %s sent to the farm chest."
 msgstr ""
@@ -5269,6 +5864,10 @@ msgstr ""
 msgid "Pelts the foe with hard seeds."
 msgstr ""
 
+#: data/quests.json
+msgid "Perfect! These will sell before lunch."
+msgstr ""
+
 #: data/traits.json
 msgid "Permafrost"
 msgstr ""
@@ -5309,6 +5908,10 @@ msgstr ""
 msgid "Pick a farmer name first."
 msgstr ""
 
+#: data/quests.json
+msgid "Pick the hoe on the hotbar and press {use} on dirt to till 3 tiles."
+msgstr ""
+
 #: data/items.json
 msgid "Pickaxe"
 msgstr ""
@@ -5321,12 +5924,20 @@ msgstr ""
 msgid "Pip"
 msgstr ""
 
+#: data/quests.json
+msgid "Pip borrowed a book and says it's 'somewhere in the Meadow'. Could you check?"
+msgstr ""
+
 #: data/villagers.json
 msgid "Pip gives you a shiny rock."
 msgstr ""
 
 #: data/villagers.json
 msgid "Pip is chasing a Nibblet."
+msgstr ""
+
+#: data/quests.json
+msgid "Pip left the book in the grass again? Of course. Thank you for looking."
 msgstr ""
 
 #: data/villagers.json
@@ -5357,11 +5968,20 @@ msgstr ""
 msgid "Place it in the Hatchery. Something is moving inside!"
 msgstr ""
 
+#: data/quests.json
+#, c-format
+msgid "Plant %d seeds."
+msgstr ""
+
+#: data/quests.json
+msgid "Plant 30 seeds this spring."
+msgstr ""
+
 #: data/items.json
 msgid "Plant fiber from weeds."
 msgstr ""
 
-#: autoload/data.gd:371
+#: autoload/data.gd:380
 #, c-format
 msgid "Plant on open farmland. Grows into a tree in %s, then gives fruit every %s in %s."
 msgstr ""
@@ -5370,8 +5990,16 @@ msgstr ""
 msgid "Play as guest"
 msgstr ""
 
+#: scenes/main/main.gd:135
+msgid "Play the tutorial? It shows the basics step by step. You can skip it any time in the quest log."
+msgstr ""
+
 #: scenes/ui/coop_panel.gd:31 scenes/ui/pause_menu.gd:44
 msgid "Play together"
+msgstr ""
+
+#: scenes/ui/quest_log_panel.gd:58
+msgid "Play tutorial"
 msgstr ""
 
 #: data/trees.json
@@ -5407,7 +6035,7 @@ msgstr ""
 msgid "Powered by tea and parsnips."
 msgstr ""
 
-#: autoload/data.gd:381
+#: autoload/data.gd:390
 msgid "Preserved by a Frost Wildling."
 msgstr ""
 
@@ -5439,7 +6067,7 @@ msgstr ""
 msgid "Prestige III"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:101
+#: scenes/ui/settings_panel.gd:102
 msgid "Previous item slot"
 msgstr ""
 
@@ -5492,12 +6120,25 @@ msgstr ""
 msgid "Pumpkin Soup"
 msgstr ""
 
+#: data/quests.json
+msgid "Pumpkin season"
+msgstr ""
+
+#: data/quests.json
+#, c-format
+msgid "Put %d items into the shipping bin."
+msgstr ""
+
 #: core/farming/machines.gd:43
 msgid "Put a crop or fruit in."
 msgstr ""
 
 #: core/farming/machines.gd:27
 msgid "Put seeds in."
+msgstr ""
+
+#: data/quests.json
+msgid "Put something into the shipping bin by the house. It pays out when the game day turns over."
 msgstr ""
 
 #: data/moves.json
@@ -5522,6 +6163,19 @@ msgstr ""
 
 #: data/items.json
 msgid "Quartz"
+msgstr ""
+
+#: scenes/main/quest_flow.gd:92
+#, c-format
+msgid "Quest complete: %s"
+msgstr ""
+
+#: scenes/ui/settings_panel.gd:96
+msgid "Quest log"
+msgstr ""
+
+#: scenes/ui/menu_shell.gd:13 scenes/ui/quest_log_panel.gd:6
+msgid "Quests"
 msgstr ""
 
 #: data/moves.json
@@ -5612,6 +6266,11 @@ msgstr ""
 msgid "Ready"
 msgstr ""
 
+#: scenes/main/quest_flow.gd:109
+#, c-format
+msgid "Recipe: %s"
+msgstr ""
+
 #: scenes/battle/battle_screen.gd:902
 msgid "Recommended"
 msgstr ""
@@ -5620,7 +6279,11 @@ msgstr ""
 msgid "Red Cabbage"
 msgstr ""
 
-#: autoload/game_state.gd:700
+#: data/quests.json
+msgid "Red and blue... now I can finally paint that sunset."
+msgstr ""
+
+#: autoload/game_state.gd:705
 msgid "Refilled!"
 msgstr ""
 
@@ -5652,13 +6315,21 @@ msgstr ""
 msgid "Repairs the old greenhouse. Crops grow there in any season."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:10
+#: data/quests.json
+msgid "Report back to Dr. Fern."
+msgstr ""
+
+#: scenes/ui/quest_log_panel.gd:6
 msgid "Requests"
 msgstr ""
 
 #: core/economy/economy.gd:29
 #, c-format
 msgid "Requires %s"
+msgstr ""
+
+#: data/quests.json
+msgid "Research rivals"
 msgstr ""
 
 #: scenes/ui/settings_panel.gd:88
@@ -5694,6 +6365,10 @@ msgstr ""
 msgid "Resume"
 msgstr ""
 
+#: data/quests.json
+msgid "Return to Cora."
+msgstr ""
+
 #: data/items.json
 msgid "Revive Seed"
 msgstr ""
@@ -5702,12 +6377,12 @@ msgstr ""
 msgid "Revives a fainted Wildling with half HP."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:193
+#: scenes/ui/journal_panel.gd:200
 #, c-format
 msgid "Reward %s + friendship  ·  You have %d"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:270
+#: scenes/ui/journal_panel.gd:277 scenes/ui/quest_log_panel.gd:139
 #, c-format
 msgid "Reward: %s"
 msgstr ""
@@ -5740,7 +6415,7 @@ msgstr ""
 msgid "Rolls in thick fog for 5 turns. Attacks miss more often."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:172
+#: scenes/ui/journal_panel.gd:179
 msgid "Romanceable"
 msgstr ""
 
@@ -5930,6 +6605,10 @@ msgstr ""
 msgid "Scythe"
 msgstr ""
 
+#: scenes/ui/quest_log_panel.gd:32 scenes/ui/quest_log_panel.gd:7
+msgid "Seasonal"
+msgstr ""
+
 #: scenes/ui/settings_panel.gd:51
 msgid "Seasons follow"
 msgstr ""
@@ -5962,8 +6641,24 @@ msgstr ""
 msgid "Seedling Farmer"
 msgstr ""
 
+#: data/quests.json
+msgid "Seeds in the soil"
+msgstr ""
+
+#: data/quests.json
+msgid "Seeds on the wind"
+msgstr ""
+
+#: data/quests.json
+msgid "Seeds on the wind: the rematch"
+msgstr ""
+
 #: data/creatures.json
 msgid "Seeing one at dusk means a wish will come true."
+msgstr ""
+
+#: data/quests.json
+msgid "Select your seeds and press {use} on tilled soil to plant 3 of them."
 msgstr ""
 
 #: data/villagers.json
@@ -5992,6 +6687,10 @@ msgstr ""
 
 #: scenes/ui/shop_panel.gd:145
 msgid "Sell 1"
+msgstr ""
+
+#: data/quests.json
+msgid "Selling"
 msgstr ""
 
 #: scenes/ui/inventory_panel.gd:331 scenes/ui/item_slot.gd:32
@@ -6023,7 +6722,7 @@ msgstr ""
 msgid "Set up"
 msgstr ""
 
-#: scenes/ui/menu_shell.gd:18 scenes/ui/pause_menu.gd:47 scenes/ui/settings_panel.gd:30 scenes/ui/title_screen.gd:130
+#: scenes/ui/menu_shell.gd:19 scenes/ui/pause_menu.gd:47 scenes/ui/settings_panel.gd:30 scenes/ui/title_screen.gd:130
 msgid "Settings"
 msgstr ""
 
@@ -6095,6 +6794,10 @@ msgstr ""
 msgid "Shift-click to buy 5 · Prices rise with quality when selling"
 msgstr ""
 
+#: data/quests.json
+msgid "Shiny rocks"
+msgstr ""
+
 #: data/progression.json
 msgid "Ship {n} crops"
 msgstr ""
@@ -6115,6 +6818,10 @@ msgstr ""
 msgid "Shovel"
 msgstr ""
 
+#: data/quests.json
+msgid "Show Dr. Fern your dex."
+msgstr ""
+
 #: data/villagers.json
 msgid "Show me endurance, farmer."
 msgstr ""
@@ -6123,16 +6830,20 @@ msgstr ""
 msgid "Show off your lead Wildling to the judges!"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:131
+#: scenes/ui/journal_panel.gd:138
 msgid "Shrine awake ✓"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:131
+#: scenes/ui/journal_panel.gd:138
 msgid "Shrine ready to wake"
 msgstr ""
 
 #: data/moves.json
 msgid "Shroud"
+msgstr ""
+
+#: scenes/ui/quest_log_panel.gd:29 scenes/ui/quest_log_panel.gd:7
+msgid "Side"
 msgstr ""
 
 #: scenes/ui/account_panel.gd:94 scenes/ui/coop_panel.gd:104 scenes/ui/coop_panel.gd:162 scenes/ui/title_screen.gd:198
@@ -6172,8 +6883,20 @@ msgstr ""
 msgid "Sings up a rain shower for 5 turns. Tide moves grow stronger."
 msgstr ""
 
-#: scenes/ui/menu_shell.gd:14
+#: scenes/ui/menu_shell.gd:15
 msgid "Skills"
+msgstr ""
+
+#: scenes/ui/quest_log_panel.gd:72
+msgid "Skip"
+msgstr ""
+
+#: scenes/ui/quest_log_panel.gd:72
+msgid "Skip the tutorial? You still get all of its rewards."
+msgstr ""
+
+#: scenes/ui/quest_log_panel.gd:50
+msgid "Skip tutorial"
 msgstr ""
 
 #: data/moves.json
@@ -6188,12 +6911,16 @@ msgstr ""
 msgid "Slams with its whole body."
 msgstr ""
 
-#: scenes/main/controller.gd:240
+#: scenes/main/controller.gd:243
 msgid "Sleep"
 msgstr ""
 
 #: data/items.json
 msgid "Small outside, roomy inside. Holds seeds and saplings, which go into it automatically."
+msgstr ""
+
+#: data/quests.json
+msgid "Smelt 3 Gold Bars."
 msgstr ""
 
 #: data/items.json
@@ -6350,6 +7077,10 @@ msgstr ""
 msgid "Southern hemisphere"
 msgstr ""
 
+#: data/quests.json
+msgid "Sowing"
+msgstr ""
+
 #: data/types.json
 msgid "Spark"
 msgstr ""
@@ -6372,6 +7103,10 @@ msgstr ""
 
 #: scenes/battle/battle_screen.gd:901 scenes/ui/party_panel.gd:153
 msgid "Special"
+msgstr ""
+
+#: data/quests.json
+msgid "Special order"
 msgstr ""
 
 #: data/traits.json
@@ -6419,8 +7154,16 @@ msgstr ""
 msgid "Split one"
 msgstr ""
 
-#: autoload/data.gd:342
+#: autoload/data.gd:351
 msgid "Spring"
+msgstr ""
+
+#: data/quests.json
+msgid "Spring cleaning"
+msgstr ""
+
+#: data/quests.json
+msgid "Spring's here! Everyone's planting. Join in?"
 msgstr ""
 
 #: data/items.json
@@ -6487,18 +7230,22 @@ msgstr ""
 msgid "Starry Charm"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:291
+#: scenes/ui/journal_panel.gd:298
 #, c-format
 msgid "Starry chain: %s x%d"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:292
+#: scenes/ui/journal_panel.gd:299
 #, c-format
 msgid "Starry odds x%.1f. Battle a different species and the chain resets."
 msgstr ""
 
 #: scenes/ui/new_game_panel.gd:96
 msgid "Start farming!"
+msgstr ""
+
+#: scenes/common/input_hints.gd:41
+msgid "Start, then the tab"
 msgstr ""
 
 #: data/moves.json
@@ -6542,6 +7289,11 @@ msgstr ""
 msgid "Steady"
 msgstr ""
 
+#: scenes/ui/quest_log_panel.gd:136
+#, c-format
+msgid "Step %d of %d"
+msgstr ""
+
 #: data/items.json
 msgid "Sticky tree sap."
 msgstr ""
@@ -6550,7 +7302,7 @@ msgstr ""
 msgid "Still the best in the valley. Same time next week?"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:301
+#: scenes/ui/journal_panel.gd:308
 #, c-format
 msgid "Still waiting for you: %s"
 msgstr ""
@@ -6571,6 +7323,14 @@ msgstr ""
 msgid "Stone Wall"
 msgstr ""
 
+#: data/quests.json
+msgid "Stone and patience"
+msgstr ""
+
+#: data/quests.json
+msgid "Stone and patience: the rematch"
+msgstr ""
+
 #: data/traits.json
 msgid "Stone moves hit 1.5x harder below 1/3 HP. Farm: +1 Digger power."
 msgstr ""
@@ -6583,12 +7343,20 @@ msgstr ""
 msgid "Stonehollow Canyon"
 msgstr ""
 
+#: scenes/ui/quest_log_panel.gd:122
+msgid "Stop tracking"
+msgstr ""
+
 #: data/items.json
 msgid "Storage Crate"
 msgstr ""
 
 #: data/items.json
 msgid "Stores 30 stacks of items."
+msgstr ""
+
+#: data/quests.json
+msgid "Stories of old"
 msgstr ""
 
 #: core/calendar/calendar.gd:123
@@ -6607,7 +7375,7 @@ msgstr ""
 msgid "Stormlynx"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:10
+#: scenes/ui/journal_panel.gd:11
 msgid "Story"
 msgstr ""
 
@@ -6617,6 +7385,11 @@ msgstr ""
 
 #: data/crops.json
 msgid "Strawberry"
+msgstr ""
+
+#: scenes/ui/quest_log_panel.gd:155
+#, c-format
+msgid "Streak: %d days (bonus every %d)."
 msgstr ""
 
 #: data/moves.json
@@ -6651,12 +7424,16 @@ msgstr ""
 msgid "Style"
 msgstr ""
 
-#: autoload/data.gd:344
+#: autoload/data.gd:353
 msgid "Summer"
 msgstr ""
 
 #: data/progression.json
 msgid "Summer Creature Show"
+msgstr ""
+
+#: data/quests.json
+msgid "Summer feast"
 msgstr ""
 
 #: data/moves.json
@@ -6688,7 +7465,7 @@ msgstr ""
 msgid "Super effective %s"
 msgstr ""
 
-#: scenes/main/main.gd:121
+#: scenes/main/main.gd:122
 msgid "Sure"
 msgstr ""
 
@@ -6720,7 +7497,7 @@ msgstr ""
 msgid "Sweet honey from Petalfly."
 msgstr ""
 
-#: autoload/data.gd:379
+#: autoload/data.gd:388
 msgid "Sweet preserves."
 msgstr ""
 
@@ -6748,7 +7525,7 @@ msgstr ""
 msgid "Take a break! Your farm will wait for you."
 msgstr ""
 
-#: scenes/main/controller.gd:369
+#: scenes/main/controller.gd:374
 msgid "Talk instead"
 msgstr ""
 
@@ -6756,7 +7533,7 @@ msgstr ""
 msgid "Talk to Elder Barley in the village."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:176
+#: scenes/ui/journal_panel.gd:183
 msgid "Talked ✓"
 msgstr ""
 
@@ -6764,8 +7541,36 @@ msgstr ""
 msgid "Talking to the server..."
 msgstr ""
 
+#: data/quests.json
+msgid "Taller corn"
+msgstr ""
+
 #: scenes/ui/inventory_panel.gd:41
 msgid "Tap to pick up, tap again to place · Double-tap a bag to open · Hold an item for actions · Rotate turns it · X closes"
+msgstr ""
+
+#: data/quests.json
+msgid "Tell Cora the village is ready."
+msgstr ""
+
+#: data/quests.json
+msgid "Tell Juniper how it went."
+msgstr ""
+
+#: data/quests.json
+msgid "Tell Lila about your fields."
+msgstr ""
+
+#: data/quests.json
+msgid "Tell Old Barley."
+msgstr ""
+
+#: data/quests.json
+msgid "Tell Pip about the Wardens."
+msgstr ""
+
+#: data/quests.json
+msgid "Ten wins? Grandpa would've liked you. Here, his old charm."
 msgstr ""
 
 #: data/villagers.json
@@ -6784,12 +7589,16 @@ msgstr ""
 msgid "Text size"
 msgstr ""
 
+#: scenes/main/quest_flow.gd:131
+msgid "Thank you, that's a big help!"
+msgstr ""
+
 #: scenes/main/adventure_flow.gd:289
 #, c-format
 msgid "Thanks for joining the %s! See you next year."
 msgstr ""
 
-#: autoload/game_state.gd:1002
+#: autoload/game_state.gd:1010
 msgid "That can't be shipped."
 msgstr ""
 
@@ -6801,11 +7610,11 @@ msgstr ""
 msgid "That old farm of yours has good bones."
 msgstr ""
 
-#: scenes/main/main.gd:131
+#: scenes/main/main.gd:147
 msgid "That save couldn't be loaded."
 msgstr ""
 
-#: autoload/game_state.gd:1162
+#: autoload/game_state.gd:1173
 msgid "That tool is already the best it can be."
 msgstr ""
 
@@ -6817,8 +7626,12 @@ msgstr ""
 msgid "That's not a machine."
 msgstr ""
 
-#: autoload/game_state.gd:1027
+#: autoload/game_state.gd:1036
 msgid "That's not for sale right now."
+msgstr ""
+
+#: data/quests.json
+msgid "That's tonight's stew sorted. You're a lifesaver."
 msgstr ""
 
 #: scenes/main/adventure_flow.gd:147
@@ -6826,7 +7639,7 @@ msgstr ""
 msgid "The %s Shrine glows warmly."
 msgstr ""
 
-#: scenes/main/controller.gd:269
+#: scenes/main/controller.gd:272
 #, c-format
 msgid "The %s is in ruins. Maybe the village could help restore it..."
 msgstr ""
@@ -6871,7 +7684,7 @@ msgstr ""
 msgid "The Grove Shrines have been dark for many years."
 msgstr ""
 
-#: autoload/game_state.gd:1250
+#: autoload/game_state.gd:1261
 msgid "The Hatchery is full."
 msgstr ""
 
@@ -6915,7 +7728,7 @@ msgstr ""
 msgid "The Whisperwood Shrine glows! Tidecove's path is open, and you learned new recipes."
 msgstr ""
 
-#: scenes/main/controller.gd:267
+#: scenes/main/controller.gd:270
 msgid "The Wildling Spa. Tired workers rest twice as fast here."
 msgstr ""
 
@@ -6931,7 +7744,7 @@ msgstr ""
 msgid "The biggest pack in the valley."
 msgstr ""
 
-#: autoload/game_state.gd:752
+#: autoload/game_state.gd:758
 msgid "The bucket is empty. Fill it at a pond, river or the sea."
 msgstr ""
 
@@ -6939,7 +7752,11 @@ msgstr ""
 msgid "The canyon has many secrets underground."
 msgstr ""
 
-#: autoload/game_state.gd:1337
+#: data/quests.json
+msgid "The canyon path crumbles. Stone, and plenty of it."
+msgstr ""
+
+#: autoload/game_state.gd:1351
 msgid "The cave is blocked."
 msgstr ""
 
@@ -6952,12 +7769,16 @@ msgstr ""
 msgid "The chest snaps open... and bites! It's a Mimicrate!"
 msgstr ""
 
-#: scenes/main/controller.gd:208
+#: scenes/main/controller.gd:211
 msgid "The coin sparkles as it sinks. You feel a little luckier today."
 msgstr ""
 
-#: scenes/main/main.gd:164
+#: scenes/main/main.gd:180
 msgid "The connection to the farm was lost."
+msgstr ""
+
+#: data/quests.json
+msgid "The display case finally looks complete. I'll put your name on the card."
 msgstr ""
 
 #: data/title_tips.json
@@ -6988,7 +7809,7 @@ msgstr ""
 msgid "The forest remembers every footstep."
 msgstr ""
 
-#: scenes/main/controller.gd:210
+#: scenes/main/controller.gd:213
 msgid "The fountain burbles happily."
 msgstr ""
 
@@ -7000,16 +7821,32 @@ msgstr ""
 msgid "The furnace only accepts ore."
 msgstr ""
 
+#: data/quests.json
+msgid "The glade remembers the stars. A Star Shard would remind it."
+msgstr ""
+
 #: data/villagers.json
 msgid "The glade shows each visitor something different."
 msgstr ""
 
-#: scenes/main/controller.gd:256
+#: data/quests.json
+msgid "The good stuff"
+msgstr ""
+
+#: scenes/main/controller.gd:259
 msgid "The greenhouse door is stuck."
+msgstr ""
+
+#: data/quests.json
+msgid "The harvest moon rises soon. A good harvest honors the valley."
 msgstr ""
 
 #: data/villagers.json
 msgid "The ice sings at night. Listen sometime."
+msgstr ""
+
+#: data/quests.json
+msgid "The impossible rose"
 msgstr ""
 
 #: scenes/main/adventure_flow.gd:324
@@ -7029,6 +7866,10 @@ msgstr ""
 msgid "The last shrine. Umbral Glade only appears to those the other seven trust."
 msgstr ""
 
+#: data/quests.json
+msgid "The little Tidelings will love this."
+msgstr ""
+
 #: data/creatures.json
 msgid "The mischievous spirit of the valley. Few have seen it twice."
 msgstr ""
@@ -7039,6 +7880,10 @@ msgstr ""
 
 #: data/villagers.json
 msgid "The ocean is calmer when you're here."
+msgstr ""
+
+#: data/quests.json
+msgid "The old footbridge creaks something awful. Got wood to spare?"
 msgstr ""
 
 #: data/progression.json
@@ -7058,19 +7903,35 @@ msgstr ""
 msgid "The patterns on its wings look like a starry sky."
 msgstr ""
 
-#: autoload/game_state.gd:902
+#: data/quests.json
+msgid "The peak's birds are hungry. Wheat, please, as much as you can spare."
+msgstr ""
+
+#: autoload/game_state.gd:909
 msgid "The plant is spent."
+msgstr ""
+
+#: data/quests.json
+msgid "The quiet wood"
+msgstr ""
+
+#: data/quests.json
+msgid "The quiet wood: the rematch"
 msgstr ""
 
 #: core/battle/battle_engine.gd:83
 msgid "The rain stopped."
 msgstr ""
 
-#: autoload/game_state.gd:1010
+#: data/quests.json
+msgid "The ridge fires are low. Bring me Coal and I'll keep them burning."
+msgstr ""
+
+#: autoload/game_state.gd:1018
 msgid "The shipping bin is full."
 msgstr ""
 
-#: autoload/game_state.gd:1322
+#: autoload/game_state.gd:1336
 msgid "The shrine glows!"
 msgstr ""
 
@@ -7078,7 +7939,7 @@ msgstr ""
 msgid "The shrine is cold and dark. Its orb is cracked through."
 msgstr ""
 
-#: autoload/game_state.gd:1308
+#: autoload/game_state.gd:1322
 msgid "The shrine is still dark."
 msgstr ""
 
@@ -7092,6 +7953,10 @@ msgstr ""
 
 #: core/battle/battle_engine.gd:87
 msgid "The snow stopped."
+msgstr ""
+
+#: data/quests.json
+msgid "The spring rush cleaned me out. Could you bring me some Parsnips?"
 msgstr ""
 
 #: scenes/main/adventure_flow.gd:132
@@ -7112,6 +7977,10 @@ msgstr ""
 
 #: core/battle/battle_engine.gd:93
 msgid "The sunlight turned harsh!"
+msgstr ""
+
+#: data/quests.json
+msgid "The tide pools need Seaweed to shelter the little ones. Could you gather some?"
 msgstr ""
 
 #: data/villagers.json
@@ -7143,7 +8012,7 @@ msgstr ""
 msgid "The valley is yours. Dig deeper in the Deep Hollow, chase the other legends, and fill the Wildling dex."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:101
+#: scenes/ui/journal_panel.gd:108
 #, c-format
 msgid "The valley · %d / %d shrines awake"
 msgstr ""
@@ -7156,7 +8025,7 @@ msgstr ""
 msgid "The way is blocked."
 msgstr ""
 
-#: scenes/main/main.gd:254
+#: scenes/main/main.gd:270
 #, c-format
 msgid "The way is blocked. (%s)"
 msgstr ""
@@ -7165,7 +8034,7 @@ msgstr ""
 msgid "The wayshrine hums. Its stones remember every road you've opened."
 msgstr ""
 
-#: autoload/game_state.gd:1470
+#: autoload/game_state.gd:1484
 msgid "The weekly Creature Show is held on Saturdays."
 msgstr ""
 
@@ -7179,6 +8048,10 @@ msgstr ""
 
 #: data/villagers.json
 msgid "The wind up here can knock you flat. Hold on!"
+msgstr ""
+
+#: data/quests.json
+msgid "The wood is waking up again. Help it along: bring me Mushrooms for the old stumps."
 msgstr ""
 
 #: data/villagers.json
@@ -7217,28 +8090,40 @@ msgstr ""
 msgid "Theo: Try this. Honest opinion... You like it? I'll call it Veggie Stew."
 msgstr ""
 
-#: autoload/game_state.gd:1299
+#: autoload/game_state.gd:1313
 msgid "There's no Warden there."
 msgstr ""
 
-#: autoload/game_state.gd:1382
+#: autoload/game_state.gd:1396
 msgid "There's no festival today."
 msgstr ""
 
-#: autoload/game_state.gd:1257
+#: autoload/game_state.gd:1271
 msgid "There's no room there."
+msgstr ""
+
+#: data/quests.json
+msgid "These are for a ring. For my mother. Don't tell anyone."
 msgstr ""
 
 #: core/farming/machines.gd:29
 msgid "These seeds can't be refined any further."
 msgstr ""
 
-#: autoload/game_state.gd:340
+#: autoload/game_state.gd:344
 msgid "These two don't seem interested in each other."
 msgstr ""
 
-#: autoload/game_state.gd:1090
+#: autoload/game_state.gd:1099
 msgid "They won't buy that."
+msgstr ""
+
+#: data/quests.json
+msgid "They'll sleep warm tonight. Thank you."
+msgstr ""
+
+#: data/quests.json
+msgid "They'll spread by spring. The wood thanks you."
 msgstr ""
 
 #: data/traits.json
@@ -7249,7 +8134,7 @@ msgstr ""
 msgid "Thick and sweet."
 msgstr ""
 
-#: scenes/main/controller.gd:145
+#: scenes/main/controller.gd:148
 #, c-format
 msgid "This %s matures in %s."
 msgstr ""
@@ -7262,7 +8147,7 @@ msgstr ""
 msgid "This isn't the right moment."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:10
+#: scenes/ui/quest_log_panel.gd:6
 msgid "This week"
 msgstr ""
 
@@ -7272,6 +8157,14 @@ msgstr ""
 
 #: data/creatures.json
 msgid "Thornwarden"
+msgstr ""
+
+#: data/quests.json
+msgid "Three Wardens?! You're basically a legend. Can I have your autograph?"
+msgstr ""
+
+#: scenes/ui/quest_log_panel.gd:153
+msgid "Three new quests every day at midnight."
 msgstr ""
 
 #: data/moves.json
@@ -7314,6 +8207,14 @@ msgstr ""
 msgid "Tide moves hit 1.5x harder below 1/3 HP. Farm: +1 Waterer power."
 msgstr ""
 
+#: data/quests.json
+msgid "Tide pools"
+msgstr ""
+
+#: data/quests.json
+msgid "Tide pools: the rematch"
+msgstr ""
+
 #: data/regions.json
 msgid "Tidecove"
 msgstr ""
@@ -7335,7 +8236,7 @@ msgstr ""
 msgid "Today's forecast: 90% chance of cozy."
 msgstr ""
 
-#: scenes/ui/hud.gd:223
+#: scenes/ui/hud.gd:255
 #, c-format
 msgid "Today: %s at the Show Ring"
 msgstr ""
@@ -7345,7 +8246,7 @@ msgstr ""
 msgid "Today: %s in the village!"
 msgstr ""
 
-#: scenes/ui/hud.gd:225
+#: scenes/ui/hud.gd:257
 msgid "Today: Creature Show at the Show Ring"
 msgstr ""
 
@@ -7369,7 +8270,7 @@ msgstr ""
 msgid "Torrentide"
 msgstr ""
 
-#: scenes/main/controller.gd:203
+#: scenes/main/controller.gd:206
 msgid "Toss a coin into the fountain? (10g)"
 msgstr ""
 
@@ -7385,6 +8286,10 @@ msgstr ""
 msgid "Touch controls"
 msgstr ""
 
+#: scenes/ui/quest_log_panel.gd:122
+msgid "Track on screen"
+msgstr ""
+
 #: scenes/ui/coop_panel.gd:210 scenes/ui/trade_panel.gd:37
 msgid "Trade"
 msgstr ""
@@ -7395,6 +8300,10 @@ msgstr ""
 
 #: data/items.json
 msgid "Trail Mix"
+msgstr ""
+
+#: data/quests.json
+msgid "Training"
 msgstr ""
 
 #: scenes/ui/inventory_panel.gd:414
@@ -7449,9 +8358,17 @@ msgstr ""
 msgid "Turns fruit and veggies into juice."
 msgstr ""
 
+#: scenes/ui/quest_log_panel.gd:31
+msgid "Tutorial"
+msgstr ""
+
 #: scenes/main/adventure_flow.gd:299
 #, c-format
 msgid "Twelve painted eggs are hidden around the village. Bring back at least %d for the grand prize."
+msgstr ""
+
+#: data/quests.json
+msgid "Twenty! That's more than my whole first year of fieldwork."
 msgstr ""
 
 #: data/regions.json
@@ -7478,12 +8395,12 @@ msgstr ""
 msgid "Umbral Glade"
 msgstr ""
 
-#: scenes/main/main.gd:211
+#: scenes/main/main.gd:227
 #, c-format
 msgid "Unknown map %s"
 msgstr ""
 
-#: autoload/game_state.gd:1553
+#: autoload/game_state.gd:1611
 msgid "Unknown offer."
 msgstr ""
 
@@ -7495,7 +8412,7 @@ msgstr ""
 msgid "Unpair"
 msgstr ""
 
-#: scenes/main/controller.gd:310
+#: scenes/main/controller.gd:313
 msgid "Up for a Wildling battle?"
 msgstr ""
 
@@ -7535,7 +8452,7 @@ msgstr ""
 msgid "Valley Grower"
 msgstr ""
 
-#: scenes/ui/map_panel.gd:31 scenes/ui/settings_panel.gd:96
+#: scenes/ui/map_panel.gd:31 scenes/ui/settings_panel.gd:97
 msgid "Valley map"
 msgstr ""
 
@@ -7551,7 +8468,7 @@ msgstr ""
 msgid "Vernalis"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:180
+#: scenes/ui/journal_panel.gd:187
 msgid "Village Board · new requests every Monday"
 msgstr ""
 
@@ -7563,7 +8480,7 @@ msgstr ""
 msgid "Village Kid"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:10
+#: scenes/ui/journal_panel.gd:11
 msgid "Villagers"
 msgstr ""
 
@@ -7573,6 +8490,42 @@ msgstr ""
 
 #: data/moves.json
 msgid "Vine Lash"
+msgstr ""
+
+#: data/quests.json
+msgid "Visit Ash again."
+msgstr ""
+
+#: data/quests.json
+msgid "Visit Gideon again."
+msgstr ""
+
+#: data/quests.json
+msgid "Visit Ivy again."
+msgstr ""
+
+#: data/quests.json
+msgid "Visit Kai again."
+msgstr ""
+
+#: data/quests.json
+msgid "Visit Marina again."
+msgstr ""
+
+#: data/quests.json
+msgid "Visit Nils again."
+msgstr ""
+
+#: data/quests.json
+msgid "Visit Selene again."
+msgstr ""
+
+#: data/quests.json
+msgid "Visit Volta again."
+msgstr ""
+
+#: data/quests.json
+msgid "Visit the Meadow."
 msgstr ""
 
 #: data/moves.json
@@ -7607,6 +8560,10 @@ msgstr ""
 msgid "Voltick"
 msgstr ""
 
+#: data/quests.json
+msgid "WOW. It's the shiniest one yet! It's mine now. Thank you!"
+msgstr ""
+
 #: scenes/ui/trade_panel.gd:123
 #, c-format
 msgid "Waiting for %s to accept..."
@@ -7626,8 +8583,24 @@ msgstr ""
 msgid "Waiting for others to go to bed (%d/%d)"
 msgstr ""
 
+#: data/quests.json
+msgid "Wake 3 shrines."
+msgstr ""
+
+#: data/quests.json
+msgid "Wake a shrine."
+msgstr ""
+
 #: scenes/main/adventure_flow.gd:132
 msgid "Wake it"
+msgstr ""
+
+#: data/quests.json
+msgid "Walk around your farm with {move}. Hold {run} to run."
+msgstr ""
+
+#: data/quests.json
+msgid "Walk into tall grass in the Meadow, then befriend a wild Wildling."
 msgstr ""
 
 #: data/villagers.json
@@ -7650,7 +8623,7 @@ msgstr ""
 msgid "Want to watch the sunset sometime?"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:131
+#: scenes/ui/journal_panel.gd:138
 #, c-format
 msgid "Warden %s awaits"
 msgstr ""
@@ -7695,7 +8668,7 @@ msgstr ""
 msgid "Warden of Whisperwood"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:294
+#: scenes/ui/journal_panel.gd:301
 #, c-format
 msgid "Warden rematches · one per Warden each week · teams around Lv%d"
 msgstr ""
@@ -7708,6 +8681,14 @@ msgstr ""
 msgid "Warm drinks, snow sculptures, and good company."
 msgstr ""
 
+#: data/quests.json
+msgid "Warm wool"
+msgstr ""
+
+#: data/quests.json
+msgid "Warm wool: the rematch"
+msgstr ""
+
 #: scenes/ui/hatchery_panel.gd:91
 #, c-format
 msgid "Warming %d / %d"
@@ -7717,12 +8698,25 @@ msgstr ""
 msgid "Washed up on the shore."
 msgstr ""
 
+#: data/quests.json
+#, c-format
+msgid "Water %d tiles."
+msgstr ""
+
+#: data/quests.json
+msgid "Water 3 planted tiles with the watering can. Watered crops grow faster for a few hours."
+msgstr ""
+
 #: data/types.json
 msgid "Waterer"
 msgstr ""
 
 #: data/items.json
 msgid "Watering Can"
+msgstr ""
+
+#: data/quests.json
+msgid "Watering round"
 msgstr ""
 
 #: data/items.json
@@ -7757,7 +8751,11 @@ msgstr ""
 msgid "Wed"
 msgstr ""
 
-#: autoload/game_state.gd:226
+#: scenes/ui/quest_log_panel.gd:34
+msgid "Weekly"
+msgstr ""
+
+#: autoload/game_state.gd:230
 #, c-format
 msgid "Weekly challenge complete: %s (+%s)"
 msgstr ""
@@ -7766,11 +8764,11 @@ msgstr ""
 msgid "Weekly challenges pay out extra gold."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:245
+#: scenes/ui/journal_panel.gd:252
 msgid "Weekly challenges · reset every Monday"
 msgstr ""
 
-#: scenes/main/controller.gd:241
+#: scenes/main/controller.gd:244
 msgid "Welcome home. What would you like to do?"
 msgstr ""
 
@@ -7798,6 +8796,10 @@ msgstr ""
 
 #: data/villagers.json
 msgid "When I'm a Warden, you can be my first challenger!"
+msgstr ""
+
+#: data/quests.json
+msgid "When the first shrine wakes, come and tell an old man. I'd like to hear it from you."
 msgstr ""
 
 #: data/villagers.json
@@ -7848,7 +8850,7 @@ msgstr ""
 msgid "Wildling Center"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:263
+#: scenes/ui/journal_panel.gd:270
 msgid "Wildling Center bounty"
 msgstr ""
 
@@ -7880,7 +8882,7 @@ msgstr ""
 msgid "Wildling-dex complete! You are a true Hollowmere legend."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:10
+#: scenes/ui/journal_panel.gd:11
 msgid "Wildlings"
 msgstr ""
 
@@ -7892,13 +8894,34 @@ msgstr ""
 msgid "Wildlings love food from the farm. Use it when befriending."
 msgstr ""
 
-#: scenes/main/controller.gd:253
+#: scenes/main/controller.gd:256
 #, c-format
 msgid "Wildlings recorded: %d / %d."
 msgstr ""
 
 #: data/villagers.json
 msgid "Will you sit for a portrait someday?"
+msgstr ""
+
+#: data/quests.json
+#, c-format
+msgid "Win %d battles."
+msgstr ""
+
+#: data/quests.json
+msgid "Win 10 battles to sharpen your team."
+msgstr ""
+
+#: data/quests.json
+msgid "Win 10 battles."
+msgstr ""
+
+#: data/quests.json
+msgid "Win 5 battles."
+msgstr ""
+
+#: data/quests.json
+msgid "Win a battle. The menu shows how much damage each move would do."
 msgstr ""
 
 #: scenes/main/adventure_flow.gd:327
@@ -7921,7 +8944,7 @@ msgstr ""
 msgid "Wing Clip"
 msgstr ""
 
-#: autoload/data.gd:348
+#: autoload/data.gd:357
 msgid "Winter"
 msgstr ""
 
@@ -7937,8 +8960,24 @@ msgstr ""
 msgid "Winter Squash"
 msgstr ""
 
+#: data/quests.json
+msgid "Winter is for being kind to each other. Will you help me spread some cheer?"
+msgstr ""
+
+#: data/quests.json
+msgid "Winter lights"
+msgstr ""
+
+#: data/quests.json
+msgid "Winter nights are long up here. A few bundles of Wool would help the little ones."
+msgstr ""
+
 #: data/crops.json
 msgid "Wintergreen"
+msgstr ""
+
+#: data/quests.json
+msgid "Wish Old Barley a happy new year."
 msgstr ""
 
 #: data/items.json
@@ -7955,6 +8994,10 @@ msgstr ""
 
 #: scenes/battle/battle_screen.gd:908
 msgid "Won't help right now."
+msgstr ""
+
+#: data/quests.json
+msgid "Wonderful data! Their temperaments vary more than I thought."
 msgstr ""
 
 #: data/items.json
@@ -7978,6 +9021,10 @@ msgstr ""
 msgid "Working Wildlings fully recover energy every night and gain happiness."
 msgstr ""
 
+#: data/quests.json
+msgid "Workshop"
+msgstr ""
+
 #: data/items.json
 msgid "Worn by those who completed the Wildling-dex."
 msgstr ""
@@ -7992,6 +9039,10 @@ msgstr ""
 
 #: data/moves.json
 msgid "Yawn"
+msgstr ""
+
+#: scenes/main/main.gd:135
+msgid "Yes, show me"
 msgstr ""
 
 #: core/farming/machines.gd:36
@@ -8033,7 +9084,7 @@ msgstr ""
 msgid "You don't flinch from the heat. Respect."
 msgstr ""
 
-#: autoload/game_state.gd:1114
+#: autoload/game_state.gd:1123
 msgid "You don't know that recipe yet."
 msgstr ""
 
@@ -8081,15 +9132,15 @@ msgstr ""
 msgid "You have an eye for quality."
 msgstr ""
 
-#: autoload/game_state.gd:1418
+#: autoload/game_state.gd:1432
 msgid "You have nothing to display. Bring crops, artisan goods or gems."
 msgstr ""
 
-#: autoload/game_state.gd:1340
+#: autoload/game_state.gd:1354
 msgid "You haven't been that deep yet."
 msgstr ""
 
-#: autoload/game_state.gd:1396
+#: autoload/game_state.gd:1410
 msgid "You haven't found any eggs yet."
 msgstr ""
 
@@ -8118,16 +9169,16 @@ msgstr ""
 msgid "You make the valley more colorful."
 msgstr ""
 
-#: autoload/game_state.gd:1227 core/farming/machines.gd:17 core/farming/machines.gd:32
+#: autoload/game_state.gd:1238 core/farming/machines.gd:17 core/farming/machines.gd:32
 #, c-format
 msgid "You need %d %s."
 msgstr ""
 
-#: autoload/game_state.gd:1403
+#: autoload/game_state.gd:1417
 msgid "You need a Wildling to enter."
 msgstr ""
 
-#: autoload/game_state.gd:1117
+#: autoload/game_state.gd:1126
 msgid "You need a kitchen to cook."
 msgstr ""
 
@@ -8144,7 +9195,7 @@ msgstr ""
 msgid "You offered the %s %s."
 msgstr ""
 
-#: scenes/main/controller.gd:293
+#: scenes/main/controller.gd:296
 #, c-format
 msgid "You pet %s. It's %s."
 msgstr ""
@@ -8233,7 +9284,7 @@ msgstr ""
 msgid "You're the reason I keep coming back."
 msgstr ""
 
-#: autoload/game_state.gd:665
+#: autoload/game_state.gd:669
 msgid "You're too tired. Eat something or go to bed."
 msgstr ""
 
@@ -8251,16 +9302,16 @@ msgstr ""
 msgid "You've already given %s a gift today."
 msgstr ""
 
-#: autoload/game_state.gd:1384
+#: autoload/game_state.gd:1398
 #, c-format
 msgid "You've already joined this year's %s."
 msgstr ""
 
-#: autoload/game_state.gd:1472
+#: autoload/game_state.gd:1486
 msgid "You've already shown a Wildling today. Come back next Saturday!"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:301
+#: scenes/ui/journal_panel.gd:308
 msgid "You've beaten every Warden this week!"
 msgstr ""
 
@@ -8286,6 +9337,10 @@ msgstr ""
 
 #: data/villagers.json
 msgid "You've got sea legs, farmer."
+msgstr ""
+
+#: data/quests.json
+msgid "You've grown. I can feel it in your Wildlings."
 msgstr ""
 
 #: data/villagers.json
@@ -8317,11 +9372,11 @@ msgstr ""
 msgid "Your Wildlings are remarkably healthy. You treat them well."
 msgstr ""
 
-#: scenes/main/controller.gd:251
+#: scenes/main/controller.gd:254
 msgid "Your Wildlings are rested and fully healed!"
 msgstr ""
 
-#: scenes/main/adventure_flow.gd:25 scenes/main/main.gd:404
+#: scenes/main/adventure_flow.gd:25 scenes/main/main.gd:420
 msgid "Your Wildlings are too tired to battle. Rest at home or the Wildling Center."
 msgstr ""
 
@@ -8354,7 +9409,7 @@ msgstr ""
 msgid "Your name"
 msgstr ""
 
-#: autoload/game_state.gd:1032 autoload/game_state.gd:1047 autoload/game_state.gd:1124 autoload/game_state.gd:897
+#: autoload/game_state.gd:1041 autoload/game_state.gd:1056 autoload/game_state.gd:1133 autoload/game_state.gd:904
 msgid "Your pack is full."
 msgstr ""
 
@@ -8366,7 +9421,7 @@ msgstr ""
 msgid "Your region"
 msgstr ""
 
-#: autoload/game_state.gd:1209
+#: autoload/game_state.gd:1220
 #, c-format
 msgid "Your things don't fit in the %s. Make some room first."
 msgstr ""
@@ -8375,12 +9430,16 @@ msgstr ""
 msgid "Your veggies make the best stew. Seriously."
 msgstr ""
 
-#: autoload/game_state.gd:703
+#: autoload/game_state.gd:708
 msgid "Your watering can is empty. Refill it at water."
 msgstr ""
 
 #: data/moves.json
 msgid "Zap"
+msgstr ""
+
+#: data/quests.json
+msgid "Zap! Full power. Thanks, farmer."
 msgstr ""
 
 #: data/creatures.json
@@ -8420,7 +9479,7 @@ msgstr ""
 msgid "debris cleared"
 msgstr ""
 
-#: scenes/main/controller.gd:129
+#: scenes/main/controller.gd:132
 msgid "dry: grows slower"
 msgstr ""
 
@@ -8432,13 +9491,18 @@ msgstr ""
 msgid "goods preserved"
 msgstr ""
 
-#: scenes/main/controller.gd:128
+#: scenes/main/controller.gd:131
 msgid "harvests forever"
 msgstr ""
 
-#: scenes/ui/hud.gd:314 scenes/ui/inventory_panel.gd:385
+#: scenes/ui/hud.gd:401 scenes/ui/inventory_panel.gd:385
 #, c-format
 msgid "hotbar_%d"
+msgstr ""
+
+#: scenes/common/input_hints.gd:45
+#, c-format
+msgid "left click or %s"
 msgstr ""
 
 #: scenes/ui/day_report.gd:68
@@ -8454,7 +9518,7 @@ msgstr ""
 msgid "mine:%s:%d"
 msgstr ""
 
-#: scenes/main/controller.gd:131
+#: scenes/main/controller.gd:134
 msgid "off season"
 msgstr ""
 
@@ -8462,11 +9526,16 @@ msgstr ""
 msgid "produce gathered"
 msgstr ""
 
-#: scenes/main/controller.gd:292
+#: scenes/main/controller.gd:295
 msgid "resting"
 msgstr ""
 
-#: scenes/main/controller.gd:126
+#: scenes/common/input_hints.gd:47
+#, c-format
+msgid "right click or %s"
+msgstr ""
+
+#: scenes/main/controller.gd:129
 #, c-format
 msgid "ripe in %s"
 msgstr ""
@@ -8479,15 +9548,15 @@ msgstr ""
 msgid "summer"
 msgstr ""
 
-#: scenes/main/main.gd:436
+#: scenes/main/main.gd:452
 msgid "the Sanctuary"
 msgstr ""
 
-#: scenes/main/main.gd:436
+#: scenes/main/main.gd:452
 msgid "the farm Den"
 msgstr ""
 
-#: autoload/game_state.gd:1070
+#: autoload/game_state.gd:1079
 msgid "the farm chest"
 msgstr ""
 
@@ -8495,11 +9564,39 @@ msgstr ""
 msgid "the guardian"
 msgstr ""
 
+#: scenes/common/input_hints.gd:32
+msgid "the hand button"
+msgstr ""
+
+#: scenes/common/input_hints.gd:30
+msgid "the joystick"
+msgstr ""
+
+#: scenes/common/input_hints.gd:37
+msgid "the left stick"
+msgstr ""
+
+#: scenes/common/input_hints.gd:39
+msgid "the left stick (push it all the way)"
+msgstr ""
+
+#: scenes/common/input_hints.gd:34
+msgid "the menu button"
+msgstr ""
+
+#: scenes/common/input_hints.gd:33
+msgid "the run button"
+msgstr ""
+
+#: scenes/common/input_hints.gd:31
+msgid "the tool button"
+msgstr ""
+
 #: scenes/battle/battle_screen.gd:500
 msgid "the trainer"
 msgstr ""
 
-#: scenes/ui/map_panel.gd:67
+#: scenes/ui/map_panel.gd:69
 msgid "the valley"
 msgstr ""
 
@@ -8507,7 +9604,7 @@ msgstr ""
 msgid "tiles watered"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:284
+#: scenes/ui/journal_panel.gd:291
 msgid "today!"
 msgstr ""
 
@@ -8520,12 +9617,12 @@ msgstr ""
 msgid "winter"
 msgstr ""
 
-#: scenes/main/controller.gd:292
+#: scenes/main/controller.gd:295
 #, c-format
 msgid "working as a %s"
 msgstr ""
 
-#: scenes/main/main.gd:436
+#: scenes/main/main.gd:452
 msgid "your party"
 msgstr ""
 
@@ -8550,4 +9647,9 @@ msgstr ""
 
 #: scenes/ui/party_panel.gd:181
 msgid "★ Starry "
+msgstr ""
+
+#: scenes/main/quest_flow.gd:107
+#, c-format
+msgid "♥ %s"
 msgstr ""

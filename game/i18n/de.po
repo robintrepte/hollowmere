@@ -2627,7 +2627,7 @@ msgstr "Schein"
 
 #: data/items.json
 msgid "Glow Tea"
-msgstr "Scheentee"
+msgstr "Leuchttee"
 
 #: data/traits.json
 msgid "Glow moves hit 1.5x harder below 1/3 HP. Farm: +1 Charmer power."
@@ -8308,4 +8308,836 @@ msgstr "Du bekommst %s für den Sieg."
 #, c-format
 msgid "● %s · %s Farm\n%s · %s"
 msgstr "● %s · %s-Hof\n%s · %s"
+
+msgid "First steps"
+msgstr "Erste Schritte"
+
+msgid "Walk around your farm with {move}. Hold {run} to run."
+msgstr "Lauf über deinen Hof ({move}). Zum Rennen: {run} halten."
+
+msgid "Break ground"
+msgstr "Boden lockern"
+
+msgid "Pick the hoe on the hotbar and press {use} on dirt to till 3 tiles."
+msgstr "Wähle die Hacke in der Hotbar und hacke 3 Felder Erde ({use})."
+
+msgid "Seeds in the soil"
+msgstr "Saat in die Erde"
+
+msgid "Select your seeds and press {use} on tilled soil to plant 3 of them."
+msgstr "Wähle dein Saatgut und pflanze 3 Samen auf gehacktem Boden ({use})."
+
+msgid "A good soak"
+msgstr "Gut gegossen"
+
+msgid "Water 3 planted tiles with the watering can. Watered crops grow faster for a few hours."
+msgstr "Gieß 3 bepflanzte Felder mit der Gießkanne. Gegossene Pflanzen wachsen ein paar Stunden lang schneller."
+
+msgid "First harvest"
+msgstr "Erste Ernte"
+
+msgid "Crops grow in real time, even while the game is closed. Harvest one when it's ripe."
+msgstr "Pflanzen wachsen in Echtzeit, auch wenn das Spiel geschlossen ist. Ernte eine, sobald sie reif ist."
+
+msgid "Selling"
+msgstr "Verkaufen"
+
+msgid "Put something into the shipping bin by the house. It pays out when the game day turns over."
+msgstr "Leg etwas in die Versandkiste am Haus. Sie zahlt beim Tageswechsel im Spiel aus."
+
+msgid "A Wildling friend"
+msgstr "Ein Wildling-Freund"
+
+msgid "Walk into tall grass in the Meadow, then befriend a wild Wildling."
+msgstr "Lauf auf der Wiese durch hohes Gras und befreunde dich mit einem wilden Wildling."
+
+msgid "Battle basics"
+msgstr "Kampf-Grundlagen"
+
+msgid "Win a battle. The menu shows how much damage each move would do."
+msgstr "Gewinne einen Kampf. Das Menü zeigt dir, wie viel Schaden jede Attacke anrichtet."
+
+msgid "Farm hands"
+msgstr "Helfer auf dem Hof"
+
+msgid "Open the Party tab with {party} and give a farm Wildling a job."
+msgstr "Öffne den Party-Tab ({party}) und gib einem Hof-Wildling einen Job."
+
+msgid "Open Crafting with {craft} and craft anything, for example a Basic Treat."
+msgstr "Öffne Crafting ({craft}) und crafte irgendetwas, zum Beispiel ein Einfaches Leckerli."
+
+msgid "Into the village"
+msgstr "Ab ins Dorf"
+
+msgid "Open the Map with {map}, then walk to the village east of your farm."
+msgstr "Öffne die Map ({map}) und lauf dann ins Dorf östlich deines Hofs."
+
+msgid "Empty shelves"
+msgstr "Leere Regale"
+
+msgid "The spring rush cleaned me out. Could you bring me some Parsnips?"
+msgstr "Der Frühlingsansturm hat mich leergekauft. Bringst du mir ein paar Pastinaken?"
+
+msgid "Bring Mira 10 Parsnips."
+msgstr "Bring Mira 10 Pastinaken."
+
+msgid "Perfect! These will sell before lunch."
+msgstr "Perfekt! Die sind bis zum Mittag weg."
+
+msgid "A sweet idea"
+msgstr "Eine süße Idee"
+
+msgid "Customers keep asking for something sweet. Could you bake a Honey Cake for me to try?"
+msgstr "Die Kundschaft fragt ständig nach etwas Süßem. Backst du mir einen Honigkuchen zum Probieren?"
+
+msgid "Cook a Honey Cake."
+msgstr "Koche einen Honigkuchen."
+
+msgid "Bring the Honey Cake to Mira."
+msgstr "Bring Mira den Honigkuchen."
+
+msgid "Oh, it's still warm! I'll put it on the counter as a sample."
+msgstr "Oh, er ist noch warm! Ich stell ihn als Kostprobe auf die Theke."
+
+msgid "Lumber for the bridge"
+msgstr "Holz für die Brücke"
+
+msgid "The old footbridge creaks something awful. Got wood to spare?"
+msgstr "Die alte Fußgängerbrücke knarzt fürchterlich. Hast du Holz übrig?"
+
+msgid "Bring Bram 40 Wood."
+msgstr "Bring Bram 40 Holz."
+
+msgid "Good straight logs. The bridge will hold for another hundred years."
+msgstr "Schöne gerade Stämme. Die Brücke hält wieder hundert Jahre."
+
+msgid "The good stuff"
+msgstr "Das gute Zeug"
+
+msgid "I need Hardwood for a roof beam. Big stumps have it, if your axe is up to it."
+msgstr "Ich brauche Hartholz für einen Dachbalken. Große Baumstümpfe haben welches, wenn deine Axt das schafft."
+
+msgid "Collect 10 Hardwood."
+msgstr "Sammle 10 Hartholz."
+
+msgid "Bring the Hardwood to Bram."
+msgstr "Bring Bram das Hartholz."
+
+msgid "Now that's timber. I'll make you something nice with the offcuts."
+msgstr "Das ist Holz! Aus den Resten mach ich dir was Schönes."
+
+msgid "Fuel for the forge"
+msgstr "Futter für die Esse"
+
+msgid "My supplier's late again. Dig me up some Copper Ore."
+msgstr "Mein Lieferant ist schon wieder zu spät. Grab mir Kupfererz aus."
+
+msgid "Bring Greta 15 Copper Ore."
+msgstr "Bring Greta 15 Kupfererz."
+
+msgid "Hmph. Decent ore. Here, for your trouble."
+msgstr "Hmpf. Ordentliches Erz. Hier, für die Mühe."
+
+msgid "A blacksmith's pride"
+msgstr "Der Stolz einer Schmiedin"
+
+msgid "I want to make something special. I need Gold Bars, and I don't trust the merchant's."
+msgstr "Ich will etwas Besonderes schmieden. Ich brauche Goldbarren, und denen vom Händler trau ich nicht."
+
+msgid "Smelt 3 Gold Bars."
+msgstr "Schmilz 3 Goldbarren."
+
+msgid "Bring the Gold Bars to Greta."
+msgstr "Bring Greta die Goldbarren."
+
+msgid "These are for a ring. For my mother. Don't tell anyone."
+msgstr "Die sind für einen Ring. Für meine Mutter. Sag's niemandem."
+
+msgid "Field survey"
+msgstr "Feldstudie"
+
+msgid "I'm studying how Wildlings bond with people. Could you befriend a few more and tell me how it went?"
+msgstr "Ich erforsche, wie Wildlinge Bindungen zu Menschen eingehen. Befreundest du dich mit ein paar weiteren und erzählst mir davon?"
+
+msgid "Befriend 3 Wildlings."
+msgstr "Befreunde dich mit 3 Wildlingen."
+
+msgid "Report back to Dr. Fern."
+msgstr "Berichte Dr. Fern."
+
+msgid "Wonderful data! Their temperaments vary more than I thought."
+msgstr "Wunderbare Daten! Ihre Temperamente sind vielfältiger als gedacht."
+
+msgid "A growing dex"
+msgstr "Ein wachsender Dex"
+
+msgid "Have 20 Wildlings in your dex."
+msgstr "Hab 20 Wildlinge in deinem Dex."
+
+msgid "Show Dr. Fern your dex."
+msgstr "Zeig Dr. Fern deinen Dex."
+
+msgid "Twenty! That's more than my whole first year of fieldwork."
+msgstr "Zwanzig! Das ist mehr als mein ganzes erstes Forschungsjahr."
+
+msgid "Fresh from the farm"
+msgstr "Frisch vom Hof"
+
+msgid "I want a farm-fresh stew on the menu. Can you supply the veggies?"
+msgstr "Ich will einen hofrischen Eintopf auf die Karte setzen. Lieferst du das Gemüse?"
+
+msgid "Bring Theo 5 Potatoes."
+msgstr "Bring Theo 5 Kartoffeln."
+
+msgid "Bring Theo 5 Kale."
+msgstr "Bring Theo 5 Grünkohl."
+
+msgid "That's tonight's stew sorted. You're a lifesaver."
+msgstr "Damit ist der Eintopf heute Abend gerettet. Du bist ein Schatz."
+
+msgid "Pumpkin season"
+msgstr "Kürbiszeit"
+
+msgid "Cook 3 Pumpkin Soups."
+msgstr "Koche 3 Kürbissuppen."
+
+msgid "Bring 3 Pumpkin Soups to Theo."
+msgstr "Bring Theo 3 Kürbissuppen."
+
+msgid "Mm. Better than mine. Don't tell anyone that either."
+msgstr "Mmh. Besser als meine. Sag das bloß keinem."
+
+msgid "A painter's palette"
+msgstr "Die Palette einer Malerin"
+
+msgid "I've run out of colors. Real flowers make the best reference."
+msgstr "Mir sind die Farben ausgegangen. Echte Blumen sind die beste Vorlage."
+
+msgid "Bring Lila 3 Tulips."
+msgstr "Bring Lila 3 Tulpen."
+
+msgid "Bring Lila 3 Blue Jazz."
+msgstr "Bring Lila 3 Blaue Jazz."
+
+msgid "Red and blue... now I can finally paint that sunset."
+msgstr "Rot und Blau ... jetzt kann ich endlich den Sonnenuntergang malen."
+
+msgid "The impossible rose"
+msgstr "Die unmögliche Rose"
+
+msgid "Grow and bring Lila a Fairy Rose."
+msgstr "Zieh eine Feenrose und bring sie Lila."
+
+msgid "It glows! I'll never get that on canvas. I'll try anyway."
+msgstr "Sie leuchtet! Das krieg ich nie auf die Leinwand. Ich versuch's trotzdem."
+
+msgid "Research rivals"
+msgstr "Forschungs-Rivalen"
+
+msgid "Fern thinks battling teaches Wildlings trust. Prove it: win five battles."
+msgstr "Fern glaubt, Kämpfe lehren Wildlinge Vertrauen. Beweis es: Gewinne fünf Kämpfe."
+
+msgid "Win 5 battles."
+msgstr "Gewinne 5 Kämpfe."
+
+msgid "Tell Juniper how it went."
+msgstr "Erzähl Juniper, wie es lief."
+
+msgid "Five? Fine. Your Wildlings are... adequate. Very adequate."
+msgstr "Fünf? Na gut. Deine Wildlinge sind ... brauchbar. Sehr brauchbar."
+
+msgid "Glow paper"
+msgstr "Das Leucht-Paper"
+
+msgid "Bring Juniper 2 Glow Teas."
+msgstr "Bring Juniper 2 Leuchttees."
+
+msgid "For science. And because I like it. Mostly science."
+msgstr "Für die Wissenschaft. Und weil ich ihn mag. Hauptsächlich Wissenschaft."
+
+msgid "Taller corn"
+msgstr "Höherer Mais"
+
+msgid "Bet you can't out-farm me this season. Bring your best Corn and we'll see."
+msgstr "Wetten, du kannst mich diese Saison nicht übertrumpfen? Bring deinen besten Mais, dann sehen wir weiter."
+
+msgid "Harvest 30 crops."
+msgstr "Ernte 30 Pflanzen."
+
+msgid "Bring Rowan 5 Corn to compare."
+msgstr "Bring Rowan 5 Mais zum Vergleich."
+
+msgid "...Okay. Yours is taller. Lunch is on me."
+msgstr "... Okay. Deiner ist höher. Das Mittagessen geht auf mich."
+
+msgid "Loser buys lunch"
+msgstr "Verlierer zahlt das Essen"
+
+msgid "Win 10 battles."
+msgstr "Gewinne 10 Kämpfe."
+
+msgid "Find Rowan."
+msgstr "Such Rowan."
+
+msgid "Ten wins? Grandpa would've liked you. Here, his old charm."
+msgstr "Zehn Siege? Opa hätte dich gemocht. Hier, sein alter Glücksbringer."
+
+msgid "Stories of old"
+msgstr "Geschichten von früher"
+
+msgid "When the first shrine wakes, come and tell an old man. I'd like to hear it from you."
+msgstr "Wenn der erste Schrein erwacht, erzähl es einem alten Mann. Ich will es von dir hören."
+
+msgid "Wake a shrine."
+msgstr "Erwecke einen Schrein."
+
+msgid "Tell Old Barley."
+msgstr "Erzähl es dem alten Barley."
+
+msgid "Ah, I felt it this morning. The valley breathes a little easier."
+msgstr "Ah, ich hab's heute Morgen gespürt. Das Tal atmet etwas freier."
+
+msgid "A taste of home"
+msgstr "Ein Geschmack von Zuhause"
+
+msgid "Cook a Cream Pudding."
+msgstr "Koche einen Sahnepudding."
+
+msgid "Bring it to Old Barley."
+msgstr "Bring ihn dem alten Barley."
+
+msgid "Hazel used to make this every winter. Thank you, child."
+msgstr "Hazel hat den jeden Winter gemacht. Danke dir, Kind."
+
+msgid "Shiny rocks"
+msgstr "Glitzersteine"
+
+msgid "I collect shiny rocks! Do you have one? A real shiny one?"
+msgstr "Ich sammle Glitzersteine! Hast du einen? So einen richtig glitzernden?"
+
+msgid "Bring Pip a Quartz."
+msgstr "Bring Pip einen Quarz."
+
+msgid "WOW. It's the shiniest one yet! It's mine now. Thank you!"
+msgstr "WOW. Der glitzert am meisten! Jetzt ist er meiner. Danke!"
+
+msgid "Future Warden"
+msgstr "Zukünftiger Warden"
+
+msgid "Wake 3 shrines."
+msgstr "Erwecke 3 Schreine."
+
+msgid "Tell Pip about the Wardens."
+msgstr "Erzähl Pip von den Wardens."
+
+msgid "Three Wardens?! You're basically a legend. Can I have your autograph?"
+msgstr "Drei Wardens?! Du bist quasi eine Legende. Krieg ich ein Autogramm?"
+
+msgid "A buyer in a far valley"
+msgstr "Ein Käufer in einem fernen Tal"
+
+msgid "I have a buyer who wants a Truffle. Pigs or Wildlings find them, I'm told."
+msgstr "Ich hab einen Käufer, der einen Trüffel will. Man sagt, Schweine oder Wildlinge finden sie."
+
+msgid "Bring Sable a Truffle."
+msgstr "Bring Sable einen Trüffel."
+
+msgid "A fine specimen. My buyer pays well, and so do I."
+msgstr "Ein feines Exemplar. Mein Käufer zahlt gut, und ich auch."
+
+msgid "Gems for the road"
+msgstr "Edelsteine für die Reise"
+
+msgid "Bring Sable an Emerald."
+msgstr "Bring Sable einen Smaragd."
+
+msgid "Bring Sable a Ruby."
+msgstr "Bring Sable einen Rubin."
+
+msgid "Green and red. A merchant's colors. Take this, I have no use for it."
+msgstr "Grün und Rot. Die Farben eines Händlers. Nimm das, ich brauch es nicht."
+
+msgid "Overdue"
+msgstr "Überfällig"
+
+msgid "Pip borrowed a book and says it's 'somewhere in the Meadow'. Could you check?"
+msgstr "Pip hat ein Buch ausgeliehen und sagt, es ist „irgendwo auf der Wiese“. Schaust du nach?"
+
+msgid "Visit the Meadow."
+msgstr "Besuch die Wiese."
+
+msgid "Return to Cora."
+msgstr "Kehr zu Cora zurück."
+
+msgid "Pip left the book in the grass again? Of course. Thank you for looking."
+msgstr "Pip hat das Buch wieder im Gras liegen lassen? Natürlich. Danke fürs Nachsehen."
+
+msgid "For the museum"
+msgstr "Fürs Museum"
+
+msgid "Bring Cora an Amethyst."
+msgstr "Bring Cora einen Amethyst."
+
+msgid "Bring Cora an Aquamarine."
+msgstr "Bring Cora einen Aquamarin."
+
+msgid "The display case finally looks complete. I'll put your name on the card."
+msgstr "Die Vitrine sieht endlich vollständig aus. Ich schreib deinen Namen aufs Schild."
+
+msgid "The quiet wood"
+msgstr "Der stille Wald"
+
+msgid "The wood is waking up again. Help it along: bring me Mushrooms for the old stumps."
+msgstr "Der Wald erwacht wieder. Hilf ihm ein wenig: Bring mir Pilze für die alten Stümpfe."
+
+msgid "Bring Ivy 10 Mushrooms."
+msgstr "Bring Ivy 10 Pilze."
+
+msgid "They'll spread by spring. The wood thanks you."
+msgstr "Bis zum Frühling breiten sie sich aus. Der Wald dankt dir."
+
+msgid "The quiet wood: the rematch"
+msgstr "Der stille Wald: die Revanche"
+
+msgid "Win 10 battles to sharpen your team."
+msgstr "Gewinne 10 Kämpfe, um dein Team zu schärfen."
+
+msgid "Visit Ivy again."
+msgstr "Besuch Ivy erneut."
+
+msgid "You've grown. I can feel it in your Wildlings."
+msgstr "Du bist gewachsen. Ich spüre es an deinen Wildlingen."
+
+msgid "Tide pools"
+msgstr "Gezeitentümpel"
+
+msgid "The tide pools need Seaweed to shelter the little ones. Could you gather some?"
+msgstr "Die Gezeitentümpel brauchen Seetang als Schutz für die Kleinen. Sammelst du welchen?"
+
+msgid "Bring Marina 10 Seaweed."
+msgstr "Bring Marina 10 Seetang."
+
+msgid "The little Tidelings will love this."
+msgstr "Die kleinen Gezeitenlinge werden das lieben."
+
+msgid "Tide pools: the rematch"
+msgstr "Gezeitentümpel: die Revanche"
+
+msgid "Visit Marina again."
+msgstr "Besuch Marina erneut."
+
+msgid "Embers"
+msgstr "Glut"
+
+msgid "The ridge fires are low. Bring me Coal and I'll keep them burning."
+msgstr "Die Feuer am Kamm brennen schwach. Bring mir Kohle, dann halte ich sie am Leben."
+
+msgid "Bring Ash 10 Coal."
+msgstr "Bring Ash 10 Kohle."
+
+msgid "Ha! That'll keep the Embers warm all season."
+msgstr "Ha! Damit bleiben die Glutlinge die ganze Saison warm."
+
+msgid "Embers: the rematch"
+msgstr "Glut: die Revanche"
+
+msgid "Visit Ash again."
+msgstr "Besuch Ash erneut."
+
+msgid "Stone and patience"
+msgstr "Stein und Geduld"
+
+msgid "The canyon path crumbles. Stone, and plenty of it."
+msgstr "Der Canyonpfad bröckelt. Stein, und zwar reichlich."
+
+msgid "Bring Gideon 10 Stone."
+msgstr "Bring Gideon 10 Stein."
+
+msgid "Good. Patience and stone. That's all a canyon needs."
+msgstr "Gut. Geduld und Stein. Mehr braucht ein Canyon nicht."
+
+msgid "Stone and patience: the rematch"
+msgstr "Stein und Geduld: die Revanche"
+
+msgid "Visit Gideon again."
+msgstr "Besuch Gideon erneut."
+
+msgid "Seeds on the wind"
+msgstr "Saat im Wind"
+
+msgid "The peak's birds are hungry. Wheat, please, as much as you can spare."
+msgstr "Die Vögel am Gipfel haben Hunger. Weizen bitte, so viel du entbehren kannst."
+
+msgid "Bring Kai 10 Wheat."
+msgstr "Bring Kai 10 Weizen."
+
+msgid "Listen, they're singing already."
+msgstr "Hör mal, sie singen schon."
+
+msgid "Seeds on the wind: the rematch"
+msgstr "Saat im Wind: die Revanche"
+
+msgid "Visit Kai again."
+msgstr "Besuch Kai erneut."
+
+msgid "Charged up"
+msgstr "Aufgeladen"
+
+msgid "My lamps run on Spark Dust. Got any? Bring it and I'll light your way."
+msgstr "Meine Lampen laufen mit Funkenstaub. Hast du welchen? Bring ihn mir und ich leuchte dir den Weg."
+
+msgid "Bring Volta 5 Spark Dust."
+msgstr "Bring Volta 5 Funkenstaub."
+
+msgid "Zap! Full power. Thanks, farmer."
+msgstr "Zapp! Volle Leistung. Danke, Farmer."
+
+msgid "Charged up: the rematch"
+msgstr "Aufgeladen: die Revanche"
+
+msgid "Visit Volta again."
+msgstr "Besuch Volta erneut."
+
+msgid "Warm wool"
+msgstr "Warme Wolle"
+
+msgid "Winter nights are long up here. A few bundles of Wool would help the little ones."
+msgstr "Die Winternächte sind lang hier oben. Ein paar Bündel Wolle würden den Kleinen helfen."
+
+msgid "Bring Nils 5 Wool."
+msgstr "Bring Nils 5 Wolle."
+
+msgid "They'll sleep warm tonight. Thank you."
+msgstr "Heute Nacht schlafen sie warm. Danke."
+
+msgid "Warm wool: the rematch"
+msgstr "Warme Wolle: die Revanche"
+
+msgid "Visit Nils again."
+msgstr "Besuch Nils erneut."
+
+msgid "Moonlit offering"
+msgstr "Opfergabe im Mondlicht"
+
+msgid "The glade remembers the stars. A Star Shard would remind it."
+msgstr "Die Lichtung erinnert sich an die Sterne. Ein Sternsplitter würde sie erinnern."
+
+msgid "Bring Selene 1 Star Shard."
+msgstr "Bring Selene 1 Sternsplitter."
+
+msgid "Do you see? The glade glows again."
+msgstr "Siehst du? Die Lichtung leuchtet wieder."
+
+msgid "Moonlit offering: the rematch"
+msgstr "Opfergabe im Mondlicht: die Revanche"
+
+msgid "Visit Selene again."
+msgstr "Besuch Selene erneut."
+
+msgid "Spring cleaning"
+msgstr "Frühjahrsputz"
+
+msgid "Spring's here! Everyone's planting. Join in?"
+msgstr "Der Frühling ist da! Alle pflanzen. Machst du mit?"
+
+msgid "Plant 30 seeds this spring."
+msgstr "Pflanze diesen Frühling 30 Samen."
+
+msgid "Tell Lila about your fields."
+msgstr "Erzähl Lila von deinen Feldern."
+
+msgid "A whole field of green! I'll paint it before it grows."
+msgstr "Ein ganzes grünes Feld! Ich male es, bevor es wächst."
+
+msgid "Summer feast"
+msgstr "Sommerfest"
+
+msgid "I'm planning a summer feast. Help me cook?"
+msgstr "Ich plane ein Sommerfest. Hilfst du mir beim Kochen?"
+
+msgid "Cook 5 dishes."
+msgstr "Koche 5 Gerichte."
+
+msgid "Bring Theo a Melon."
+msgstr "Bring Theo eine Melone."
+
+msgid "Ice-cold melon for the whole village. Perfect."
+msgstr "Eiskalte Melone fürs ganze Dorf. Perfekt."
+
+msgid "Harvest moon"
+msgstr "Erntemond"
+
+msgid "The harvest moon rises soon. A good harvest honors the valley."
+msgstr "Bald geht der Erntemond auf. Eine gute Ernte ehrt das Tal."
+
+msgid "Harvest 60 crops."
+msgstr "Ernte 60 Pflanzen."
+
+msgid "Bring Old Barley a Pumpkin."
+msgstr "Bring dem alten Barley einen Kürbis."
+
+msgid "For the lantern on the shrine path. Just like the old days."
+msgstr "Für die Laterne am Schreinpfad. Wie in alten Zeiten."
+
+msgid "Winter lights"
+msgstr "Winterlichter"
+
+msgid "Winter is for being kind to each other. Will you help me spread some cheer?"
+msgstr "Der Winter ist dafür da, nett zueinander zu sein. Hilfst du mir, etwas Freude zu verbreiten?"
+
+msgid "Gift something to 5 villagers."
+msgstr "Mach 5 Dorfbewohnern ein Geschenk."
+
+msgid "Tell Cora the village is ready."
+msgstr "Sag Cora, dass das Dorf bereit ist."
+
+msgid "Everyone's smiling. That's what the lights are for."
+msgstr "Alle lächeln. Genau dafür sind die Lichter da."
+
+msgid "A fresh start"
+msgstr "Ein Neuanfang"
+
+msgid "A new year! The old folks say your first harvest sets the tone."
+msgstr "Ein neues Jahr! Die Alten sagen, die erste Ernte gibt den Ton an."
+
+msgid "Harvest 10 crops in the new year."
+msgstr "Ernte im neuen Jahr 10 Pflanzen."
+
+msgid "Wish Old Barley a happy new year."
+msgstr "Wünsch dem alten Barley ein frohes neues Jahr."
+
+msgid "Another year in the valley. May it be kind to you."
+msgstr "Noch ein Jahr im Tal. Möge es gut zu dir sein."
+
+msgid "Harvest day"
+msgstr "Erntetag"
+
+#, c-format
+msgid "Harvest %d crops."
+msgstr "Ernte %d Pflanzen."
+
+msgid "Sowing"
+msgstr "Aussaat"
+
+#, c-format
+msgid "Plant %d seeds."
+msgstr "Pflanze %d Samen."
+
+msgid "Watering round"
+msgstr "Gießrunde"
+
+#, c-format
+msgid "Water %d tiles."
+msgstr "Gieß %d Felder."
+
+msgid "Market day"
+msgstr "Markttag"
+
+#, c-format
+msgid "Put %d items into the shipping bin."
+msgstr "Leg %d Items in die Versandkiste."
+
+msgid "New friends"
+msgstr "Neue Freunde"
+
+#, c-format
+msgid "Befriend %d Wildlings."
+msgstr "Befreunde dich mit %d Wildlingen."
+
+msgid "Training"
+msgstr "Training"
+
+#, c-format
+msgid "Win %d battles."
+msgstr "Gewinne %d Kämpfe."
+
+msgid "Home cooking"
+msgstr "Hausmannskost"
+
+#, c-format
+msgid "Cook %d dishes."
+msgstr "Koche %d Gerichte."
+
+msgid "Workshop"
+msgstr "Werkstatt"
+
+#, c-format
+msgid "Craft %d items."
+msgstr "Crafte %d Items."
+
+msgid "Good neighbor"
+msgstr "Gute Nachbarschaft"
+
+#, c-format
+msgid "Give %d gifts to villagers."
+msgstr "Mach Dorfbewohnern %d Geschenke."
+
+msgid "Special order"
+msgstr "Sonderbestellung"
+
+#, c-format
+msgid "Bring %d %s to %s."
+msgstr "Bring %d × %s zu %s."
+
+msgid "Down below"
+msgstr "Unter Tage"
+
+#, c-format
+msgid "Go down %d mine floors."
+msgstr "Steig %d Minenebenen hinab."
+
+#, c-format
+msgid "%d skill points"
+msgstr "%d Skillpunkte"
+
+#, c-format
+msgid "%d-day daily streak! Bonus: %s"
+msgstr "%d Tage Daily-Serie! Bonus: %s"
+
+msgid "Accept"
+msgstr "Annehmen"
+
+msgid "Completed"
+msgstr "Abgeschlossen"
+
+msgid "Daily"
+msgstr "Daily"
+
+msgid "Finished quests show up here."
+msgstr "Abgeschlossene Quests erscheinen hier."
+
+msgid "Got a moment? I could use your help with something."
+msgstr "Hast du kurz Zeit? Ich könnte deine Hilfe gebrauchen."
+
+msgid "Hide this hint"
+msgstr "Hinweis ausblenden"
+
+msgid "Keep playing"
+msgstr "Weiterspielen"
+
+msgid "Main"
+msgstr "Haupt"
+
+msgid "New daily quests are on your list."
+msgstr "Neue Daily Quests stehen auf deiner Liste."
+
+#, c-format
+msgid "New quest: %s"
+msgstr "Neue Quest: %s"
+
+msgid "New task (once a day)"
+msgstr "Neue Quest würfeln (1× am Tag)"
+
+msgid "No quests right now. Villagers with a ! over their head have something for you."
+msgstr "Gerade keine Quests. Dorfbewohner mit einem ! über dem Kopf haben etwas für dich."
+
+msgid "No, I know the basics"
+msgstr "Nein, ich kenne mich aus"
+
+msgid "Play the tutorial? It shows the basics step by step. You can skip it any time in the quest log."
+msgstr "Tutorial spielen? Es zeigt dir die Grundlagen Schritt für Schritt. Du kannst es jederzeit im Questlog überspringen."
+
+msgid "Play tutorial"
+msgstr "Tutorial spielen"
+
+#, c-format
+msgid "Quest complete: %s"
+msgstr "Quest abgeschlossen: %s"
+
+msgid "Quest log"
+msgstr "Questlog"
+
+msgid "Quests"
+msgstr "Quests"
+
+#, c-format
+msgid "Recipe: %s"
+msgstr "Rezept: %s"
+
+msgid "Seasonal"
+msgstr "Saison"
+
+msgid "Side"
+msgstr "Neben"
+
+msgid "Skip"
+msgstr "Überspringen"
+
+msgid "Skip the tutorial? You still get all of its rewards."
+msgstr "Tutorial überspringen? Du bekommst trotzdem alle Belohnungen."
+
+msgid "Skip tutorial"
+msgstr "Tutorial überspringen"
+
+#, c-format
+msgid "Step %d of %d"
+msgstr "Schritt %d von %d"
+
+msgid "Stop tracking"
+msgstr "Nicht mehr verfolgen"
+
+#, c-format
+msgid "Streak: %d days (bonus every %d)."
+msgstr "Serie: %d Tage (Bonus alle %d)."
+
+msgid "Thank you, that's a big help!"
+msgstr "Danke, das hilft mir sehr!"
+
+msgid "Three new quests every day at midnight."
+msgstr "Jeden Tag um Mitternacht drei neue Quests."
+
+msgid "Track on screen"
+msgstr "Auf dem Bildschirm verfolgen"
+
+msgid "Yes, show me"
+msgstr "Ja, zeig's mir"
+
+#, c-format
+msgid "♥ %s"
+msgstr "♥ %s"
+
+msgid "Event"
+msgstr "Event"
+
+msgid "Start, then the tab"
+msgstr "Start, dann der Tab"
+
+msgid "Tutorial"
+msgstr "Tutorial"
+
+msgid "Weekly"
+msgstr "Weekly"
+
+#, c-format
+msgid "left click or %s"
+msgstr "Linksklick oder %s"
+
+#, c-format
+msgid "right click or %s"
+msgstr "Rechtsklick oder %s"
+
+msgid "the hand button"
+msgstr "Hand-Button"
+
+msgid "the joystick"
+msgstr "Joystick"
+
+msgid "the left stick"
+msgstr "linker Stick"
+
+msgid "the left stick (push it all the way)"
+msgstr "linker Stick, ganz durchgedrückt"
+
+msgid "the menu button"
+msgstr "Menü-Button"
+
+msgid "the run button"
+msgstr "Renn-Button"
+
+msgid "the tool button"
+msgstr "Werkzeug-Button"
+
+#, c-format
+msgid "%d quests complete · %s"
+msgstr "%d Quests abgeschlossen · %s"
 

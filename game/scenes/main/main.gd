@@ -117,12 +117,28 @@ func _start_new(opts: Dictionary) -> void:
 		lines.append(l.replace("{name}", p.name))
 	player.locked = true
 	await ui.say(lines, "A letter")
+	await _offer_tutorial(p)
 	if not Settings.analytics_asked and Telemetry.enabled:
 		var c: int = await ui.ask("Help make Hollowmere better? Share anonymous play stats: how long you play and how far your farm gets. Nothing personal, and you can change it in Settings.", ["Sure", "No thanks"])
 		Settings.analytics = c == 0
 		Settings.analytics_asked = true
 		Settings.save_settings()
 	player.locked = false
+
+## First farm: ask. Players who have seen the tutorial (on any farm, any device) skip it
+## and get its rewards; they can start it from the quest log.
+func _offer_tutorial(p: PlayerData) -> void:
+	var now := TimeService.now()
+	if Settings.profile_get("tutorial_seen", false):
+		Quests.skip_tutorial(p, now)
+	else:
+		var c: int = await ui.ask("Play the tutorial? It shows the basics step by step. You can skip it any time in the quest log.", ["Yes, show me", "No, I know the basics"])
+		if c == 0:
+			Quests.start_tutorial(p, now)
+		else:
+			Quests.skip_tutorial(p, now)
+		Settings.profile_set("tutorial_seen", true)
+	EventBus.quest_updated.emit()
 
 func _load_slot(slot: int) -> void:
 	await _fade_to(1.0)
@@ -307,7 +323,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		ui.open(pm)
 		get_viewport().set_input_as_handled()
 		return
-	for action in ["inventory", "party", "journal", "craft", "map", "skills"]:
+	for action in MenuShell.HOTKEYS:
 		if InputMap.has_action(action) and event.is_action_pressed(action):
 			Audio.sfx("open")
 			open_menu(action)
