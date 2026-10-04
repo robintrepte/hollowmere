@@ -11,6 +11,7 @@ var _weather: Label
 var _dial: DayDial
 var _money: Label
 var _money_shown := 0.0
+var _coin_icon: TextureRect
 var _energy: EnergyPips
 var _level: Label
 var _xp: ProgressBar
@@ -117,7 +118,8 @@ func _ready() -> void:
 	var mrow := HBoxContainer.new()
 	mrow.add_theme_constant_override("separation", 3)
 	co.add_child(mrow)
-	mrow.add_child(UITheme.icon_rect(Art.item("_coin"), 16))
+	_coin_icon = UITheme.icon_rect(Art.item("_coin"), 16)
+	mrow.add_child(_coin_icon)
 	_money = UITheme.label("0", 12, UITheme.WOOD_DK)
 	mrow.add_child(_money)
 
@@ -154,7 +156,7 @@ func _ready() -> void:
 	_hotbar_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	root.add_child(_hotbar_name)
 
-	# Tutorial hint (top center)
+	# Tutorial hint (above the hotbar)
 	_hint = PanelContainer.new()
 	_hint.add_theme_stylebox_override("panel", UITheme.box(Color(0.12, 0.09, 0.1, 0.88), UITheme.COIN, 1, 4, 6, false))
 	_hint.anchor_left = 0.5
@@ -192,7 +194,8 @@ func _ready() -> void:
 	EventBus.day_started.connect(func(_d, _r): _refresh_all())
 	EventBus.money_changed.connect(func(_m, d: int):
 		if d > 0:
-			Juice.pop(_money))
+			Juice.pop(_money)
+			_fly_coins(d))
 	EventBus.energy_changed.connect(func(_e, _mx): _refresh_energy())
 	EventBus.inventory_changed.connect(_refresh_hotbar)
 	EventBus.hotbar_changed.connect(_refresh_hotbar)
@@ -416,7 +419,8 @@ func _process(delta: float) -> void:
 		_money_shown = lerpf(_money_shown, target, minf(1.0, delta * 8.0))
 		if absf(_money_shown - target) < 1.0:
 			_money_shown = target
-	_money.text = Num.group(int(round(_money_shown)))
+	var shown := int(round(_money_shown))
+	_money.text = Num.short(shown) if shown >= 1000000 else Num.group(shown)
 	if _name_t > 0:
 		_name_t -= delta
 		_hotbar_name.modulate.a = clampf(_name_t, 0, 1)
@@ -425,6 +429,24 @@ func _process(delta: float) -> void:
 		_refresh_lead()
 	if Engine.get_process_frames() % 60 == 15:
 		_refresh_quest()
+
+## A few coins fly from the middle of the screen into the money counter.
+func _fly_coins(amount: int) -> void:
+	if not is_inside_tree() or not _coin_icon.is_visible_in_tree():
+		return
+	var view := get_viewport().get_visible_rect().size
+	var to := _coin_icon.global_position
+	for i in clampi(1 + int(log(float(amount)) / log(4.0)), 1, 7):
+		var c := TextureRect.new()
+		c.texture = _coin_icon.texture
+		c.size = Vector2(12, 12)
+		c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		c.position = view / 2.0 + Vector2(randf_range(-18, 18), randf_range(-26, 6))
+		add_child(c)
+		var tw := c.create_tween()
+		tw.tween_interval(i * 0.05)
+		tw.tween_property(c, "position", to, 0.55).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tw.tween_callback(c.queue_free)
 
 func toast(text: String, _icon: String = "") -> void:
 	var pc := PanelContainer.new()

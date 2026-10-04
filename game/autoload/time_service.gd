@@ -23,6 +23,10 @@ func now() -> float:
 		return fixed_now
 	return Time.get_unix_time_from_system() + offset
 
+## Seconds to add to a unix time to get the player's local wall clock.
+func utc_offset() -> int:
+	return int(Time.get_time_zone_from_system().get("bias", 0)) * 60
+
 ## Seconds that really passed between two stamps: never negative, never more than the offline cap.
 static func elapsed(from: float, to: float) -> float:
 	return clampf(to - from, 0.0, OFFLINE_CAP)

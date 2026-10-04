@@ -8,7 +8,9 @@ signal closed
 ## Shown as a tab inside the MenuShell: no frame and no close button of its own.
 var embedded := false
 
-const TABS := [["story", "Story"], ["people", "Villagers"], ["dex", "Wildlings"]]
+const TABS := [["story", "Story"], ["people", "Villagers"], ["dex", "Wildlings"], ["ledger", "Ledger"]]
+## Reasons GameState.add_money records, listed so the catalog picks them up.
+const LEDGER_LABELS := ["Story", "Reward", "Shipping bin", "Shop", "Sold", "Building", "Tool upgrade", "Backpack", "Request board", "Battle", "Show prize", "Fountain", "Casino"]
 
 var player: PlayerData
 var tab := "story"
@@ -72,6 +74,7 @@ func _render(id: String) -> void:
 		"board": _board()
 		"dex": _dex()
 		"weekly": _weekly()
+		"ledger": _ledger()
 
 func _card() -> HBoxContainer:
 	var pc := PanelContainer.new()
@@ -145,6 +148,29 @@ func _story() -> void:
 		for lid in Data.legends:
 			names.append(Data.species[lid].name if lid in w.legends else "???")
 		_body.add_child(UITheme.label("Legends of the seasons: " + ", ".join(names), 9, UITheme.WOOD))
+
+## The farm's last income and spending, newest first.
+func _ledger() -> void:
+	var led: Array = GameState.world.get("ledger", [])
+	if led.is_empty():
+		_body.add_child(UITheme.label("Nothing earned or spent yet.", 9, UITheme.MUTED))
+		return
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", 12)
+	grid.add_theme_constant_override("v_separation", 2)
+	_body.add_child(grid)
+	for i in range(led.size() - 1, -1, -1):
+		var e: Array = led[i]
+		var when := Time.get_datetime_dict_from_unix_time(int(e[0]) + TimeService.utc_offset())
+		grid.add_child(UITheme.label(Num.day_month(when) + " " + Calendar.time_string(when.hour * 60 + when.minute, Settings.twelve_hour), 8, UITheme.MUTED))
+		var why := UITheme.label(tr(str(e[2])) if str(e[2]) != "" else "—", 8, UITheme.INK)
+		why.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		grid.add_child(why)
+		var n := int(e[1])
+		var amt := CoinLabel.new(absi(n), 8, UITheme.LEAF.darkened(0.3) if n > 0 else Color("#b04040"))
+		amt.label.text = ("+" if n > 0 else "−") + amt.label.text
+		grid.add_child(amt)
 
 func _wrap(text: String, size: int, col: Color) -> Label:
 	var l := UITheme.label(text, size, col)

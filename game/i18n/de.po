@@ -9141,3 +9141,49 @@ msgstr "Werkzeug-Button"
 msgid "%d quests complete · %s"
 msgstr "%d Quests abgeschlossen · %s"
 
+#, c-format
+msgid "(%s× the ingredients)"
+msgstr "(%s× Zutatenwert)"
+
+msgid "Building"
+msgstr "Gebäude"
+
+msgid "Casino"
+msgstr "Casino"
+
+msgid "Fountain"
+msgstr "Brunnen"
+
+msgid "Ledger"
+msgstr "Kontoauszug"
+
+msgid "Nothing earned or spent yet."
+msgstr "Noch nichts eingenommen oder ausgegeben."
+
+msgid "Ready to harvest"
+msgstr "Erntereif"
+
+msgid "Request board"
+msgstr "Dorftafel"
+
+msgid "Reward"
+msgstr "Belohnung"
+
+msgid "Sells for"
+msgstr "Verkaufswert"
+
+msgid "Shipping bin"
+msgstr "Versandkiste"
+
+msgid "Shop"
+msgstr "Shop"
+
+msgid "Show prize"
+msgstr "Show-Preisgeld"
+
+msgid "Sold"
+msgstr "Verkauft"
+
+msgid "Tool upgrade"
+msgstr "Werkzeug-Upgrade"
+

@@ -151,6 +151,20 @@ func _show_detail() -> void:
 		info.add_child(UITheme.label(tr("+%d energy") % int(it.energy), 9, UITheme.LEAF.darkened(0.3)))
 	if locked:
 		return
+	var sell := Data.sell_price(_sel, 0)
+	if sell > 0:
+		var worth := 0
+		for k in r.in:
+			worth += Data.sell_price(k, 0) * int(r.in[k])
+		var vrow := HBoxContainer.new()
+		vrow.add_theme_constant_override("separation", 3)
+		vrow.add_child(UITheme.label("Sells for", 8, UITheme.MUTED))
+		vrow.add_child(CoinLabel.new(sell, 8))
+		if worth > 0:
+			var ratio := float(sell) / worth
+			var col := UITheme.LEAF.darkened(0.3) if ratio >= 1.0 else Color("#b04040")
+			vrow.add_child(UITheme.label(tr("(%s× the ingredients)") % Num.decimal(ratio), 8, col))
+		info.add_child(vrow)
 	_detail.add_child(UITheme.label("Ingredients", 10, UITheme.WOOD))
 	var srcs := GameState.craft_sources(player)
 	for k in r.in:

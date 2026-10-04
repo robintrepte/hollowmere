@@ -194,18 +194,27 @@ func farm_grids() -> Array:
 
 # --- Money, XP and stats ---------------------------------------------------------------
 
-func add_money(n: int, at: Vector2 = Vector2.INF) -> void:
+## Newest last: [unix, amount, reason msgid]. The Journal shows them as the farm's ledger.
+const LEDGER_MAX := 50
+
+func add_money(n: int, at: Vector2 = Vector2.INF, reason: String = "") -> void:
 	world.money = maxi(0, int(world.money) + n)
 	if n > 0:
 		world.stats.earned = int(world.stats.get("earned", 0)) + n
+	if n != 0:
+		var led: Array = world.get("ledger", [])
+		led.append([int(TimeService.now()), n, reason])
+		if led.size() > LEDGER_MAX:
+			led = led.slice(led.size() - LEDGER_MAX)
+		world["ledger"] = led
 	EventBus.money_changed.emit(int(world.money), n)
 	if at != Vector2.INF and n != 0:
 		EventBus.popup.emit(at, ("+" if n > 0 else "-") + Num.short(absi(n)), Color("#ffd447") if n > 0 else Color("#ff7a7a"), "_coin")
 
-func spend(n: int) -> bool:
+func spend(n: int, reason: String = "") -> bool:
 	if int(world.money) < n:
 		return false
-	add_money(-n)
+	add_money(-n, Vector2.INF, reason)
 	return true
 
 func add_farm_xp(n: int, at: Vector2 = Vector2.INF) -> void:
@@ -226,7 +235,7 @@ func bump_stat(key: String, n: int = 1, pid: String = "") -> void:
 	if p:
 		p.stat_add(key, n)
 	for c in Progression.bump(world.weekly, key, n):
-		add_money(int(c.reward_money))
+		add_money(int(c.reward_money), Vector2.INF, "Story")
 		EventBus.toast.emit(tr("Weekly challenge complete: %s (+%s)") % [tr(c.text), CoinLabel.text(int(c.reward_money))], "star")
 	EventBus.quest_updated.emit()
 
@@ -234,7 +243,7 @@ func bump_stat(key: String, n: int = 1, pid: String = "") -> void:
 func grant(reward: Dictionary, p: PlayerData) -> void:
 	for k in reward:
 		if k == "money":
-			add_money(int(reward[k]))
+			add_money(int(reward[k]), Vector2.INF, "Reward")
 		elif k == "recipe":
 			if p and not reward[k] in p.recipes:
 				p.recipes.append(reward[k])
@@ -555,7 +564,7 @@ func _pay_shipping() -> Dictionary:
 			bump_stat("ship:crop", int(sh.n))
 	world.shipping = []
 	if total > 0:
-		add_money(total)
+		add_money(total, Vector2.INF, "Shipping bin")
 		add_farm_xp(int(total / 40))
 	return {"shipped": shipped, "total": total}
 
@@ -1040,7 +1049,7 @@ func buy(pid: String, shop_id: String, item_id: String, n: int = 1) -> Dictionar
 	if not p.inventory.can_add(item_id, n, 0, false):
 		r.reason = tr("Your pack is full.")
 		return r
-	if not spend(price * n):
+	if not spend(price * n, "Shop"):
 		r.reason = tr("Not enough gold.")
 		return r
 	var before := p.inventory.homes_of(item_id)
@@ -1050,7 +1059,7 @@ func buy(pid: String, shop_id: String, item_id: String, n: int = 1) -> Dictionar
 		var still := farm_chest.add(item_id, left)
 		chest_gain = left - still
 		if still > 0:
-			add_money(price * still)
+			add_money(price * still, Vector2.INF, "Shop")
 			n -= still
 	if n <= 0:
 		r.reason = tr("Your pack is full.")
@@ -1100,7 +1109,7 @@ func sell(pid: String, uid: String, n: int = -1) -> Dictionary:
 		return r
 	var amount: int = int(f.entry.n) if n < 0 else mini(n, int(f.entry.n))
 	f.inv.take(uid, amount)
-	add_money(price * amount)
+	add_money(price * amount, Vector2.INF, "Sold")
 	EventBus.inventory_changed.emit()
 	r.ok = true
 	r.sfx = "coin"
@@ -1152,7 +1161,7 @@ func construct(pid: String, building_id: String) -> Dictionary:
 		r.reason = chk.reason
 		return r
 	var b: Dictionary = Data.buildings[building_id]
-	spend(int(b.price))
+	spend(int(b.price), "Building")
 	Economy.consume(srcs, b.materials)
 	world.buildings.append(building_id)
 	bump_stat("build")
@@ -1176,7 +1185,7 @@ func upgrade_tool(pid: String, tool: String) -> Dictionary:
 	if Economy.count_in(srcs, spec.bar) < int(spec.n):
 		r.reason = tr("Bring %d %s.") % [int(spec.n), Data.item_name(spec.bar)]
 		return r
-	if not spend(int(spec.price)):
+	if not spend(int(spec.price), "Tool upgrade"):
 		r.reason = tr("Not enough gold.")
 		return r
 	Economy.consume(srcs, {spec.bar: int(spec.n)})
@@ -1200,7 +1209,7 @@ func buy_backpack(pid: String, id: String) -> Dictionary:
 		if not Casino.spend_chips(p, int(spec.chips)):
 			r.reason = tr("Not enough chips.")
 			return r
-	elif not spend(int(spec.price)):
+	elif not spend(int(spec.price), "Backpack"):
 		r.reason = tr("Not enough gold.")
 		return r
 	p.packs.append(id)
@@ -1239,7 +1248,7 @@ func deliver_board(pid: String, idx: int) -> Dictionary:
 		return r
 	p.inventory.remove(b.item, int(b.n))
 	b.done = true
-	add_money(int(b.money))
+	add_money(int(b.money), Vector2.INF, "Request board")
 	Relationships.add_points(b.from, p.relationship(b.from), 40)
 	bump_stat("board")
 	add_farm_xp(20)
@@ -1290,7 +1299,7 @@ func dex_seen_act(_pid: String, species_id: String, owned: bool = false, starry:
 
 ## Prize money from a client's trainer battle (money is shared by the farm).
 func reward_act(_pid: String, amount: int) -> Dictionary:
-	add_money(clampi(amount, 0, 20000))
+	add_money(clampi(amount, 0, 20000), Vector2.INF, "Battle")
 	return _res(true)
 
 ## Marks a species seen/owned in the farm dex, routing through the host when we're a client.
@@ -1302,7 +1311,7 @@ func dex_mark(species_id: String, owned: bool = false, starry: bool = false) -> 
 ## Farm money earned by the local player (routed to the host when visiting).
 func earn(amount: int) -> void:
 	if Net.is_authority():
-		add_money(amount)
+		add_money(amount, Vector2.INF, "Battle")
 	else:
 		Coop.act("reward_act", [amount])
 
@@ -1492,7 +1501,7 @@ func show_act(pid: String, uid: String) -> Dictionary:
 	var res := Endless.judge(c, srng)
 	Endless.award(c, res)
 	world.flags["show:" + pid] = day()
-	add_money(int(res.prize))
+	add_money(int(res.prize), Vector2.INF, "Show prize")
 	bump_stat("show")
 	if int(res.place) == 1:
 		bump_stat("show_win")

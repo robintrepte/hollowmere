@@ -321,8 +321,7 @@ static func toggle_track(p: PlayerData, qid: String) -> bool:
 
 ## "YYYY-MM-DD" in the player's time zone.
 static func local_date(unix: float) -> String:
-	var bias := int(Time.get_time_zone_from_system().get("bias", 0)) * 60
-	var d := Time.get_datetime_dict_from_unix_time(int(unix) + bias)
+	var d := Time.get_datetime_dict_from_unix_time(int(unix) + TimeService.utc_offset())
 	return "%04d-%02d-%02d" % [d.year, d.month, d.day]
 
 static func _day_before(date: String) -> String:

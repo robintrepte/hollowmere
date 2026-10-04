@@ -181,7 +181,7 @@ func _update_target() -> void:
 	# also reach a villager or object one tile off, as long as you're facing it.
 	_talk_tile = world.focus_tile(me, t)
 	target = t if _precise_aim() else _talk_tile
-	world.cursor.show_at(target, not locked)
+	world.cursor.show_at(target, not locked, me)
 
 func _precise_aim() -> bool:
 	var p := GameState.player(pid)

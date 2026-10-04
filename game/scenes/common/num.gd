@@ -21,6 +21,14 @@ static func group(n: int) -> String:
 		s = s.substr(0, s.length() - 3)
 	return ("-" if neg else "") + s + out
 
+## 1.5 -> "1,5" (de) or "1.5" (en).
+static func decimal(v: float, digits: int = 1) -> String:
+	return String.num(v, digits).replace(".", _dec())
+
+## A short date from a datetime dict: "24.12." (de) or "12/24" (en).
+static func day_month(d: Dictionary) -> String:
+	return "%02d.%02d." % [d.day, d.month] if _german_style() else "%d/%d" % [d.month, d.day]
+
 ## Compact form for tight spaces: 950, 12,3k, 1,2 Mio. (de) / 12.3k, 1.2M (en).
 static func short(n: int) -> String:
 	var a := absi(n)

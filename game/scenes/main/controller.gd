@@ -204,7 +204,7 @@ func _interact_static(io: Dictionary) -> void:
 		"fountain":
 			if int(p.stats.get("wish_day", -1)) != GameState.day() and GameState.money() >= 10:
 				var c: int = await ui.ask("Toss a coin into the fountain? (10g)", ["Make a wish", "Not today"])
-				if c == 0 and GameState.spend(10):
+				if c == 0 and GameState.spend(10, "Fountain"):
 					p.stats["wish_day"] = GameState.day()
 					GameState.world.luck = float(GameState.world.get("luck", 0.0)) + 0.01
 					Audio.sfx("coin")

@@ -45,15 +45,15 @@ msgstr ""
 msgid "  ·  fainted"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:167
+#: scenes/ui/journal_panel.gd:193
 msgid "  ♥ dating"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:167
+#: scenes/ui/journal_panel.gd:193
 msgid "  ♥ married"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:287
+#: scenes/ui/journal_panel.gd:313
 #, c-format
 msgid " (%d ribbons)"
 msgstr ""
@@ -63,11 +63,11 @@ msgstr ""
 msgid " (%s)"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:287
+#: scenes/ui/journal_panel.gd:313
 msgid " (1 ribbon)"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:142
+#: scenes/ui/journal_panel.gd:145
 #, c-format
 msgid " / %d"
 msgstr ""
@@ -97,7 +97,7 @@ msgstr ""
 msgid "\"Um... I'll find a use for it, I guess.\""
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:248
+#: scenes/ui/journal_panel.gd:274
 #, c-format
 msgid "#%03d %s%s"
 msgstr ""
@@ -107,12 +107,12 @@ msgstr ""
 msgid "%d %s"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:247 scenes/battle/battle_screen.gd:558 scenes/battle/battle_screen.gd:667 scenes/ui/craft_panel.gd:164
+#: scenes/battle/battle_screen.gd:247 scenes/battle/battle_screen.gd:558 scenes/battle/battle_screen.gd:667 scenes/ui/craft_panel.gd:178
 #, c-format
 msgid "%d / %d"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:265
+#: scenes/ui/journal_panel.gd:291
 #, c-format
 msgid "%d / %d  ·  Reward %s"
 msgstr ""
@@ -132,22 +132,22 @@ msgstr ""
 msgid "%d crops ripened"
 msgstr ""
 
-#: autoload/time_service.gd:60
+#: autoload/time_service.gd:64
 #, c-format
 msgid "%d d"
 msgstr ""
 
-#: autoload/time_service.gd:60
+#: autoload/time_service.gd:64
 #, c-format
 msgid "%d d %d h"
 msgstr ""
 
-#: autoload/time_service.gd:64
+#: autoload/time_service.gd:68
 #, c-format
 msgid "%d h"
 msgstr ""
 
-#: autoload/time_service.gd:64
+#: autoload/time_service.gd:68
 #, c-format
 msgid "%d h %d min"
 msgstr ""
@@ -167,12 +167,12 @@ msgstr ""
 msgid "%d hearts with %s"
 msgstr ""
 
-#: autoload/game_state.gd:1087
+#: autoload/game_state.gd:1096
 #, c-format
 msgid "%d in %s"
 msgstr ""
 
-#: autoload/time_service.gd:66
+#: autoload/time_service.gd:70
 #, c-format
 msgid "%d min"
 msgstr ""
@@ -192,7 +192,7 @@ msgstr ""
 msgid "%d quests complete · %s"
 msgstr ""
 
-#: autoload/time_service.gd:67
+#: autoload/time_service.gd:71
 #, c-format
 msgid "%d s"
 msgstr ""
@@ -267,7 +267,7 @@ msgstr ""
 msgid "%s %s"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:287
+#: scenes/ui/journal_panel.gd:313
 #, c-format
 msgid "%s %s%s"
 msgstr ""
@@ -287,7 +287,7 @@ msgstr ""
 msgid "%s (power %d)"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:142
+#: scenes/ui/journal_panel.gd:145
 #, c-format
 msgid "%s B%d%s"
 msgstr ""
@@ -307,7 +307,7 @@ msgstr ""
 msgid "%s Juice"
 msgstr ""
 
-#: scenes/ui/hud.gd:376
+#: scenes/ui/hud.gd:379
 #, c-format
 msgid "%s Lv%d"
 msgstr ""
@@ -422,7 +422,7 @@ msgstr ""
 msgid "%s has received enough gifts this week."
 msgstr ""
 
-#: autoload/game_state.gd:1613
+#: autoload/game_state.gd:1622
 #, c-format
 msgid "%s has to keep at least one Wildling."
 msgstr ""
@@ -462,7 +462,7 @@ msgstr ""
 msgid "%s is hurt by its burn!"
 msgstr ""
 
-#: autoload/game_state.gd:1161
+#: autoload/game_state.gd:1170
 #, c-format
 msgid "%s is ready!"
 msgstr ""
@@ -547,12 +547,12 @@ msgstr ""
 msgid "%s nature · %s"
 msgstr ""
 
-#: autoload/game_state.gd:1608
+#: autoload/game_state.gd:1617
 #, c-format
 msgid "%s no longer has that Wildling."
 msgstr ""
 
-#: autoload/game_state.gd:1604
+#: autoload/game_state.gd:1613
 #, c-format
 msgid "%s no longer has that item."
 msgstr ""
@@ -562,7 +562,7 @@ msgstr ""
 msgid "%s offers"
 msgstr ""
 
-#: autoload/game_state.gd:1516
+#: autoload/game_state.gd:1525
 #, c-format
 msgid "%s only takes one rematch a week."
 msgstr ""
@@ -627,7 +627,7 @@ msgstr ""
 msgid "%s used a %s."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:198
+#: scenes/ui/journal_panel.gd:224
 #, c-format
 msgid "%s wants %d %s"
 msgstr ""
@@ -747,7 +747,7 @@ msgstr ""
 msgid "%s! Your most valuable goods go on display (you keep them). Variety helps!"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:168 scenes/ui/party_panel.gd:181
+#: scenes/ui/journal_panel.gd:194 scenes/ui/party_panel.gd:181
 #, c-format
 msgid "%s%s"
 msgstr ""
@@ -847,6 +847,11 @@ msgstr ""
 msgid "%s:%d"
 msgstr ""
 
+#: scenes/ui/craft_panel.gd:166
+#, c-format
+msgid "(%s× the ingredients)"
+msgstr ""
+
 #: scenes/ui/day_report.gd:35
 #, c-format
 msgid "(the farm only keeps going for %s on its own)"
@@ -860,7 +865,7 @@ msgstr ""
 msgid "+ Wildling"
 msgstr ""
 
-#: autoload/game_state.gd:216
+#: autoload/game_state.gd:225
 #, c-format
 msgid "+%d XP"
 msgstr ""
@@ -870,7 +875,7 @@ msgstr ""
 msgid "+%d energy"
 msgstr ""
 
-#: autoload/game_state.gd:943
+#: autoload/game_state.gd:952
 #, c-format
 msgid "+1 %s"
 msgstr ""
@@ -1461,11 +1466,11 @@ msgstr ""
 msgid "Already built."
 msgstr ""
 
-#: autoload/game_state.gd:1235
+#: autoload/game_state.gd:1244
 msgid "Already delivered."
 msgstr ""
 
-#: autoload/game_state.gd:1281
+#: autoload/game_state.gd:1290
 msgid "Already on the farm."
 msgstr ""
 
@@ -1597,11 +1602,15 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
+#: scenes/ui/journal_panel.gd:13
+msgid "Backpack"
+msgstr ""
+
 #: scenes/ui/shop_panel.gd:59
 msgid "Backpacks"
 msgstr ""
 
-#: autoload/game_state.gd:1278
+#: autoload/game_state.gd:1287
 msgid "Bad creature."
 msgstr ""
 
@@ -1661,7 +1670,7 @@ msgstr ""
 msgid "Basic Treat"
 msgstr ""
 
-#: scenes/ui/coop_panel.gd:213
+#: scenes/ui/coop_panel.gd:213 scenes/ui/journal_panel.gd:13
 msgid "Battle"
 msgstr ""
 
@@ -1747,7 +1756,7 @@ msgstr ""
 msgid "Befriend {n} {type} Wildlings"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:224
+#: scenes/ui/journal_panel.gd:250
 #, c-format
 msgid "Befriended %d · Seen %d · Total %d"
 msgstr ""
@@ -1793,7 +1802,7 @@ msgstr ""
 msgid "Birdbath"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:176
+#: scenes/ui/journal_panel.gd:202
 #, c-format
 msgid "Birthday: %s %d"
 msgstr ""
@@ -1850,21 +1859,21 @@ msgstr ""
 msgid "Born from the longest day of summer."
 msgstr ""
 
-#: autoload/game_state.gd:342
+#: autoload/game_state.gd:351
 msgid "Both Wildlings must live in the Den."
 msgstr ""
 
-#: autoload/game_state.gd:1081 scenes/ui/shop_panel.gd:273
+#: autoload/game_state.gd:1090 scenes/ui/shop_panel.gd:273
 #, c-format
 msgid "Bought %d %s"
 msgstr ""
 
-#: autoload/game_state.gd:1088
+#: autoload/game_state.gd:1097
 #, c-format
 msgid "Bought %d %s (%s)"
 msgstr ""
 
-#: autoload/game_state.gd:1084
+#: autoload/game_state.gd:1093
 #, c-format
 msgid "Bought %d %s (in %s)"
 msgstr ""
@@ -1877,7 +1886,7 @@ msgstr ""
 msgid "Bouldron"
 msgstr ""
 
-#: autoload/game_state.gd:274
+#: autoload/game_state.gd:283
 #, c-format
 msgid "Bounty complete: %s!"
 msgstr ""
@@ -1975,7 +1984,7 @@ msgstr ""
 msgid "Bring %d %s to %s."
 msgstr ""
 
-#: autoload/game_state.gd:1177
+#: autoload/game_state.gd:1186
 #, c-format
 msgid "Bring %d %s."
 msgstr ""
@@ -2104,7 +2113,7 @@ msgstr ""
 msgid "Bring the Honey Cake to Mira."
 msgstr ""
 
-#: autoload/game_state.gd:1489
+#: autoload/game_state.gd:1498
 msgid "Bring the Wildling along in your party."
 msgstr ""
 
@@ -2132,12 +2141,16 @@ msgstr ""
 msgid "Bucket"
 msgstr ""
 
-#: autoload/game_state.gd:743
+#: autoload/game_state.gd:752
 msgid "Bucket filled"
 msgstr ""
 
 #: scenes/ui/shop_panel.gd:217 scenes/ui/shop_panel.gd:55
 msgid "Build"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:13
+msgid "Building"
 msgstr ""
 
 #: data/buildings.json
@@ -2204,7 +2217,7 @@ msgstr ""
 msgid "Can't fall asleep. Farm: happiness never drops."
 msgstr ""
 
-#: autoload/game_state.gd:888
+#: autoload/game_state.gd:897
 msgid "Can't place that here."
 msgstr ""
 
@@ -2220,6 +2233,10 @@ msgstr ""
 msgid "Carpenter"
 msgstr ""
 
+#: scenes/ui/journal_panel.gd:13
+msgid "Casino"
+msgstr ""
+
 #: data/crops.json
 msgid "Cauliflower"
 msgstr ""
@@ -2229,7 +2246,7 @@ msgstr ""
 msgid "Challenge sent to %s."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:93 scenes/ui/quest_log_panel.gd:79
+#: scenes/ui/journal_panel.gd:96 scenes/ui/quest_log_panel.gd:79
 #, c-format
 msgid "Chapter %d · %s"
 msgstr ""
@@ -2439,7 +2456,7 @@ msgstr ""
 msgid "Controls (click, then press a key)"
 msgstr ""
 
-#: scenes/main/controller.gd:243 scenes/ui/craft_panel.gd:170
+#: scenes/main/controller.gd:243 scenes/ui/craft_panel.gd:184
 msgid "Cook"
 msgstr ""
 
@@ -2614,7 +2631,7 @@ msgstr ""
 msgid "Create account"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:280
+#: scenes/ui/journal_panel.gd:306
 msgid "Creature Show ladder · every Saturday at the Show Ring"
 msgstr ""
 
@@ -2729,11 +2746,11 @@ msgstr ""
 msgid "Delete this farm forever?"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:205
+#: scenes/ui/journal_panel.gd:231
 msgid "Deliver"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:209
+#: scenes/ui/journal_panel.gd:235
 #, c-format
 msgid "Delivered! +%s"
 msgstr ""
@@ -2790,7 +2807,7 @@ msgstr ""
 msgid "Done"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:202 scenes/ui/journal_panel.gd:267 scenes/ui/journal_panel.gd:279
+#: scenes/ui/journal_panel.gd:228 scenes/ui/journal_panel.gd:293 scenes/ui/journal_panel.gd:305
 msgid "Done ✓"
 msgstr ""
 
@@ -2975,7 +2992,7 @@ msgstr ""
 msgid "Empty shelves"
 msgstr ""
 
-#: autoload/game_state.gd:839
+#: autoload/game_state.gd:848
 msgid "Empty the chest first."
 msgstr ""
 
@@ -3050,12 +3067,12 @@ msgstr ""
 msgid "Farm Level %d!"
 msgstr ""
 
-#: scenes/ui/hud.gd:333
+#: scenes/ui/hud.gd:336
 #, c-format
 msgid "Farm Lv %d"
 msgstr ""
 
-#: scenes/ui/hud.gd:81
+#: scenes/ui/hud.gd:82
 msgid "Farm Lv 1"
 msgstr ""
 
@@ -3080,7 +3097,7 @@ msgstr ""
 msgid "Farm job: %s. %s"
 msgstr ""
 
-#: scenes/ui/hud.gd:202
+#: scenes/ui/hud.gd:205
 #, c-format
 msgid "Farm level %d!"
 msgstr ""
@@ -3234,7 +3251,7 @@ msgstr ""
 msgid "Finished quests show up here."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:107
+#: scenes/ui/journal_panel.gd:110
 #, c-format
 msgid "Finished: %s"
 msgstr ""
@@ -3353,6 +3370,10 @@ msgstr ""
 
 #: data/creatures.json
 msgid "Forgemole"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:13
+msgid "Fountain"
 msgstr ""
 
 #: data/title_tips.json
@@ -3597,11 +3618,11 @@ msgstr ""
 msgid "Gift something to 5 villagers."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:184
+#: scenes/ui/journal_panel.gd:210
 msgid "Gift ✓"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:177
+#: scenes/ui/journal_panel.gd:203
 #, c-format
 msgid "Gifts this week %d/2"
 msgstr ""
@@ -3868,7 +3889,7 @@ msgstr ""
 msgid "Grows fastest in %s: ripe in %s when watered%s. Grows slower in other seasons, and always well in the greenhouse."
 msgstr ""
 
-#: autoload/game_state.gd:875
+#: autoload/game_state.gd:884
 #, c-format
 msgid "Grows slowly in %s"
 msgstr ""
@@ -4105,7 +4126,7 @@ msgstr ""
 msgid "Hibernox"
 msgstr ""
 
-#: scenes/ui/hud.gd:180
+#: scenes/ui/hud.gd:182
 msgid "Hide this hint"
 msgstr ""
 
@@ -4400,7 +4421,7 @@ msgstr ""
 msgid "Inferno"
 msgstr ""
 
-#: scenes/ui/craft_panel.gd:154
+#: scenes/ui/craft_panel.gd:168
 msgid "Ingredients"
 msgstr ""
 
@@ -4619,7 +4640,7 @@ msgstr ""
 msgid "It's blocked. (%s)"
 msgstr ""
 
-#: autoload/game_state.gd:842
+#: autoload/game_state.gd:851
 msgid "It's busy."
 msgstr ""
 
@@ -4970,9 +4991,13 @@ msgstr ""
 msgid "Leaf moves hit 1.5x harder below 1/3 HP. Farm: +1 Grower power."
 msgstr ""
 
-#: autoload/game_state.gd:241
+#: autoload/game_state.gd:250
 #, c-format
 msgid "Learned recipe: %s"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:11
+msgid "Ledger"
 msgstr ""
 
 #: data/items.json
@@ -4983,7 +5008,7 @@ msgstr ""
 msgid "Legend of the Valley"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:147
+#: scenes/ui/journal_panel.gd:150
 msgid "Legends of the seasons: "
 msgstr ""
 
@@ -5080,7 +5105,7 @@ msgstr ""
 msgid "Load a farm"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:136
+#: scenes/ui/journal_panel.gd:139
 msgid "Locked"
 msgstr ""
 
@@ -5129,11 +5154,11 @@ msgstr ""
 msgid "Lv%d"
 msgstr ""
 
-#: scenes/common/num.gd:33
+#: scenes/common/num.gd:41
 msgid "M"
 msgstr ""
 
-#: scenes/ui/craft_panel.gd:189
+#: scenes/ui/craft_panel.gd:203
 #, c-format
 msgid "Made %d %s"
 msgstr ""
@@ -5290,7 +5315,7 @@ msgstr ""
 msgid "Mira: She always said a valley grows as much as its people do."
 msgstr ""
 
-#: autoload/game_state.gd:1130
+#: autoload/game_state.gd:1139
 msgid "Missing ingredients."
 msgstr ""
 
@@ -5462,12 +5487,12 @@ msgstr ""
 msgid "Next item slot"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:231
+#: scenes/ui/journal_panel.gd:257
 #, c-format
 msgid "Next reward at %d befriended"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:291
+#: scenes/ui/journal_panel.gd:317
 #, c-format
 msgid "Next show: %s"
 msgstr ""
@@ -5538,7 +5563,7 @@ msgstr ""
 msgid "No farms yet."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:184
+#: scenes/ui/journal_panel.gd:210
 msgid "No gift yet"
 msgstr ""
 
@@ -5550,11 +5575,11 @@ msgstr ""
 msgid "No recipes yet."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:190
+#: scenes/ui/journal_panel.gd:216
 msgid "No requests pinned up right now."
 msgstr ""
 
-#: autoload/game_state.gd:845
+#: autoload/game_state.gd:854
 msgid "No room in your pack."
 msgstr ""
 
@@ -5590,11 +5615,11 @@ msgstr ""
 msgid "Northern hemisphere"
 msgstr ""
 
-#: autoload/game_state.gd:1201
+#: autoload/game_state.gd:1210
 msgid "Not enough chips."
 msgstr ""
 
-#: autoload/game_state.gd:1044 autoload/game_state.gd:1180 autoload/game_state.gd:1204
+#: autoload/game_state.gd:1053 autoload/game_state.gd:1189 autoload/game_state.gd:1213
 msgid "Not enough gold."
 msgstr ""
 
@@ -5610,7 +5635,7 @@ msgstr ""
 msgid "Not ready"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:183
+#: scenes/ui/journal_panel.gd:209
 msgid "Not talked"
 msgstr ""
 
@@ -5629,6 +5654,10 @@ msgstr ""
 
 #: scenes/main/adventure_flow.gd:132 scenes/main/adventure_flow.gd:308 scenes/main/adventure_flow.gd:312 scenes/main/adventure_flow.gd:391 ...
 msgid "Not yet"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:156
+msgid "Nothing earned or spent yet."
 msgstr ""
 
 #: scenes/battle/battle_screen.gd:966
@@ -5793,7 +5822,7 @@ msgstr ""
 msgid "Own type +50%"
 msgstr ""
 
-#: autoload/game_state.gd:251
+#: autoload/game_state.gd:260
 #, c-format
 msgid "Pack full: %d %s sent to the farm chest."
 msgstr ""
@@ -6266,6 +6295,10 @@ msgstr ""
 msgid "Ready"
 msgstr ""
 
+#: scenes/world/target_cursor.gd:65
+msgid "Ready to harvest"
+msgstr ""
+
 #: scenes/main/quest_flow.gd:109
 #, c-format
 msgid "Recipe: %s"
@@ -6283,7 +6316,7 @@ msgstr ""
 msgid "Red and blue... now I can finally paint that sunset."
 msgstr ""
 
-#: autoload/game_state.gd:705
+#: autoload/game_state.gd:714
 msgid "Refilled!"
 msgstr ""
 
@@ -6317,6 +6350,10 @@ msgstr ""
 
 #: data/quests.json
 msgid "Report back to Dr. Fern."
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:13
+msgid "Request board"
 msgstr ""
 
 #: scenes/ui/quest_log_panel.gd:6
@@ -6377,12 +6414,16 @@ msgstr ""
 msgid "Revives a fainted Wildling with half HP."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:200
+#: scenes/ui/journal_panel.gd:13
+msgid "Reward"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:226
 #, c-format
 msgid "Reward %s + friendship  ·  You have %d"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:277 scenes/ui/quest_log_panel.gd:139
+#: scenes/ui/journal_panel.gd:303 scenes/ui/quest_log_panel.gd:139
 #, c-format
 msgid "Reward: %s"
 msgstr ""
@@ -6415,7 +6456,7 @@ msgstr ""
 msgid "Rolls in thick fog for 5 turns. Attacks miss more often."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:179
+#: scenes/ui/journal_panel.gd:205
 msgid "Romanceable"
 msgstr ""
 
@@ -6693,6 +6734,10 @@ msgstr ""
 msgid "Selling"
 msgstr ""
 
+#: scenes/ui/craft_panel.gd:161
+msgid "Sells for"
+msgstr ""
+
 #: scenes/ui/inventory_panel.gd:331 scenes/ui/item_slot.gd:32
 #, c-format
 msgid "Sells for %s"
@@ -6806,12 +6851,20 @@ msgstr ""
 msgid "Shipped"
 msgstr ""
 
+#: scenes/ui/journal_panel.gd:13
+msgid "Shipping bin"
+msgstr ""
+
 #: data/creatures.json
 msgid "Shiverwisp"
 msgstr ""
 
 #: data/moves.json
 msgid "Shock Wave"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:13
+msgid "Shop"
 msgstr ""
 
 #: data/items.json
@@ -6830,11 +6883,15 @@ msgstr ""
 msgid "Show off your lead Wildling to the judges!"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:138
+#: scenes/ui/journal_panel.gd:13
+msgid "Show prize"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:141
 msgid "Shrine awake ✓"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:138
+#: scenes/ui/journal_panel.gd:141
 msgid "Shrine ready to wake"
 msgstr ""
 
@@ -7040,6 +7097,10 @@ msgstr ""
 msgid "Solaria"
 msgstr ""
 
+#: scenes/ui/journal_panel.gd:13
+msgid "Sold"
+msgstr ""
+
 #: scenes/ui/shop_panel.gd:89
 msgid "Sold out for today."
 msgstr ""
@@ -7230,12 +7291,12 @@ msgstr ""
 msgid "Starry Charm"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:298
+#: scenes/ui/journal_panel.gd:324
 #, c-format
 msgid "Starry chain: %s x%d"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:299
+#: scenes/ui/journal_panel.gd:325
 #, c-format
 msgid "Starry odds x%.1f. Battle a different species and the chain resets."
 msgstr ""
@@ -7302,7 +7363,7 @@ msgstr ""
 msgid "Still the best in the valley. Same time next week?"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:308
+#: scenes/ui/journal_panel.gd:334
 #, c-format
 msgid "Still waiting for you: %s"
 msgstr ""
@@ -7375,7 +7436,7 @@ msgstr ""
 msgid "Stormlynx"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:11
+#: scenes/ui/journal_panel.gd:11 scenes/ui/journal_panel.gd:13
 msgid "Story"
 msgstr ""
 
@@ -7533,7 +7594,7 @@ msgstr ""
 msgid "Talk to Elder Barley in the village."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:183
+#: scenes/ui/journal_panel.gd:209
 msgid "Talked ✓"
 msgstr ""
 
@@ -7598,7 +7659,7 @@ msgstr ""
 msgid "Thanks for joining the %s! See you next year."
 msgstr ""
 
-#: autoload/game_state.gd:1010
+#: autoload/game_state.gd:1019
 msgid "That can't be shipped."
 msgstr ""
 
@@ -7614,7 +7675,7 @@ msgstr ""
 msgid "That save couldn't be loaded."
 msgstr ""
 
-#: autoload/game_state.gd:1173
+#: autoload/game_state.gd:1182
 msgid "That tool is already the best it can be."
 msgstr ""
 
@@ -7626,7 +7687,7 @@ msgstr ""
 msgid "That's not a machine."
 msgstr ""
 
-#: autoload/game_state.gd:1036
+#: autoload/game_state.gd:1045
 msgid "That's not for sale right now."
 msgstr ""
 
@@ -7684,7 +7745,7 @@ msgstr ""
 msgid "The Grove Shrines have been dark for many years."
 msgstr ""
 
-#: autoload/game_state.gd:1261
+#: autoload/game_state.gd:1270
 msgid "The Hatchery is full."
 msgstr ""
 
@@ -7744,7 +7805,7 @@ msgstr ""
 msgid "The biggest pack in the valley."
 msgstr ""
 
-#: autoload/game_state.gd:758
+#: autoload/game_state.gd:767
 msgid "The bucket is empty. Fill it at a pond, river or the sea."
 msgstr ""
 
@@ -7756,7 +7817,7 @@ msgstr ""
 msgid "The canyon path crumbles. Stone, and plenty of it."
 msgstr ""
 
-#: autoload/game_state.gd:1351
+#: autoload/game_state.gd:1360
 msgid "The cave is blocked."
 msgstr ""
 
@@ -7907,7 +7968,7 @@ msgstr ""
 msgid "The peak's birds are hungry. Wheat, please, as much as you can spare."
 msgstr ""
 
-#: autoload/game_state.gd:909
+#: autoload/game_state.gd:918
 msgid "The plant is spent."
 msgstr ""
 
@@ -7927,11 +7988,11 @@ msgstr ""
 msgid "The ridge fires are low. Bring me Coal and I'll keep them burning."
 msgstr ""
 
-#: autoload/game_state.gd:1018
+#: autoload/game_state.gd:1027
 msgid "The shipping bin is full."
 msgstr ""
 
-#: autoload/game_state.gd:1336
+#: autoload/game_state.gd:1345
 msgid "The shrine glows!"
 msgstr ""
 
@@ -7939,7 +8000,7 @@ msgstr ""
 msgid "The shrine is cold and dark. Its orb is cracked through."
 msgstr ""
 
-#: autoload/game_state.gd:1322
+#: autoload/game_state.gd:1331
 msgid "The shrine is still dark."
 msgstr ""
 
@@ -8012,7 +8073,7 @@ msgstr ""
 msgid "The valley is yours. Dig deeper in the Deep Hollow, chase the other legends, and fill the Wildling dex."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:108
+#: scenes/ui/journal_panel.gd:111
 #, c-format
 msgid "The valley · %d / %d shrines awake"
 msgstr ""
@@ -8034,7 +8095,7 @@ msgstr ""
 msgid "The wayshrine hums. Its stones remember every road you've opened."
 msgstr ""
 
-#: autoload/game_state.gd:1484
+#: autoload/game_state.gd:1493
 msgid "The weekly Creature Show is held on Saturdays."
 msgstr ""
 
@@ -8090,15 +8151,15 @@ msgstr ""
 msgid "Theo: Try this. Honest opinion... You like it? I'll call it Veggie Stew."
 msgstr ""
 
-#: autoload/game_state.gd:1313
+#: autoload/game_state.gd:1322
 msgid "There's no Warden there."
 msgstr ""
 
-#: autoload/game_state.gd:1396
+#: autoload/game_state.gd:1405
 msgid "There's no festival today."
 msgstr ""
 
-#: autoload/game_state.gd:1271
+#: autoload/game_state.gd:1280
 msgid "There's no room there."
 msgstr ""
 
@@ -8110,11 +8171,11 @@ msgstr ""
 msgid "These seeds can't be refined any further."
 msgstr ""
 
-#: autoload/game_state.gd:344
+#: autoload/game_state.gd:353
 msgid "These two don't seem interested in each other."
 msgstr ""
 
-#: autoload/game_state.gd:1099
+#: autoload/game_state.gd:1108
 msgid "They won't buy that."
 msgstr ""
 
@@ -8236,7 +8297,7 @@ msgstr ""
 msgid "Today's forecast: 90% chance of cozy."
 msgstr ""
 
-#: scenes/ui/hud.gd:255
+#: scenes/ui/hud.gd:258
 #, c-format
 msgid "Today: %s at the Show Ring"
 msgstr ""
@@ -8246,7 +8307,7 @@ msgstr ""
 msgid "Today: %s in the village!"
 msgstr ""
 
-#: scenes/ui/hud.gd:257
+#: scenes/ui/hud.gd:260
 msgid "Today: Creature Show at the Show Ring"
 msgstr ""
 
@@ -8256,6 +8317,10 @@ msgstr ""
 
 #: data/items.json
 msgid "Tool Belt"
+msgstr ""
+
+#: scenes/ui/journal_panel.gd:13
+msgid "Tool upgrade"
 msgstr ""
 
 #: data/items.json
@@ -8400,7 +8465,7 @@ msgstr ""
 msgid "Unknown map %s"
 msgstr ""
 
-#: autoload/game_state.gd:1611
+#: autoload/game_state.gd:1620
 msgid "Unknown offer."
 msgstr ""
 
@@ -8468,7 +8533,7 @@ msgstr ""
 msgid "Vernalis"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:187
+#: scenes/ui/journal_panel.gd:213
 msgid "Village Board · new requests every Monday"
 msgstr ""
 
@@ -8623,7 +8688,7 @@ msgstr ""
 msgid "Want to watch the sunset sometime?"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:138
+#: scenes/ui/journal_panel.gd:141
 #, c-format
 msgid "Warden %s awaits"
 msgstr ""
@@ -8668,7 +8733,7 @@ msgstr ""
 msgid "Warden of Whisperwood"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:301
+#: scenes/ui/journal_panel.gd:327
 #, c-format
 msgid "Warden rematches · one per Warden each week · teams around Lv%d"
 msgstr ""
@@ -8755,7 +8820,7 @@ msgstr ""
 msgid "Weekly"
 msgstr ""
 
-#: autoload/game_state.gd:230
+#: autoload/game_state.gd:239
 #, c-format
 msgid "Weekly challenge complete: %s (+%s)"
 msgstr ""
@@ -8764,7 +8829,7 @@ msgstr ""
 msgid "Weekly challenges pay out extra gold."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:252
+#: scenes/ui/journal_panel.gd:278
 msgid "Weekly challenges · reset every Monday"
 msgstr ""
 
@@ -8850,7 +8915,7 @@ msgstr ""
 msgid "Wildling Center"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:270
+#: scenes/ui/journal_panel.gd:296
 msgid "Wildling Center bounty"
 msgstr ""
 
@@ -9084,7 +9149,7 @@ msgstr ""
 msgid "You don't flinch from the heat. Respect."
 msgstr ""
 
-#: autoload/game_state.gd:1123
+#: autoload/game_state.gd:1132
 msgid "You don't know that recipe yet."
 msgstr ""
 
@@ -9132,15 +9197,15 @@ msgstr ""
 msgid "You have an eye for quality."
 msgstr ""
 
-#: autoload/game_state.gd:1432
+#: autoload/game_state.gd:1441
 msgid "You have nothing to display. Bring crops, artisan goods or gems."
 msgstr ""
 
-#: autoload/game_state.gd:1354
+#: autoload/game_state.gd:1363
 msgid "You haven't been that deep yet."
 msgstr ""
 
-#: autoload/game_state.gd:1410
+#: autoload/game_state.gd:1419
 msgid "You haven't found any eggs yet."
 msgstr ""
 
@@ -9169,16 +9234,16 @@ msgstr ""
 msgid "You make the valley more colorful."
 msgstr ""
 
-#: autoload/game_state.gd:1238 core/farming/machines.gd:17 core/farming/machines.gd:32
+#: autoload/game_state.gd:1247 core/farming/machines.gd:17 core/farming/machines.gd:32
 #, c-format
 msgid "You need %d %s."
 msgstr ""
 
-#: autoload/game_state.gd:1417
+#: autoload/game_state.gd:1426
 msgid "You need a Wildling to enter."
 msgstr ""
 
-#: autoload/game_state.gd:1126
+#: autoload/game_state.gd:1135
 msgid "You need a kitchen to cook."
 msgstr ""
 
@@ -9284,7 +9349,7 @@ msgstr ""
 msgid "You're the reason I keep coming back."
 msgstr ""
 
-#: autoload/game_state.gd:669
+#: autoload/game_state.gd:678
 msgid "You're too tired. Eat something or go to bed."
 msgstr ""
 
@@ -9302,16 +9367,16 @@ msgstr ""
 msgid "You've already given %s a gift today."
 msgstr ""
 
-#: autoload/game_state.gd:1398
+#: autoload/game_state.gd:1407
 #, c-format
 msgid "You've already joined this year's %s."
 msgstr ""
 
-#: autoload/game_state.gd:1486
+#: autoload/game_state.gd:1495
 msgid "You've already shown a Wildling today. Come back next Saturday!"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:308
+#: scenes/ui/journal_panel.gd:334
 msgid "You've beaten every Warden this week!"
 msgstr ""
 
@@ -9409,7 +9474,7 @@ msgstr ""
 msgid "Your name"
 msgstr ""
 
-#: autoload/game_state.gd:1041 autoload/game_state.gd:1056 autoload/game_state.gd:1133 autoload/game_state.gd:904
+#: autoload/game_state.gd:1050 autoload/game_state.gd:1065 autoload/game_state.gd:1142 autoload/game_state.gd:913
 msgid "Your pack is full."
 msgstr ""
 
@@ -9421,7 +9486,7 @@ msgstr ""
 msgid "Your region"
 msgstr ""
 
-#: autoload/game_state.gd:1220
+#: autoload/game_state.gd:1229
 #, c-format
 msgid "Your things don't fit in the %s. Make some room first."
 msgstr ""
@@ -9430,7 +9495,7 @@ msgstr ""
 msgid "Your veggies make the best stew. Seriously."
 msgstr ""
 
-#: autoload/game_state.gd:708
+#: autoload/game_state.gd:717
 msgid "Your watering can is empty. Refill it at water."
 msgstr ""
 
@@ -9495,7 +9560,7 @@ msgstr ""
 msgid "harvests forever"
 msgstr ""
 
-#: scenes/ui/hud.gd:401 scenes/ui/inventory_panel.gd:385
+#: scenes/ui/hud.gd:404 scenes/ui/inventory_panel.gd:385
 #, c-format
 msgid "hotbar_%d"
 msgstr ""
@@ -9556,7 +9621,7 @@ msgstr ""
 msgid "the farm Den"
 msgstr ""
 
-#: autoload/game_state.gd:1079
+#: autoload/game_state.gd:1088
 msgid "the farm chest"
 msgstr ""
 
@@ -9604,7 +9669,7 @@ msgstr ""
 msgid "tiles watered"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:291
+#: scenes/ui/journal_panel.gd:317
 msgid "today!"
 msgstr ""
 
