@@ -471,7 +471,7 @@ msgstr "%s:%d"
 
 #: scenes/ui/trade_panel.gd:49
 msgid "+ Item"
-msgstr "+ Gegenstand"
+msgstr "+ Item"
 
 #: scenes/ui/trade_panel.gd:50
 msgid "+ Wildling"
@@ -1744,7 +1744,7 @@ msgstr "Konnte den Hof nicht online öffnen. Versuch es gleich nochmal."
 
 #: scenes/ui/coop_panel.gd:136
 msgid "Couldn't reach that farm. Check the code and that the host is online."
-msgstr "Konnte diesen Hof nicht erreichen. Prüfe den Code und ob der Gastgeber online ist."
+msgstr "Konnte diesen Hof nicht erreichen. Prüfe den Code und ob der Host online ist."
 
 #: data/creatures.json
 msgid "Couriersnail"
@@ -1776,7 +1776,7 @@ msgstr "Knisternder Staub von Voltick."
 
 #: scenes/ui/settings_panel.gd
 msgid "Crafting"
-msgstr "Handwerk"
+msgstr "Crafting"
 
 #: data/crops.json
 msgid "Cranberry"
@@ -1976,7 +1976,7 @@ msgstr "Leg Waren in die Versandkiste. Über Nacht bekommst du das Geld."
 
 #: scenes/ui/inventory_panel.gd:110
 msgid "Drop items here.\nThey sell overnight."
-msgstr "Leg Gegenstände hier ab.\nSie werden über Nacht verkauft."
+msgstr "Leg Items hier ab.\nSie werden über Nacht verkauft."
 
 #: data/creatures.json
 msgid "Duskmoth"
@@ -2980,7 +2980,7 @@ msgstr "Hacke"
 #: scenes/main/controller.gd:140
 #, c-format
 msgid "Hold an item and use it on the %s to load it."
-msgstr "Halte einen Gegenstand und benutze ihn am %s, um ihn zu befüllen."
+msgstr "Halte ein Item und benutze es am %s, um ihn zu befüllen."
 
 #: scenes/ui/inventory_panel.gd:288
 #, c-format
@@ -3041,7 +3041,7 @@ msgstr "Heiß genug, dass selbst ein Embercub schwitzt."
 
 #: scenes/ui/inventory_panel.gd:81
 msgid "Hotbar  (pick up an item and tap a slot)"
-msgstr "Schnellleiste  (nimm einen Gegenstand und tippe auf einen Platz)"
+msgstr "Hotbar  (nimm ein Item und tippe auf einen Platz)"
 
 #: data/moves.json
 msgid "Hyper Rush"
@@ -3407,7 +3407,7 @@ msgstr "Es ist die wöchentliche Kreaturenschau! Die Preisrichter bewerten Pfleg
 
 #: scenes/battle/battle_screen.gd:803
 msgid "Items stay in the bag during friendly battles."
-msgstr "Gegenstände bleiben im freundschaftlichen Kampf in der Tasche."
+msgstr "Items bleiben im freundschaftlichen Kampf in der Tasche."
 
 #: data/creatures.json
 msgid "Its antlers sprout new leaves each spring."
@@ -3523,7 +3523,7 @@ msgstr "LAN beitreten"
 
 #: scenes/ui/party_panel.gd:277
 msgid "Join party"
-msgstr "Team beitreten"
+msgstr "In die Party"
 
 #: data/creatures.json
 msgid "Joltbeetle"
@@ -4077,7 +4077,7 @@ msgstr "Nils: Wolle von meinem Snowpaca. Mach etwas Warmes daraus."
 
 #: scenes/ui/party_panel.gd:77
 msgid "No Wildlings live on the farm yet.\nMove some here from your party."
-msgstr "Noch leben keine Wildlinge auf dem Hof.\nBring welche aus deinem Team hierher."
+msgstr "Noch leben keine Wildlinge auf dem Hof.\nBring welche aus deiner Party hierher."
 
 #: scenes/ui/party_panel.gd:321
 #, c-format
@@ -4155,7 +4155,7 @@ msgstr "Online-Spiel braucht ein kostenloses Konto."
 
 #: scenes/ui/pause_menu.gd:48
 msgid "Only the host can save in co-op."
-msgstr "Im Koop kann nur der Gastgeber speichern."
+msgstr "Im Koop kann nur der Host speichern."
 
 #: data/villagers.json
 msgid "Only the strong earn the shrine's light."
@@ -4242,7 +4242,7 @@ msgstr "Partner in der Forschung. Und... vielleicht mehr?"
 #: scenes/ui/party_panel.gd:67
 #, c-format
 msgid "Party %d/%d"
-msgstr "Team %d/%d"
+msgstr "Party %d/%d"
 
 #: data/villagers.json
 msgid "Patience. Like stone, I don't move easily."
@@ -4376,7 +4376,7 @@ msgstr "Als Gast spielen"
 
 #: scenes/ui/coop_panel.gd:31 scenes/ui/pause_menu.gd:51
 msgid "Play together"
-msgstr "Zusammen spielen"
+msgstr "Koop"
 
 #: data/trees.json
 msgid "Plum"
@@ -4424,7 +4424,7 @@ msgstr "Konserviert Pflanzen in der Hoftruhe und schützt Pflanzen vor dem Jahre
 
 #: data/title_tips.json
 msgid "Press R to rotate items in your backpack."
-msgstr "Drücke R, um Gegenstände im Rucksack zu drehen."
+msgstr "Drücke R, um Items im Rucksack zu drehen."
 
 #: data/progression.json
 msgid "Prestige I"
@@ -4981,7 +4981,7 @@ msgstr "Shellfort"
 
 #: data/title_tips.json
 msgid "Shift-click moves items between grids in a flash."
-msgstr "Umschalt-Klick bewegt Gegenstände blitzschnell zwischen den Feldern."
+msgstr "Umschalt-Klick bewegt Items blitzschnell zwischen den Rastern."
 
 #: scenes/ui/shop_panel.gd:66
 msgid "Shift-click to buy 5 · Prices rise with quality when selling"
@@ -5407,7 +5407,7 @@ msgstr "Lagerkiste"
 
 #: data/items.json
 msgid "Stores 30 stacks of items."
-msgstr "Lagert 30 Stapel Gegenstände."
+msgstr "Lagert 30 Stapel Items."
 
 #: data/moves.json
 msgid "Storm Call"
@@ -5602,7 +5602,7 @@ msgstr "Die Tiefen Steine"
 
 #: scenes/ui/party_panel.gd:273
 msgid "The Den is full, or this is your last party member."
-msgstr "Der Bau ist voll, oder das ist dein letztes Gruppenmitglied."
+msgstr "Der Bau ist voll, oder das ist dein letztes Party-Mitglied."
 
 #: data/progression.json
 msgid "The Frost Shrine gleams! The path to Umbral Glade appears."
@@ -5748,7 +5748,7 @@ msgstr "Der schelmische Geist des Tals. Wenige haben ihn zweimal gesehen."
 
 #: data/villagers.json
 msgid "The museum takes donations of gems and rare items."
-msgstr "Das Museum nimmt Spenden von Edelsteinen und seltenen Gegenständen an."
+msgstr "Das Museum nimmt Spenden von Edelsteinen und seltenen Items an."
 
 #: data/villagers.json
 msgid "The ocean is calmer when you're here."
@@ -6095,7 +6095,7 @@ msgstr "Umbral Glade"
 #: scenes/main/main.gd:192
 #, c-format
 msgid "Unknown map %s"
-msgstr "Unbekannte Karte %s"
+msgstr "Unbekannte Map %s"
 
 #: scenes/ui/party_panel.gd:311
 msgid "Unpair"
@@ -6127,7 +6127,7 @@ msgstr "Benutzen"
 
 #: data/items.json
 msgid "Useful for crafting."
-msgstr "Nützlich zum Herstellen."
+msgstr "Nützlich zum Craften."
 
 #: scenes/ui/craft_panel.gd:36
 msgid "Using your pack + farm chest   "
@@ -6139,7 +6139,7 @@ msgstr "Talgärtner"
 
 #: scenes/ui/map_panel.gd
 msgid "Valley map"
-msgstr "Talkarte"
+msgstr "Tal-Map"
 
 #: data/items.json
 msgid "Veggie Stew"
@@ -6912,7 +6912,7 @@ msgstr "arbeitet als %s"
 
 #: scenes/main/main.gd:417
 msgid "your party"
-msgstr "deine Gruppe"
+msgstr "deine Party"
 
 #: scenes/ui/party_panel.gd:147
 #, c-format
@@ -7018,7 +7018,7 @@ msgid "%s broke free of the roots!"
 msgstr "%s reißt sich von den Wurzeln los!"
 
 msgid "%s can now use %s! (Equip it from the Party menu.)"
-msgstr "%s kann jetzt %s einsetzen! (Lege es im Team-Menü an.)"
+msgstr "%s kann jetzt %s einsetzen! (Lege es im Party-Menü an.)"
 
 msgid "%s can't battle right now."
 msgstr "%s kann gerade nicht kämpfen."
@@ -7096,7 +7096,7 @@ msgid "%s no longer has that Wildling."
 msgstr "%s hat dieses Wildling nicht mehr."
 
 msgid "%s no longer has that item."
-msgstr "%s hat diesen Gegenstand nicht mehr."
+msgstr "%s hat dieses Item nicht mehr."
 
 msgid "%s only takes one rematch a week."
 msgstr "%s nimmt nur eine Revanche pro Woche an."
@@ -7246,7 +7246,7 @@ msgid "Befriend or hatch a %s (%s)"
 msgstr "Schließ Freundschaft mit einem %s oder lass eines schlüpfen (%s)"
 
 msgid "Bind to next hotbar slot"
-msgstr "Auf den nächsten Schnellplatz legen"
+msgstr "Auf den nächsten Hotbar-Platz legen"
 
 msgid "Both Wildlings must live in the Den."
 msgstr "Beide Wildlings müssen im Bau leben."
@@ -7255,7 +7255,7 @@ msgid "Bring %d %s."
 msgstr "Bring %d %s."
 
 msgid "Bring the Wildling along in your party."
-msgstr "Nimm das Wildling mit ins Team."
+msgstr "Nimm das Wildling in deine Party mit."
 
 msgid "Built ✓"
 msgstr "Gebaut ✓"
@@ -7387,7 +7387,7 @@ msgid "Job: %s"
 msgstr "Arbeit: %s"
 
 msgid "Journal"
-msgstr "Tagebuch"
+msgstr "Journal"
 
 msgid "Keep"
 msgstr "Behalten"
@@ -7492,7 +7492,7 @@ msgid "Nothing yet."
 msgstr "Noch nichts."
 
 msgid "Nothing yet. Add items or Wildlings."
-msgstr "Noch nichts. Leg Gegenstände oder Wildlings dazu."
+msgstr "Noch nichts. Leg Items oder Wildlings dazu."
 
 msgid "Off"
 msgstr "Aus"
@@ -7510,7 +7510,7 @@ msgid "Owned ✓"
 msgstr "Im Besitz ✓"
 
 msgid "Party"
-msgstr "Team"
+msgstr "Party"
 
 msgid "Password (8+ characters)"
 msgstr "Passwort (mindestens 8 Zeichen)"
@@ -7579,7 +7579,7 @@ msgid "Shrine ready to wake"
 msgstr "Schrein kann geweckt werden"
 
 msgid "Sign in to keep your farms in the cloud and play co-op online. Offline play always works."
-msgstr "Melde dich an, damit deine Höfe in der Cloud bleiben und du online zusammen spielen kannst. Offline geht es immer."
+msgstr "Melde dich an, damit deine Höfe in der Cloud bleiben und du online Koop spielen kannst. Offline geht es immer."
 
 msgid "Sleep"
 msgstr "Schlafen"
@@ -7741,7 +7741,7 @@ msgid "This week"
 msgstr "Diese Woche"
 
 msgid "To host, load your farm, then press O (or Esc > Play together). Friends' progress is saved on the host's farm."
-msgstr "Zum Gastgeben lädst du deinen Hof und drückst O (oder Esc > Zusammen spielen). Der Fortschritt deiner Freunde wird auf dem Hof des Gastgebers gespeichert."
+msgstr "Zum Hosten lädst du deinen Hof und drückst O (oder Esc > Koop). Der Fortschritt deiner Freunde wird auf dem Hof des Hosts gespeichert."
 
 msgid "Touch controls"
 msgstr "Touch-Steuerung"
@@ -7906,7 +7906,7 @@ msgid "Farm code, e.g. K7QM2D"
 msgstr "Hofcode, z. B. K7QM2D"
 
 msgid "Host address"
-msgstr "Adresse des Gastgebers"
+msgstr "Host-Adresse"
 
 msgid "Say something..."
 msgstr "Sag etwas..."
