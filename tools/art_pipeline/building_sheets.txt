@@ -20,3 +20,7 @@ ore_shop 5 https://replicate.delivery/xezq/gfu4jYxwWhSf606VldWvzHTE8MLeDTo0ngefJ
 forge 5 https://replicate.delivery/xezq/UO1WorUDTQqgJ5xUhxGSrrwuHn10zcZxBgvKXkA73sbwRepLA/tmp2gbwwm0s.png
 geologist 4 https://replicate.delivery/xezq/SaaH49e4B7V7QaWNCq6L6vA3Nf0QToZWXUZpq99dDgEFH5TXA/tmpclasfi5k.png
 mine_lift 5 https://replicate.delivery/xezq/hA4QRqbmrSLIEZmJg4Bm84EqnW3WLiuuHlSEGvqs1SByRepLA/tmp6z0vlp65.png
+grand_casino 10 https://replicate.delivery/xezq/eCryjRoc8U1aa6G88HeiD8XnLe3Q26tf7Jyq7doD0buevPf0F/tmppb_p1je9.jpeg
+hotel_lumiere 6 https://replicate.delivery/xezq/mJO8IdbnWeTIG663zb2AmhpreeHeoYdecIyS2qTKXXeggf8pLA/tmpc8dcnwip.jpeg
+cafe_lumiere 4 https://replicate.delivery/xezq/AirfJfPC9IuevpgXhWyaPHwdb0jSbeqd8VFf1Nr7b5dAxPf0F/tmp2u8aatkp.jpeg
+villa_lumiere 4 https://replicate.delivery/xezq/yJ8tBYzGPrLuGpdFh52ayrFgfnUTOdtkigsWfsKs3eZX8znuA/tmp2c6mp7fx.jpeg

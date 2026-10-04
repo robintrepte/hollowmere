@@ -2,3 +2,4 @@ portraits_01.png https://replicate.delivery/xezq/A48yfGhZDO0YHCeipuYp4XhlMdkmGOJ
 portraits_02.png https://replicate.delivery/xezq/t9j0JxQq7sptDt681VaaExCwtmu70fHqEtLOR9kJ42g1SupLA/tmpg_juiz7n.png sable:64x64,cora:64x64,ivy:64x64,marina:64x64,ash:64x64,gideon:64x64,kai:64x64,volta:64x64,nils:64x64,selene:64x64
 portraits_03.png https://replicate.delivery/xezq/V3HvJZeS1O0PBanO0Umcxf8qW7Z9oZc9fhaVh8nm7KA4dxnuA/tmp4332f_e6.png ansel:64x64,wren:64x64
 portraits_04.png https://replicate.delivery/xezq/lKsQH7QQx8ZDP1V3KOfCVwbjm2Rgf8UbY079U3cmx6qyM5TXA/tmpkb93c879.png brannoc:64x64,hilde:64x64,opal:64x64,tobin:64x64
+portraits_05.png https://replicate.delivery/xezq/lV0hZb7lj2o8BV4aKVaOfFUYsMlLCvvpt8aQXuZLBHpFA9pLA/tmpzl4xxe31.png rosalind:64x64,dorian:64x64,margaux:64x64,marcel:64x64,celeste:64x64,bruno:64x64

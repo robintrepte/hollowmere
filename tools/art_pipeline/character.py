@@ -5,7 +5,7 @@ Every layer is grayscale (light 240 / mid 196 / shade 150 / outline 70) so Godot
 with `modulate` (multiply) - one sheet serves every skin, hair and outfit color.
 Sheet layout: 7 columns (idle, walk0..3, tool0..1) x 3 rows (down, up, side-facing-right). Frames are 32x48.
 
-Outputs game/assets/characters/{body,face,shirt,pants,shoes,pack,hair_<style>}.png
+Outputs game/assets/characters/{body,face,shirt,pants,shoes,pack,hair_<style>,hat_<style>}.png
 """
 import argparse
 import os
@@ -18,6 +18,7 @@ LIGHT, MID, SHADE, LINE = 240, 196, 150, 70
 DIRS = ["down", "up", "side"]
 FRAMES = ["idle", "walk0", "walk1", "walk2", "walk3", "tool0", "tool1"]
 HAIR = ["short", "long", "ponytail", "spiky", "bob", "buzz", "curly", "bun"]
+HATS = ["cap", "straw", "top", "crown", "flowers", "beret", "visor", "fedora"]
 
 
 class Layer:
@@ -76,7 +77,7 @@ class Layer:
 
 
 def frame(direction, fr):
-    L = {k: Layer() for k in ["body", "face", "shirt", "pants", "shoes", "pack"] + [f"hair_{h}" for h in HAIR]}
+    L = {k: Layer() for k in ["body", "face", "shirt", "pants", "shoes", "pack"] + [f"hair_{h}" for h in HAIR] + [f"hat_{h}" for h in HATS]}
     walk = fr.startswith("walk")
     step = int(fr[-1]) if walk else -1
     tool = fr.startswith("tool")
@@ -194,7 +195,65 @@ def frame(direction, fr):
                     lay.ellipse(cx, cy, 2.6, 2.6)
         elif h == "bun":
             lay.ellipse(16, top - 1, 3.4, 3.0)
+    draw_hats(L, direction, hy)
     return {k: (v.raw() if k == "face" else v.outlined()) for k, v in L.items()}
+
+
+def draw_hats(L, direction, hy):
+    """Hats sit on the head ellipse (center 16, hy; radius about 8.5). Side view faces right, so brims reach right."""
+    side = direction == "side"
+    front = direction == "down"
+    for h in HATS:
+        lay = L[f"hat_{h}"]
+        if h == "cap":
+            lay.ellipse(16, hy - 3, 9.0, 6.4, clip=lambda x, y: y <= hy - 3)
+            if side:
+                lay.rect(20, hy - 4, 27, hy - 3, shade=False)
+            elif front:
+                lay.rect(9, hy - 4, 22, hy - 3, shade=False)
+                lay.px(16, hy - 9, LIGHT)
+        elif h == "visor":
+            lay.rect(7, hy - 6, 24, hy - 4, shade=False)
+            if side:
+                lay.rect(20, hy - 4, 27, hy - 3, shade=False)
+            elif front:
+                lay.rect(8, hy - 4, 23, hy - 2, shade=True)
+        elif h == "straw":
+            lay.rect(10, hy - 11, 21, hy - 5)
+            lay.v[hy - 7:hy - 5, 10:22] = SHADE
+            lay.rect(3 if not side else 6, hy - 5, 28 if not side else 29, hy - 3, shade=True)
+        elif h == "top":
+            lay.rect(10, hy - 18, 21, hy - 6)
+            lay.v[hy - 9:hy - 6, 10:22] = SHADE
+            lay.rect(6, hy - 6, 25, hy - 4, shade=True)
+        elif h == "fedora":
+            lay.rect(9, hy - 12, 22, hy - 6)
+            lay.v[hy - 8:hy - 6, 9:23] = SHADE
+            for x in range(13, 19):
+                lay.px(x, hy - 12, 0)
+            lay.rect(5 if not side else 8, hy - 6, 26 if not side else 28, hy - 4, shade=True)
+        elif h == "beret":
+            lay.ellipse(15 if not side else 14, hy - 7, 10.0, 4.0)
+            lay.px(16, hy - 12, MID)
+            lay.px(16, hy - 11, MID)
+        elif h == "crown":
+            lay.rect(9, hy - 9, 22, hy - 6)
+            for x in (9, 13, 18, 22) if not side else (10, 15, 20):
+                lay.px(x, hy - 10, LIGHT)
+                lay.px(x, hy - 11, LIGHT)
+                lay.px(x, hy - 12, MID)
+            if front:
+                lay.px(15, hy - 8, SHADE)
+                lay.px(16, hy - 8, SHADE)
+        elif h == "flowers":
+            spots = [(8, hy - 5), (11, hy - 7), (16, hy - 8), (21, hy - 7), (24, hy - 5)]
+            if side:
+                spots = [(9, hy - 6), (13, hy - 8), (18, hy - 8), (22, hy - 6)]
+            elif direction == "up":
+                spots = [(8, hy - 4), (12, hy - 7), (16, hy - 8), (20, hy - 7), (24, hy - 4)]
+            for cx, cy in spots:
+                lay.ellipse(cx + 0.5, cy + 0.5, 2.2, 2.2)
+                lay.px(cx, cy, LIGHT)
 
 
 def main():

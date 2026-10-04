@@ -130,6 +130,18 @@ def main():
         out = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
         out.alpha_composite(e, ((16 - e.size[0]) // 2, 16 - e.size[1]))
         out.save(os.path.join(items, "wildling_egg.png"))
+    # The purple label of the VIP record keys out against magenta, so it is the gold record relabeled.
+    gold = os.path.join(items, "record_casino.png")
+    if os.path.exists(gold):
+        rec = load("record_casino")
+        px = rec.load()
+        for y in range(rec.size[1]):
+            for x in range(rec.size[0]):
+                r, g, b, a = px[x, y]
+                if a and r > 90 and r - b > 40:
+                    lum = (r * 0.3 + g * 0.59 + b * 0.11) / 255
+                    px[x, y] = (int(150 * lum + 40), int(70 * lum + 20), int(210 * lum + 40), a)
+        rec.save(os.path.join(items, "record_vip.png"))
     print("derived icons for", made, "crops/trees")
 
 

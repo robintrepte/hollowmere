@@ -27,7 +27,7 @@ from PIL import Image
 T = 32
 SEASONS = ["spring", "summer", "fall", "winter"]
 GROUND_ORDER = ["grass", "tallgrass", "path", "sand", "water", "plaza", "cave", "snow", "ice", "dirt", "bridge",
-                "flowers", "ash", "marsh", "twilight", "canyon", "lava", "wood", "darkgrass", "deepwater"]
+                "flowers", "ash", "marsh", "twilight", "canyon", "lava", "wood", "darkgrass", "deepwater", "marble", "carpet"]
 OUTLINE = (34, 24, 30)
 
 
@@ -255,6 +255,28 @@ def make_tile(name, season, variant, shared_only=False):
         for y in range(0, T, 11):
             img[y, :] = img[y, :] * 0.85
         pebbles(img, rng, 2, "#c88a60", "#e0a878", "#804830")
+    elif name == "marble":
+        img = np.zeros((T, T, 3))
+        for y in range(T):
+            for x in range(T):
+                light = ((x // 16) + (y // 16)) % 2 == 0
+                img[y, x] = hexc("#f2ece0" if light else "#d8cfc0")
+        img *= (0.95 + 0.08 * n)[..., None]
+        for _ in range(2):
+            x, y = spot(rng)
+            for i in range(rng.integers(5, 10)):
+                put(img, x + i, y + (i // 3) * (1 if variant % 2 else -1), "#b8ae9e")
+        img[0, :] = img[0, :] * 0.93
+        img[:, 0] = img[:, 0] * 0.93
+    elif name == "carpet":
+        img = ramp(n * 0.3 + 0.35, ["#7a1a24", "#8a2028", "#96262e", "#a02c34"])
+        for y in range(T):
+            for x in range(T):
+                d = abs((x % 16) - 7.5) + abs((y % 16) - 7.5)
+                if 6.5 < d < 7.6:
+                    img[y, x] = hexc("#c89a40")
+                elif d < 1.6:
+                    img[y, x] = hexc("#d8aa50")
     elif name == "lava":
         img = ramp(n * 0.7 + 0.15, ["#a02010", "#d04010", "#f07020", "#f8b040"])
         specks(img, rng, 4, ["#fff0a0"])
@@ -711,6 +733,28 @@ def wall(top, face, dark, rim, seed):
     return Image.fromarray(img, "RGBA")
 
 
+def wallpaper():
+    """Casino interior wall: burgundy top, cream and gold striped wallpaper, dark wood wainscot."""
+    h = 48
+    img = np.zeros((h, T, 4), dtype=np.uint8)
+    img[..., 3] = 255
+    for x in range(T):
+        stripe = (x // 4) % 2 == 0
+        img[16:h, x, :3] = hexc("#efe2c4" if stripe else "#e2cf9e")
+        if x % 8 == 2:
+            for y in range(20, 34, 5):
+                img[y, x, :3] = hexc("#c89a40")
+    img[:14, :, :3] = hexc("#6a1e28")
+    img[2:12, 2:30, :3] = hexc("#7a2630")
+    img[14:16, :, :3] = hexc("#c89a40")
+    img[34:36, :, :3] = hexc("#c89a40")
+    img[36:h, :, :3] = hexc("#6a4426")
+    for x in range(0, T, 8):
+        img[38:h - 3, x + 3, :3] = hexc("#55361e")
+    img[h - 2:, :, :3] = hexc("#2a1a12")
+    return Image.fromarray(img, "RGBA")
+
+
 MINE_BLOCKS = {
     "block_dirt": (["#8a6444", "#9a7250", "#a8805c"], ["#5a3e2a", "#6a4a32", "#7a5638", "#885f40"], "#2e2016", "#b08a62", 11),
     "block_stone": (["#7c7688", "#8a8496", "#9892a4"], ["#4e4a5a", "#5a5666", "#686474", "#747082"], "#24202c", "#a8a2b4", 12),
@@ -755,6 +799,7 @@ def main():
     wall(GRASS["summer"], ["#6a5a4a", "#7c6a56", "#8c7a62", "#9a8870"], "#3a2e24", "#4a6a32", 5).save(os.path.join(world, "cliff.png"))
     wall(["#3a3240", "#463c4c", "#524658"], ["#2a2430", "#363040", "#433b4e", "#4e465a"], "#16121c", "#5e5264", 6).save(os.path.join(world, "cavewall.png"))
     mine_blocks(world)
+    wallpaper().save(os.path.join(world, "wallpaper.png"))
     print("tiles written to", out)
 
 
