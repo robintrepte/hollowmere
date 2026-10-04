@@ -82,7 +82,7 @@ func _on_use(t: Vector2i) -> void:
 	if cat in ["bait", "tackle"]:
 		_act("equip_tackle_act", [e.uid])
 		return
-	if cat in ["seed", "sapling"] or it.has("fert") or it.has("place"):
+	if cat in ["seed", "sapling"] or it.has("fert") or it.has("place") or it.has("mine_place") or it.has("blast"):
 		_act("use_item", [world.map_id, t, e.uid])
 		return
 	var npc := world.npc_at(t)
@@ -127,6 +127,11 @@ func _on_interact(t: Vector2i) -> void:
 		if not o.is_empty():
 			if await _interact_object(t, o):
 				return
+	if g and int(world.info.get("deep", 0)) > 0 and g.get_deco(t) in [Tiles.DECO.ladder, Tiles.DECO.ladder_up, Tiles.DECO.elevator, Tiles.DECO.minecart]:
+		busy = true
+		await adventure.deep_interact(t)
+		busy = false
+		return
 	var io := world.interactable_at(t)
 	if not io.is_empty():
 		busy = true
@@ -271,7 +276,13 @@ func _building(io: Dictionary) -> void:
 			Audio.sfx("heal")
 			await ui.say(["Your Wildlings are rested and fully healed!"], "Wildling Center")
 		"museum":
-			await ui.say([tr("Wildlings recorded: %d / %d.") % [Progression.owned_count(GameState.world.dex), Data.species.size()], "The more you befriend, the more the valley reveals."], "Museum")
+			await adventure.museum()
+		"geologist":
+			await adventure.geologist(io)
+		"deep_lift":
+			await adventure.deep_lift()
+		"guild":
+			await adventure.guild()
 		"greenhouse":
 			if GameState.map_info("greenhouse").is_empty():
 				await ui.say(["The greenhouse door is stuck."])

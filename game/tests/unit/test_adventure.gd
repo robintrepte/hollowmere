@@ -168,7 +168,7 @@ func test_friends_goal_counts_villagers_at_hearts() -> void:
 	assert_eq(Adventure.goal_progress({"friends": [4, 3]}, facts), [2, 4])
 
 func test_story_data_is_valid() -> void:
-	var keys := ["dex", "shrines", "farm_level", "legends", "friends", "mine", "fish"]
+	var keys := ["dex", "shrines", "farm_level", "legends", "friends", "mine", "fish", "depth", "deep_boss"]
 	var chs := Adventure.chapters()
 	assert_gt(chs.size(), 8)
 	assert_true(chs[-1].goal.is_empty(), "epilogue is open-ended")

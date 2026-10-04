@@ -69,5 +69,29 @@
       {"id": "crab_pot", "requires": "fish:5"}
     ],
     "backpacks": true, "rods": true, "buys": {"fish": 0.15}
+  },
+  "mine_supply": {
+    "name": "Tobin's Mine Supply", "owner": "tobin", "open": [700, 2000],
+    "stock": [
+      {"id": "torch", "price": 25}, {"id": "stone_block", "price": 10}, {"id": "support_beam", "price": 120}, {"id": "mine_ladder", "price": 400},
+      {"id": "cherry_bomb", "price": 150, "requires": "depth:1"}, {"id": "rail", "price": 60, "requires": "depth:2"}, {"id": "minecart", "price": 2500, "requires": "depth:2"},
+      {"id": "mega_bomb", "price": 600, "requires": "depth:4"}, {"id": "miners_helmet", "price": 3000}, {"id": "gem_case", "price": 3000}
+    ],
+    "buys": {"ore": 0.15, "bar": 0.1}
+  },
+  "smelter": {
+    "name": "Eisenkamm Forge", "owner": "hilde", "open": [600, 2200],
+    "stock": [
+      {"id": "coal", "price": 120}, {"id": "copper_bar", "price": 400}, {"id": "iron_bar", "price": 800, "requires": "depth:2"},
+      {"id": "silver_bar", "price": 1100, "requires": "depth:2"}, {"id": "gold_bar", "price": 1600, "requires": "depth:3"}, {"id": "furnace", "price": 2000}
+    ],
+    "upgrades": true
+  },
+  "geologist": {
+    "name": "Opal's Finds", "owner": "opal", "open": [800, 1900],
+    "stock": [
+      {"id": "geode", "price": 200}, {"id": "quartz", "price": 150}, {"id": "amethyst", "price": 500, "requires": "depth:2"}, {"id": "gem_case", "price": 3000}
+    ],
+    "buys": {"gem": 0.25, "artifact": 0.25}
   }
 }

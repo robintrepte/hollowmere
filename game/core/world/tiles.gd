@@ -16,9 +16,12 @@ const DECO := {
 	"tree": 24, "pine": 25, "palm": 26, "deadtree": 27, "crystaltree": 28, "rock": 29, "boulder": 30,
 	"weed": 31, "branch": 32, "stump": 33, "fence": 34, "cliff": 35, "cavewall": 36, "bush": 37,
 	"iceblock": 38, "ore": 39, "ladder": 40, "cave_entrance": 41, "ladder_up": 42,
+	"dirtblock": 43, "stoneblock": 44, "deepstone": 45, "basalt": 46, "obsidian": 47,
+	"vein": 48, "crystal": 49, "fossil": 50, "torch": 51, "support": 52, "rail": 53, "minecart": 54,
+	"elevator": 55,
 }
 const BLOCKING_GROUND := [4, 16, 19]
-const NON_BLOCKING_DECO := [31, 40, 41, 42]
+const NON_BLOCKING_DECO := [31, 40, 41, 42, 51, 53]
 const WATER_TILES := [4, 19]
 ## Debris: deco id -> {tool, min_level, drops: [[item, min, max]], energy}
 const DEBRIS := {

@@ -2,10 +2,10 @@ extends Node
 ## The whole simulation state. The host is authoritative; actions here are
 ## called directly offline or via Net RPCs in co-op.
 
-const SAVE_VERSION := 4
+const SAVE_VERSION := 5
 const PERSISTENT_MAPS := ["farm", "greenhouse", "terrace"]
 const STARTERS := ["sproutle", "puddlop", "embercub"]
-const PLACE_REQUIRES := {"gull_bay": "story:coast"}
+const PLACE_REQUIRES := {"gull_bay": "story:coast", "eisenkamm": "story:mountain"}
 
 var world: Dictionary = {}
 var grids: Dictionary = {}            # persistent FarmGrids
@@ -137,7 +137,7 @@ func ctx() -> Dictionary:
 	return {
 		"shrines": world.shrines.size(), "farm_level": int(world.farm.level),
 		"hearts": p.hearts_dict() if p else {}, "recipes": p.recipes if p else [], "buildings": world.buildings,
-		"fish": Fishing.species_caught(p),
+		"fish": Fishing.species_caught(p), "depth": deep_max(), "quest": int(world.get("quest", 0)),
 	}
 
 func has_building(id: String) -> bool:
@@ -198,6 +198,13 @@ func map_info(map_id: String) -> Dictionary:
 	var info: Dictionary = MapBuilder.build(map_id, int(world.seed))
 	if grids.has(map_id):
 		info.grid = grids[map_id]
+	if map_id.begins_with("deep:"):
+		var base := FarmGrid.new()
+		base.setup(info.grid.w, info.grid.h)
+		base.ground = info.grid.ground.duplicate()
+		base.deco = info.grid.deco.duplicate()
+		info["base"] = base
+		Mining.apply_diff(info.grid, str(_deep().layers.get(map_id.substr(5), "")))
 	_map_cache[map_id] = info
 	return info
 
@@ -807,7 +814,14 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 					r.sfx = "water"
 					_trench_redraw(map_id, t)
 			elif g.is_tilled(t) and p.bucket_full:
-				for a in [t, t + Vector2i(1, 0), t + Vector2i(-1, 0), t + Vector2i(0, 1), t + Vector2i(0, -1)]:
+				var reach := 2 if lvl >= 4 else (1 if lvl >= 2 else 0)
+				var splash: Array = [t, t + Vector2i(1, 0), t + Vector2i(-1, 0), t + Vector2i(0, 1), t + Vector2i(0, -1)]
+				if reach > 0:
+					splash.clear()
+					for dy in range(-reach, reach + 1):
+						for dx in range(-reach, reach + 1):
+							splash.append(t + Vector2i(dx, dy))
+				for a in splash:
 					g.water(a)
 					EventBus.tile_changed.emit(map_id, a)
 				p.bucket_full = false
@@ -815,6 +829,8 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 				r.sfx = "water"
 			elif not p.bucket_full:
 				r.reason = tr("The bucket is empty. Fill it at a pond, river or the sea.")
+		"drill":
+			r = _drill(p, map_id, g, info, t)
 		"pickaxe", "axe", "scythe":
 			if tool == "scythe":
 				if g.crop_ready(t):
@@ -834,7 +850,9 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 						r.ok = true
 						r.sfx = "scythe"
 			var d := g.get_deco(t)
-			if Tiles.DEBRIS.has(d) and (Tiles.DEBRIS[d].tool == tool or d == Tiles.DECO.weed):
+			if tool == "pickaxe" and Mining.is_block(d):
+				r = _mine_block(p, map_id, g, info, t, lvl)
+			elif Tiles.DEBRIS.has(d) and (Tiles.DEBRIS[d].tool == tool or d == Tiles.DECO.weed):
 				var cost := float(Tiles.DEBRIS[d].energy) * maxf(0.4, 1.0 - 0.15 * lvl)
 				if tool == "pickaxe":
 					cost /= Modifiers.mult(p, "mine_speed")
@@ -934,6 +952,12 @@ func use_item(pid: String, map_id: String, t: Vector2i, uid: String) -> Dictiona
 	var e: Dictionary = f.entry
 	var it: Dictionary = Data.get_item(e.id)
 	var cat: String = it.get("cat", "")
+	if it.has("mine_place") or it.has("blast"):
+		r = _blast(p, map_id, g, map_info(map_id), t, f, it) if it.has("blast") else _place_mining(p, map_id, g, map_info(map_id), t, f, it)
+		if r.ok:
+			EventBus.inventory_changed.emit()
+			EventBus.tile_changed.emit(map_id, t)
+		return r
 	if map_id in PERSISTENT_MAPS and cat == "bait" and g.object_at(t).get("kind", "") == "crab_pot":
 		var pot := g.object_at(t)
 		if int(pot.get("bait", 0)) >= 5:
@@ -1454,6 +1478,275 @@ func mine_floor_act(pid: String, region: String, floor_n: int) -> Dictionary:
 		add_farm_xp(Progression.XP.mine_floor)
 		bump_stat("mine_floor", 1, pid)
 		r["new_elevator"] = floor_n % Adventure.ELEVATOR_STEP == 0
+	return r
+
+# --- Mining -------------------------------------------------------------------------
+
+## Crack damage per map {map_id: {"x,y": 0..1}}; not saved, a half-cracked rock heals overnight.
+var _cracks: Dictionary = {}
+
+func _deep() -> Dictionary:
+	var m: Dictionary = world.get("mining", {})
+	for k in [["layers", {}], ["max", 0], ["museum", []]]:
+		if not m.has(k[0]):
+			m[k[0]] = k[1]
+	world["mining"] = m
+	return m
+
+func deep_max() -> int:
+	return int(_deep().max)
+
+func crack(map_id: String, t: Vector2i) -> float:
+	return float(_cracks.get(map_id, {}).get(Tiles.key(t), 0.0))
+
+func _deep_touch(map_id: String) -> void:
+	if not map_id.begins_with("deep:"):
+		return
+	var info := map_info(map_id)
+	if info.has("base"):
+		_deep().layers[map_id.substr(5)] = Mining.encode_diff(info.base, info.grid)
+
+func _mine_block(p: PlayerData, map_id: String, g: FarmGrid, info: Dictionary, t: Vector2i, lvl: int) -> Dictionary:
+	var r := _res(false)
+	var d := g.get_deco(t)
+	var k := Tiles.key(t)
+	var what := str(info.get("ore_types", {}).get(k, ""))
+	var spec := Mining.block_spec(d, what)
+	if lvl < int(spec.min):
+		r.reason = tr("Too hard for your pickaxe. It needs %s or better.") % tr(Mining.tier_name(int(spec.min)))
+		return r
+	var speed := Modifiers.mult(p, "mine_speed")
+	if not _spend_energy(p, float(spec.energy) * maxf(0.4, 1.0 - 0.12 * lvl) / speed):
+		return r
+	var cracks: Dictionary = _cracks.get(map_id, {})
+	var dmg := float(cracks.get(k, 0.0)) + Mining.power(lvl) * speed / float(spec.hp)
+	r.ok = true
+	r.sfx = Mining.sound(d)
+	if dmg < 0.999:
+		cracks[k] = dmg
+		_cracks[map_id] = cracks
+		EventBus.shake.emit(0.3)
+		return r
+	cracks.erase(k)
+	_break_block(p, map_id, g, info, t, r)
+	_cave_in(map_id, g, info, t)
+	return r
+
+func _break_block(p: PlayerData, map_id: String, g: FarmGrid, info: Dictionary, t: Vector2i, r: Dictionary) -> void:
+	var d := g.get_deco(t)
+	var what := str(info.get("ore_types", {}).get(Tiles.key(t), ""))
+	g.set_deco(t, 0)
+	for dr in Mining.drops(d, what, rng, Modifiers.value(p, "ore_luck"), luck(), info.get("fossils", [])):
+		give_item(p, dr[0], int(dr[1]))
+		r.fx.append(["+%d %s" % [int(dr[1]), Data.item_name(dr[0])], Color.WHITE])
+	p.stat_add("mined")
+	bump_stat("blocks")
+	add_farm_xp(Progression.XP.clear)
+	_deep_touch(map_id)
+	EventBus.shake.emit(1.0)
+
+## Big open halls in the deeper layers shed rubble unless a support beam stands nearby.
+func _cave_in(map_id: String, g: FarmGrid, info: Dictionary, t: Vector2i) -> void:
+	if int(info.get("deep", 0)) < 2 or rng.randf() > 0.08:
+		return
+	var open := 0
+	for y in range(t.y - 4, t.y + 5):
+		for x in range(t.x - 4, t.x + 5):
+			var q := Vector2i(x, y)
+			if not g.in_bounds(q):
+				continue
+			if g.get_deco(q) == Tiles.DECO.support:
+				return
+			if g.get_deco(q) == 0:
+				open += 1
+	if open < 40:
+		return
+	var fell := 0
+	for i in 6:
+		var q := t + Vector2i(rng.randi_range(-2, 2), rng.randi_range(-2, 2))
+		if q != t and g.in_bounds(q) and g.get_deco(q) == 0 and g.get_ground(q) == Tiles.GROUND.cave and not _player_on(map_id, q):
+			g.set_deco(q, Tiles.DECO.rock)
+			EventBus.tile_changed.emit(map_id, q)
+			fell += 1
+	if fell > 0:
+		_deep_touch(map_id)
+		EventBus.shake.emit(3.0)
+		EventBus.toast.emit(tr("The ceiling crumbles! Support beams keep big halls stable."), "")
+
+func _player_on(map_id: String, t: Vector2i) -> bool:
+	for pid in players:
+		var pl: PlayerData = players[pid]
+		if pl.map_id == map_id and Vector2i(pl.pos / Tiles.TILE) == t:
+			return true
+	return false
+
+## The drill bites a row of three: the target tile and the ones left and right of it.
+func _drill(p: PlayerData, map_id: String, g: FarmGrid, info: Dictionary, t: Vector2i) -> Dictionary:
+	var r := _res(false)
+	var lvl := p.tool_level("pickaxe")
+	for dx in [0, -1, 1]:
+		var q := t + Vector2i(dx, 0)
+		if not Mining.is_block(g.get_deco(q)):
+			continue
+		var one := _mine_block(p, map_id, g, info, q, lvl)
+		if one.ok:
+			r.ok = true
+			r.sfx = one.sfx
+			r.fx.append_array(one.fx)
+			if q != t:
+				EventBus.tile_changed.emit(map_id, q)
+		elif r.reason == "":
+			r.reason = one.reason
+	return r
+
+## Torches, ladders, beams, rails, carts and stone blocks go straight into the rock layer.
+func _place_mining(p: PlayerData, map_id: String, g: FarmGrid, info: Dictionary, t: Vector2i, f: Dictionary, it: Dictionary) -> Dictionary:
+	var r := _res(false)
+	if not info.get("mine", false):
+		r.reason = tr("That only works down in a mine.")
+		return r
+	var what := str(it.mine_place)
+	var d := g.get_deco(t)
+	var gr := g.get_ground(t)
+	if what == "stoneblock" and gr in Tiles.BLOCKING_GROUND and d == 0:
+		g.ground[g.idx(t)] = Tiles.GROUND.cave
+	elif d != 0 or gr in Tiles.BLOCKING_GROUND or _player_on(map_id, t):
+		r.reason = tr("Can't place that here.")
+		return r
+	elif what == "ladder":
+		if int(info.get("deep", 0)) == 0 or int(info.deep) >= Mining.layer_count():
+			r.reason = tr("There's nothing below to climb down to.")
+			return r
+		g.set_deco(t, Tiles.DECO.ladder)
+	else:
+		g.set_deco(t, Tiles.id_of(what))
+	f.inv.take(f.entry.uid, 1)
+	_deep_touch(map_id)
+	r.ok = true
+	r.sfx = "place"
+	return r
+
+## Bombs crack every block in reach that the strongest pickaxe tier could break.
+func _blast(p: PlayerData, map_id: String, g: FarmGrid, info: Dictionary, t: Vector2i, f: Dictionary, it: Dictionary) -> Dictionary:
+	var r := _res(false)
+	if not info.get("mine", false):
+		r.reason = tr("That only works down in a mine.")
+		return r
+	f.inv.take(f.entry.uid, 1)
+	var rad := float(it.get("blast", 1.5))
+	var reach := int(ceil(rad))
+	for y in range(t.y - reach, t.y + reach + 1):
+		for x in range(t.x - reach, t.x + reach + 1):
+			var q := Vector2i(x, y)
+			if Vector2(q - t).length() > rad or not g.in_bounds(q):
+				continue
+			var d := g.get_deco(q)
+			if d == Tiles.DECO.rock or (Mining.is_block(d) and int(Mining.block_spec(d, str(info.get("ore_types", {}).get(Tiles.key(q), ""))).min) <= 3):
+				if d == Tiles.DECO.rock:
+					g.set_deco(q, 0)
+					give_item(p, "stone", 1)
+				else:
+					_break_block(p, map_id, g, info, q, r)
+				EventBus.tile_changed.emit(map_id, q)
+	_deep_touch(map_id)
+	EventBus.shake.emit(6.0)
+	r.ok = true
+	r.sfx = "boom"
+	return r
+
+## Ladder down from layer-1 at t, or the elevator straight to a layer's landing.
+func deep_enter_act(pid: String, layer: int, x: int, y: int, via: String) -> Dictionary:
+	var p := player(pid)
+	if p == null or layer < 1 or layer > Mining.layer_count():
+		return _res(false)
+	var L := Mining.layer_spec(layer)
+	var r := _res(true)
+	var to := Vector2i(Mining.LANDING.x, Mining.LANDING.y + 1)
+	match via:
+		"elevator":
+			if layer > maxi(1, deep_max()):
+				return _res(false, tr("The lift doesn't go that deep yet."))
+		"ladder":
+			var t := Vector2i(x, y)
+			var from := grid("deep:%d" % (layer - 1)) if layer > 1 else null
+			if from == null or from.get_deco(t) != Tiles.DECO.ladder:
+				return _res(false)
+			if p.tool_level("pickaxe") < int(L.get("min_pick", 0)):
+				return _res(false, tr("The rock below is too hard. Bring a %s pickaxe.") % tr(Mining.tier_name(int(L.min_pick))))
+			var g := grid("deep:%d" % layer)
+			Mining.carve_arrival(g, t, Tiles.DECO.ladder_up)
+			_deep_touch("deep:%d" % layer)
+			to = t + Vector2i(0, 1)
+		"up":
+			var t2 := Vector2i(x, y)
+			var g2 := grid("deep:%d" % layer)
+			Mining.carve_arrival(g2, t2, Tiles.DECO.ladder)
+			_deep_touch("deep:%d" % layer)
+			to = t2 + Vector2i(0, 1)
+		_:
+			return _res(false)
+	if layer > deep_max():
+		_deep().max = layer
+		add_farm_xp(Progression.XP.mine_floor * 4)
+		bump_stat("deep_layer", 1, pid)
+		r["new_layer"] = true
+		EventBus.quest_updated.emit()
+	r["to"] = [to.x, to.y]
+	return r
+
+func deep_boss_act(pid: String) -> Dictionary:
+	if world.flags.get("deep_boss", false):
+		return _res(false)
+	world.flags["deep_boss"] = true
+	grant({"money": 20000, "glimmer_crystal": 3, "crystal_bar": 2}, player(pid))
+	EventBus.quest_updated.emit()
+	var r := _res(true)
+	r["text"] = tr("The magma stills. Deep below Eisenkamm, the mountain finally rests. (+%s, 3 Glimmer Crystals, 2 Crystal Bars)") % CoinLabel.text(20000)
+	return r
+
+## The geologist splits geodes for a small fee.
+func crack_geode_act(pid: String, n: int) -> Dictionary:
+	var p := player(pid)
+	var have := p.inventory.count("geode") if p else 0
+	n = mini(n, have)
+	if n <= 0:
+		return _res(false, tr("You don't have any geodes."))
+	if not spend(25 * n, "Geodes"):
+		return _res(false, tr("Not enough gold."))
+	p.inventory.remove("geode", n)
+	p.stat_add("geodes", n)
+	var got := {}
+	for i in n:
+		var id := Mining.pick(Mining.GEODE_LOOT, rng)
+		got[id] = int(got.get(id, 0)) + 1
+		give_item(p, id, 1)
+	var r := _res(true)
+	r["loot"] = got
+	r.sfx = "chest"
+	return r
+
+## Hands every new mineral and fossil in your pack to the museum.
+func donate_museum_act(pid: String) -> Dictionary:
+	var p := player(pid)
+	var m := _deep()
+	var given: Array = []
+	for id in Mining.MUSEUM:
+		if not id in m.museum and p.inventory.count(id) > 0:
+			p.inventory.remove(id, 1)
+			m.museum.append(id)
+			given.append(id)
+	if given.is_empty():
+		return _res(false, tr("Nothing new for the collection today."))
+	var r := _res(true)
+	r["given"] = given
+	for need in Mining.MUSEUM_REWARDS:
+		var before: int = m.museum.size() - given.size()
+		if before < int(need) and m.museum.size() >= int(need):
+			grant(Mining.MUSEUM_REWARDS[need], p)
+			r["milestone"] = int(need)
+	EventBus.inventory_changed.emit()
+	EventBus.quest_updated.emit()
+	r.sfx = "levelup"
 	return r
 
 func open_treasure_act(pid: String, map_id: String, x: int, y: int) -> Dictionary:

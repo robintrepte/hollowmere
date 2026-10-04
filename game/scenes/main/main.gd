@@ -476,6 +476,10 @@ func _on_battle_requested(s: Dictionary) -> void:
 				var sp: Array = Data.get_map("farm").spawn
 				_go_to("farm", GameState.tile_center(Vector2i(int(sp[0]), int(sp[1]))))
 				GameState.advance_minutes(120)
+	if s.get("boss", false) and res.result in ["befriend", "win"] and str(world.info.get("boss", {}).get("species", "")) == str(s.get("species", "")):
+		var br: Dictionary = await Coop.act_async("deep_boss_act", [])
+		if br.has("text"):
+			after.append(str(br.text))
 	if s.kind == "wild" and res.result in ["befriend", "win"] and not s.get("boss", false):
 		var cr: Dictionary = await Coop.act_async("chain_act", [s.species])
 		var n := int(cr.get("chain", {}).get("n", 0))

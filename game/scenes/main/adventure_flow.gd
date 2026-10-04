@@ -191,7 +191,7 @@ func enter_floor(region: String, n: int) -> void:
 		return
 	if int(GameState.world.mine_depth.get(region, 0)) < n:
 		GameState.world.mine_depth[region] = n
-	var mid := TranslationServer.translate("mine:%s:%d") % [region, n]
+	var mid := "mine:%s:%d" % [region, n]
 	var sp: Array = GameState.map_info(mid).spawn
 	EventBus.map_change_requested.emit(mid, Vector2i(int(sp[0]), int(sp[1])))
 	if r.get("new_elevator", false):
@@ -212,6 +212,129 @@ func ladder_up() -> void:
 		if o.type == "cave":
 			to = Vector2i(int(o.x), int(o.y) + 1)
 	EventBus.map_change_requested.emit(region, to)
+
+# --- Deep Mine --------------------------------------------------------------------------
+
+func deep_interact(t: Vector2i) -> void:
+	var layer := int(ctl.world.info.get("deep", 0))
+	var g: FarmGrid = ctl.world.grid
+	match g.get_deco(t):
+		Tiles.DECO.ladder:
+			await _deep_go(layer + 1, t, "ladder")
+		Tiles.DECO.ladder_up:
+			if t == Mining.LADDER_UP:
+				if layer == 1:
+					var c: int = await _ask("Climb back up to Eisenkamm?", ["Climb up", "Stay"])
+					if c == 0:
+						_to_eisenkamm()
+				else:
+					await _deep_go(layer - 1, Vector2i(-1, -1), "elevator")
+			else:
+				await _deep_go(layer - 1, t, "up")
+		Tiles.DECO.elevator:
+			await deep_lift()
+		Tiles.DECO.minecart:
+			Audio.sfx("door")
+			EventBus.map_change_requested.emit(ctl.world.map_id, Vector2i(Mining.LANDING.x, Mining.LANDING.y + 1))
+
+func _deep_go(layer: int, t: Vector2i, via: String) -> void:
+	var r: Dictionary = await Coop.act_async("deep_enter_act", [layer, t.x, t.y, via])
+	if not r.get("ok", false):
+		if str(r.get("reason", "")) != "":
+			EventBus.toast.emit(str(r.reason), "")
+		return
+	var to: Array = r.get("to", [Mining.LANDING.x, Mining.LANDING.y + 1])
+	EventBus.map_change_requested.emit("deep:%d" % layer, Vector2i(int(to[0]), int(to[1])))
+	if r.get("new_layer", false):
+		EventBus.toast.emit(TranslationServer.translate("New layer: %s. The lift can take you here now.") % TranslationServer.translate(str(Mining.layer_spec(layer).name)), "star")
+
+func _to_eisenkamm() -> void:
+	var to := Vector2i(20, 8)
+	for o in Data.get_map("eisenkamm").get("objects", []):
+		if o.get("type", "") == "building" and o.get("action", "") == "deep_lift":
+			to = Vector2i(int(o.x) + int(o.get("w", 2)) / 2, int(o.y) + int(o.get("h", 2)))
+	EventBus.map_change_requested.emit("eisenkamm", to)
+
+## The mine lift: Eisenkamm and every layer you've already reached.
+func deep_lift() -> void:
+	var here := int(ctl.world.info.get("deep", 0))
+	var reached := maxi(1, GameState.deep_max())
+	var opts: Array = []
+	var dest: Array = []
+	if here > 0:
+		opts.append("Eisenkamm")
+		dest.append(0)
+	for n in range(1, reached + 1):
+		if n != here:
+			opts.append(TranslationServer.translate("Layer %d: %s") % [n, TranslationServer.translate(str(Mining.layer_spec(n).name))])
+			dest.append(n)
+	opts.append("Stay")
+	var c: int = await _ask("The lift creaks. Where to?", opts)
+	if c < 0 or c >= dest.size():
+		return
+	Audio.sfx("door")
+	if int(dest[c]) == 0:
+		_to_eisenkamm()
+	else:
+		await _deep_go(int(dest[c]), Vector2i(-1, -1), "elevator")
+
+func guild() -> void:
+	var p := GameState.local_player()
+	var reached := GameState.deep_max()
+	var lines: Array = [TranslationServer.translate("The Miners' Guild ledger: %d blocks broken, deepest layer %d of %d.") % [int(p.stats.get("mined", 0)), reached, Mining.layer_count()]]
+	if reached < Mining.layer_count():
+		var nxt := Mining.layer_spec(reached + 1)
+		lines.append(TranslationServer.translate("Next down: %s. You'll want a %s pickaxe for that rock.") % [TranslationServer.translate(str(nxt.name)), TranslationServer.translate(Mining.tier_name(int(nxt.get("min_pick", 0))))])
+	elif not GameState.world.flags.get("deep_boss", false):
+		lines.append("Something huge stirs in the Magma Depths. The guild would be grateful if it stopped.")
+	else:
+		lines.append("The mountain sleeps easy, thanks to you. The guild owes you a drink.")
+	await _say(lines, "brannoc")
+
+func geologist(_io: Dictionary) -> void:
+	var p := GameState.local_player()
+	var n := p.inventory.count("geode")
+	var opts: Array = []
+	if n > 0:
+		opts.append(TranslationServer.translate("Crack one (%s)") % CoinLabel.text(25))
+		if n > 1:
+			opts.append(TranslationServer.translate("Crack all %d (%s)") % [n, CoinLabel.text(25 * n)])
+	opts.append("Browse finds")
+	opts.append("Leave")
+	var c: int = await _ask(TranslationServer.translate("Got geodes? I'll split them for %s apiece. You keep whatever's inside.") % CoinLabel.text(25) if n > 0 else TranslationServer.translate("Bring me geodes from the mine and I'll split them for you."), opts)
+	if c < 0 or c >= opts.size():
+		return
+	if opts[c] == "Browse finds":
+		Audio.sfx("door")
+		ctl.ui.open(ShopPanel.new("geologist"))
+		return
+	if opts[c] == "Leave":
+		return
+	var r: Dictionary = await Coop.act_async("crack_geode_act", [1 if c == 0 else n])
+	if not r.get("ok", false):
+		EventBus.toast.emit(str(r.get("reason", "")), "")
+		return
+	Audio.sfx("chest")
+	await _say([TranslationServer.translate("Crack! Inside: %s.") % loot_text(r.get("loot", {}))])
+
+func museum() -> void:
+	var m: Dictionary = GameState.world.get("mining", {})
+	var have: int = m.get("museum", []).size()
+	var c: int = await _ask(TranslationServer.translate("Wildlings recorded: %d / %d. Minerals and fossils on display: %d / %d.") % [Progression.owned_count(GameState.world.dex), Data.species.size(), have, Mining.MUSEUM.size()], ["Donate finds", "Leave"])
+	if c != 0:
+		return
+	var r: Dictionary = await Coop.act_async("donate_museum_act", [])
+	if not r.get("ok", false):
+		await _say([str(r.get("reason", ""))])
+		return
+	var names: Array = []
+	for id in r.get("given", []):
+		names.append(Data.item_name(id))
+	var lines: Array = [TranslationServer.translate("The curator beams. New on display: %s.") % ", ".join(names)]
+	if r.has("milestone"):
+		lines.append(TranslationServer.translate("%d pieces in the collection! The curator hands you a thank-you gift.") % int(r.milestone))
+	Audio.sfx("levelup")
+	await _say(lines)
 
 func treasure(t: Vector2i, o: Dictionary) -> void:
 	if GameState.treasure_opened(ctl.world.map_id, t):

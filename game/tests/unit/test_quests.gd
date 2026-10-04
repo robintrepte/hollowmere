@@ -24,7 +24,7 @@ func _goal_ok(g: Dictionary) -> String:
 		return "unknown villager %s" % g.to
 	if g.has("talk") and not Data.villagers.has(str(g.talk)):
 		return "unknown villager %s" % g.talk
-	var kinds := ["stat", "have", "deliver", "talk", "visit", "tile", "flag", "dex", "farm_level", "shrines", "hearts"]
+	var kinds := ["stat", "have", "deliver", "talk", "visit", "tile", "flag", "dex", "farm_level", "shrines", "hearts", "depth", "museum"]
 	for k in g:
 		if not k in kinds and not k in ["n", "to"]:
 			return "unknown goal key %s" % k

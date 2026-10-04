@@ -62,7 +62,7 @@ static func water_kind(info: Dictionary, t: Vector2i) -> String:
 ## Fish that can bite here and now. `dex` excludes legendaries already caught.
 static func pool(kind: String, map_id: String, season: String, night: bool, weather: String, floor_n: int, dex: Dictionary, any_time := false) -> Array:
 	var out: Array = []
-	var place := map_id.split(":")[1] if map_id.begins_with("mine:") else map_id
+	var place := map_id.split(":")[1] if map_id.begins_with("mine:") else "deep" if map_id.begins_with("deep:") else map_id
 	for id in Data.fish:
 		var f: Dictionary = Data.fish[id]
 		if not kind in f.where:

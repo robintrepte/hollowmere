@@ -44,6 +44,8 @@ var shellfish: Dictionary = {}
 ## Junk, treasure, water Wildlings and rods from fish.json.
 var fish_meta: Dictionary = {}
 var skill_branches: Dictionary = {}
+## Deep mine layers (data/mine_layers.json), top to bottom.
+var mine_layers: Array = []
 var skill_nodes: Array = []
 var _maps: Dictionary = {}
 var _prev_evo: Dictionary = {}
@@ -84,6 +86,7 @@ func load_all() -> void:
 	buildings = _load_json("res://data/buildings.json")
 	shops = _load_json("res://data/shops.json")
 	villagers = _load_json("res://data/villagers.json")
+	mine_layers = _load_json("res://data/mine_layers.json").get("layers", [])
 	var reg: Dictionary = _load_json("res://data/regions.json")
 	legends = reg.get("legends", {})
 	reg.erase("legends")
@@ -285,11 +288,13 @@ const BIG_ITEMS := {
 	"chest": [2, 2], "furnace": [2, 2], "keg": [1, 2], "seed_maker": [2, 2], "scarecrow": [1, 2], "wooden_bench": [2, 1],
 	"stone_lantern": [1, 2], "hay_bale": [2, 1], "wood": [2, 1], "hardwood": [2, 1], "milk": [1, 2],
 	"copper_bar": [2, 1], "iron_bar": [2, 1], "gold_bar": [2, 1], "mystic_bar": [2, 1],
+	"silver_bar": [2, 1], "mithril_bar": [2, 1], "crystal_bar": [2, 1], "drill": [1, 2],
 }
 const STACKS := {
 	"seed": 99, "crop": 24, "forage": 24, "fruit": 24, "material": 99, "ore": 50, "bar": 20, "gem": 10, "produce": 20,
 	"food": 10, "treat": 20, "fish": 20, "bait": 99, "tackle": 1, "junk": 20, "charm": 20, "medicine": 10, "artisan": 10, "fertilizer": 50, "placeable": 10,
 	"key": 1, "gift": 5, "cosmetic": 1, "tool": 1, "egg": 1, "container": 1, "sapling": 5,
+	"artifact": 10, "mining": 99, "bomb": 20,
 }
 
 func item_size(id: String) -> Vector2i:

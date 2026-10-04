@@ -1,0 +1,42 @@
+{
+  "id": "eisenkamm", "name": "Eisenkamm", "w": 48, "h": 34, "base": "grass", "border": "cliff", "music": "mining_town",
+  "biome": "cliffs", "levels": [16, 22],
+  "spawns": [
+    ["pebblit", 30], ["burrowpup", 20], ["moleup", 25], ["glintbat", 15, {"t": "night"}], ["bouldron", 5]
+  ],
+  "ops": [
+    ["rect", "cliff", 1, 1, 19, 4],
+    ["rect", "cliff", 27, 1, 20, 4],
+    ["rect", "tallgrass", 2, 25, 10, 6],
+    ["rect", "tallgrass", 41, 13, 5, 6],
+    ["rect", "plaza", 14, 12, 20, 12],
+    ["rect", "path", 30, 26, 18, 2],
+    ["rect", "path", 28, 24, 2, 2],
+    ["rect", "path", 22, 7, 3, 5],
+    ["rect", "path", 10, 11, 4, 2],
+    ["rect", "path", 34, 12, 4, 1],
+    ["rect", "path", 34, 21, 4, 1],
+    ["rect", "path", 10, 21, 4, 1],
+    ["scatter", "pine", 1, 5, 7, 19, 0.12, 61],
+    ["scatter", "pine", 40, 5, 7, 7, 0.12, 62],
+    ["scatter", "pine", 13, 25, 15, 8, 0.08, 63],
+    ["scatter", "pine", 31, 28, 16, 5, 0.1, 64],
+    ["scatter", "boulder", 1, 5, 46, 28, 0.02, 65],
+    ["scatter", "rock", 1, 5, 46, 28, 0.03, 66],
+    ["clearpath"]
+  ],
+  "warps": [
+    {"x": 47, "y": 26, "w": 1, "h": 2, "to": "town", "tx": 1, "ty": 7}
+  ],
+  "objects": [
+    {"type": "building", "id": "mine_lift", "x": 21, "y": 3, "w": 5, "h": 4, "label": "Deep Mine", "roof": "#5a5a6a", "action": "deep_lift"},
+    {"type": "building", "id": "mine_guild", "x": 8, "y": 7, "w": 6, "h": 4, "label": "Miners' Guild", "roof": "#4a5a7a", "action": "guild"},
+    {"type": "building", "id": "ore_shop", "x": 35, "y": 9, "w": 5, "h": 3, "label": "Mine Supply", "roof": "#a04a3a", "action": "shop:mine_supply"},
+    {"type": "building", "id": "forge", "x": 35, "y": 17, "w": 5, "h": 4, "label": "Eisenkamm Forge", "roof": "#3a3a4a", "action": "shop:smelter"},
+    {"type": "building", "id": "geologist", "x": 9, "y": 17, "w": 4, "h": 4, "label": "Geologist", "roof": "#5a9a8a", "action": "geologist"},
+    {"type": "wayshrine", "x": 31, "y": 13},
+    {"type": "sign", "x": 44, "y": 25, "text": "Eisenkamm. Mind the carts."},
+    {"type": "sign", "x": 25, "y": 8, "text": "Deep Mine. Five layers down, and nobody has seen the bottom in a hundred years."}
+  ],
+  "spawn": [46, 26]
+}

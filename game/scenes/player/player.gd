@@ -103,7 +103,8 @@ func _physics_process(delta: float) -> void:
 		if _speed_t <= 0.0:
 			_speed_t = 0.5
 			_speed_mult = clampf(Modifiers.mult(GameState.player(pid), "move_speed"), 0.5, 1.6)
-		var step := dir.normalized() * speed * _speed_mult * delta
+		var on_rail := world != null and world.grid != null and world.grid.get_deco(GameState.to_tile(position)) == Tiles.DECO.rail
+		var step := dir.normalized() * speed * _speed_mult * (1.7 if on_rail else 1.0) * delta
 		_move(step)
 		_step_t += delta
 		if _step_t > 0.32 * WALK_SPEED / speed:

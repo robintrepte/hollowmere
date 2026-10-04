@@ -348,27 +348,27 @@ Das ist der tiefste Eingriff in den Kern. Er muss vor Quests, Skilltree und Bala
 ## Phase G – Mining
 
 ### G1 Abbausystem (Kern) · XL
-- [ ] Chunk-basiertes, persistentes Höhlengitter (32×32-Chunks), generiert aus Welt-Seed plus Chunk-Koordinate über Noise. Gespeichert werden nur **Diffs** (abgebaute und platzierte Blöcke) als komprimierte Bitmasken, mit Blick auf das Save-Budget.
-- [ ] Blöcke mit Härte, die eine passende Spitzhacken-Stufe verlangen: Erde, Stein, Tiefenstein, Basalt, Obsidian. Erzadern: Kupfer, Eisen, Silber, Gold, Mithril, Mystik. Kristalle: Quarz, Amethyst, Aquamarin, Rubin, Glimmerkristall. Fossilien und Artefakte für das Museum.
-- [ ] **Tiefenschichten** (`mine_layers.json`): Lehmgänge, Steinhallen, Kristallgrotten, Unterwassersee (Angeln!), Magmatiefen. Je tiefer, desto wertvoller und gefährlicher.
-- [ ] Licht: Fackeln platzierbar, Dunkelheit mit Lichtradius (performant für WebGL2: ein Lichtmasken-Pass statt vieler `Light2D`).
-- [ ] Platzierbar: Fackeln, Leitern (zur nächsten Schicht), Stützbalken, Steinblöcke, Schienen und Lore (Schnellreise zurück zum Eingang).
-- [ ] Abbau: Halten statt Spammen (touch-freundlich), sichtbarer Riss-Fortschritt, Partikel, Sound je Material, Energieverbrauch.
-- [ ] **Besondere Wildlinge**: Gesteins- und Kristall-Wildlinge, die nur in bestimmten Schichten oder Grotten erscheinen, dazu 4–6 neue Spezies.
-- [ ] Koop: `mine_block` und `place_block` als Host-Aktionen, Chunk-Diffs über den bestehenden `tile_sync`.
+- [x] Persistentes Höhlengitter pro Tiefenschicht (64×48), generiert aus Welt-Seed plus Schicht über Noise. Gespeichert werden nur **Diffs** (XOR gegen das Basisgitter, deflate + base64, ein paar hundert Byte pro Stollen). Statt 32×32-Chunks eine Karte pro Schicht: kleiner, einfacher zu syncen und passt in eine Szene.
+- [x] Blöcke mit Härte, die eine passende Spitzhacken-Stufe verlangen: Erde, Stein, Tiefenstein, Basalt, Obsidian. Erzadern: Kupfer, Eisen, Silber, Gold, Mithril, Mystik. Kristalle: Quarz, Amethyst, Aquamarin, Rubin, Glimmerkristall. Fossilien und Artefakte für das Museum.
+- [x] **Tiefenschichten** (`mine_layers.json`): Lehmgänge, Steinhallen, Kristallgrotten, Unterwassersee (Angeln!), Magmatiefen. Je tiefer, desto wertvoller und gefährlicher.
+- [x] Licht: Fackeln platzierbar, Dunkelheit mit Lichtradius (performant für WebGL2: ein Lichtmasken-Pass statt vieler `Light2D`).
+- [x] Platzierbar: Fackeln, Leitern (zur nächsten Schicht), Stützbalken, Steinblöcke, Schienen und Lore (Schnellreise zurück zum Eingang).
+- [x] Abbau: Halten statt Spammen (touch-freundlich), sichtbarer Riss-Fortschritt, Partikel, Sound je Material, Energieverbrauch.
+- [x] **Besondere Wildlinge**: Gesteins- und Kristall-Wildlinge, die nur in bestimmten Schichten oder Grotten erscheinen, dazu 4–6 neue Spezies.
+- [x] Koop: `mine_block` und `place_block` als Host-Aktionen, Chunk-Diffs über den bestehenden `tile_sync`.
 
 ### G2 Neue Bergbaustadt „Eisenkamm“ (Arbeitsname) · L
-- [ ] Map mit Minenschacht-Eingang, **Bergmannsgilde** mit NPC-Vorarbeiter (Questgeber), **Mining-Shop** (Spitzhacken, Fackeln, Bomben, Helmlampe, Leitern, Schienen), **Schmelze/Schmiede** mit Schmiedin, Geologe (bestimmt Geoden und Kristalle, kauft Funde an).
-- [ ] Musik „Bergbaustadt“ und „Tiefe Mine“ (ace-step), Ambience (Tropfen, Hall).
-- [ ] Main-Story-Kapitel „Das Herz des Berges“ mit Boss-Wildling in den Magmatiefen.
+- [x] Map mit Minenschacht-Eingang, **Bergmannsgilde** mit NPC-Vorarbeiter (Questgeber), **Mining-Shop** (Spitzhacken, Fackeln, Bomben, Helmlampe, Leitern, Schienen), **Schmelze/Schmiede** mit Schmiedin, Geologe (bestimmt Geoden und Kristalle, kauft Funde an).
+- [ ] Musik „Bergbaustadt“ und „Tiefe Mine“ (ace-step), Ambience (Tropfen, Hall). (Bis dahin spielen die synthetisierten Beds „mining_town“ und „deep“; echte Tracks in Phase L.)
+- [x] Main-Story-Kapitel „Eisen im Berg“ (öffnet Eisenkamm) und „Das Herz des Berges“ mit dem Boss-Wildling Glutwurm in den Magmatiefen (Save-Migration v5 verschiebt spätere Kapitel).
 
 ### G3 Umbau der bestehenden Regions-Minen · M → G1
-- [ ] Die Etagen-Generierung (`MapBuilder.build_mine`) bleibt, aber Wände werden abbaubar und Erzadern stecken in den Wänden. Etagen bleiben kurze Dungeons mit Aufzug. Diffs werden täglich zurückgesetzt (temporär), nur in Eisenkamm sind sie dauerhaft.
-- [ ] Regionsspezifische Erze und Kristalle.
+- [x] Die Etagen-Generierung (`MapBuilder.build_mine`) bleibt, aber Wände werden abbaubar und Erzadern stecken in den Wänden. Etagen bleiben kurze Dungeons mit Aufzug. Diffs werden täglich zurückgesetzt (temporär), nur in Eisenkamm sind sie dauerhaft.
+- [x] Regionsspezifische Erze und Kristalle.
 
 ### G4 Neue Crafting-Rezepte und bessere Werkzeuge · M
-- [ ] Neue Werkzeugstufe(n) über Mystic hinaus (z. B. „Kristall“) aus Mining-Ressourcen. Neue Rezepte: Bohrer (3×1-Abbau), Bomben, Helmlampe, verstärkte Angelrute, verbesserte Sprinkler, Eimer- und Schaufel-Stufen, **Verzauberungstisch**, **Amboss**, Schleifstein, Krabbenkörbe.
-- [ ] Rezepte in `recipes.json`, Crafting-Tab mit Kategorien und Suchfeld.
+- [x] Neue Werkzeugstufe(n) über Mystic hinaus (z. B. „Kristall“) aus Mining-Ressourcen. Neue Rezepte: Bohrer (3×1-Abbau), Bomben, Helmlampe, verstärkte Angelrute, verbesserte Sprinkler, Eimer- und Schaufel-Stufen, **Verzauberungstisch**, **Amboss**, Schleifstein, Krabbenkörbe. (Kristall-Stufe, Bohrer, Kirsch- und Megabombe, Kristall-Sprinkler, Schaufel-/Eimer-Stufen beim Schmied; die Helmlampe verkauft Tobin, Rutenstufen und Krabbenkörbe kamen mit Phase F, Verzauberungstisch, Amboss und Schleifstein folgen mit Phase H.)
+- [x] Rezepte in `recipes.json`, Crafting-Tab mit Kategorien und Suchfeld.
 
 ---
 

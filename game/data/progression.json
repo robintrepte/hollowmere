@@ -99,7 +99,8 @@
     {"level": 1, "name": "Copper", "price": 2000,  "bar": "copper_bar", "n": 5},
     {"level": 2, "name": "Iron",   "price": 5000,  "bar": "iron_bar",   "n": 5},
     {"level": 3, "name": "Gold",   "price": 10000, "bar": "gold_bar",   "n": 5},
-    {"level": 4, "name": "Mystic", "price": 25000, "bar": "mystic_bar", "n": 5}
+    {"level": 4, "name": "Mystic", "price": 25000, "bar": "mystic_bar", "n": 5},
+    {"level": 5, "name": "Crystal", "price": 50000, "bar": "crystal_bar", "n": 5}
   ],
   "story": [
     {"id": "roots", "title": "New Roots", "goal": {"dex": 3},
@@ -126,6 +127,9 @@
     {"id": "stone", "title": "The Deep Stones", "goal": {"shrines": 4},
      "lines": ["Gideon of Stonehollow has never lost a battle he cared about. Make him care."],
      "hint": "Beat Gideon in Stonehollow and wake the shrine.", "reward": {"money": 2500, "gold_bar": 3}},
+    {"id": "mountain", "title": "Iron in the Mountain", "goal": {"depth": 2},
+     "lines": ["Gideon says the miners of Eisenkamm have been asking for you. The mountain road leaves the village to the west.", "Their Deep Mine goes down five layers. Hazel helped them dig the first one. Go and see how far you get."],
+     "hint": "Take the mountain road (west of the village) to Eisenkamm and dig down to the Stone Halls.", "reward": {"money": 3000, "torch": 20, "support_beam": 5}},
     {"id": "gale", "title": "Above the Clouds", "goal": {"shrines": 5},
      "lines": ["Galepeak. Kai's Wildlings ride the wind. Spark and Stone will ground them."],
      "hint": "Beat Kai in Galepeak and wake the shrine.", "reward": {"money": 3000, "ultra_charm": 2}},
@@ -138,6 +142,9 @@
     {"id": "twilight", "title": "The Twilight Glade", "goal": {"shrines": 8},
      "lines": ["The last shrine. Umbral Glade only appears to those the other seven trust.", "Selene was Hazel's dearest friend. Go gently, and win."],
      "hint": "Beat Selene in Umbral Glade and wake the final shrine.", "reward": {"money": 5000, "star_charm": 1}},
+    {"id": "heart", "title": "The Heart of the Mountain", "goal": {"deep_boss": 1},
+     "lines": ["Brannoc sent word: the mountain shakes every night now, and the shaking comes from the Magma Depths.", "The old miners call it the Cinderwyrm. Hazel sang it to sleep once. Now it's your turn."],
+     "hint": "Dig down to the Magma Depths below Eisenkamm and calm the Cinderwyrm.", "reward": {"money": 8000, "crystal_bar": 2, "glimmer_crystal": 2}},
     {"id": "legends", "title": "The Turning Seasons", "goal": {"legends": 1},
      "lines": ["The valley breathes again. Can you feel it?", "The old songs say four great Wildlings walk the seasons: one each in spring, summer, fall and winter. They come to the shrines of their home lands."],
      "hint": "Find a seasonal legend at its home shrine and befriend it.", "reward": {"money": 10000, "star_crown": 1}},

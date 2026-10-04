@@ -8,8 +8,12 @@ const DECO_SPRITES := {
 	24: "tree", 25: "pine", 26: "palm", 27: "deadtree", 28: "crystaltree", 29: "rock", 30: "boulder",
 	31: "weed", 32: "branch", 33: "stump", 34: "fence", 35: "cliff", 36: "cavewall", 37: "bush",
 	38: "iceblock", 39: "ore_copper", 40: "ladder", 41: "cave_entrance", 42: "ladder_up",
+	43: "block_dirt", 44: "block_stone", 45: "block_deep", 46: "block_basalt", 47: "block_obsidian",
+	48: "block_stone", 49: "crystal", 50: "block_fossil", 51: "torch", 52: "support", 53: "rail", 54: "minecart", 55: "elevator",
 }
-const FLAT_DECO := [40, 31]
+const FLAT_DECO := [40, 31, 53]
+## Drawn by MineFx when there is no sprite for them.
+const MINE_FX := {49: "crystal", 51: "torch", 52: "support", 53: "rail", 54: "minecart", 55: "elevator"}
 const TRELLIS := ["green_bean", "tomato", "grape", "hot_pepper", "snowpea", "cranberry"]
 const STALK := ["corn", "wheat", "sunflower", "amaranth"]
 const FLOWERS := ["tulip", "blue_jazz", "fairy_rose", "ice_lily", "moonbloom"]
@@ -56,6 +60,7 @@ var npcs: Dictionary = {}            # vid -> Npc
 var creatures: Array = []            # WildCreature nodes (wild + ranch)
 var actors: Node2D
 var astar: AStarGrid2D
+var darkness: DarknessFx
 
 func _ready() -> void:
 	y_sort_enabled = false
@@ -148,6 +153,12 @@ func load_map(id: String) -> void:
 	for k in grid.soil:
 		_draw_crop(Tiles.parse_key(k))
 	_build_astar()
+	if darkness:
+		darkness.queue_free()
+		darkness = null
+	if info.has("dark"):
+		darkness = DarknessFx.new(self, float(info.dark))
+		add_child(darkness)
 	_spawn_npcs()
 	_spawn_creatures()
 	_on_time(GameState.minute())
@@ -274,6 +285,13 @@ func _deco_sprite_name(p: Vector2i, d: int) -> String:
 	if d == Tiles.DECO.ore:
 		var ore: String = info.get("ore_types", {}).get(Tiles.key(p), "copper_ore")
 		n = "ore_" + ore.replace("_ore", "")
+		if not ResourceLoader.exists("res://assets/world/%s.png" % n):
+			n = "rock"
+	elif d == Tiles.DECO.vein:
+		for dir in NEIGHBORS:
+			var nd := grid.get_deco(p + dir) if grid.in_bounds(p + dir) else 0
+			if nd in [43, 44, 45, 46, 47]:
+				return DECO_SPRITES[nd]
 	elif d == Tiles.DECO.fence:
 		n = "fence_%d" % _link_mask(p, "fence")
 	return n
@@ -287,23 +305,58 @@ func _draw_deco(p: Vector2i) -> void:
 	if d <= 0:
 		return
 	var tex := Art.world(_deco_sprite_name(p, d))
-	if tex == null:
+	var tint := Color.WHITE
+	if tex == null and Mining.BLOCKS.has(d):
+		tex = Art.world("cavewall")
+		tint = Color(str(Mining.BLOCKS[d].tint))
+	elif tex == null and d == Tiles.DECO.vein:
+		tex = Art.world("cavewall")
+		tint = Color(str(Mining.BLOCKS[44].tint))
+	if tex == null and not MINE_FX.has(d):
 		return
 	var s := Sprite2D.new()
 	s.texture = tex
+	s.self_modulate = tint
 	s.centered = false
-	var sz := tex.get_size()
+	var sz := tex.get_size() if tex else Vector2.ZERO
 	s.offset = Vector2(-sz.x / 2.0, -sz.y)
 	s.position = Vector2(p.x * T + T / 2.0, p.y * T + T)
+	_add_mine_fx(s, p, d, tex == null)
 	if d in [24, 25, 37] and season != "summer":
 		s.modulate = {"spring": Color(1, 1, 1), "fall": Color(1.0, 0.78, 0.5), "winter": Color(0.86, 0.9, 1.0)}.get(season, Color.WHITE)
 	if d in FLAT_DECO:
 		s.position.y -= 1
-	if d == Tiles.DECO.ladder:
+	if d == Tiles.DECO.ladder or d == Tiles.DECO.rail:
 		decals.add_child(s)
 	else:
 		ysort.add_child(s)
 	_deco_nodes[k] = s
+
+func _add_mine_fx(s: Sprite2D, p: Vector2i, d: int, stand_in: bool) -> void:
+	var what := str(info.get("ore_types", {}).get(Tiles.key(p), ""))
+	var hsh := p.x * 7919 + p.y * 104729
+	if d == Tiles.DECO.ore and s.texture == Art.world("rock"):
+		s.add_child(MineFx.new("vein", Color(str(Data.get_item(what).get("color", "#d8804a"))), 1.0, hsh))
+	elif d == Tiles.DECO.rail and not stand_in:
+		s.centered = true
+		s.offset = Vector2.ZERO
+		s.position = Vector2(p.x * T + T / 2.0, p.y * T + T / 2.0)
+		if grid.get_deco(p + Vector2i(0, -1)) == d or grid.get_deco(p + Vector2i(0, 1)) == d:
+			s.rotation = PI / 2.0
+	elif d == Tiles.DECO.vein:
+		s.add_child(MineFx.new("vein", Color(str(Data.get_item(what).get("color", "#d8804a"))), 0.0, hsh))
+	elif d == Tiles.DECO.crystal and stand_in:
+		s.add_child(MineFx.new("crystal", Color(str(Data.get_item(what).get("color", "#f0f0f8"))), 0.0, hsh))
+	elif d == Tiles.DECO.crystal:
+		s.self_modulate = Color(str(Data.get_item(what).get("color", "#f0f0f8")))
+	elif d == Tiles.DECO.rail and stand_in:
+		var vertical := grid.get_deco(p + Vector2i(0, -1)) == d or grid.get_deco(p + Vector2i(0, 1)) == d
+		s.add_child(MineFx.new("rail", Color.WHITE, 1.0 if vertical else 0.0))
+	elif stand_in and MINE_FX.has(d):
+		s.add_child(MineFx.new(MINE_FX[d]))
+	var c := GameState.crack(map_id, p)
+	if c > 0.0:
+		s.add_child(MineFx.new("crack", Color.WHITE, c, hsh))
 
 func _object_sprite_name(o: Dictionary, p: Vector2i) -> String:
 	if o.kind == "tree":
@@ -665,6 +718,9 @@ func _spawn_creatures() -> void:
 		var lid := Adventure.legend_here(GameState.world, region, GameState.season())
 		if lid != "" and Data.species.has(lid):
 			_add_creature(lid, int(Data.legends[lid].level), false, Vector2i(38, 15), null, true)
+	var boss: Dictionary = info.get("boss", {})
+	if not boss.is_empty() and not GameState.world.flags.get("deep_boss", false) and Data.species.has(str(boss.species)):
+		_add_creature(str(boss.species), int(boss.level), false, Vector2i(int(boss.at[0]), int(boss.at[1])), null, true)
 	if map_id == "farm":
 		var den := Vector2i(-1, -1)
 		for o in info.get("objects", []):
@@ -880,7 +936,7 @@ func _on_tile_changed(m: String, t: Vector2i) -> void:
 	_draw_deco(t)
 	for dir in NEIGHBORS:
 		var n: Vector2i = t + dir
-		if grid.in_bounds(n) and grid.get_deco(n) == Tiles.DECO.fence:
+		if grid.in_bounds(n) and grid.get_deco(n) in [Tiles.DECO.fence, Tiles.DECO.rail, Tiles.DECO.vein]:
 			_draw_deco(n)
 	for d in NEIGHBORS + DIAGONALS + [Vector2i.ZERO]:
 		_draw_soil(t + d)
@@ -888,6 +944,8 @@ func _on_tile_changed(m: String, t: Vector2i) -> void:
 	_draw_object(t)
 	if astar:
 		astar.set_point_solid(t, is_tile_solid(t))
+	if darkness:
+		darkness.rebuild()
 
 func _on_objects_changed(m: String) -> void:
 	if m != map_id:

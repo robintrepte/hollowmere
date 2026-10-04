@@ -109,6 +109,15 @@
     ["vernalis", "Vernalis", ["leaf", "glow"], [105, 95, 100, 120, 100], null, ["none"], 3, "strawberry", "", "ancient", "It appears on the first warm morning of spring."],
     ["solstara", "Solstara", ["ember", "glow"], [100, 115, 95, 120, 110], null, ["none"], 3, "starfruit", "", "ancient", "Born from the longest day of summer."],
     ["harvestus", "Harvestus", ["wild", "leaf"], [120, 120, 105, 90, 85], null, ["none"], 3, "pumpkin", "", "ancient", "It blesses fields that were tended with love."],
-    ["hibernox", "Hibernox", ["frost", "shade"], [115, 110, 110, 105, 90], null, ["none"], 3, "glacier_melon", "", "ancient", "It sleeps all year and wakes only in deep winter."]
+    ["hibernox", "Hibernox", ["frost", "shade"], [115, 110, 110, 105, 90], null, ["none"], 3, "glacier_melon", "", "ancient", "It sleeps all year and wakes only in deep winter."],
+    ["moleup", "Moleup", ["stone"], [45, 55, 50, 40, 30], ["drillmole", 24], ["field", "mineral"], 170, "potato", "", "hardworker", "A sleepy mole that sniffs out ore veins with its pink nose."],
+    ["drillmole", "Drillmole", ["stone", "spark"], [70, 95, 80, 65, 45], null, ["field", "mineral"], 70, "potato", "", "hardworker", "Its spinning claws bore through solid rock in seconds."],
+    ["glintbat", "Glintbat", ["shade", "glow"], [40, 45, 35, 70, 55], ["gloomwing", 26], ["sky"], 170, "crystal_fruit", "", "swift", "It hangs from cave ceilings and glitters like a gem."],
+    ["gloomwing", "Gloomwing", ["shade", "glow"], [70, 75, 60, 100, 85], null, ["sky"], 60, "crystal_fruit", "", "swift", "Its wings scatter crystal dust that lights up the dark."],
+    ["prismite", "Prismite", ["glow", "stone"], [50, 40, 70, 35, 60], ["prismarch", 34], ["mineral", "amorphous"], 120, "crystal_fruit", "quartz", "glimmer_coat", "A living crystal that hums when you tap it."],
+    ["prismarch", "Prismarch", ["glow", "stone"], [80, 65, 105, 50, 95], null, ["mineral", "amorphous"], 45, "crystal_fruit", "quartz", "glimmer_coat", "Light passes through its body and comes out as music."],
+    ["magmite", "Magmite", ["ember", "stone"], [50, 60, 55, 35, 55], ["magmaul", 32], ["mineral"], 120, "hot_pepper", "coal", "flame_body", "A pebble of lava that never quite cools down."],
+    ["magmaul", "Magmaul", ["ember", "stone"], [85, 105, 90, 40, 70], null, ["mineral"], 50, "hot_pepper", "coal", "flame_body", "It smashes basalt with molten fists to keep warm."],
+    ["cinderwyrm", "Cinderwyrm", ["ember", "shade"], [110, 125, 95, 90, 110], null, ["none"], 3, "hot_pepper", "", "ancient", "The serpent at the mountain's heart. While it sleeps, the magma stays still."]
   ]
 }

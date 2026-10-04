@@ -180,6 +180,10 @@ static func progress(p: PlayerData, world: Dictionary, qid: String) -> Array:
 		return [1 if entry.get("reached", false) else 0, 1]
 	if g.has("flag"):
 		return [1 if world.flags.get(str(g.flag), false) else 0, 1]
+	if g.has("depth"):
+		return [mini(int(g.depth), int(world.get("mining", {}).get("max", 0))), int(g.depth)]
+	if g.has("museum"):
+		return [mini(int(g.museum), world.get("mining", {}).get("museum", []).size()), int(g.museum)]
 	if g.has("dex"):
 		return [mini(int(g.dex), Progression.owned_count(world.dex)), int(g.dex)]
 	if g.has("farm_level"):

@@ -2020,6 +2020,370 @@
      "ansel": 120
     }
    }
+  },
+  {
+   "id": "brannoc_first_layer",
+   "type": "side",
+   "title": "Down the shaft",
+   "giver": "brannoc",
+   "requires": {
+    "story": "mountain"
+   },
+   "intro": [
+    "New faces go down with a pick and a torch. Break fifty blocks in the Clay Tunnels and come tell me how it went."
+   ],
+   "steps": [
+    {
+     "text": "Break 50 blocks in a mine.",
+     "goal": {
+      "stat": "mined",
+      "n": 50
+     }
+    },
+    {
+     "text": "Report to Brannoc.",
+     "goal": {
+      "talk": "brannoc"
+     },
+     "done": [
+      "Fifty! And you came back up. That's the important part."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 800,
+    "torch": 15,
+    "friendship": {
+     "brannoc": 80
+    }
+   }
+  },
+  {
+   "id": "brannoc_beams",
+   "type": "side",
+   "title": "Hold up the sky",
+   "giver": "brannoc",
+   "requires": {
+    "quests": [
+     "brannoc_first_layer"
+    ]
+   },
+   "intro": [
+    "The halls below get big. Big halls fall in. Bring me five support beams so I know you can make them."
+   ],
+   "steps": [
+    {
+     "text": "Bring Brannoc 5 Support Beams.",
+     "goal": {
+      "deliver": "support_beam",
+      "n": 5,
+      "to": "brannoc"
+     },
+     "done": [
+      "Good timber, good joints. You'll live a long time."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1200,
+    "mine_ladder": 2,
+    "friendship": {
+     "brannoc": 100
+    }
+   }
+  },
+  {
+   "id": "brannoc_crystal",
+   "type": "side",
+   "title": "The glittering dark",
+   "giver": "brannoc",
+   "requires": {
+    "quests": [
+     "brannoc_beams"
+    ]
+   },
+   "intro": [
+    "Nobody's mapped the Crystal Grottoes since my grandfather. Get down there for me."
+   ],
+   "steps": [
+    {
+     "text": "Reach the Crystal Grottoes (layer 3).",
+     "goal": {
+      "depth": 3
+     }
+    },
+    {
+     "text": "Tell Brannoc what you saw.",
+     "goal": {
+      "talk": "brannoc"
+     },
+     "done": [
+      "Crystals as tall as a house? Grandfather wasn't lying after all."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 3000,
+    "mega_bomb": 2,
+    "friendship": {
+     "brannoc": 120
+    }
+   }
+  },
+  {
+   "id": "brannoc_magma",
+   "type": "side",
+   "title": "The heart of the mountain",
+   "giver": "brannoc",
+   "requires": {
+    "quests": [
+     "brannoc_crystal"
+    ]
+   },
+   "intro": [
+    "The Magma Depths shake every night. Something lives down there, and it's angry. Find it. Calm it."
+   ],
+   "steps": [
+    {
+     "text": "Reach the Magma Depths (layer 5).",
+     "goal": {
+      "depth": 5
+     }
+    },
+    {
+     "text": "Defeat the beast of the Magma Depths.",
+     "goal": {
+      "flag": "deep_boss"
+     }
+    },
+    {
+     "text": "Return to Brannoc.",
+     "goal": {
+      "talk": "brannoc"
+     },
+     "done": [
+      "The mountain's quiet. First time in my life. Thank you."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 10000,
+    "crystal_bar": 2,
+    "friendship": {
+     "brannoc": 200
+    }
+   }
+  },
+  {
+   "id": "opal_geodes",
+   "type": "side",
+   "title": "What's inside?",
+   "giver": "opal",
+   "requires": {
+    "story": "mountain"
+   },
+   "intro": [
+    "Geodes! The mine's full of them. Bring me some to crack. Five should show you why I love this job."
+   ],
+   "steps": [
+    {
+     "text": "Crack 5 geodes at Opal's.",
+     "goal": {
+      "stat": "geodes",
+      "n": 5
+     },
+     "done": [
+      "See? Every one a little surprise."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 600,
+    "geode": 3,
+    "friendship": {
+     "opal": 80
+    }
+   }
+  },
+  {
+   "id": "opal_museum",
+   "type": "side",
+   "title": "A proper collection",
+   "giver": "opal",
+   "requires": {
+    "quests": [
+     "opal_geodes"
+    ]
+   },
+   "intro": [
+    "The museum in the village has empty cases. That's a crime. Donate eight minerals or fossils."
+   ],
+   "steps": [
+    {
+     "text": "Have 8 finds on display at the museum.",
+     "goal": {
+      "museum": 8
+     }
+    },
+    {
+     "text": "Tell Opal.",
+     "goal": {
+      "talk": "opal"
+     },
+     "done": [
+      "Eight cases! I'll have to visit. I never visit anything."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 2000,
+    "amber_drop": 1,
+    "friendship": {
+     "opal": 120
+    }
+   }
+  },
+  {
+   "id": "hilde_silver",
+   "type": "side",
+   "title": "Soft metal",
+   "giver": "hilde",
+   "requires": {
+    "story": "mountain"
+   },
+   "intro": [
+    "Silver's in the Stone Halls. I need five bars for a commission. Smelt them yourself, I'm busy."
+   ],
+   "steps": [
+    {
+     "text": "Bring Hilde 5 Silver Bars.",
+     "goal": {
+      "deliver": "silver_bar",
+      "n": 5,
+      "to": "hilde"
+     },
+     "done": [
+      "Clean pours. You've done this before."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1500,
+    "friendship": {
+     "hilde": 100
+    }
+   }
+  },
+  {
+   "id": "hilde_mithril",
+   "type": "side",
+   "title": "The stubborn metal",
+   "giver": "hilde",
+   "requires": {
+    "quests": [
+     "hilde_silver"
+    ]
+   },
+   "intro": [
+    "Mithril. Below the Sunken Lake. Bring me three bars and I'll show you what crystal tools look like."
+   ],
+   "steps": [
+    {
+     "text": "Bring Hilde 3 Mithril Bars.",
+     "goal": {
+      "deliver": "mithril_bar",
+      "n": 3,
+      "to": "hilde"
+     },
+     "done": [
+      "Feel how light that is? Now imagine it fused with glimmer crystal."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 4000,
+    "glimmer_crystal": 1,
+    "friendship": {
+     "hilde": 140
+    }
+   }
+  },
+  {
+   "id": "tobin_torches",
+   "type": "side",
+   "title": "Light the way",
+   "giver": "tobin",
+   "requires": {
+    "story": "mountain"
+   },
+   "intro": [
+    "I'm testing a new torch recipe. Craft a couple of batches and tell me if they burn right?"
+   ],
+   "steps": [
+    {
+     "text": "Craft 2 batches of torches.",
+     "goal": {
+      "stat": "craft:torch",
+      "n": 2
+     }
+    },
+    {
+     "text": "Tell Tobin.",
+     "goal": {
+      "talk": "tobin"
+     },
+     "done": [
+      "They burn! Mostly. Thanks for testing."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 500,
+    "cherry_bomb": 3,
+    "friendship": {
+     "tobin": 80
+    }
+   }
+  },
+  {
+   "id": "tobin_rails",
+   "type": "side",
+   "title": "All aboard",
+   "giver": "tobin",
+   "requires": {
+    "quests": [
+     "tobin_torches"
+    ]
+   },
+   "intro": [
+    "Rails make the long walk back so much shorter. Lay some down in the deep mine, then let me know how the cart rides!"
+   ],
+   "steps": [
+    {
+     "text": "Reach the Stone Halls (layer 2).",
+     "goal": {
+      "depth": 2
+     }
+    },
+    {
+     "text": "Bring Tobin 10 Rails.",
+     "goal": {
+      "deliver": "rail",
+      "n": 10,
+      "to": "tobin"
+     },
+     "done": [
+      "Smooth as butter. I'll put in a word with Brannoc for you."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1500,
+    "minecart": 1,
+    "friendship": {
+     "tobin": 100
+    }
+   }
   }
  ],
  "daily": [
@@ -2220,6 +2584,51 @@
    "money_per": 30,
    "requires": {
     "story": "coast"
+   }
+  },
+  {
+   "id": "dig",
+   "title": "Shift work",
+   "text": "Break %d blocks in a mine.",
+   "goal": {
+    "stat": "mined"
+   },
+   "n": [
+    20,
+    80
+   ],
+   "money": 120,
+   "money_per": 6,
+   "requires": {
+    "story": "mountain"
+   }
+  },
+  {
+   "id": "ore_run",
+   "title": "Ore run",
+   "text": "Bring %d %s to %s.",
+   "goal": {
+    "deliver": ""
+   },
+   "n": [
+    5,
+    15
+   ],
+   "money": 150,
+   "money_per": 12,
+   "items": [
+    "copper_ore",
+    "iron_ore",
+    "silver_ore",
+    "coal"
+   ],
+   "to": [
+    "brannoc",
+    "hilde",
+    "tobin"
+   ],
+   "requires": {
+    "story": "mountain"
    }
   }
  ]

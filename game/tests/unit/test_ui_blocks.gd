@@ -68,3 +68,20 @@ func test_tab_bar_steps_and_wraps() -> void:
 	assert_eq(bar.current, "inventory")
 	assert_true(bar.button("inventory").button_pressed)
 	assert_false(bar.button("craft").button_pressed)
+
+func test_tab_bar_compact_keeps_the_open_tab_named() -> void:
+	var bar := IconTabBar.new()
+	add_child_autofree(bar)
+	for id in ["inventory", "party", "craft"]:
+		bar.add_tab(id, id.capitalize(), Art.item("_star"))
+	var wide := bar.full_width()
+	assert_gt(wide, 0.0)
+	bar.select("party")
+	bar.set_compact(true)
+	assert_eq(bar.button("inventory").text, "")
+	assert_ne(bar.button("party").text, "")
+	bar.select("craft")
+	assert_eq(bar.button("party").text, "")
+	assert_ne(bar.button("craft").text, "")
+	bar.set_compact(false)
+	assert_ne(bar.button("inventory").text, "")

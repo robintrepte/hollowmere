@@ -10676,3 +10676,810 @@ msgstr "Deine Angel ist schon die beste, die es gibt."
 msgid "Your rod is now a %s."
 msgstr "Deine Angel ist jetzt eine %s."
 
+#, c-format
+msgid "%d pieces in the collection! The curator hands you a thank-you gift."
+msgstr "%d Stücke in der Sammlung! Der Kurator überreicht dir ein Dankeschön."
+
+#, c-format
+msgid "%s → %s. A full bucket soaks a wider patch of soil."
+msgstr "%s → %s. Ein voller Eimer wässert eine größere Fläche."
+
+#, c-format
+msgid "%s → %s. Breaks rock faster and cracks harder ores and crystals."
+msgstr "%s → %s. Bricht Gestein schneller und knackt härtere Erze und Kristalle."
+
+#, c-format
+msgid "%s → %s. Digs trenches for less energy."
+msgstr "%s → %s. Gräbt Gräben mit weniger Energie."
+
+msgid "A bar of silver. Eisenkamm's smith works it into rails and lamps."
+msgstr "Ein Silberbarren. Die Schmiedin von Eisenkamm macht daraus Schienen und Lampen."
+
+msgid "A feather-light bar that never rusts."
+msgstr "Ein federleichter Barren, der nie rostet."
+
+msgid "A living crystal that hums when you tap it."
+msgstr "Ein lebender Kristall, der summt, wenn man ihn antippt."
+
+msgid "A long eel that dangles a glowing lure into the black water."
+msgstr "Ein langer Aal, der einen leuchtenden Köder ins schwarze Wasser hängen lässt."
+
+msgid "A much bigger blast. Stand well back."
+msgstr "Eine viel größere Explosion. Halte Abstand."
+
+msgid "A pebble of lava that never quite cools down."
+msgstr "Ein Lavakiesel, der nie ganz abkühlt."
+
+msgid "A proper collection"
+msgstr "Eine richtige Sammlung"
+
+msgid "A sleepy mole that sniffs out ore veins with its pink nose."
+msgstr "Ein verschlafener Maulwurf, der mit seiner rosa Nase Erzadern erschnüffelt."
+
+msgid "A small stone Wildling, worn smooth by the deep water."
+msgstr "Ein kleiner Stein-Wildling, vom tiefen Wasser glatt geschliffen."
+
+msgid "A spiral shell turned to stone. The museum would love it."
+msgstr "Eine zu Stein gewordene Spiralmuschel. Das Museum würde sie lieben."
+
+msgid "Abyss King"
+msgstr "Abgrundkönig"
+
+msgid "All aboard"
+msgstr "Alles einsteigen"
+
+msgid "Amber Drop"
+msgstr "Bernsteintropfen"
+
+msgid "Ammonite"
+msgstr "Ammonit"
+
+msgid "An ancient sea bug, perfectly preserved."
+msgstr "Ein uraltes Meerestier, perfekt erhalten."
+
+msgid "Ancient Coin"
+msgstr "Alte Münze"
+
+msgid "Big halls need support beams. The ceiling doesn't forgive."
+msgstr "Große Hallen brauchen Stützbalken. Die Decke verzeiht nichts."
+
+msgid "Brannoc"
+msgstr "Brannoc"
+
+msgid "Brannoc hands you a dented brass lamp."
+msgstr "Brannoc reicht dir eine verbeulte Messinglampe."
+
+msgid "Brannoc is checking the lift ropes."
+msgstr "Brannoc prüft die Seile des Aufzugs."
+
+msgid "Brannoc sent word: the mountain shakes every night now, and the shaking comes from the Magma Depths."
+msgstr "Brannoc lässt ausrichten: Der Berg bebt jetzt jede Nacht, und das Beben kommt aus den Magmatiefen."
+
+msgid "Brannoc stares down the lift shaft."
+msgstr "Brannoc starrt in den Aufzugsschacht."
+
+msgid "Brannoc: Every morning, every rope. That's how you grow old in this job."
+msgstr "Brannoc: Jeden Morgen, jedes Seil. So wird man in diesem Job alt."
+
+msgid "Brannoc: Here. Take a few beams. Use them."
+msgstr "Brannoc: Hier. Nimm ein paar Balken. Benutz sie."
+
+msgid "Brannoc: Lost three friends to a cave-in when I was your age."
+msgstr "Brannoc: Hab in deinem Alter drei Freunde bei einem Einsturz verloren."
+
+msgid "Brannoc: My first helmet lamp. Still burns brighter than anything they sell."
+msgstr "Brannoc: Meine erste Helmlampe. Brennt heller als alles, was man heute kaufen kann."
+
+msgid "Brannoc: That's why I nag. Don't let it go to your head."
+msgstr "Brannoc: Darum meckere ich. Bild dir nichts drauf ein."
+
+msgid "Brannoc: Wear it. Come back up."
+msgstr "Brannoc: Trag sie. Und komm wieder hoch."
+
+#, c-format
+msgid "Break %d blocks in a mine."
+msgstr "Baue %d Blöcke in einer Mine ab."
+
+msgid "Break 50 blocks in a mine."
+msgstr "Baue 50 Blöcke in einer Mine ab."
+
+msgid "Breaks three blocks in a row with one swing. Works with your pickaxe's strength."
+msgstr "Bricht drei Blöcke nebeneinander mit einem Schlag. Arbeitet mit der Stärke deiner Spitzhacke."
+
+msgid "Bring Brannoc 5 Support Beams."
+msgstr "Bring Brannoc 5 Stützbalken."
+
+msgid "Bring Hilde 3 Mithril Bars."
+msgstr "Bring Hilde 3 Mithrilbarren."
+
+msgid "Bring Hilde 5 Silver Bars."
+msgstr "Bring Hilde 5 Silberbarren."
+
+msgid "Bring Tobin 10 Rails."
+msgstr "Bring Tobin 10 Schienen."
+
+msgid "Bring finds from the mines to the museum in the village to put them on display."
+msgstr "Bring Funde aus den Minen ins Museum im Dorf, um sie auszustellen."
+
+msgid "Bring me bars and I'll make your tools sing."
+msgstr "Bring mir Barren, und ich bringe deine Werkzeuge zum Singen."
+
+msgid "Bring me geodes and I'll crack them for you. Small fee, big surprises."
+msgstr "Bring mir Geoden, und ich knacke sie für dich. Kleine Gebühr, große Überraschungen."
+
+msgid "Bring me geodes from the mine and I'll split them for you."
+msgstr "Bring mir Geoden aus der Mine, und ich spalte sie für dich."
+
+msgid "Cherry Bomb"
+msgstr "Kirschbombe"
+
+msgid "Cinderwyrm"
+msgstr "Glutwurm"
+
+msgid "Clay Tunnels"
+msgstr "Lehmgänge"
+
+msgid "Clean pours. You've done this before."
+msgstr "Saubere Güsse. Das hast du nicht zum ersten Mal gemacht."
+
+msgid "Climb back up to Eisenkamm?"
+msgstr "Zurück nach Eisenkamm hochklettern?"
+
+msgid "Climb up"
+msgstr "Hochklettern"
+
+msgid "Come, I'll show you the stars through my telescope."
+msgstr "Komm, ich zeige dir die Sterne durch mein Teleskop."
+
+msgid "Crack 5 geodes at Opal's."
+msgstr "Lass 5 Geoden bei Opal knacken."
+
+#, c-format
+msgid "Crack all %d (%s)"
+msgstr "Alle %d knacken (%s)"
+
+#, c-format
+msgid "Crack one (%s)"
+msgstr "Eine knacken (%s)"
+
+#, c-format
+msgid "Crack! Inside: %s."
+msgstr "Knack! Darin: %s."
+
+msgid "Craft 2 batches of torches."
+msgstr "Crafte 2 Ladungen Fackeln."
+
+msgid "Crystal"
+msgstr "Kristall"
+
+msgid "Crystal Bar"
+msgstr "Kristallbarren"
+
+msgid "Crystal Grottoes"
+msgstr "Kristallgrotten"
+
+msgid "Crystal Sprinkler"
+msgstr "Kristall-Sprinkler"
+
+msgid "Crystals as tall as a house? Grandfather wasn't lying after all."
+msgstr "Kristalle so groß wie ein Haus? Großvater hat also doch nicht gelogen."
+
+msgid "Deep Mine. Five layers down, and nobody has seen the bottom in a hundred years."
+msgstr "Tiefe Mine. Fünf Schichten tief, und seit hundert Jahren hat niemand den Grund gesehen."
+
+msgid "Defeat the beast of the Magma Depths."
+msgstr "Besiege die Bestie der Magmatiefen."
+
+msgid "Dig down to the Magma Depths below Eisenkamm and calm the Cinderwyrm."
+msgstr "Grab dich bis zu den Magmatiefen unter Eisenkamm hinunter und besänftige den Glutwurm."
+
+msgid "Donate finds"
+msgstr "Funde spenden"
+
+msgid "Down the shaft"
+msgstr "Ab in den Schacht"
+
+msgid "Drill"
+msgstr "Bohrer"
+
+msgid "Drillmole"
+msgstr "Bohrwurf"
+
+msgid "Eight cases! I'll have to visit. I never visit anything."
+msgstr "Acht Vitrinen! Da muss ich hin. Ich gehe sonst nie irgendwohin."
+
+msgid "Eisenkamm"
+msgstr "Eisenkamm"
+
+msgid "Eisenkamm Forge"
+msgstr "Schmiede Eisenkamm"
+
+msgid "Eisenkamm. Mind the carts."
+msgstr "Eisenkamm. Vorsicht, Loren."
+
+msgid "Every rock is a story. Most of them are boring stories. Not geodes, though."
+msgstr "Jeder Stein erzählt eine Geschichte. Meistens eine langweilige. Geoden nicht."
+
+msgid "Everyone in town is talking about you. I mean, I am."
+msgstr "Alle im Ort reden über dich. Also, ich jedenfalls."
+
+msgid "Farm"
+msgstr "Hof"
+
+msgid "Feel how light that is? Now imagine it fused with glimmer crystal."
+msgstr "Merkst du, wie leicht das ist? Jetzt stell dir das mit Glimmerkristall verschmolzen vor."
+
+msgid "Fern Fossil"
+msgstr "Farnfossil"
+
+msgid "Fifty! And you came back up. That's the important part."
+msgstr "Fünfzig! Und du bist wieder hochgekommen. Das ist das Wichtigste."
+
+msgid "Fishing"
+msgstr "Angeln"
+
+msgid "Foreman of the Miners' Guild"
+msgstr "Vorarbeiter der Bergmannsgilde"
+
+msgid "Geode"
+msgstr "Geode"
+
+msgid "Geodes! The mine's full of them. Bring me some to crack. Five should show you why I love this job."
+msgstr "Geoden! Die Mine ist voll davon. Bring mir welche zum Knacken. Fünf reichen, damit du siehst, warum ich diesen Job liebe."
+
+msgid "Geologist"
+msgstr "Geologin"
+
+msgid "Gideon says the miners of Eisenkamm have been asking for you. The mountain road leaves the village to the west."
+msgstr "Gideon sagt, die Bergleute von Eisenkamm haben nach dir gefragt. Die Bergstraße führt im Westen aus dem Dorf."
+
+msgid "Glimmer Crystal"
+msgstr "Glimmerkristall"
+
+msgid "Glintbat"
+msgstr "Glitzerfledermaus"
+
+msgid "Gloomwing"
+msgstr "Düsterflügel"
+
+msgid "Golden resin with a tiny bug inside."
+msgstr "Goldenes Harz mit einem winzigen Käfer darin."
+
+msgid "Good timber, good joints. You'll live a long time."
+msgstr "Gutes Holz, gute Verbindungen. Du wirst lange leben."
+
+#, c-format
+msgid "Got geodes? I'll split them for %s apiece. You keep whatever's inside."
+msgstr "Geoden dabei? Ich spalte sie für je %s. Was drin ist, gehört dir."
+
+msgid "Greta in the village taught me. Don't tell her I'm better now."
+msgstr "Greta im Dorf hat es mir beigebracht. Sag ihr nicht, dass ich jetzt besser bin."
+
+msgid "Have 8 finds on display at the museum."
+msgstr "Stelle 8 Funde im Museum aus."
+
+msgid "Hazel's grandchild in my mine? Then you'll go down properly. Torches for the dark, and a ladder so you can find your own way to the next layer."
+msgstr "Hazels Enkelkind in meiner Mine? Dann gehst du richtig runter. Fackeln für die Dunkelheit und eine Leiter, damit du selbst den Weg zur nächsten Schicht findest."
+
+msgid "Hilde"
+msgstr "Hilde"
+
+msgid "Hilde is quenching a glowing blade."
+msgstr "Hilde schreckt eine glühende Klinge ab."
+
+msgid "Hilde is staring at a crystal on her anvil."
+msgstr "Hilde starrt auf einen Kristall auf ihrem Amboss."
+
+msgid "Hilde presses a warm ingot into your hands."
+msgstr "Hilde drückt dir einen warmen Barren in die Hand."
+
+msgid "Hilde: Hear that hiss? That's the sound of it becoming something."
+msgstr "Hilde: Hörst du das Zischen? So klingt es, wenn etwas daraus wird."
+
+msgid "Hilde: It should be yours."
+msgstr "Hilde: Er soll dir gehören."
+
+msgid "Hilde: Mine won't. I just need the right bar."
+msgstr "Hilde: Meins wird das nicht. Ich brauche nur den richtigen Barren."
+
+msgid "Hilde: My first crystal bar that didn't crack."
+msgstr "Hilde: Mein erster Kristallbarren, der nicht gesprungen ist."
+
+msgid "Hilde: My mother forged the first crystal tool in Eisenkamm. It shattered."
+msgstr "Hilde: Meine Mutter hat das erste Kristallwerkzeug in Eisenkamm geschmiedet. Es ist zersprungen."
+
+msgid "Hilde: Take these. Practice bars."
+msgstr "Hilde: Nimm die. Übungsbarren."
+
+msgid "Hold up the sky"
+msgstr "Den Himmel stützen"
+
+msgid "I kept the forge warm in case you came by."
+msgstr "Ich habe die Esse warm gehalten, falls du vorbeikommst."
+
+msgid "I made something for you. No, you can't see it yet."
+msgstr "Ich habe etwas für dich gemacht. Nein, du darfst es noch nicht sehen."
+
+msgid "I named a crystal after you. It's a very nice crystal."
+msgstr "Ich habe einen Kristall nach dir benannt. Ein sehr schöner Kristall."
+
+msgid "I saved the good bombs for you. Don't tell Uncle."
+msgstr "Ich habe die guten Bomben für dich aufgehoben. Sag's nicht Onkel."
+
+msgid "I'd follow you down to the Magma Depths. Probably screaming, but I'd follow."
+msgstr "Ich würde dir bis in die Magmatiefen folgen. Wahrscheinlich schreiend, aber ich würde folgen."
+
+msgid "I'm testing a new torch recipe. Craft a couple of batches and tell me if they burn right?"
+msgstr "Ich teste ein neues Fackelrezept. Craftest du ein paar Ladungen und sagst mir, ob sie richtig brennen?"
+
+msgid "I've studied rocks for fifty years. You're the best thing I've found."
+msgstr "Ich studiere seit fünfzig Jahren Steine. Du bist das Beste, was ich gefunden habe."
+
+msgid "If you ever want my job, it's yours. I'm only half joking."
+msgstr "Wenn du je meinen Job willst, gehört er dir. Das ist nur halb ein Scherz."
+
+msgid "Iron in the Mountain"
+msgstr "Eisen im Berg"
+
+msgid "It hangs from cave ceilings and glitters like a gem."
+msgstr "Er hängt an Höhlendecken und glitzert wie ein Edelstein."
+
+msgid "It hums faintly. Found only in the deepest layers."
+msgstr "Er summt leise. Nur in den tiefsten Schichten zu finden."
+
+msgid "It smashes basalt with molten fists to keep warm."
+msgstr "Er zertrümmert Basalt mit glühenden Fäusten, um warm zu bleiben."
+
+msgid "Its scales grow like tiny crystals. Found only deep below Eisenkamm."
+msgstr "Seine Schuppen wachsen wie winzige Kristalle. Nur tief unter Eisenkamm zu finden."
+
+msgid "Its spinning claws bore through solid rock in seconds."
+msgstr "Seine rotierenden Krallen bohren sich in Sekunden durch massiven Fels."
+
+msgid "Its wings scatter crystal dust that lights up the dark."
+msgstr "Seine Flügel verstreuen Kristallstaub, der die Dunkelheit erhellt."
+
+msgid "Keep it in your pack: its lamp lights up much more of the dark."
+msgstr "Behalte ihn im Rucksack: Seine Lampe erhellt viel mehr von der Dunkelheit."
+
+msgid "Keeps the ceiling up. Stops cave-ins in big halls nearby."
+msgstr "Hält die Decke. Verhindert Einstürze in großen Hallen in der Nähe."
+
+msgid "Lantern Eel"
+msgstr "Laternenaal"
+
+msgid "Lay it in a mine. You move much faster along rails."
+msgstr "Leg sie in einer Mine aus. Auf Schienen kommst du viel schneller voran."
+
+#, c-format
+msgid "Layer %d: %s"
+msgstr "Schicht %d: %s"
+
+msgid "Leave"
+msgstr "Gehen"
+
+msgid "Light passes through its body and comes out as music."
+msgstr "Licht fällt durch seinen Körper und kommt als Musik heraus."
+
+msgid "Light the way"
+msgstr "Den Weg erleuchten"
+
+msgid "Light your way. The dark down there is thicker than it looks."
+msgstr "Erleuchte deinen Weg. Die Dunkelheit da unten ist dichter, als sie aussieht."
+
+msgid "Light, cold ore from below the Sunken Lake."
+msgstr "Leichtes, kaltes Erz von unterhalb des Versunkenen Sees."
+
+msgid "Magma Depths"
+msgstr "Magmatiefen"
+
+msgid "Magmaul"
+msgstr "Magmaul"
+
+msgid "Magmite"
+msgstr "Magmit"
+
+msgid "Mega Bomb"
+msgstr "Megabombe"
+
+msgid "Mine Ladder"
+msgstr "Minenleiter"
+
+msgid "Minecart"
+msgstr "Lore"
+
+msgid "Miner's Helmet"
+msgstr "Grubenhelm"
+
+msgid "Mining"
+msgstr "Bergbau"
+
+msgid "Minted by miners who lived here long before Eisenkamm."
+msgstr "Geprägt von Bergleuten, die lange vor Eisenkamm hier lebten."
+
+msgid "Mithril Bar"
+msgstr "Mithrilbarren"
+
+msgid "Mithril Ore"
+msgstr "Mithrilerz"
+
+msgid "Mithril fused with glimmer crystal. The finest tools are made from it."
+msgstr "Mithril, verschmolzen mit Glimmerkristall. Daraus werden die besten Werkzeuge gemacht."
+
+msgid "Mithril. Below the Sunken Lake. Bring me three bars and I'll show you what crystal tools look like."
+msgstr "Mithril. Unterhalb des Versunkenen Sees. Bring mir drei Barren, und ich zeige dir, wie Kristallwerkzeuge aussehen."
+
+msgid "Moleup"
+msgstr "Maulwurfel"
+
+msgid "Museum"
+msgstr "Museum"
+
+msgid "My father ran this guild. His father too. Iron in the blood."
+msgstr "Mein Vater hat diese Gilde geführt. Sein Vater auch. Eisen im Blut."
+
+msgid "New faces go down with a pick and a torch. Break fifty blocks in the Clay Tunnels and come tell me how it went."
+msgstr "Neue Gesichter gehen mit Hacke und Fackel runter. Bau fünfzig Blöcke in den Lehmgängen ab und erzähl mir, wie es lief."
+
+#, c-format
+msgid "New layer: %s. The lift can take you here now."
+msgstr "Neue Schicht: %s. Der Aufzug bringt dich jetzt hierher."
+
+#, c-format
+msgid "Next down: %s. You'll want a %s pickaxe for that rock."
+msgstr "Als Nächstes: %s. Für dieses Gestein brauchst du eine Spitzhacke (%s)."
+
+#, c-format
+msgid "Next gift from the curator at %d pieces"
+msgstr "Nächstes Geschenk des Kurators bei %d Stücken"
+
+msgid "Nobody's mapped the Crystal Grottoes since my grandfather. Get down there for me."
+msgstr "Seit meinem Großvater hat niemand die Kristallgrotten kartiert. Geh für mich da runter."
+
+msgid "Not donated yet"
+msgstr "Noch nicht gespendet"
+
+msgid "Nothing matches."
+msgstr "Keine Treffer."
+
+msgid "Nothing new for the collection today."
+msgstr "Heute nichts Neues für die Sammlung."
+
+msgid "Obsidian"
+msgstr "Obsidian"
+
+#, c-format
+msgid "On display %d of %d"
+msgstr "Ausgestellt: %d von %d"
+
+msgid "Opal"
+msgstr "Opal"
+
+msgid "Opal hands you a velvet pouch."
+msgstr "Opal reicht dir einen Samtbeutel."
+
+msgid "Opal is peering at a stone through a loupe."
+msgstr "Opal betrachtet einen Stein durch eine Lupe."
+
+msgid "Opal is sitting on the roof with her telescope."
+msgstr "Opal sitzt mit ihrem Teleskop auf dem Dach."
+
+msgid "Opal's Finds"
+msgstr "Opals Funde"
+
+msgid "Opal: A glimmer crystal. I found it the year I came to Eisenkamm."
+msgstr "Opal: Ein Glimmerkristall. Ich habe ihn in dem Jahr gefunden, als ich nach Eisenkamm kam."
+
+msgid "Opal: An ammonite! Look at the spiral. Perfect."
+msgstr "Opal: Ein Ammonit! Sieh dir die Spirale an. Perfekt."
+
+msgid "Opal: It wants to be with someone who goes deep."
+msgstr "Opal: Er will bei jemandem sein, der tief hinabsteigt."
+
+msgid "Opal: My husband used to say that. He was wrong, but I liked it."
+msgstr "Opal: Das hat mein Mann immer gesagt. Er lag falsch, aber ich mochte es."
+
+msgid "Opal: Stars are just very far-away rocks, you know."
+msgstr "Opal: Sterne sind nur sehr weit entfernte Steine, weißt du."
+
+msgid "Opal: You keep this one. I have three."
+msgstr "Opal: Den behältst du. Ich habe drei."
+
+msgid "Ore run"
+msgstr "Erzlieferung"
+
+msgid "Place it in a mine as a wall, or drop it into water or lava to fill it."
+msgstr "Setz ihn in einer Mine als Wand oder wirf ihn in Wasser oder Lava, um es aufzufüllen."
+
+msgid "Place it in a mine to light the dark."
+msgstr "Stell sie in einer Mine auf, um die Dunkelheit zu erhellen."
+
+msgid "Place it in a mine. Hop in to ride back to the layer's lift."
+msgstr "Stell sie in einer Mine auf. Steig ein, um zum Aufzug der Schicht zurückzufahren."
+
+msgid "Place it in the Deep Mine to dig a way down to the next layer."
+msgstr "Stell sie in der Tiefen Mine auf, um dir einen Weg zur nächsten Schicht zu graben."
+
+msgid "Plain on the outside. The Eisenkamm geologist splits them for a small fee."
+msgstr "Außen unscheinbar. Die Geologin in Eisenkamm spaltet sie gegen eine kleine Gebühr."
+
+msgid "Prismarch"
+msgstr "Prismarch"
+
+msgid "Prismite"
+msgstr "Prismit"
+
+msgid "Quartz Carp"
+msgstr "Quarzkarpfen"
+
+msgid "Rail"
+msgstr "Schiene"
+
+msgid "Rails make the long walk back a lot shorter. Just saying."
+msgstr "Schienen machen den langen Rückweg viel kürzer. Nur so als Tipp."
+
+msgid "Rails make the long walk back so much shorter. Lay some down in the deep mine, then let me know how the cart rides!"
+msgstr "Schienen machen den langen Rückweg so viel kürzer. Leg welche in der Tiefen Mine aus und sag mir, wie die Lore fährt!"
+
+#, c-format
+msgid "Reach the %s"
+msgstr "Erreiche: %s"
+
+msgid "Reach the Crystal Grottoes (layer 3)."
+msgstr "Erreiche die Kristallgrotten (Schicht 3)."
+
+msgid "Reach the Magma Depths (layer 5)."
+msgstr "Erreiche die Magmatiefen (Schicht 5)."
+
+msgid "Reach the Stone Halls (layer 2)."
+msgstr "Erreiche die Steinhallen (Schicht 2)."
+
+msgid "Report to Brannoc."
+msgstr "Melde dich bei Brannoc."
+
+msgid "Return to Brannoc."
+msgstr "Kehre zu Brannoc zurück."
+
+msgid "Runs the Mine Supply"
+msgstr "Führt den Minenbedarf"
+
+msgid "Search…"
+msgstr "Suchen…"
+
+msgid "See? Every one a little surprise."
+msgstr "Siehst du? Jede eine kleine Überraschung."
+
+msgid "Shift work"
+msgstr "Schichtarbeit"
+
+msgid "Silver Bar"
+msgstr "Silberbarren"
+
+msgid "Silver Ore"
+msgstr "Silbererz"
+
+msgid "Silver's in the Stone Halls. I need five bars for a commission. Smelt them yourself, I'm busy."
+msgstr "Silber gibt's in den Steinhallen. Ich brauche fünf Barren für einen Auftrag. Schmilz sie selbst, ich hab zu tun."
+
+msgid "Silver's soft, mithril's stubborn, crystal's alive. You learn to listen."
+msgstr "Silber ist weich, Mithril stur, Kristall lebendig. Man lernt zuzuhören."
+
+msgid "Smelt into silver bars. Common in the Stone Halls."
+msgstr "Wird zu Silberbarren geschmolzen. Häufig in den Steinhallen."
+
+msgid "Smith of Eisenkamm"
+msgstr "Schmiedin von Eisenkamm"
+
+msgid "Smooth as butter. I'll put in a word with Brannoc for you."
+msgstr "Läuft wie geschmiert. Ich lege bei Brannoc ein gutes Wort für dich ein."
+
+msgid "Soft metal"
+msgstr "Weiches Metall"
+
+msgid "Stay a while. The forge is warmest at night."
+msgstr "Bleib ein bisschen. Nachts ist die Esse am wärmsten."
+
+msgid "Stone Block"
+msgstr "Steinblock"
+
+msgid "Stone Halls"
+msgstr "Steinhallen"
+
+msgid "Sunken Idol"
+msgstr "Versunkenes Idol"
+
+msgid "Sunken Lake"
+msgstr "Versunkener See"
+
+msgid "Support Beam"
+msgstr "Stützbalken"
+
+msgid "Take the mountain road (west of the village) to Eisenkamm and dig down to the Stone Halls."
+msgstr "Nimm die Bergstraße (westlich vom Dorf) nach Eisenkamm und grab dich bis zu den Steinhallen hinunter."
+
+msgid "Tell Brannoc what you saw."
+msgstr "Erzähl Brannoc, was du gesehen hast."
+
+msgid "Tell Opal."
+msgstr "Sag Opal Bescheid."
+
+msgid "Tell Tobin."
+msgstr "Sag Tobin Bescheid."
+
+msgid "That fossil you found? Older than the mountain. Think about that."
+msgstr "Das Fossil, das du gefunden hast? Älter als der Berg. Denk mal drüber nach."
+
+msgid "That only works down in a mine."
+msgstr "Das geht nur unten in einer Mine."
+
+msgid "The Deep Mine has five layers. Each one needs a harder pickaxe than the last."
+msgstr "Die Tiefe Mine hat fünf Schichten. Jede braucht eine härtere Spitzhacke als die davor."
+
+msgid "The Heart of the Mountain"
+msgstr "Das Herz des Berges"
+
+msgid "The Magma Depths shake every night. Something lives down there, and it's angry. Find it. Calm it."
+msgstr "Die Magmatiefen beben jede Nacht. Da unten lebt etwas, und es ist wütend. Finde es. Besänftige es."
+
+#, c-format
+msgid "The Miners' Guild ledger: %d blocks broken, deepest layer %d of %d."
+msgstr "Buch der Bergmannsgilde: %d Blöcke abgebaut, tiefste Schicht %d von %d."
+
+msgid "The ceiling crumbles! Support beams keep big halls stable."
+msgstr "Die Decke bröckelt! Stützbalken halten große Hallen stabil."
+
+#, c-format
+msgid "The curator beams. New on display: %s."
+msgstr "Der Kurator strahlt. Neu ausgestellt: %s."
+
+msgid "The glittering dark"
+msgstr "Die glitzernde Dunkelheit"
+
+msgid "The guild talks about you. That's a compliment, mostly."
+msgstr "Die Gilde redet über dich. Meistens ist das ein Kompliment."
+
+msgid "The halls below get big. Big halls fall in. Bring me five support beams so I know you can make them."
+msgstr "Die Hallen da unten werden groß. Große Hallen stürzen ein. Bring mir fünf Stützbalken, damit ich weiß, dass du welche bauen kannst."
+
+msgid "The heart of the mountain"
+msgstr "Das Herz des Berges"
+
+msgid "The lift creaks. Where to?"
+msgstr "Der Aufzug knarrt. Wohin?"
+
+msgid "The lift doesn't go that deep yet."
+msgstr "So tief fährt der Aufzug noch nicht."
+
+msgid "The lord of the Sunken Lake. Miners say it has never seen the sun."
+msgstr "Der Herrscher des Versunkenen Sees. Bergleute sagen, er hat nie die Sonne gesehen."
+
+#, c-format
+msgid "The magma stills. Deep below Eisenkamm, the mountain finally rests. (+%s, 3 Glimmer Crystals, 2 Crystal Bars)"
+msgstr "Das Magma kommt zur Ruhe. Tief unter Eisenkamm schläft der Berg endlich. (+%s, 3 Glimmerkristalle, 2 Kristallbarren)"
+
+msgid "The mountain trusts you. So do I."
+msgstr "Der Berg vertraut dir. Ich auch."
+
+msgid "The mountain's quiet. First time in my life. Thank you."
+msgstr "Der Berg ist still. Zum ersten Mal in meinem Leben. Danke."
+
+msgid "The museum in the village has empty cases. That's a crime. Donate eight minerals or fossils."
+msgstr "Das Museum im Dorf hat leere Vitrinen. Das ist ein Verbrechen. Spende acht Mineralien oder Fossilien."
+
+msgid "The museum in the village takes donations. Give them your best finds."
+msgstr "Das Museum im Dorf nimmt Spenden an. Gib ihnen deine besten Funde."
+
+msgid "The old miners call it the Cinderwyrm. Hazel sang it to sleep once. Now it's your turn."
+msgstr "Die alten Bergleute nennen ihn den Glutwurm. Hazel hat ihn einst in den Schlaf gesungen. Jetzt bist du dran."
+
+msgid "The print of a fern older than the valley."
+msgstr "Der Abdruck eines Farns, älter als das Tal."
+
+#, c-format
+msgid "The rock below is too hard. Bring a %s pickaxe."
+msgstr "Das Gestein darunter ist zu hart. Bring eine Spitzhacke der Stufe %s."
+
+msgid "The serpent at the mountain's heart. While it sleeps, the magma stays still."
+msgstr "Die Schlange im Herzen des Berges. Solange sie schläft, bleibt das Magma ruhig."
+
+msgid "The stubborn metal"
+msgstr "Das sture Metall"
+
+msgid "Their Deep Mine goes down five layers. Hazel helped them dig the first one. Go and see how far you get."
+msgstr "Ihre Tiefe Mine reicht fünf Schichten hinab. Hazel hat ihnen geholfen, die erste zu graben. Sieh nach, wie weit du kommst."
+
+msgid "There's nothing below to climb down to."
+msgstr "Darunter gibt es nichts, wohin du klettern könntest."
+
+msgid "They burn! Mostly. Thanks for testing."
+msgstr "Sie brennen! Meistens. Danke fürs Testen."
+
+msgid "Tobin"
+msgstr "Tobin"
+
+msgid "Tobin hands you a tiny carved minecart."
+msgstr "Tobin reicht dir eine kleine geschnitzte Lore."
+
+msgid "Tobin is juggling three cherry bombs."
+msgstr "Tobin jongliert mit drei Kirschbomben."
+
+msgid "Tobin is restocking shelves, humming."
+msgstr "Tobin füllt summend die Regale auf."
+
+msgid "Tobin's Mine Supply"
+msgstr "Tobins Minenbedarf"
+
+msgid "Tobin: Here, have a couple. Safely."
+msgstr "Tobin: Hier, nimm ein paar. Vorsichtig."
+
+msgid "Tobin: Made it myself. It even rolls."
+msgstr "Tobin: Selbst gemacht. Sie rollt sogar."
+
+msgid "Tobin: My parents wanted me in the mine. I wanted to run the shop."
+msgstr "Tobin: Meine Eltern wollten mich in der Mine sehen. Ich wollte den Shop führen."
+
+msgid "Tobin: So you always find your way back."
+msgstr "Tobin: Damit du immer den Weg zurück findest."
+
+msgid "Tobin: They're not lit! Probably."
+msgstr "Tobin: Die sind nicht angezündet! Wahrscheinlich."
+
+msgid "Tobin: Uncle Brannoc took me in when they moved away. I owe him."
+msgstr "Tobin: Onkel Brannoc hat mich aufgenommen, als sie weggezogen sind. Ich schulde ihm was."
+
+#, c-format
+msgid "Too hard for your pickaxe. It needs %s or better."
+msgstr "Zu hart für deine Spitzhacke. Nötig ist mindestens %s."
+
+msgid "Torch"
+msgstr "Fackel"
+
+msgid "Torches, ladders, beams, bombs. If it helps you dig, I sell it."
+msgstr "Fackeln, Leitern, Balken, Bomben. Wenn's beim Graben hilft, verkaufe ich es."
+
+msgid "Trilobite"
+msgstr "Trilobit"
+
+msgid "Uncle Brannoc says I talk too much. He's not wrong."
+msgstr "Onkel Brannoc sagt, ich rede zu viel. Er hat nicht unrecht."
+
+msgid "Use it in a mine to blast the rock around a tile."
+msgstr "Benutze sie in einer Mine, um das Gestein um ein Feld herum wegzusprengen."
+
+msgid "Volcanic glass from the Magma Depths."
+msgstr "Vulkanglas aus den Magmatiefen."
+
+msgid "Waters a 7x7 area every morning."
+msgstr "Bewässert jeden Morgen eine 7×7-Fläche."
+
+msgid "West: the mountain road to Eisenkamm, the miners' town."
+msgstr "Westen: die Bergstraße nach Eisenkamm, der Bergbaustadt."
+
+msgid "What's inside?"
+msgstr "Was ist drin?"
+
+#, c-format
+msgid "Wildlings recorded: %d / %d. Minerals and fossils on display: %d / %d."
+msgstr "Erfasste Wildlings: %d / %d. Ausgestellte Mineralien und Fossilien: %d / %d."
+
+msgid "You don't have any geodes."
+msgstr "Du hast keine Geoden."
+
+msgid "You have a good eye. For a farmer."
+msgstr "Du hast ein gutes Auge. Für einen Bauern."
+
+msgid "You make this little town feel big."
+msgstr "Mit dir fühlt sich dieser kleine Ort groß an."
+
+msgid "You swing that pick like you mean it. Good."
+msgstr "Du schwingst die Hacke, als meintest du es ernst. Gut."
+
+msgid "You went down to the Stone Halls already? Respect."
+msgstr "Du warst schon unten in den Steinhallen? Respekt."
+
+msgid "You're the only one who brings me interesting ore."
+msgstr "Du bist der Einzige, der mir interessantes Erz bringt."
+
+msgid "Your pickaxe looks tired. Let me see it."
+msgstr "Deine Spitzhacke sieht müde aus. Lass mal sehen."
+

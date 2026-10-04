@@ -39,7 +39,7 @@ func test_fish_data_is_complete() -> void:
 		if Fishing.habitat_text(id) == "":
 			problems.append("%s: habitat" % id)
 	assert_eq(problems, [])
-	assert_eq(Data.fish.values().filter(func(f): return f.get("legendary", false)).size(), 5)
+	assert_eq(Data.fish.values().filter(func(f): return f.get("legendary", false)).size(), 6)
 	for e in Data.fish_meta.junk + Data.fish_meta.treasure:
 		assert_true(Data.items.has(str(e[0])), "loot item %s" % e[0])
 	for kind in Data.fish_meta.wildlings:

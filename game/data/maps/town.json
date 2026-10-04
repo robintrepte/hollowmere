@@ -28,6 +28,8 @@
     ["scatter", "tree", 1, 1, 6, 4, 0.2, 32],
     ["scatter", "tree", 1, 29, 20, 4, 0.12, 33],
     ["scatter", "bush", 1, 1, 46, 32, 0.015, 34],
+    ["rect", "path", 0, 6, 2, 2],
+    ["rect", "path", 1, 8, 1, 8],
     ["clearpath"]
   ],
   "warps": [
@@ -35,6 +37,7 @@
     {"x": 23, "y": 0, "w": 2, "h": 1, "to": "whisperwood", "tx": 1, "ty": 17, "requires": "region:whisperwood"},
     {"x": 47, "y": 16, "w": 1, "h": 2, "to": "tidecove", "tx": 1, "ty": 17, "requires": "region:tidecove"},
     {"x": 47, "y": 27, "w": 1, "h": 2, "to": "gull_bay", "tx": 1, "ty": 16, "requires": "story:coast"},
+    {"x": 0, "y": 6, "w": 1, "h": 2, "to": "eisenkamm", "tx": 46, "ty": 26, "requires": "story:mountain"},
     {"x": 23, "y": 33, "w": 2, "h": 1, "to": "meadow", "tx": 1, "ty": 17}
   ],
   "objects": [
@@ -55,7 +58,8 @@
     {"type": "sign", "x": 25, "y": 32, "text": "South: Hollow Meadow. Wild Wildlings live here!"},
     {"type": "sign", "x": 25, "y": 1, "text": "North: Whisperwood. Restore the Grove Shrine there."},
     {"type": "sign", "x": 46, "y": 15, "text": "East: Tidecove."},
-    {"type": "sign", "x": 45, "y": 26, "text": "East: Gull Bay, the fishing harbor."}
+    {"type": "sign", "x": 45, "y": 26, "text": "East: Gull Bay, the fishing harbor."},
+    {"type": "sign", "x": 2, "y": 5, "text": "West: the mountain road to Eisenkamm, the miners' town."}
   ],
   "spawn": [2, 16]
 }

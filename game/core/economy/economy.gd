@@ -16,6 +16,10 @@ static func meets(req: String, ctx: Dictionary) -> bool:
 			return int(ctx.get("hearts", {}).get(parts[1], 0)) >= int(parts[2])
 		"fish":
 			return int(ctx.get("fish", 0)) >= int(parts[1])
+		"depth":
+			return int(ctx.get("depth", 0)) >= int(parts[1])
+		"story":
+			return int(ctx.get("quest", 0)) >= Adventure.chapter_index(parts[1])
 	return req in ctx.get("buildings", [])
 
 static func req_text(req: String) -> String:
@@ -29,6 +33,8 @@ static func req_text(req: String) -> String:
 			return str(TranslationServer.translate("%d hearts with %s")) % [int(parts[2]), Data.villager_name(parts[1])]
 		"fish":
 			return str(TranslationServer.translate("Catch %d kinds of fish")) % int(parts[1])
+		"depth":
+			return str(TranslationServer.translate("Reach the %s")) % TranslationServer.translate(str(Mining.layer_spec(int(parts[1])).get("name", "Deep Mine")))
 		"story":
 			var ci := Adventure.chapter_index(parts[1])
 			var chs := Adventure.chapters()

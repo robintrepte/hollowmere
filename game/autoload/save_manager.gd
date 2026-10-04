@@ -193,7 +193,7 @@ func delete_slot(slot: int) -> void:
 ## Upgrades older save formats in place, one version step at a time.
 func migrate(d: Dictionary) -> Dictionary:
 	var v: int = int(d.get("version", 0))
-	var steps := [_migrate_0_to_1, _migrate_1_to_2, _migrate_2_to_3, _migrate_3_to_4]
+	var steps := [_migrate_0_to_1, _migrate_1_to_2, _migrate_2_to_3, _migrate_3_to_4, _migrate_4_to_5]
 	while v < GameState.SAVE_VERSION and v < steps.size():
 		steps[v].call(d.state)
 		v += 1
@@ -270,6 +270,15 @@ func _migrate_3_to_4(state: Dictionary) -> void:
 	var w: Dictionary = state.world
 	if int(w.get("quest", 0)) >= 4:
 		w["quest"] = int(w.quest) + 1
+
+## The mountain chapter (Eisenkamm) was added after "The Deep Stones".
+func _migrate_4_to_5(state: Dictionary) -> void:
+	var w: Dictionary = state.world
+	var q := int(w.get("quest", 0))
+	if q >= 12:
+		w["quest"] = q + 2
+	elif q >= 8:
+		w["quest"] = q + 1
 
 ## Cloud copies carry the state gzipped and base64-encoded under "z" to stay far below the server limit.
 static func pack_cloud(payload: Dictionary) -> Dictionary:

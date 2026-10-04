@@ -757,6 +757,88 @@
    "desc": "Lights up the dark water of the deep caves.",
    "min_floor": 7
   },
+  "quartz_carp": {
+   "name": "Quartz Carp",
+   "where": [
+    "mine"
+   ],
+   "maps": [
+    "deep"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 18,
+   "diff": 60,
+   "move": "smooth",
+   "size": [
+    25,
+    55
+   ],
+   "price": 320,
+   "desc": "Its scales grow like tiny crystals. Found only deep below Eisenkamm.",
+   "min_floor": 10
+  },
+  "lantern_eel": {
+   "name": "Lantern Eel",
+   "where": [
+    "mine"
+   ],
+   "maps": [
+    "deep"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 10,
+   "diff": 80,
+   "move": "dart",
+   "size": [
+    60,
+    140
+   ],
+   "price": 520,
+   "desc": "A long eel that dangles a glowing lure into the black water.",
+   "min_floor": 15
+  },
+  "abyss_king": {
+   "name": "Abyss King",
+   "where": [
+    "mine"
+   ],
+   "maps": [
+    "deep"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 2,
+   "diff": 95,
+   "move": "mixed",
+   "size": [
+    120,
+    220
+   ],
+   "price": 4000,
+   "desc": "The lord of the Sunken Lake. Miners say it has never seen the sun.",
+   "min_floor": 20,
+   "legendary": true
+  },
   "crystal_carp": {
    "name": "Crystal Carp",
    "where": [

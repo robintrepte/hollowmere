@@ -21,6 +21,8 @@ const RETURN_POINTS := {
 static func build(map_id: String, world_seed: int) -> Dictionary:
 	if Data.regions.has(map_id):
 		return build_region(map_id, world_seed)
+	if map_id.begins_with("deep:"):
+		return Mining.build_layer(Mining.layer_of(map_id), world_seed)
 	if map_id.begins_with("mine:"):
 		var parts := map_id.split(":")
 		return build_mine(parts[1], int(parts[2]), world_seed, int(parts[3]) if parts.size() > 3 else 0)
@@ -381,13 +383,17 @@ static func build_mine(region_id: String, floor_n: int, world_seed: int, day_ind
 	var ore_types := {}
 	var ores: Array = mine.ores
 	var depth_bonus := float(floor_n) / 30.0
+	var rock := _mine_rock(int(r.order), floor_n)
 	for i in solid.size():
 		var cell := Vector2i(i % g.w, int(i / g.w))
 		if solid[i] == 1:
-			g.deco[i] = Tiles.DECO.cavewall
+			if cell.x == 0 or cell.y == 0 or cell.x == g.w - 1 or cell.y == g.h - 1:
+				g.deco[i] = Tiles.DECO.cavewall
+			else:
+				g.deco[i] = rock[0] if rng.randf() < 0.7 else rock[1]
 		elif cell.distance_to(entry) > 2.5 and cell.distance_to(ladder) > 1.5:
 			var roll := rng.randf()
-			if roll < 0.06 + depth_bonus * 0.05:
+			if roll < 0.03 + depth_bonus * 0.03:
 				g.deco[i] = Tiles.DECO.ore
 				var idx_o := mini(ores.size() - 1, int(pow(rng.randf(), 1.6 - minf(depth_bonus, 1.0)) * ores.size()))
 				ore_types[Tiles.key(cell)] = ores[idx_o]
@@ -395,6 +401,7 @@ static func build_mine(region_id: String, floor_n: int, world_seed: int, day_ind
 				g.deco[i] = Tiles.DECO.rock
 	if floor_n % 5 == 0 or rng.randf() < 0.3:
 		_cave_lake(g, rng, entry, ladder)
+	_mine_veins(g, rng, ores, depth_bonus, ore_types)
 	g.set_deco(entry, Tiles.DECO.ladder_up)
 	var objects: Array = []
 	var bottom := Adventure.is_bottom(region_id, floor_n)
@@ -419,11 +426,43 @@ static func build_mine(region_id: String, floor_n: int, world_seed: int, day_ind
 		"bottom": bottom,
 	}
 
+## Breakable rock for a regional mine: softer near the village, harder in later regions and deeper floors.
+static func _mine_rock(order: int, floor_n: int) -> Array:
+	var tier := order / 2 + floor_n / 10
+	match clampi(tier, 0, 3):
+		0:
+			return [Tiles.DECO.stoneblock, Tiles.DECO.dirtblock]
+		1:
+			return [Tiles.DECO.stoneblock, Tiles.DECO.deepstone]
+		2:
+			return [Tiles.DECO.deepstone, Tiles.DECO.stoneblock]
+	return [Tiles.DECO.deepstone, Tiles.DECO.basalt]
+
+## Ore and gems show up as veins in the walls, mostly where the rock meets the open floor.
+static func _mine_veins(g: FarmGrid, rng: RandomNumberGenerator, ores: Array, depth_bonus: float, ore_types: Dictionary) -> void:
+	var minable: Array = []
+	for o in ores:
+		if Mining.ORES.has(o):
+			minable.append(o)
+	if minable.is_empty():
+		return
+	for y in range(1, g.h - 1):
+		for x in range(1, g.w - 1):
+			var p := Vector2i(x, y)
+			var d := g.get_deco(p)
+			if not d in [Tiles.DECO.stoneblock, Tiles.DECO.dirtblock, Tiles.DECO.deepstone, Tiles.DECO.basalt]:
+				continue
+			if not Mining._touches_open(g, p) or rng.randf() > 0.07 + depth_bonus * 0.04:
+				continue
+			var o: String = minable[mini(minable.size() - 1, int(pow(rng.randf(), 1.6 - minf(depth_bonus, 1.0)) * minable.size()))]
+			g.set_deco(p, Tiles.DECO.vein)
+			ore_types[Tiles.key(p)] = o
+
 ## Floods a pocket of cave wall next to open floor, so the paths through the floor stay as they were.
 static func _cave_lake(g: FarmGrid, rng: RandomNumberGenerator, entry: Vector2i, ladder: Vector2i) -> void:
 	for tries in 40:
 		var c := Vector2i(rng.randi_range(3, g.w - 4), rng.randi_range(3, g.h - 4))
-		if g.get_deco(c) != Tiles.DECO.cavewall or c.distance_to(entry) < 5.0 or c.distance_to(ladder) < 4.0:
+		if not Mining.BLOCKS.has(g.get_deco(c)) or c.distance_to(entry) < 5.0 or c.distance_to(ladder) < 4.0:
 			continue
 		var opens := false
 		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
@@ -436,7 +475,7 @@ static func _cave_lake(g: FarmGrid, rng: RandomNumberGenerator, entry: Vector2i,
 				var p := Vector2i(x, y)
 				if x <= 0 or y <= 0 or x >= g.w - 1 or y >= g.h - 1 or Vector2(p - c).length() > 2.3:
 					continue
-				if g.get_deco(p) == Tiles.DECO.cavewall:
+				if Mining.BLOCKS.has(g.get_deco(p)):
 					g.set_deco(p, 0)
 					g.ground[g.idx(p)] = Tiles.GROUND.water
 		return

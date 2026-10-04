@@ -396,5 +396,83 @@
       "8": ["Wren hands you a shell on a string.", "Wren: I found it the day you first came to the bay.", "Wren: Keep it. So you always come back."]
     },
     "event_rewards": {"2": {"wild_bait": 10}, "8": {"aquamarine": 1}}
+    },
+  "brannoc": {
+    "name": "Brannoc", "role": "Foreman of the Miners' Guild", "romance": false, "birthday": ["fall", 9],
+    "look": {"skin": "#c89070", "hair": "#6a6a70", "shirt": "#5a4a3a"},
+    "loves": ["mithril_bar", "spicy_curry", "ancient_coin"], "likes": ["coal", "iron_bar", "farmer_lunch", "hot_pepper"], "dislikes": ["tulip", "frost_sorbet"],
+    "schedule": [[600, "eisenkamm", 23, 8], [1100, "eisenkamm", 11, 12], [1600, "eisenkamm", 20, 15], [2000, "eisenkamm", 12, 11]],
+    "first_gift": {"torch": 10, "mine_ladder": 1},
+    "first_gift_line": "Hazel's grandchild in my mine? Then you'll go down properly. Torches for the dark, and a ladder so you can find your own way to the next layer.",
+    "lines": {
+      "0": ["The Deep Mine has five layers. Each one needs a harder pickaxe than the last.", "Light your way. The dark down there is thicker than it looks."],
+      "3": ["You swing that pick like you mean it. Good.", "Big halls need support beams. The ceiling doesn't forgive."],
+      "6": ["The guild talks about you. That's a compliment, mostly.", "My father ran this guild. His father too. Iron in the blood."],
+      "9": ["If you ever want my job, it's yours. I'm only half joking.", "The mountain trusts you. So do I."]
+    },
+    "season": {"spring": "Spring melt floods the upper tunnels. Watch your boots.", "summer": "Summer's cool down there. Best place in the valley.", "fall": "Fall is when the carts run day and night.", "winter": "Winter or not, the mine's the same. That's why I love it."},
+    "events": {
+      "2": ["Brannoc is checking the lift ropes.", "Brannoc: Every morning, every rope. That's how you grow old in this job.", "Brannoc: Here. Take a few beams. Use them."],
+      "5": ["Brannoc stares down the lift shaft.", "Brannoc: Lost three friends to a cave-in when I was your age.", "Brannoc: That's why I nag. Don't let it go to your head."],
+      "8": ["Brannoc hands you a dented brass lamp.", "Brannoc: My first helmet lamp. Still burns brighter than anything they sell.", "Brannoc: Wear it. Come back up."]
+    },
+    "event_rewards": {"2": {"support_beam": 5}, "8": {"miners_helmet": 1}}
+  },
+  "hilde": {
+    "name": "Hilde", "role": "Smith of Eisenkamm", "romance": true, "birthday": ["winter", 4],
+    "look": {"skin": "#e0b090", "hair": "#d08030", "shirt": "#3a3a4a"},
+    "loves": ["gold_bar", "ruby", "spicy_curry"], "likes": ["iron_bar", "silver_bar", "coal", "hearty_pancakes"], "dislikes": ["clay", "sea_cucumber"],
+    "schedule": [[600, "eisenkamm", 37, 22], [1200, "eisenkamm", 26, 18], [1800, "eisenkamm", 37, 22], [2100, "eisenkamm", 30, 15]],
+    "lines": {
+      "0": ["Greta in the village taught me. Don't tell her I'm better now.", "Bring me bars and I'll make your tools sing."],
+      "3": ["Silver's soft, mithril's stubborn, crystal's alive. You learn to listen.", "Your pickaxe looks tired. Let me see it."],
+      "6": ["I kept the forge warm in case you came by.", "You're the only one who brings me interesting ore."],
+      "9": ["I made something for you. No, you can't see it yet.", "Stay a while. The forge is warmest at night."]
+    },
+    "season": {"spring": "Spring is for fixing what winter broke.", "summer": "Summer at the forge is a special kind of hot.", "fall": "Fall orders pile up. Everyone wants new tools for winter.", "winter": "Winter's my season. Best place to be is right here."},
+    "events": {
+      "2": ["Hilde is quenching a glowing blade.", "Hilde: Hear that hiss? That's the sound of it becoming something.", "Hilde: Take these. Practice bars."],
+      "5": ["Hilde is staring at a crystal on her anvil.", "Hilde: My mother forged the first crystal tool in Eisenkamm. It shattered.", "Hilde: Mine won't. I just need the right bar."],
+      "8": ["Hilde presses a warm ingot into your hands.", "Hilde: My first crystal bar that didn't crack.", "Hilde: It should be yours."]
+    },
+    "event_rewards": {"2": {"silver_bar": 3}, "8": {"crystal_bar": 1}}
+  },
+  "opal": {
+    "name": "Opal", "role": "Geologist", "romance": false, "birthday": ["summer", 3],
+    "look": {"skin": "#a07050", "hair": "#e8e8f0", "shirt": "#5a9a8a"},
+    "loves": ["glimmer_crystal", "trilobite", "glow_tea"], "likes": ["quartz", "amethyst", "geode", "amber_drop"], "dislikes": ["coal", "old_boot"],
+    "schedule": [[800, "eisenkamm", 11, 22], [1300, "eisenkamm", 17, 20], [1700, "eisenkamm", 11, 22], [2000, "eisenkamm", 16, 13]],
+    "lines": {
+      "0": ["Every rock is a story. Most of them are boring stories. Not geodes, though.", "Bring me geodes and I'll crack them for you. Small fee, big surprises."],
+      "3": ["That fossil you found? Older than the mountain. Think about that.", "The museum in the village takes donations. Give them your best finds."],
+      "6": ["I named a crystal after you. It's a very nice crystal.", "You have a good eye. For a farmer."],
+      "9": ["I've studied rocks for fifty years. You're the best thing I've found.", "Come, I'll show you the stars through my telescope."]
+    },
+    "season": {"spring": "Spring rain uncovers fossils on the cliffs.", "summer": "Summer is field season. I barely sleep.", "fall": "Fall light makes crystals glow. Have you noticed?", "winter": "Winter is for cataloguing. So many drawers."},
+    "events": {
+      "2": ["Opal is peering at a stone through a loupe.", "Opal: An ammonite! Look at the spiral. Perfect.", "Opal: You keep this one. I have three."],
+      "5": ["Opal is sitting on the roof with her telescope.", "Opal: Stars are just very far-away rocks, you know.", "Opal: My husband used to say that. He was wrong, but I liked it."],
+      "8": ["Opal hands you a velvet pouch.", "Opal: A glimmer crystal. I found it the year I came to Eisenkamm.", "Opal: It wants to be with someone who goes deep."]
+    },
+    "event_rewards": {"2": {"ammonite": 1}, "8": {"glimmer_crystal": 1}}
+  },
+  "tobin": {
+    "name": "Tobin", "role": "Runs the Mine Supply", "romance": true, "birthday": ["spring", 25],
+    "look": {"skin": "#f0c8a8", "hair": "#2a2020", "shirt": "#a04a3a"},
+    "loves": ["honey_cake", "emerald", "cream_pudding"], "likes": ["torch", "copper_bar", "cherry_bomb", "trail_mix"], "dislikes": ["seaweed", "clay"],
+    "schedule": [[700, "eisenkamm", 37, 13], [1200, "eisenkamm", 24, 21], [1700, "eisenkamm", 37, 13], [2000, "eisenkamm", 29, 22]],
+    "lines": {
+      "0": ["Torches, ladders, beams, bombs. If it helps you dig, I sell it.", "Uncle Brannoc says I talk too much. He's not wrong."],
+      "3": ["You went down to the Stone Halls already? Respect.", "Rails make the long walk back a lot shorter. Just saying."],
+      "6": ["I saved the good bombs for you. Don't tell Uncle.", "Everyone in town is talking about you. I mean, I am."],
+      "9": ["I'd follow you down to the Magma Depths. Probably screaming, but I'd follow.", "You make this little town feel big."]
+    },
+    "season": {"spring": "Spring rush! Everyone wants new gear.", "summer": "Summer's slow. More time to chat.", "fall": "Fall is cart season. I've sold forty rails this week.", "winter": "Winter means torches. So many torches."},
+    "events": {
+      "2": ["Tobin is juggling three cherry bombs.", "Tobin: They're not lit! Probably.", "Tobin: Here, have a couple. Safely."],
+      "5": ["Tobin is restocking shelves, humming.", "Tobin: My parents wanted me in the mine. I wanted to run the shop.", "Tobin: Uncle Brannoc took me in when they moved away. I owe him."],
+      "8": ["Tobin hands you a tiny carved minecart.", "Tobin: Made it myself. It even rolls.", "Tobin: So you always find your way back."]
+    },
+    "event_rewards": {"2": {"cherry_bomb": 4}, "8": {"minecart": 1}}
   }
 }

@@ -226,7 +226,7 @@ func _build_list() -> void:
 func _upgrade_list() -> void:
 	var p := GameState.local_player()
 	var srcs := GameState.craft_sources(p)
-	for tool in ["hoe", "watering_can", "pickaxe", "axe", "scythe"]:
+	for tool in ["hoe", "watering_can", "pickaxe", "axe", "scythe", "shovel", "bucket"]:
 		var lvl := p.tool_level(tool)
 		var spec := Economy.upgrade_spec(lvl + 1)
 		var cur_name: String = tr("Basic") if lvl == 0 else tr(str(Economy.upgrade_spec(lvl).get("name", "")))
@@ -239,6 +239,12 @@ func _upgrade_list() -> void:
 		var desc := tr("%s → %s. Works a wider area and breaks tougher debris.") % [cur_name, next_name]
 		if tool == "watering_can":
 			desc = tr("%s → %s. Holds more water and soaks a wider area.") % [cur_name, next_name]
+		elif tool == "pickaxe":
+			desc = tr("%s → %s. Breaks rock faster and cracks harder ores and crystals.") % [cur_name, next_name]
+		elif tool == "shovel":
+			desc = tr("%s → %s. Digs trenches for less energy.") % [cur_name, next_name]
+		elif tool == "bucket":
+			desc = tr("%s → %s. A full bucket soaks a wider patch of soil.") % [cur_name, next_name]
 		_list.add_child(_offer(Art.item(tool), tr("%s %s") % [next_name, Data.item_name(tool)], desc, costs, tr("Upgrade"),
 			GameState.money() >= int(spec.price) and have >= int(spec.n), func(): _act("upgrade_tool", [tool])))
 

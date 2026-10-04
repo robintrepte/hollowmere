@@ -198,6 +198,7 @@ static func story_facts(world: Dictionary, p: PlayerData) -> Dictionary:
 		"dex": Progression.owned_count(world.dex), "shrines": world.shrines.size(),
 		"farm_level": int(world.farm.level), "legends": world.legends.size(), "hearts": hearts, "mine": deep,
 		"fish": int(world.get("stats", {}).get("fish", 0)),
+		"depth": int(world.get("mining", {}).get("max", 0)), "deep_boss": 1 if world.get("flags", {}).get("deep_boss", false) else 0,
 	}
 
 ## [have, need] for a goal; a goal with no keys is never complete (the epilogue).

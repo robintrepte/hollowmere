@@ -14,7 +14,7 @@ var inventory: Inventory
 var hotbar: Array = []          # [{uid, id}] or {} per slot
 var selected: int = 0
 var party: Array = []           # Array[Creature]; party[0] is the lead
-var tool_levels: Dictionary = {"hoe": 0, "watering_can": 0, "pickaxe": 0, "axe": 0, "scythe": 0}
+var tool_levels: Dictionary = {"hoe": 0, "watering_can": 0, "pickaxe": 0, "axe": 0, "scythe": 0, "shovel": 0, "bucket": 0}
 var water_left: int = 40
 var bucket_full: bool = false
 var chips: int = 0

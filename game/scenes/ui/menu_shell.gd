@@ -55,6 +55,7 @@ func _ready() -> void:
 	v.add_child(content)
 	bar.tab_selected.connect(_show)
 	bar.select(tab if tab in bar.ids() else "inventory")
+	_fit()
 
 ## Tabs whose systems are not part of this build stay hidden.
 static func available(id: String) -> bool:
@@ -83,7 +84,8 @@ func _fit() -> void:
 	offset_right = -maxf(m.x, inset.z)
 	offset_bottom = -maxf(m.y, inset.w)
 	if bar:
-		bar.set_compact(view.x < 560.0 or Settings.text_scale > 1.2)
+		var room := view.x - offset_left + offset_right - 40.0
+		bar.set_compact(view.x < 560.0 or Settings.text_scale > 1.2 or bar.full_width() > room)
 
 func _make(id: String) -> Control:
 	var p := GameState.local_player()

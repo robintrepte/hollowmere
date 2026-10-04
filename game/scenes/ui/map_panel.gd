@@ -8,7 +8,7 @@ signal closed
 var embedded := false
 
 const CROSS := [
-	["", "whisperwood", ""],
+	["eisenkamm", "whisperwood", ""],
 	["farm", "town", "tidecove"],
 	["", "meadow", "gull_bay"],
 ]

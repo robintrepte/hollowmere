@@ -49,7 +49,7 @@ func test_shops_reference_items() -> void:
 			assert_true(Data.has_item(s.id), "shop %s sells unknown %s" % [sid, s.id])
 
 func test_villagers_reference_items_and_maps() -> void:
-	assert_eq(Data.villagers.size(), 22)
+	assert_eq(Data.villagers.size(), 26)
 	for vid in Data.villagers:
 		var v: Dictionary = Data.villagers[vid]
 		for k in ["loves", "likes", "dislikes"]:
@@ -89,6 +89,11 @@ func test_every_species_obtainable() -> void:
 		if Data.regions[rid].has("mine"):
 			for s in Data.regions[rid].mine.spawns:
 				obtainable[s[0]] = true
+	for layer in Data.mine_layers:
+		for s in layer.get("spawns", []):
+			obtainable[s[0]] = true
+		if layer.has("boss"):
+			obtainable[layer.boss.species] = true
 	for lid in Data.legends:
 		obtainable[lid] = true
 	for rid in Data.regions:

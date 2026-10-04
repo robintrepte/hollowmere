@@ -56,7 +56,17 @@
     "cork_bobber":       {"in": {"wood": 10, "hardwood": 5, "sap": 10}, "unlock": "fish:8"},
     "spinner":           {"in": {"iron_bar": 2}, "unlock": "fish:12"},
     "trap_bobber":       {"in": {"copper_bar": 1, "sap": 10}, "unlock": "fish:15"},
-    "treasure_lure":     {"in": {"gold_bar": 1, "quartz": 1}, "unlock": "fish:20"}
+    "treasure_lure":     {"in": {"gold_bar": 1, "quartz": 1}, "unlock": "fish:20"},
+    "torch":             {"in": {"wood": 1, "coal": 1}, "n": 5, "unlock": "story:mountain"},
+    "mine_ladder":       {"in": {"wood": 12, "iron_bar": 1}, "unlock": "story:mountain"},
+    "support_beam":      {"in": {"wood": 8, "hardwood": 2}, "unlock": "story:mountain"},
+    "stone_block":       {"in": {"stone": 4}, "n": 2, "unlock": "story:mountain"},
+    "cherry_bomb":       {"in": {"copper_ore": 4, "coal": 1}, "n": 2, "unlock": "depth:1"},
+    "rail":              {"in": {"iron_bar": 1, "wood": 2}, "n": 6, "unlock": "depth:2"},
+    "minecart":          {"in": {"iron_bar": 4, "silver_bar": 2, "wood": 20}, "unlock": "depth:2"},
+    "mega_bomb":         {"in": {"gold_ore": 4, "coal": 2, "obsidian": 1}, "unlock": "depth:4"},
+    "drill":             {"in": {"mithril_bar": 3, "silver_bar": 5, "iron_bar": 10}, "unlock": "depth:4"},
+    "crystal_sprinkler": {"in": {"crystal_bar": 1, "mithril_bar": 2, "glimmer_crystal": 1}, "unlock": "depth:5"}
   },
   "machines": {
     "furnace": {
@@ -64,7 +74,10 @@
         {"in": "copper_ore", "n": 5, "fuel": "coal", "out": "copper_bar", "time": 30},
         {"in": "iron_ore", "n": 5, "fuel": "coal", "out": "iron_bar", "time": 120},
         {"in": "gold_ore", "n": 5, "fuel": "coal", "out": "gold_bar", "time": 300},
-        {"in": "mystic_ore", "n": 5, "fuel": "coal", "out": "mystic_bar", "time": 480}
+        {"in": "mystic_ore", "n": 5, "fuel": "coal", "out": "mystic_bar", "time": 480},
+        {"in": "silver_ore", "n": 5, "fuel": "coal", "out": "silver_bar", "time": 180},
+        {"in": "mithril_ore", "n": 5, "fuel": "coal", "out": "mithril_bar", "time": 600},
+        {"in": "glimmer_crystal", "n": 1, "fuel": "mithril_bar", "out": "crystal_bar", "time": 720}
       ]
     },
     "keg":           {"any": "crop", "prefix": "juice", "time": 1440, "mult": 2.25, "add": 0},

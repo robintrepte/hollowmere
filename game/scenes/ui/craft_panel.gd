@@ -12,6 +12,19 @@ var player: PlayerData
 var _sel := ""
 var _list: VBoxContainer
 var _detail: VBoxContainer
+var _cat := "all"
+var _query := ""
+var _cats: HBoxContainer
+
+## Crafting filter tabs: item categories that fall under each.
+const CATEGORIES := {
+	"all": [],
+	"farm": ["placeable", "fertilizer"],
+	"mining": ["mining", "bomb", "tool"],
+	"fishing": ["tackle", "bait"],
+	"wildlings": ["treat", "medicine", "charm"],
+}
+const CATEGORY_LABELS := {"all": "All", "farm": "Farm", "mining": "Mining", "fishing": "Fishing", "wildlings": "Wildlings"}
 
 func _init(p: PlayerData = null, k: String = "crafting") -> void:
 	player = p
@@ -39,6 +52,23 @@ func _ready() -> void:
 		head.add_child(UITheme.label("Using your pack + farm chest   ", 8, UITheme.MUTED))
 	if not embedded:
 		head.add_child(UITheme.button("Close", func(): closed.emit()))
+	var bar := HBoxContainer.new()
+	bar.add_theme_constant_override("separation", 3)
+	v.add_child(bar)
+	if kind == "crafting":
+		_cats = HBoxContainer.new()
+		_cats.add_theme_constant_override("separation", 2)
+		bar.add_child(_cats)
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bar.add_child(spacer)
+	var search := LineEdit.new()
+	search.placeholder_text = tr("Search…")
+	search.custom_minimum_size = Vector2(130, 0)
+	search.add_theme_font_size_override("font_size", 9)
+	search.clear_button_enabled = true
+	search.text_changed.connect(func(q: String): _query = q.strip_edges().to_lower(); _refresh())
+	bar.add_child(search)
 	var cols := HBoxContainer.new()
 	cols.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	cols.add_theme_constant_override("separation", 10)
@@ -78,17 +108,49 @@ func _locked() -> Array:
 			out.append(id)
 	return out
 
+## Whether a recipe passes the category tab and the search text (locked ones only match by category).
+func _shown(id: String, locked: bool) -> bool:
+	var want: Array = CATEGORIES.get(_cat, [])
+	if not want.is_empty() and not str(Data.get_item(id).get("cat", "")) in want:
+		return false
+	if _query == "":
+		return true
+	if locked:
+		return false
+	if Data.item_name(id).to_lower().contains(_query):
+		return true
+	for k in Economy.recipe(kind, id).in:
+		if Data.item_name(k).to_lower().contains(_query):
+			return true
+	return false
+
+func _refresh_cats() -> void:
+	if _cats == null:
+		return
+	for c in _cats.get_children():
+		c.queue_free()
+	for k in CATEGORIES:
+		var b := UITheme.button(CATEGORY_LABELS[k], func(): _cat = k; Audio.sfx("tick", 0.0); _refresh())
+		b.toggle_mode = true
+		b.button_pressed = k == _cat
+		b.add_theme_font_size_override("font_size", 8)
+		_cats.add_child(b)
+
 func _refresh() -> void:
+	_refresh_cats()
 	for c in _list.get_children():
 		c.queue_free()
 	var srcs := GameState.craft_sources(player)
-	var ids := _known()
-	if _sel == "" and ids.size() > 0:
-		_sel = ids[0]
+	var ids := _known().filter(func(id): return _shown(id, false))
+	var locked := _locked().filter(func(id): return _shown(id, true))
+	if not _sel in ids and not _sel in locked:
+		_sel = ids[0] if ids.size() > 0 else ""
 	for id in ids:
 		_list.add_child(_row(id, Economy.can_make(kind, id, srcs), false))
-	for id in _locked():
+	for id in locked:
 		_list.add_child(_row(id, false, true))
+	if ids.is_empty() and locked.is_empty():
+		_list.add_child(UITheme.label("Nothing matches.", 9, UITheme.MUTED))
 	_show_detail()
 
 func _row(id: String, can: bool, locked: bool) -> Control:

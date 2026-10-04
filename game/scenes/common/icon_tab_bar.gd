@@ -5,6 +5,7 @@ extends HBoxContainer
 signal tab_selected(id: String)
 
 var current := ""
+var compact := false
 var _buttons: Dictionary = {}
 
 func _init() -> void:
@@ -33,6 +34,7 @@ func select(id: String) -> void:
 	current = id
 	for k in _buttons:
 		_buttons[k].set_pressed_no_signal(k == id)
+	_relabel()
 	tab_selected.emit(id)
 
 func ids() -> Array:
@@ -49,8 +51,22 @@ func step(dir: int) -> void:
 func button(id: String) -> Button:
 	return _buttons.get(id)
 
-## Narrow screens show icons only.
-func set_compact(on: bool) -> void:
+## Width of the row with every tab labelled.
+func full_width() -> float:
+	var w := 0.0
 	for k in _buttons:
 		var b: Button = _buttons[k]
-		b.text = "" if on else b.tooltip_text.split(" (")[0]
+		var font := b.get_theme_font("font")
+		var title := b.tooltip_text.split(" (")[0]
+		w += font.get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, b.get_theme_font_size("font_size")).x + UITheme.fs(16) + 28.0
+	return w + get_theme_constant("separation") * maxi(0, _buttons.size() - 1)
+
+## Narrow screens show icons only, plus the name of the open tab.
+func set_compact(on: bool) -> void:
+	compact = on
+	_relabel()
+
+func _relabel() -> void:
+	for k in _buttons:
+		var b: Button = _buttons[k]
+		b.text = "" if compact and k != current else b.tooltip_text.split(" (")[0]
