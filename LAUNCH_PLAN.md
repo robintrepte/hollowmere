@@ -1,8 +1,8 @@
 # Hollowmere – Launch-Plan (v1.0)
 
-Stand: 4. Oktober 2026 · Basis: Commit `7ea8072` · Engine: Godot 4.7.2 (GL Compatibility) · Backend: Nakama + Postgres
+Stand: 4. Oktober 2026 · Engine: Godot 4.7.2 (GL Compatibility) · Backend: Nakama + Postgres · Client `1.0.0`
 
-Dieser Plan bringt Hollowmere vom aktuellen Stand („quasi fertig“) zu einem launch- und produktionsreifen Release. Alles hier Gelistete ist Launch-Umfang. Die Phasen geben die **Reihenfolge** vor, weil spätere Features auf früheren Fundamenten aufbauen. Sie sind keine Release-Etappen.
+**Status: spiel- und serverseitig launch-bereit.** Phasen A–K und der überwiegende Teil von L/M sind im Code. Offen bleiben Betriebs- und Store-Schritte (IARC-Antrag, Soft-Launch mit Testern, optionale ace-step-Alben, Trailer, Tag `v1.0.0` + Deploy).
 
 Legende: `[ ]` offen · Größe **S** (≤ ½ Tag) · **M** (1–2 Tage) · **L** (3–5 Tage) · **XL** (> 1 Woche) · `→` Abhängigkeit
 
@@ -44,62 +44,62 @@ Legende: `[ ]` offen · Größe **S** (≤ ½ Tag) · **M** (1–2 Tage) · **L*
 Diese Bausteine werden von fast allen Features gebraucht. Ohne sie entstehen Doppelarbeit und Migrationschaos.
 
 ### A1 Save-Format v2 und Migrationsgerüst · L
-- [ ] `SAVE_VERSION = 2`, die Migrationskette in `SaveManager.migrate()` auf Einzelschritte umbauen (`_migrate_1_to_2`, …).
-- [ ] Neue Top-Level-Blöcke reservieren: `time` (letzter Echtzeit-Tick), `quests`, `skills`, `fishing`, `mining`, `casino`, `enchants`, `tutorial`.
-- [ ] Größenbudget prüfen: Nakama-Limit `max_save_bytes` = 3 MB. Mining-Diffs und Quest-Historie müssen kompakt sein. Saves vor dem Upload mit gzip und Base64 komprimieren, das Lua-Modul akzeptiert beide Formate.
-- [ ] Fixtures `tests/fixtures/save_v2_*.json` und ein Migrationstest v0 → v1 → v2.
+- [x] `SAVE_VERSION = 2`, die Migrationskette in `SaveManager.migrate()` auf Einzelschritte umbauen (`_migrate_1_to_2`, …).
+- [x] Neue Top-Level-Blöcke reservieren: `time` (letzter Echtzeit-Tick), `quests`, `skills`, `fishing`, `mining`, `casino`, `enchants`, `tutorial`.
+- [x] Größenbudget prüfen: Nakama-Limit `max_save_bytes` = 3 MB. Mining-Diffs und Quest-Historie müssen kompakt sein. Saves vor dem Upload mit gzip und Base64 komprimieren, das Lua-Modul akzeptiert beide Formate.
+- [x] Fixtures `tests/fixtures/save_v2_*.json` und ein Migrationstest v0 → v1 → v2.
 
 ### A2 TimeService: Echtzeit, Serverzeit, Manipulationsschutz · M
-- [ ] Neues Autoload `TimeService`: `now()` liefert Unix-Sekunden. Wenn eingeloggt, wird die Serverzeit verwendet (Offset aus dem `health`-RPC, regelmäßig nachjustiert).
-- [ ] Offline gilt: Die Zeit darf nie rückwärts laufen (`last_seen` im Save). Vorwärtssprünge über das Offline-Cap hinaus werden gekappt.
-- [ ] **Offline-Cap: 14 Tage.** Längere Abwesenheiten zählen wie 14 Tage. Lange Abwesenheiten werden in groben Schritten aggregiert nachgerechnet (statt 2.016 Einzel-Ticks), damit das Laden auf Mobilgeräten unter 200 ms bleibt.
-- [ ] Das Signal `TimeService.tick(dt_real)` läuft alle 5 s während des Spiels, `catch_up(elapsed)` einmal beim Laden.
+- [x] Neues Autoload `TimeService`: `now()` liefert Unix-Sekunden. Wenn eingeloggt, wird die Serverzeit verwendet (Offset aus dem `health`-RPC, regelmäßig nachjustiert).
+- [x] Offline gilt: Die Zeit darf nie rückwärts laufen (`last_seen` im Save). Vorwärtssprünge über das Offline-Cap hinaus werden gekappt.
+- [x] **Offline-Cap: 14 Tage.** Längere Abwesenheiten zählen wie 14 Tage. Lange Abwesenheiten werden in groben Schritten aggregiert nachgerechnet (statt 2.016 Einzel-Ticks), damit das Laden auf Mobilgeräten unter 200 ms bleibt.
+- [x] Das Signal `TimeService.tick(dt_real)` läuft alle 5 s während des Spiels, `catch_up(elapsed)` einmal beim Laden.
 
 ### A3 SeasonService: echte Jahreszeiten · S
-- [ ] `season_for(date, hemisphere)` mit meteorologischen Grenzen. Hemisphäre aus `OS.get_locale()` (Ländercode → Süd für AU, NZ, ZA, AR, BR, CL …), Override in den Einstellungen.
-- [ ] Im Koop gilt die Saison des Hosts.
-- [ ] Debug-Override (`--season=winter` und eine Dev-Einstellung) für Tests und Screenshots.
+- [x] `season_for(date, hemisphere)` mit meteorologischen Grenzen. Hemisphäre aus `OS.get_locale()` (Ländercode → Süd für AU, NZ, ZA, AR, BR, CL …), Override in den Einstellungen.
+- [x] Im Koop gilt die Saison des Hosts.
+- [x] Debug-Override (`--season=winter` und eine Dev-Einstellung) für Tests und Screenshots.
 
 ### A4 Modifier-System · M
-- [ ] Zentrale `Modifiers`-Klasse: `Modifiers.get(p, "crop_growth_mult")` sammelt Boni aus Skilltree, Verzauberungen, Rucksack, Essen-Buffs, Gebäuden und Saison.
-- [ ] Alle bisherigen hart kodierten Boni (Glück, Spa, Traits) schrittweise darauf umstellen. Das ist die Voraussetzung für Skilltree, Enchanting und Rucksack-Boni.
+- [x] Zentrale `Modifiers`-Klasse: `Modifiers.get(p, "crop_growth_mult")` sammelt Boni aus Skilltree, Verzauberungen, Rucksack, Essen-Buffs, Gebäuden und Saison.
+- [x] Alle bisherigen hart kodierten Boni (Glück, Spa, Traits) schrittweise darauf umstellen. Das ist die Voraussetzung für Skilltree, Enchanting und Rucksack-Boni.
 
 ### A5 Datenregister für neue Inhalte · S
-- [ ] Neue Dateien in `game/data/`: `fish.json`, `ores.json`, `mine_layers.json`, `enchantments.json`, `skills.json`, `quests.json`, `emotes.json`, `casino.json`, `seasonal_events.json`.
-- [ ] `Data` lädt sie, `test_data_integrity.gd` validiert Referenzen (Items, Villager, Maps, Icons, Übersetzungen).
+- [x] Neue Dateien in `game/data/`: `fish.json`, `ores.json`, `mine_layers.json`, `enchantments.json`, `skills.json`, `quests.json`, `emotes.json`, `casino.json`, `seasonal_events.json`.
+- [x] `Data` lädt sie, `test_data_integrity.gd` validiert Referenzen (Items, Villager, Maps, Icons, Übersetzungen).
 
 ### A6 Koop-Erweiterung als Muster · S
-- [ ] Jede neue Spieleraktion kommt in `Coop.ACTIONS` und wird host-seitig validiert. Für jede Aktion gibt es einen Eintrag im 4-Peer-Desync-Test (`tests/net/desync_test.gd`).
-- [ ] Neues Muster für **zeitbasierte Systeme**: Nur der Host rechnet Echtzeit-Fortschritt, Clients bekommen Tile- und Objekt-Syncs wie bisher.
+- [x] Jede neue Spieleraktion kommt in `Coop.ACTIONS` und wird host-seitig validiert. Für jede Aktion gibt es einen Eintrag im 4-Peer-Desync-Test (`tests/net/desync_test.gd`).
+- [x] Neues Muster für **zeitbasierte Systeme**: Nur der Host rechnet Echtzeit-Fortschritt, Clients bekommen Tile- und Objekt-Syncs wie bisher.
 
 ### A7 Gemeinsame UI-Bausteine · M
-- [ ] `CoinLabel` (Goldmünzen-Icon plus formatierte Zahl), `ChipLabel`, `PriceTag` (rot, wenn nicht bezahlbar), `StatBar`, `Badge` („Empfohlen“, „Neu“).
-- [ ] `FloatingWindow` (verschiebbar, schließbar, Z-Reihenfolge, am Bildschirmrand eingerastet, Position wird im Profil gespeichert).
-- [ ] `IconTabBar` für die Menü-Shell.
-- [ ] Zahlenformat nach Locale (`1.234` in DE, `1,234` in EN; kurz `12,3k` und `1,2 Mio.` für das HUD).
+- [x] `CoinLabel` (Goldmünzen-Icon plus formatierte Zahl), `ChipLabel`, `PriceTag` (rot, wenn nicht bezahlbar), `StatBar`, `Badge` („Empfohlen“, „Neu“).
+- [x] `FloatingWindow` (verschiebbar, schließbar, Z-Reihenfolge, am Bildschirmrand eingerastet, Position wird im Profil gespeichert).
+- [x] `IconTabBar` für die Menü-Shell.
+- [x] Zahlenformat nach Locale (`1.234` in DE, `1,234` in EN; kurz `12,3k` und `1,2 Mio.` für das HUD).
 
 ### A8 Asset-Pipeline-Batches · M (laufend)
-- [ ] Sammeldatei `tools/art_pipeline/launch_sheets.txt` mit allen neuen Sprites (siehe Asset-Liste in Phase H). Generierung über Replicate: `nano-banana-2` für Gebäude, Porträts und Tilesets, `nano-banana-2-lite` für Item-Icons, `fishaudio/ace-step-1.5` für Musik.
-- [ ] Gleicher Weg wie bisher: generieren, quantisieren, Atlas (`process.py`, `derive_icons.py`), Stilregeln aus `style.md`.
+- [x] Sammeldatei `tools/art_pipeline/launch_sheets.txt` mit allen neuen Sprites (siehe Asset-Liste in Phase H). Generierung über Replicate: `nano-banana-2` für Gebäude, Porträts und Tilesets, `nano-banana-2-lite` für Item-Icons, `fishaudio/ace-step-1.5` für Musik.
+- [x] Gleicher Weg wie bisher: generieren, quantisieren, Atlas (`process.py`, `derive_icons.py`), Stilregeln aus `style.md`.
 
 ### A9 i18n-Workflow und Glossar · S
-- [ ] `game/i18n/GLOSSARY.md` mit festen Gaming-Begriffen (siehe F2).
-- [ ] Test `test_i18n_glossary.gd`: Verbotene Übersetzungen (z. B. „Zusammen spielen“, „Handwerk“, „Talkarte“) dürfen in `de.po` nicht vorkommen. Alle neuen Strings stehen in `hollowmere.pot` (die CI prüft das bereits).
+- [x] `game/i18n/GLOSSARY.md` mit festen Gaming-Begriffen (siehe F2).
+- [x] Test `test_i18n_glossary.gd`: Verbotene Übersetzungen (z. B. „Zusammen spielen“, „Handwerk“, „Talkarte“) dürfen in `de.po` nicht vorkommen. Alle neuen Strings stehen in `hollowmere.pot` (die CI prüft das bereits).
 
 ---
 
 ## Phase B – Fixes und Optimierungen
 
 ### F1 Einstellungen und Profil im Nutzerkonto speichern · M
-- [ ] Neue Nakama-Collection `profile`, Key `settings` (pro User, `permission_read = 1`, `permission_write = 1`). `before_write` im Lua-Modul um `profile/settings` und `profile/meta` erweitern, mit Größenlimit 64 KB und Schema-Prüfung.
-- [ ] Synchronisiert werden: Lautstärken, Textgröße, Font, Farbenblind-Modus, Bildschirmwackeln, 12/24 h, Auto-Pause, Sprache, Tastenbelegung, Uhrgeschwindigkeit, Analytics-Opt-in, Hemisphäre, Emote-Rad-Belegung, Fensterpositionen, gesehene Tutorials, Chat-Einstellungen, Menü-Präferenzen.
-- [ ] **Nicht** synchronisiert werden gerätespezifische Werte: `fullscreen`, `server_*`, `touch_controls`, Fenstergröße.
-- [ ] Konfliktregel: Jede Einstellung trägt `updated_at`, beim Login wird pro Schlüssel zusammengeführt (neuerer Wert gewinnt). Uploads werden 3 s gebündelt. Offline greift `settings.cfg` als Cache.
-- [ ] Ablauf: Nach dem Login Profil laden und anwenden (`Settings.apply()`). Nach dem Logout bleiben die lokalen Werte erhalten.
-- [ ] Tests: Unit-Test für Merge-Logik, Nakama-Integrationstest (Login auf Gerät A, ändern, Login auf Gerät B, Wert übernommen).
+- [x] Neue Nakama-Collection `profile`, Key `settings` (pro User, `permission_read = 1`, `permission_write = 1`). `before_write` im Lua-Modul um `profile/settings` und `profile/meta` erweitern, mit Größenlimit 64 KB und Schema-Prüfung.
+- [x] Synchronisiert werden: Lautstärken, Textgröße, Font, Farbenblind-Modus, Bildschirmwackeln, 12/24 h, Auto-Pause, Sprache, Tastenbelegung, Uhrgeschwindigkeit, Analytics-Opt-in, Hemisphäre, Emote-Rad-Belegung, Fensterpositionen, gesehene Tutorials, Chat-Einstellungen, Menü-Präferenzen.
+- [x] **Nicht** synchronisiert werden gerätespezifische Werte: `fullscreen`, `server_*`, `touch_controls`, Fenstergröße.
+- [x] Konfliktregel: Jede Einstellung trägt `updated_at`, beim Login wird pro Schlüssel zusammengeführt (neuerer Wert gewinnt). Uploads werden 3 s gebündelt. Offline greift `settings.cfg` als Cache.
+- [x] Ablauf: Nach dem Login Profil laden und anwenden (`Settings.apply()`). Nach dem Logout bleiben die lokalen Werte erhalten.
+- [x] Tests: Unit-Test für Merge-Logik, Nakama-Integrationstest (Login auf Gerät A, ändern, Login auf Gerät B, Wert übernommen).
 
 ### F2 Gaming-Begriffe in der deutschen Übersetzung · S
-- [ ] Glossar festlegen und in `de.po` durchziehen. Vorschlag:
+- [x] Glossar festlegen und in `de.po` durchziehen. Vorschlag:
 
 | Englisch | Deutsch (neu) | statt bisher |
 |---|---|---|
@@ -118,49 +118,49 @@ Diese Bausteine werden von fast allen Features gebraucht. Ohne sie entstehen Dop
 | Item | Item | „Gegenstand“ (nur im UI) |
 | Chat | Chat | – |
 
-- [ ] Fließtext in Dialogen darf natürlich bleiben (z. B. „Sable reicht dir eine abgenutzte Karte“ als physischer Gegenstand). Nur UI-Labels, Menüs und Tipps folgen dem Glossar.
-- [ ] Glossar-Test aus A9 aktivieren.
+- [x] Fließtext in Dialogen darf natürlich bleiben (z. B. „Sable reicht dir eine abgenutzte Karte“ als physischer Gegenstand). Nur UI-Labels, Menüs und Tipps folgen dem Glossar.
+- [x] Glossar-Test aus A9 aktivieren.
 
 ### F3 Kampfmenü nutzerfreundlicher · M
-- [ ] `BattleEngine.preview(attacker, move, defender)` liefert erwarteten Schaden als Min/Max in Prozent der aktuellen Gegner-KP, KO-Chance, Effektivität, STAB, Trefferchance und Statuseffekt. Rein und deterministisch, ohne Zufall zu verbrauchen.
-- [ ] Neue Attacken-Karten in `battle_screen.gd → _show_moves()`:
+- [x] `BattleEngine.preview(attacker, move, defender)` liefert erwarteten Schaden als Min/Max in Prozent der aktuellen Gegner-KP, KO-Chance, Effektivität, STAB, Trefferchance und Statuseffekt. Rein und deterministisch, ohne Zufall zu verbrauchen.
+- [x] Neue Attacken-Karten in `battle_screen.gd → _show_moves()`:
   - Typ-Icon und Typfarbe, Name, Stärke, Genauigkeit, AP (falls vorhanden)
   - **Schadensbalken** auf der Gegner-KP-Leiste als Vorschau beim Hover oder Fokus („32–38 %“, „KO möglich“)
   - Effektivitäts-Badge: „Sehr effektiv ×2“, „Wenig effektiv ×½“, „Wirkungslos“
   - **„Empfohlen“-Badge** für die Attacke mit dem besten Erwartungswert, bei Status-Attacken nach einfacher Heuristik (z. B. kein Gift auf bereits vergiftete Gegner)
   - Langer Druck (Touch) oder Hover zeigt die Beschreibung
-- [ ] Im Kampf schwebende Schadenszahlen und Effektivitäts-Text.
-- [ ] Wechsel-Menü: Typ-Matchup des eigenen Wildlings gegen den aktuellen Gegner („Vorteil“, „Nachteil“).
-- [ ] Buttongrößen bleiben touch-tauglich (die Regel aus Commit `178d5c1` beibehalten). `test_battle_ui.gd` erweitern.
+- [x] Im Kampf schwebende Schadenszahlen und Effektivitäts-Text.
+- [x] Wechsel-Menü: Typ-Matchup des eigenen Wildlings gegen den aktuellen Gegner („Vorteil“, „Nachteil“).
+- [x] Buttongrößen bleiben touch-tauglich (die Regel aus Commit `178d5c1` beibehalten). `test_battle_ui.gd` erweitern.
 
 ### F4 Fehlende Zeichen im Browser („25CF“-Kästchen) · S
-- [ ] Ursache: **Nunito** (lesbarer Font) enthält `●` (U+25CF) und `→` nicht, und `SymbolsFallback.ttf` deckt sie auch nicht ab. Betroffen sind Titelbildschirm, Account, Map, Koop und Kampf. Desktop-Systeme fallen auf Systemfonts zurück, Browser nicht.
-- [ ] Fix: `SymbolsFallback.ttf` neu subsetten (Noto Sans Symbols 2 und Noto Sans, OFL) mit allen genutzten Sonderzeichen: `● → ← ↑ ↓ … · × ★ ☆ ♥ ✓ ✕ ⚔ ▶ ◀ •` plus Zeichen aus Übersetzungen.
-- [ ] Wo es sich anbietet, Glyphen durch Textur-Icons ersetzen (Online-Punkt, Herzen, Sterne), damit es im Pixel-Stil konsistent ist.
-- [ ] **Test** `test_glyph_coverage.gd`: Sammelt alle Zeichen aus `.gd`-Strings, `de.po` und `data/*.json` und prüft sie gegen Tiny5+Fallback **und** Nunito+Fallback. Die CI schlägt fehl, wenn ein Zeichen fehlt.
+- [x] Ursache: **Nunito** (lesbarer Font) enthält `●` (U+25CF) und `→` nicht, und `SymbolsFallback.ttf` deckt sie auch nicht ab. Betroffen sind Titelbildschirm, Account, Map, Koop und Kampf. Desktop-Systeme fallen auf Systemfonts zurück, Browser nicht.
+- [x] Fix: `SymbolsFallback.ttf` neu subsetten (Noto Sans Symbols 2 und Noto Sans, OFL) mit allen genutzten Sonderzeichen: `● → ← ↑ ↓ … · × ★ ☆ ♥ ✓ ✕ ⚔ ▶ ◀ •` plus Zeichen aus Übersetzungen.
+- [x] Wo es sich anbietet, Glyphen durch Textur-Icons ersetzen (Online-Punkt, Herzen, Sterne), damit es im Pixel-Stil konsistent ist.
+- [x] **Test** `test_glyph_coverage.gd`: Sammelt alle Zeichen aus `.gd`-Strings, `de.po` und `data/*.json` und prüft sie gegen Tiny5+Fallback **und** Nunito+Fallback. Die CI schlägt fehl, wenn ein Zeichen fehlt.
 
 ### F5 Wildlinge auf dem Hof starten ihre Standard-Aktivität · S
-- [ ] `GameState.move_creature(uid, "den")` setzt `c.job = c.job_type()`, sofern `can_do_job`. Dasselbe beim Schlüpfen und Befreunden direkt in den Hof.
-- [ ] Neues Feld `job_manual: bool`: Ein bewusst gewähltes „Ausruhen“ wird nicht überschrieben.
-- [ ] Migration v2: Hof-Wildlinge ohne Job und ohne `job_manual` bekommen ihren Standardjob.
-- [ ] Toast: „Puddlop gießt jetzt deine Felder.“
+- [x] `GameState.move_creature(uid, "den")` setzt `c.job = c.job_type()`, sofern `can_do_job`. Dasselbe beim Schlüpfen und Befreunden direkt in den Hof.
+- [x] Neues Feld `job_manual: bool`: Ein bewusst gewähltes „Ausruhen“ wird nicht überschrieben.
+- [x] Migration v2: Hof-Wildlinge ohne Job und ohne `job_manual` bekommen ihren Standardjob.
+- [x] Toast: „Puddlop gießt jetzt deine Felder.“
 
 ### F6 Farm-Aktivitäten verständlich und bequem auswählbar · M
-- [ ] Das `OptionButton` im Team-Panel durch **Job-Karten** ersetzen: Icon, Name, konkrete Wirkung mit Zahlen („gießt bis zu 14 Felder pro Stunde“, „+20 % Wachstum im Umkreis von 3 Feldern“), Leistung als Sterne, Energieverbrauch pro Stunde, Badge „Passt zum Typ“ bzw. „Empfohlen“.
-- [ ] Mit dem Idle-Modell (Phase C) werden Jobs zu **Raten pro Stunde**. Die Karte zeigt die Live-Leistung („Letzte Stunde: 12 Felder gegossen, 3 Erze geschmolzen“).
-- [ ] **Hof-Übersicht** im Team-Tab: alle Hof-Wildlinge mit Job, Energie und Leistung, Job-Wechsel per Drag & Drop auf Job-Spalten.
-- [ ] Optional: Wirkungsbereich auf der Farm einblenden, wenn ein Job gewählt wird.
-- [ ] Job-Texte in `types.json` (`job_desc`) überarbeiten und übersetzen.
+- [x] Das `OptionButton` im Team-Panel durch **Job-Karten** ersetzen: Icon, Name, konkrete Wirkung mit Zahlen („gießt bis zu 14 Felder pro Stunde“, „+20 % Wachstum im Umkreis von 3 Feldern“), Leistung als Sterne, Energieverbrauch pro Stunde, Badge „Passt zum Typ“ bzw. „Empfohlen“.
+- [x] Mit dem Idle-Modell (Phase C) werden Jobs zu **Raten pro Stunde**. Die Karte zeigt die Live-Leistung („Letzte Stunde: 12 Felder gegossen, 3 Erze geschmolzen“).
+- [x] **Hof-Übersicht** im Team-Tab: alle Hof-Wildlinge mit Job, Energie und Leistung, Job-Wechsel per Drag & Drop auf Job-Spalten.
+- [x] Optional: Wirkungsbereich auf der Farm einblenden, wenn ein Job gewählt wird.
+- [x] Job-Texte in `types.json` (`job_desc`) überarbeiten und übersetzen.
 
 ### F7 Gewässerränder und Ecken zu hell · M
-- [ ] Ursache eingrenzen: Die Uferecken kommen aus `shore_cap_<season>.png` (`tools/art_pipeline/tiles.py`). Das sind vorgebackene Landfarben pro Saison und Terrain (6 Terrains × 64 Zeilen), die echten Bodentiles sind dagegen texturiert und haben Varianten. Zusätzlich verdächtig:
+- [x] Ursache eingrenzen: Die Uferecken kommen aus `shore_cap_<season>.png` (`tools/art_pipeline/tiles.py`). Das sind vorgebackene Landfarben pro Saison und Terrain (6 Terrains × 64 Zeilen), die echten Bodentiles sind dagegen texturiert und haben Varianten. Zusätzlich verdächtig:
   - Die Aufhellung aus Commit `4d56fc8` („Lighten pond shores …“)
   - Ob `water_fx.gd` (Schimmer und Animation) additiv über den Cap-Pixeln liegt
   - Ob Regen-, Saison- und Tageszeit-Tönung alle Layer gleich trifft (`CanvasModulate`) oder einzelne Layer eigene Materialien bzw. `light_mask` haben
   - `world.gd:107` zwingt nicht-saisonale Maps auf `summer`, Caps und Boden könnten dort aus verschiedenen Saisons stammen
-- [ ] Testmatrix: 4 Saisons × {klar, Regen, Sturm, Schnee} × {Tag, Dämmerung, Nacht} × {Farm, Stadt, Region} als automatisierte Screenshots (`store_shots.gd` erweitern) plus Pixelvergleich Cap gegen benachbartes Bodentile.
-- [ ] Fix-Richtung: Caps nicht mehr als Flachfarbe backen, sondern **aus dem tatsächlichen Boden-Atlas** der jeweiligen Saison maskieren (Textur übernehmen, nur die Rundung ausstanzen). Wasser-Effekte per Maske auf die Wasserfläche begrenzen.
-- [ ] Gleiche Logik später für Bewässerungsgräben (Phase C) und Stege wiederverwenden.
+- [x] Testmatrix: 4 Saisons × {klar, Regen, Sturm, Schnee} × {Tag, Dämmerung, Nacht} × {Farm, Stadt, Region} als automatisierte Screenshots (`store_shots.gd` erweitern) plus Pixelvergleich Cap gegen benachbartes Bodentile.
+- [x] Fix-Richtung: Caps nicht mehr als Flachfarbe backen, sondern **aus dem tatsächlichen Boden-Atlas** der jeweiligen Saison maskieren (Textur übernehmen, nur die Rundung ausstanzen). Wasser-Effekte per Maske auf die Wasserfläche begrenzen.
+- [x] Gleiche Logik später für Bewässerungsgräben (Phase C) und Stege wiederverwenden.
 
 ---
 
@@ -169,17 +169,17 @@ Diese Bausteine werden von fast allen Features gebraucht. Ohne sie entstehen Dop
 Das ist der tiefste Eingriff in den Kern. Er muss vor Quests, Skilltree und Balancing stehen, weil alles auf Raten statt Tagen umgestellt wird.
 
 ### C1 Echtzeit-Wachstum (lazy, deterministisch) · XL
-- [ ] Neues Crop-Schema im Soil-Dict: `{id, progress (0..1), last_tick, watered_until, fert, fert_until, quality_boost, pollinated, harvests}`.
-- [ ] Pure Funktion `CropGrowth.advance(crop, soil_ctx, from_t, to_t)`. Sie integriert **stückweise** über Zeitabschnitte mit unterschiedlicher Rate (z. B. erst bewässert, dann trocken) und braucht keine Server-Simulation.
-- [ ] Rate = `base_rate × saison_faktor[crop][season] × (bewässert ? 1,6 : 1,0) × dünger × gewächshaus (1,15) × job_boni × skill_boni`. **Unbewässert wächst es weiter, nur langsamer** (Idle-freundlich).
-- [ ] Neue Spalten in `crops.json`: `grow_min` (Echtzeit-Minuten bis reif), `season_rate {spring, summer, fall, winter}`, `season_yield {…}`. Die Spalte `days` entfällt.
-- [ ] Zeitskala als Startwert (wird im Balancing feinjustiert): kurze Pflanzen 10–30 min, mittlere 1–4 h, lange 8–24 h, Bäume 1–3 Tage.
-- [ ] Auswertung: beim Betreten einer Map, alle 5 s für die sichtbare Map, beim Speichern und einmal als Offline-Catch-up beim Laden.
-- [ ] Rendering zeigt Wachstumsstufen aus `progress`. Tooltip beim Zielen: „Reif in 1 h 12 min“ samt aktiver Boni.
+- [x] Neues Crop-Schema im Soil-Dict: `{id, progress (0..1), last_tick, watered_until, fert, fert_until, quality_boost, pollinated, harvests}`.
+- [x] Pure Funktion `CropGrowth.advance(crop, soil_ctx, from_t, to_t)`. Sie integriert **stückweise** über Zeitabschnitte mit unterschiedlicher Rate (z. B. erst bewässert, dann trocken) und braucht keine Server-Simulation.
+- [x] Rate = `base_rate × saison_faktor[crop][season] × (bewässert ? 1,6 : 1,0) × dünger × gewächshaus (1,15) × job_boni × skill_boni`. **Unbewässert wächst es weiter, nur langsamer** (Idle-freundlich).
+- [x] Neue Spalten in `crops.json`: `grow_min` (Echtzeit-Minuten bis reif), `season_rate {spring, summer, fall, winter}`, `season_yield {…}`. Die Spalte `days` entfällt.
+- [x] Zeitskala als Startwert (wird im Balancing feinjustiert): kurze Pflanzen 10–30 min, mittlere 1–4 h, lange 8–24 h, Bäume 1–3 Tage.
+- [x] Auswertung: beim Betreten einer Map, alle 5 s für die sichtbare Map, beim Speichern und einmal als Offline-Catch-up beim Laden.
+- [x] Rendering zeigt Wachstumsstufen aus `progress`. Tooltip beim Zielen: „Reif in 1 h 12 min“ samt aktiver Boni.
 
 ### C2 Ernten ohne Neupflanzen, Saat-Stufen · M
-- [ ] Nach der Ernte bleibt die Pflanze stehen und beginnt wieder bei `regrow_progress` (Mehrfachernte-Pflanzen) bzw. bei 0 (alle anderen).
-- [ ] **Saat-Stufen** bestimmen, wie oft eine Pflanze geerntet werden kann, bevor sie verbraucht ist:
+- [x] Nach der Ernte bleibt die Pflanze stehen und beginnt wieder bei `regrow_progress` (Mehrfachernte-Pflanzen) bzw. bei 0 (alle anderen).
+- [x] **Saat-Stufen** bestimmen, wie oft eine Pflanze geerntet werden kann, bevor sie verbraucht ist:
 
 | Stufe | EN | DE | Ernten | Bezug |
 |---|---|---|---|---|
@@ -188,103 +188,103 @@ Das ist der tiefste Eingriff in den Kern. Er muss vor Quests, Skilltree und Bala
 | III | Noble | Edel | 12 | Veredelung (Crafting), Quests, Mining-/Angel-Loot, Casino-Shop |
 | IV | Everlasting | Ewig | unbegrenzt | Veredelung aus III mit seltenen Materialien, Main-Story, saisonale Events |
 
-- [ ] Saat-Stufe als Item-Qualität bzw. Meta (`tier`), Icon mit Stufen-Rahmen, Feld-Tooltip „Noch 4 Ernten“. Höhere Stufen wachsen nicht schneller, damit Stufe und Wachstum getrennt balanciert bleiben.
-- [ ] Neue Maschine **Saatveredler** (Saat + Material → nächste Stufe) und Rezepte in `recipes.json`.
-- [ ] Entfernen nur bewusst per Sense oder Hacke (mit Bestätigung, wenn reif). Ist die letzte Ernte erreicht, verwelkt die Pflanze sichtbar und das Feld wird wieder frei.
-- [ ] Migration: Bestehende Pflanzen werden zu Stufe I mit voller Erntezahl.
+- [x] Saat-Stufe als Item-Qualität bzw. Meta (`tier`), Icon mit Stufen-Rahmen, Feld-Tooltip „Noch 4 Ernten“. Höhere Stufen wachsen nicht schneller, damit Stufe und Wachstum getrennt balanciert bleiben.
+- [x] Neue Maschine **Saatveredler** (Saat + Material → nächste Stufe) und Rezepte in `recipes.json`.
+- [x] Entfernen nur bewusst per Sense oder Hacke (mit Bestätigung, wenn reif). Ist die letzte Ernte erreicht, verwelkt die Pflanze sichtbar und das Feld wird wieder frei.
+- [x] Migration: Bestehende Pflanzen werden zu Stufe I mit voller Erntezahl.
 
 ### C3 Bewässerung: Wassernähe, Gräben, Eimer · L
-- [ ] **Wassernähe**: Felder im Umkreis von 4 Feldern (Manhattan) um Wasser oder einen gefüllten Graben gelten dauerhaft als bewässert (Minecraft-Farmland-Regel). Ein Indikator zeigt es (Tropfen-Icon, feuchte Erde).
-- [ ] Neue Werkzeuge: **Schaufel** (gräbt einen Graben `trench_dry`, schüttet ihn wieder zu) und **Eimer** (schöpft Wasser aus Teich, Fluss oder Meer und füllt Gräben).
-- [ ] Wasserfluss: Ein Graben mit Verbindung zu einer Quelle wird über Flood-Fill bis maximal 8 Felder Abstand zu `trench_wet`. Bricht die Verbindung, trocknet er nach einer Weile aus.
-- [ ] Gräben sind nicht begehbar, Holzplanken bzw. Brücken als baubares Objekt.
-- [ ] Autotiling für schmale Kanäle (Ecken, T-Stücke, Kreuzungen) im selben Stil wie die neuen Uferkanten (F7).
-- [ ] Koop-Aktionen `dig_trench`, `fill_trench`, `use_bucket` und Desync-Test.
-- [ ] Sprinkler bleiben, setzen aber `watered_until` periodisch statt täglich.
-- [ ] Gepflügte Felder im Sprinkler- oder Wasserbereich verwildern nicht mehr über Nacht. Bisher würfelt `FarmGrid.new_day` das Zurücksetzen von nacktem Boden aus, *bevor* die Sprinkler gießen.
+- [x] **Wassernähe**: Felder im Umkreis von 4 Feldern (Manhattan) um Wasser oder einen gefüllten Graben gelten dauerhaft als bewässert (Minecraft-Farmland-Regel). Ein Indikator zeigt es (Tropfen-Icon, feuchte Erde).
+- [x] Neue Werkzeuge: **Schaufel** (gräbt einen Graben `trench_dry`, schüttet ihn wieder zu) und **Eimer** (schöpft Wasser aus Teich, Fluss oder Meer und füllt Gräben).
+- [x] Wasserfluss: Ein Graben mit Verbindung zu einer Quelle wird über Flood-Fill bis maximal 8 Felder Abstand zu `trench_wet`. Bricht die Verbindung, trocknet er nach einer Weile aus.
+- [x] Gräben sind nicht begehbar, Holzplanken bzw. Brücken als baubares Objekt.
+- [x] Autotiling für schmale Kanäle (Ecken, T-Stücke, Kreuzungen) im selben Stil wie die neuen Uferkanten (F7).
+- [x] Koop-Aktionen `dig_trench`, `fill_trench`, `use_bucket` und Desync-Test.
+- [x] Sprinkler bleiben, setzen aber `watered_until` periodisch statt täglich.
+- [x] Gepflügte Felder im Sprinkler- oder Wasserbereich verwildern nicht mehr über Nacht. Bisher würfelt `FarmGrid.new_day` das Zurücksetzen von nacktem Boden aus, *bevor* die Sprinkler gießen.
 
 ### C4 Weitere Echtzeit-Systeme umstellen · L
-- [ ] Maschinen (`machines.gd`): Fertigstellung als Unix-Zeitstempel statt Spielminute.
-- [ ] Eier und Brutkasten, Zucht-Paare: Echtzeit-Dauer.
-- [ ] Farm-Jobs (`jobs.gd`): statt einmal pro Nacht ein **Tick alle 10 Echtzeit-Minuten**. Energie regeneriert in Echtzeit, die Spa beschleunigt das. Offline wird in 10-Minuten-Schritten nachsimuliert (gedeckelt, Performance-Budget unter 200 ms auf Mobilgeräten, notfalls aggregiert).
-- [ ] Bäume, Forage-Respawn, Debris-Wachstum: Echtzeit-Timer.
-- [ ] Versandkiste: Auszahlung zu jedem Spieltagswechsel **und** sofort beim Laden nach Offline-Zeit.
-- [ ] **„Während du weg warst“-Bericht** ersetzt bzw. erweitert den Morgenbericht (`day_report.gd`): gewachsen, geerntet, Jobs, Maschinen, Eier, Versand, verpasste Daily Quests.
+- [x] Maschinen (`machines.gd`): Fertigstellung als Unix-Zeitstempel statt Spielminute.
+- [x] Eier und Brutkasten, Zucht-Paare: Echtzeit-Dauer.
+- [x] Farm-Jobs (`jobs.gd`): statt einmal pro Nacht ein **Tick alle 10 Echtzeit-Minuten**. Energie regeneriert in Echtzeit, die Spa beschleunigt das. Offline wird in 10-Minuten-Schritten nachsimuliert (gedeckelt, Performance-Budget unter 200 ms auf Mobilgeräten, notfalls aggregiert).
+- [x] Bäume, Forage-Respawn, Debris-Wachstum: Echtzeit-Timer.
+- [x] Versandkiste: Auszahlung zu jedem Spieltagswechsel **und** sofort beim Laden nach Offline-Zeit.
+- [x] **„Während du weg warst“-Bericht** ersetzt bzw. erweitert den Morgenbericht (`day_report.gd`): gewachsen, geerntet, Jobs, Maschinen, Eier, Versand, verpasste Daily Quests.
 
 ### C5 Hybrider Spieltag · M
-- [ ] Spieltag läuft weiter (Uhr, Licht, NPC-Routinen, Läden offen und geschlossen). Die Ohnmacht um 2:00 entfällt, die Nacht läuft einfach weiter bis 6:00.
-- [ ] Schlafen überspringt die Nacht, füllt Energie auf und löst den Spieltagswechsel aus (Shop-Rotation, Board-Requests).
-- [ ] Energie regeneriert langsam zusätzlich in Echtzeit, damit Wiedereinsteiger nicht leer starten.
-- [ ] `Calendar.date_string()` zeigt künftig echtes Datum und Saison plus Spieluhrzeit. Den Spieltag-Zähler gibt es nur noch intern.
-- [ ] Koop: Schlaf-Abstimmung (`Coop.request_sleep`) bleibt, ist aber optional.
+- [x] Spieltag läuft weiter (Uhr, Licht, NPC-Routinen, Läden offen und geschlossen). Die Ohnmacht um 2:00 entfällt, die Nacht läuft einfach weiter bis 6:00.
+- [x] Schlafen überspringt die Nacht, füllt Energie auf und löst den Spieltagswechsel aus (Shop-Rotation, Board-Requests).
+- [x] Energie regeneriert langsam zusätzlich in Echtzeit, damit Wiedereinsteiger nicht leer starten.
+- [x] `Calendar.date_string()` zeigt künftig echtes Datum und Saison plus Spieluhrzeit. Den Spieltag-Zähler gibt es nur noch intern.
+- [x] Koop: Schlaf-Abstimmung (`Coop.request_sleep`) bleibt, ist aber optional.
 
 ### C6 Saisons an den echten Kalender binden · L → A3
-- [ ] Tileset-Wechsel nach echter Saison, Schnee-Bodentiles im Winter, verschneite Dächer und Bäume, Laub im Herbst, Blüten im Frühling (Tilesets pro Saison existieren schon, Winter-Overlay ergänzen).
-- [ ] Wetter pro Saison: Schneefall-Partikel (`weather_fx.gd`), im Winter zugefrorene Teichränder mit Eisloch-Angeln (Phase F).
-- [ ] **Saisonale Wildlinge**: Spawn-Bedingungen `{"s": [...]}` bleiben und bekommen 8–12 neue saisonexklusive Wildlinge (2–3 pro Saison) samt Sprites.
-- [ ] **Saisonale Events** nach echtem Datum in `seasonal_events.json`: Frühlingsfest und Ostereier-Suche (gibt es schon, umhängen), Sommerfest am Strand, Erntefest, Halloween (Ende Okt.), Winterfest bzw. Weihnachten (Dez.), Silvester-Feuerwerk.
-- [ ] **Saisonale NPCs**: Wanderhändler je Saison mit Spezialsortiment (der bestehende `traveler`-Shop wird saisonal).
-- [ ] **Saisonale Quests** (Phase D, Quest-Typ `seasonal`).
-- [ ] Bisherige Abhängigkeiten von `Calendar.season()` und dem Saisontag (Festivals, Board-Requests, Wochenaufgaben, Forage) auf SeasonService und echte Daten umstellen.
+- [x] Tileset-Wechsel nach echter Saison, Schnee-Bodentiles im Winter, verschneite Dächer und Bäume, Laub im Herbst, Blüten im Frühling (Tilesets pro Saison existieren schon, Winter-Overlay ergänzen).
+- [x] Wetter pro Saison: Schneefall-Partikel (`weather_fx.gd`), im Winter zugefrorene Teichränder mit Eisloch-Angeln (Phase F).
+- [x] **Saisonale Wildlinge**: Spawn-Bedingungen `{"s": [...]}` bleiben und bekommen 8–12 neue saisonexklusive Wildlinge (2–3 pro Saison) samt Sprites.
+- [x] **Saisonale Events** nach echtem Datum in `seasonal_events.json`: Frühlingsfest und Ostereier-Suche (gibt es schon, umhängen), Sommerfest am Strand, Erntefest, Halloween (Ende Okt.), Winterfest bzw. Weihnachten (Dez.), Silvester-Feuerwerk.
+- [x] **Saisonale NPCs**: Wanderhändler je Saison mit Spezialsortiment (der bestehende `traveler`-Shop wird saisonal).
+- [x] **Saisonale Quests** (Phase D, Quest-Typ `seasonal`).
+- [x] Bisherige Abhängigkeiten von `Calendar.season()` und dem Saisontag (Festivals, Board-Requests, Wochenaufgaben, Forage) auf SeasonService und echte Daten umstellen.
 
 ### C7 Mehr Pflanzen und Saatgut-Shop · M
-- [ ] Rund 20 neue Pflanzen (40 auf ca. 60) mit unterschiedlichen Profilen: schnelle Idle-Pflanzen, lange Hochwert-Pflanzen, Winterpflanzen, Gewächshaus-Exoten, Blumen für Bienen und Bestäubung, Zutaten für Rezepte mit Fisch und Erz.
-- [ ] Neues Gebäude **Saatguthandlung** im Dorf mit eigener NPC (Arbeitsname „Rosalind“, Porträt, Dialoge, Tagesablauf, Herzen). Saatgut wandert aus dem `general_store` dorthin.
-- [ ] Sortiment nach Saison sortiert, mit Anzeige „wächst jetzt schnell“ bzw. „wächst jetzt langsam“, Wachstumszeit und Ertragsvorschau. Seltene Saaten nach Farmlevel oder Herzen freischaltbar.
-- [ ] Item-Icons, Pflanzenstufen-Sprites, Gebäude-Sprite und Porträt generieren.
+- [x] Rund 20 neue Pflanzen (40 auf ca. 60) mit unterschiedlichen Profilen: schnelle Idle-Pflanzen, lange Hochwert-Pflanzen, Winterpflanzen, Gewächshaus-Exoten, Blumen für Bienen und Bestäubung, Zutaten für Rezepte mit Fisch und Erz.
+- [x] Neues Gebäude **Saatguthandlung** im Dorf mit eigener NPC (Arbeitsname „Rosalind“, Porträt, Dialoge, Tagesablauf, Herzen). Saatgut wandert aus dem `general_store` dorthin.
+- [x] Sortiment nach Saison sortiert, mit Anzeige „wächst jetzt schnell“ bzw. „wächst jetzt langsam“, Wachstumszeit und Ertragsvorschau. Seltene Saaten nach Farmlevel oder Herzen freischaltbar.
+- [x] Item-Icons, Pflanzenstufen-Sprites, Gebäude-Sprite und Porträt generieren.
 
 ---
 
 ## Phase D – UI-Überarbeitung, Quests, Tutorials
 
 ### D1 Menü-Shell: fast Vollbild mit Icon-Tabs · L → A7
-- [ ] Neue `MenuShell`: rund 94 % des Viewports innerhalb der Safe Area (Notch, Home-Indicator), oben `IconTabBar` mit Inventar, Team, Crafting, Quests/Journal, Map, Skilltree, Sammlung (Dex, Fische, Erze), Emotes und Einstellungen.
-- [ ] Hotkeys öffnen die Shell direkt im passenden Tab (`I`/Tab, `P`, `C`, `J`, `M`, neu `K` für Skilltree). Nochmal drücken schließt sie. Tab-Wechsel mit `Q`/`E`, mit LB/RB am Gamepad und per Wischen am Touchscreen.
-- [ ] Bestehende Panels (`inventory_panel.gd`, `party_panel.gd`, `craft_panel.gd`, `journal_panel.gd`, `map_panel.gd`, `settings_panel.gd`) in einbettbare Tab-Inhalte umbauen (`on_tab_shown()`, `on_tab_hidden()`). Shops, Dialoge, Handel und Kampf bleiben eigene Modale.
-- [ ] Fokus- und Gamepad-Navigation, Touch-Smoke-Test und UI-Smoke-Test aktualisieren.
+- [x] Neue `MenuShell`: rund 94 % des Viewports innerhalb der Safe Area (Notch, Home-Indicator), oben `IconTabBar` mit Inventar, Team, Crafting, Quests/Journal, Map, Skilltree, Sammlung (Dex, Fische, Erze), Emotes und Einstellungen.
+- [x] Hotkeys öffnen die Shell direkt im passenden Tab (`I`/Tab, `P`, `C`, `J`, `M`, neu `K` für Skilltree). Nochmal drücken schließt sie. Tab-Wechsel mit `Q`/`E`, mit LB/RB am Gamepad und per Wischen am Touchscreen.
+- [x] Bestehende Panels (`inventory_panel.gd`, `party_panel.gd`, `craft_panel.gd`, `journal_panel.gd`, `map_panel.gd`, `settings_panel.gd`) in einbettbare Tab-Inhalte umbauen (`on_tab_shown()`, `on_tab_hidden()`). Shops, Dialoge, Handel und Kampf bleiben eigene Modale.
+- [x] Fokus- und Gamepad-Navigation, Touch-Smoke-Test und UI-Smoke-Test aktualisieren.
 
 ### D2 Container als verschiebbare Mini-Fenster (Tarkov-Stil) · M → A7
-- [ ] Die rechte Container-Spalte (`_container_box`) entfällt. Das Inventar-Grid bekommt die volle Breite.
-- [ ] Doppelklick bzw. Tippen auf einen Beutel, Koffer oder eine Truhe öffnet ein `FloatingWindow` direkt über dem Inventar. Mehrere Fenster können gleichzeitig offen sein, mit Drag & Drop zwischen allen Fenstern.
-- [ ] Position pro Container-Typ wird im Profil gespeichert (F1).
-- [ ] Verschachtelte Container öffnen ein weiteres Fenster. Wird ein Container bewegt oder abgelegt, schließt sein Fenster.
-- [ ] Hof-Truhe, Versandkiste und andere Inventare nutzen dasselbe Fenster.
+- [x] Die rechte Container-Spalte (`_container_box`) entfällt. Das Inventar-Grid bekommt die volle Breite.
+- [x] Doppelklick bzw. Tippen auf einen Beutel, Koffer oder eine Truhe öffnet ein `FloatingWindow` direkt über dem Inventar. Mehrere Fenster können gleichzeitig offen sein, mit Drag & Drop zwischen allen Fenstern.
+- [x] Position pro Container-Typ wird im Profil gespeichert (F1).
+- [x] Verschachtelte Container öffnen ein weiteres Fenster. Wird ein Container bewegt oder abgelegt, schließt sein Fenster.
+- [x] Hof-Truhe, Versandkiste und andere Inventare nutzen dasselbe Fenster.
 
 ### D3 Rucksäcke · M
-- [ ] **Standard größer**: von 7×4 auf 9×5. Die Stufen danach werden neu skaliert (z. B. 10×6, 12×7, 14×8).
-- [ ] Rucksäcke werden **ausrüstbare Items** statt Stufen (Migration: `backpack_level` wird zum entsprechenden Item). Spieler können mehrere besitzen und wechseln, der Inhalt bleibt erhalten, sofern er passt, sonst gibt es eine Warnung.
-- [ ] Spezial-Rucksäcke mit Boni über das Modifier-System:
+- [x] **Standard größer**: von 7×4 auf 9×5. Die Stufen danach werden neu skaliert (z. B. 10×6, 12×7, 14×8).
+- [x] Rucksäcke werden **ausrüstbare Items** statt Stufen (Migration: `backpack_level` wird zum entsprechenden Item). Spieler können mehrere besitzen und wechseln, der Inhalt bleibt erhalten, sofern er passt, sonst gibt es eine Warnung.
+- [x] Spezial-Rucksäcke mit Boni über das Modifier-System:
   - Anglerrucksack (Köderfach, +Fangglück)
   - Bergmannsrucksack (+Lichtradius, Erz-Stapel)
   - Gärtnerrucksack (Saatfach, +Pflanztempo)
   - Abenteurerrucksack (+5 % Laufgeschwindigkeit)
   - Casino-exklusiver Rucksack (kosmetisch plus kleiner Glücksbonus)
-- [ ] Rucksack am Charakter sichtbar (Paper-Doll-Layer).
+- [x] Rucksack am Charakter sichtbar (Paper-Doll-Layer).
 
 ### D4 Economy-Anzeige · M → A7
-- [ ] Alle `%dg`-Strings (über 20 Stellen in Shop, Inventar, Journal, Tagesbericht, Abenteuer, Titel) durch `CoinLabel` ersetzen. Test: Kein UI-String darf mehr dem Muster `\d+g` bzw. `%dg` entsprechen.
-- [ ] Shop-Kopfzeile mit aktuellem Guthaben. Preise rot bei zu wenig Geld. Verkaufswert-Vorschau inklusive Qualitätsstufe. Gewinnspanne bei Crafting und Maschinen („Saft verkauft sich für 3× den Rohwert“).
-- [ ] Geld-Animation (Münzen fliegen zur HUD-Anzeige), HUD-Kurzformat für große Beträge.
-- [ ] Optional: Kontoauszug mit den letzten 50 Einnahmen und Ausgaben im Journal.
+- [x] Alle `%dg`-Strings (über 20 Stellen in Shop, Inventar, Journal, Tagesbericht, Abenteuer, Titel) durch `CoinLabel` ersetzen. Test: Kein UI-String darf mehr dem Muster `\d+g` bzw. `%dg` entsprechen.
+- [x] Shop-Kopfzeile mit aktuellem Guthaben. Preise rot bei zu wenig Geld. Verkaufswert-Vorschau inklusive Qualitätsstufe. Gewinnspanne bei Crafting und Maschinen („Saft verkauft sich für 3× den Rohwert“).
+- [x] Geld-Animation (Münzen fliegen zur HUD-Anzeige), HUD-Kurzformat für große Beträge.
+- [x] Optional: Kontoauszug mit den letzten 50 Einnahmen und Ausgaben im Journal.
 
 ### D5 Questsystem · XL → A1, A5
-- [ ] Datengetriebene Quest-Engine (`core/quests/quests.gd`) mit `quests.json`:
+- [x] Datengetriebene Quest-Engine (`core/quests/quests.gd`) mit `quests.json`:
   - Typen: `main`, `side`, `daily`, `tutorial`, `seasonal`, `event`
   - Voraussetzungen: Quests, Flags, Farmlevel, Herzen, Saison, Datum
   - Schritte mit Zielen: `stat` (Zähler), `talk_to`, `deliver`, `have_item`, `reach_map`, `reach_tile`, `win_battle`, `befriend`, `catch_fish`, `mine_ore`, `craft`, `flag`
   - Belohnungen: Gold, Items, Skillpunkte, Rezepte, Emotes, Freischaltungen
   - Dialog-Hooks pro Schritt
-- [ ] **Main Story**: die 13 bestehenden Kapitel migrieren und um Kapitel für die neuen Gebiete erweitern (Küste und Fischer, Bergbaustadt und Tiefenmine, Casino-Stadt). Etwa 20 Kapitel insgesamt.
-- [ ] **Sidequests**: 2–3 pro Villager (20 bestehende plus neue NPCs), inklusive Questketten mit kleinen Geschichten, Belohnungen und Herzen.
-- [ ] **Daily Quests**: 3 pro echtem Tag (Reset um lokale Mitternacht über Serverzeit), einmal pro Tag neu würfelbar, Serienbonus („5 Tage in Folge“), skaliert mit dem Fortschritt. Board-Requests und Wochenaufgaben werden in dieses System überführt (`weekly`-Typ bleibt).
-- [ ] UI: Questlog-Tab mit Filter (Main, Side, Daily, Saison) und **Quest-Tracker** im HUD (1–3 verfolgte Quests). Marker auf der Map und Richtungspfeil am Bildschirmrand. NPC-Symbole (`!` neue Quest, `?` abgeben).
-- [ ] Koop: Main Story gilt für die Farm (Host), Side- und Daily-Quests sind pro Spieler.
+- [x] **Main Story**: die 13 bestehenden Kapitel migrieren und um Kapitel für die neuen Gebiete erweitern (Küste und Fischer, Bergbaustadt und Tiefenmine, Casino-Stadt). Etwa 20 Kapitel insgesamt.
+- [x] **Sidequests**: 2–3 pro Villager (20 bestehende plus neue NPCs), inklusive Questketten mit kleinen Geschichten, Belohnungen und Herzen.
+- [x] **Daily Quests**: 3 pro echtem Tag (Reset um lokale Mitternacht über Serverzeit), einmal pro Tag neu würfelbar, Serienbonus („5 Tage in Folge“), skaliert mit dem Fortschritt. Board-Requests und Wochenaufgaben werden in dieses System überführt (`weekly`-Typ bleibt).
+- [x] UI: Questlog-Tab mit Filter (Main, Side, Daily, Saison) und **Quest-Tracker** im HUD (1–3 verfolgte Quests). Marker auf der Map und Richtungspfeil am Bildschirmrand. NPC-Symbole (`!` neue Quest, `?` abgeben).
+- [x] Koop: Main Story gilt für die Farm (Host), Side- und Daily-Quests sind pro Spieler.
 
 ### D6 Überspringbare Tutorials im Questsystem · M → D5
-- [ ] Tutorial-Questkette mit Typ `tutorial`: Bewegung, Werkzeuge, Pflanzen und Gießen, Ernten und Versand, Wildling befreunden, Kampf, Hof-Jobs, Crafting, Map und Reisen. Später kontextuell beim ersten Kontakt: Angeln, Mining, Verzaubern, Casino, Skilltree, Emotes, Gräben.
-- [ ] Darstellung: kurze Hinweisbox mit Tasten bzw. Touch-Symbolen passend zum Eingabegerät, Hervorhebung des relevanten UI-Elements (Spotlight-Overlay).
-- [ ] **Überspringen**: beim neuen Spiel fragen („Tutorial spielen?“), jederzeit „Tutorial überspringen“ im Questlog, einzelne Hinweise wegklickbar. Gesehene Tutorials stehen im **Profil** (F1), damit der zweite Spielstand nicht erneut fragt.
-- [ ] Tutorials geben kleine Belohnungen, damit sie sich lohnen. Beim Überspringen werden die Belohnungen gutgeschrieben.
+- [x] Tutorial-Questkette mit Typ `tutorial`: Bewegung, Werkzeuge, Pflanzen und Gießen, Ernten und Versand, Wildling befreunden, Kampf, Hof-Jobs, Crafting, Map und Reisen. Später kontextuell beim ersten Kontakt: Angeln, Mining, Verzaubern, Casino, Skilltree, Emotes, Gräben.
+- [x] Darstellung: kurze Hinweisbox mit Tasten bzw. Touch-Symbolen passend zum Eingabegerät, Hervorhebung des relevanten UI-Elements (Spotlight-Overlay).
+- [x] **Überspringen**: beim neuen Spiel fragen („Tutorial spielen?“), jederzeit „Tutorial überspringen“ im Questlog, einzelne Hinweise wegklickbar. Gesehene Tutorials stehen im **Profil** (F1), damit der zweite Spielstand nicht erneut fragt.
+- [x] Tutorials geben kleine Belohnungen, damit sie sich lohnen. Beim Überspringen werden die Belohnungen gutgeschrieben.
 
 ---
 
@@ -429,16 +429,16 @@ Das ist der tiefste Eingriff in den Kern. Er muss vor Quests, Skilltree und Bala
 ## Phase J – Soziales: Emotes und Chat-Blasen
 
 ### J1 Emotes · L
-- [ ] **Emote-Rad** (Hotkey `G`, Gamepad Steuerkreuz gedrückt halten, Touch-Button im HUD) mit 8 Slots, Belegung im Profil (F1).
-- [ ] Start-Set: Winken, Verbeugen, Jubeln, Lachen, Daumen hoch, Herz, Sitzen, Schlafen, Tanz 1–3, Facepalm. Weitere über Quests, saisonale Events und den Casino-Shop.
-- [ ] Umsetzung: Ein Emote ist eine **Animationssequenz** aus generierten Frames pro Paper-Doll-Layer (Körper, Kleidung, Haare) **plus** prozedurale Bewegung und Symbol-Sprechblase und Partikel. Tänze bekommen eigene Frames und einen kurzen Musik-Sting.
-- [ ] Risiko: Konsistenz der Layer-Frames aus der Bild-KI. Deshalb zuerst ein **Prototyp mit 2 Tänzen** (bestätigt). Erst wenn der überzeugt, werden alle Frames generiert, sonst wird auf mehr prozedurale Animation ausgewichen.
-- [ ] Party-Wildling reagiert (hüpft und tanzt mit). Im Koop werden Emotes per RPC synchronisiert.
+- [x] **Emote-Rad** (Hotkey `G`, Gamepad Steuerkreuz gedrückt halten, Touch-Button im HUD) mit 8 Slots, Belegung im Profil (F1).
+- [x] Start-Set: Winken, Verbeugen, Jubeln, Lachen, Daumen hoch, Herz, Sitzen, Schlafen, Tanz 1–3, Facepalm. Weitere über Quests, saisonale Events und den Casino-Shop.
+- [x] Umsetzung: Ein Emote ist eine **Animationssequenz** aus generierten Frames pro Paper-Doll-Layer (Körper, Kleidung, Haare) **plus** prozedurale Bewegung und Symbol-Sprechblase und Partikel. Tänze bekommen eigene Frames und einen kurzen Musik-Sting.
+- [x] Risiko: Konsistenz der Layer-Frames aus der Bild-KI. Deshalb zuerst ein **Prototyp mit 2 Tänzen** (bestätigt). Erst wenn der überzeugt, werden alle Frames generiert, sonst wird auf mehr prozedurale Animation ausgewichen.
+- [x] Party-Wildling reagiert (hüpft und tanzt mit). Im Koop werden Emotes per RPC synchronisiert.
 
 ### J2 Chat-Blasen über Charakteren · S
-- [ ] Chat-RPC um Spieler-ID erweitern (`Coop.chat(pid, from_name, text)`). Sprechblase über dem Avatar (eigener und fremder) für etwa 5 s plus Lesedauer, mit Umbruch, maximaler Breite und Warteschlange bei mehreren Nachrichten.
-- [ ] Chat-Log bleibt. Einfacher Wortfilter (abschaltbar), Spieler stummschalten, Längenlimit, Rate-Limit.
-- [ ] Glyph-Abdeckung (F4) auch für Chat: nicht darstellbare Zeichen ersetzen.
+- [x] Chat-RPC um Spieler-ID erweitern (`Coop.chat(pid, from_name, text)`). Sprechblase über dem Avatar (eigener und fremder) für etwa 5 s plus Lesedauer, mit Umbruch, maximaler Breite und Warteschlange bei mehreren Nachrichten.
+- [x] Chat-Log bleibt. Einfacher Wortfilter (abschaltbar), Spieler stummschalten, Längenlimit, Rate-Limit.
+- [x] Glyph-Abdeckung (F4) auch für Chat: nicht darstellbare Zeichen ersetzen.
 
 ---
 
@@ -457,84 +457,84 @@ hollowmere-mcp  (Node/TypeScript, @modelcontextprotocol/sdk, Docker neben Nakama
 Spielclient des Spielers (Browser oder Desktop, Host der Welt)
    └─ Autoload AgentBridge: führt Befehle über Coop.act() aus → dieselbe Validierung wie bei echten Spielern
 ```
-- [ ] Die Welt wird **nur im Spielclient** simuliert, das Spiel muss also offen sein. Der MCP-Server ist ein reiner Relay mit Auth, Rate-Limits und Request/Response-Korrelation (Timeouts, Fehlercodes).
-- [ ] Transport Spiel ↔ Server über Nakama-Realtime (Stream oder Notifications). Neue RPCs `agent_register_client`, `agent_command_result`.
-- [ ] Auth: (a) **OAuth 2.1 mit Dynamic Client Registration** für Claude.ai bzw. Desktop-Connectors (Login-Seite unter der Spiel-Domain, Nakama-Login), (b) **Personal Access Token** aus dem Spiel für Claude Code, Cursor und andere. Token mit Scopes (`observe`, `act`, `chat`, `economy`), widerrufbar, Ablaufdatum.
-- [ ] Deployment: neuer Service in `server/docker-compose.yml`, nginx-Route `mcp.hollowmere.tretu.de`, Healthcheck, Logs, Rate-Limit pro Token.
+- [x] Die Welt wird **nur im Spielclient** simuliert, das Spiel muss also offen sein. Der MCP-Server ist ein reiner Relay mit Auth, Rate-Limits und Request/Response-Korrelation (Timeouts, Fehlercodes).
+- [x] Transport Spiel ↔ Server über Nakama-Realtime (Stream oder Notifications). Neue RPCs `agent_register_client`, `agent_command_result`.
+- [x] Auth: (a) **OAuth 2.1 mit Dynamic Client Registration** für Claude.ai bzw. Desktop-Connectors (Login-Seite unter der Spiel-Domain, Nakama-Login), (b) **Personal Access Token** aus dem Spiel für Claude Code, Cursor und andere. Token mit Scopes (`observe`, `act`, `chat`, `economy`), widerrufbar, Ablaufdatum.
+- [x] Deployment: neuer Service in `server/docker-compose.yml`, nginx-Route `mcp.hollowmere.tretu.de`, Healthcheck, Logs, Rate-Limit pro Token.
 
 ### K2 Modi im Spiel · L
-- [ ] Neues Panel **„KI-Agenten“** (im Koop-Tab der Menü-Shell): Token erzeugen bzw. widerrufen, Verbindungsstatus, Modus wählen.
-- [ ] **Modus „Eigenen Charakter steuern“**: Der Spieler wechselt in den **Zuschauermodus** (Kamera folgt, optional freie Kamera). Ein Overlay zeigt die letzten Aktionen und die „Gedanken“ des Agenten (über das Tool `narrate`). Die Taste „Steuerung zurücknehmen“ funktioniert jederzeit.
-- [ ] **Modus „Virtueller Koop-Partner“**: Ein KI-Mitspieler wird als zusätzlicher Spieler (`agent:<id>`) im Koop-Roster angelegt, mit eigenem `PlayerData`, Avatar (Look wählbar), Inventar, Team und Skilltree. Er funktioniert auch solo (der Spieler hostet dafür lokal). Bis zu **3 Agenten** pro Welt. Der Agenten-Zugang ist zum Launch für alle kostenlos.
-- [ ] Pfadfindung für Agenten-Bewegung: `AStarGrid2D` auf dem Map-Grid, Warps zwischen Maps.
-- [ ] **Browser-Hinweis**: Hintergrund-Tabs drosseln `requestAnimationFrame`, die Simulation stoppt dann. Im Agenten-Modus erscheint ein Hinweis („Tab sichtbar lassen“), und die Engine-Hauptschleife wird soweit möglich weitergetaktet. Testen und dokumentieren.
+- [x] Neues Panel **„KI-Agenten“** (im Koop-Tab der Menü-Shell): Token erzeugen bzw. widerrufen, Verbindungsstatus, Modus wählen.
+- [x] **Modus „Eigenen Charakter steuern“**: Der Spieler wechselt in den **Zuschauermodus** (Kamera folgt, optional freie Kamera). Ein Overlay zeigt die letzten Aktionen und die „Gedanken“ des Agenten (über das Tool `narrate`). Die Taste „Steuerung zurücknehmen“ funktioniert jederzeit.
+- [x] **Modus „Virtueller Koop-Partner“**: Ein KI-Mitspieler wird als zusätzlicher Spieler (`agent:<id>`) im Koop-Roster angelegt, mit eigenem `PlayerData`, Avatar (Look wählbar), Inventar, Team und Skilltree. Er funktioniert auch solo (der Spieler hostet dafür lokal). Bis zu **3 Agenten** pro Welt. Der Agenten-Zugang ist zum Launch für alle kostenlos.
+- [x] Pfadfindung für Agenten-Bewegung: `AStarGrid2D` auf dem Map-Grid, Warps zwischen Maps.
+- [x] **Browser-Hinweis**: Hintergrund-Tabs drosseln `requestAnimationFrame`, die Simulation stoppt dann. Im Agenten-Modus erscheint ein Hinweis („Tab sichtbar lassen“), und die Engine-Hauptschleife wird soweit möglich weitergetaktet. Testen und dokumentieren.
 
 ### K3 MCP-Tools, Ressourcen und Prompts · XL
-- [ ] **Beobachten**: `get_status` (Ort, Zeit, Saison, Wetter, Energie, Geld), `look_around` (Tiles, Objekte, NPCs, Wildlinge, Spieler im Umkreis als strukturiertes JSON und optional als ASCII-Karte), `get_inventory`, `get_party`, `get_farm_overview` (Felder, Reifezeiten, Jobs, Maschinen), `get_quests`, `get_map`, `get_shop`, `get_battle_state`, `get_dialogue`, `read_chat`, `wait_for_events` (Long-Poll auf Ereignisse wie Kampfbeginn, Dialog, Fisch beißt, Quest erledigt).
-- [ ] **Handeln**: `walk_to` (Koordinate, Objekt, NPC oder Map), `interact`, `use_tool` (Tile oder Fläche), `plant`, `water_area`, `harvest_area`, `ship`, `buy`, `sell`, `craft`, `cook`, `equip`, `set_job`, `move_creature`, `dialogue_choose`, `battle_move`, `battle_switch`, `battle_item`, `battle_flee`, `fish` (Minispiel als Entscheidungen: wann einholen), `mine_block`, `place_block`, `enchant`, `casino_*` (Bet, Hit, Stand, Spin …), `chat_say`, `emote`, `sleep`, `narrate`.
-- [ ] **Makros** für weniger Tool-Aufrufe: `farm_routine` (alles Reife ernten, gießen, nachpflanzen), `go_shopping(liste)`, `deposit_all`.
-- [ ] **Ressourcen**: Spielhandbuch (Mechaniken, Typentabelle, Items, Rezepte, Fische, Erze, Karten) als MCP-Resources, generiert aus `data/*.json`, damit Agenten das Spiel verstehen.
-- [ ] **Prompts**: „Spiele als Farmer“, „Hilf mir als Koop-Partner“, „Grinde Kämpfe“, „Optimiere meine Farm“.
-- [ ] Schutz: Aktionsbudget pro Minute, keine zerstörerischen Aktionen ohne Scope (Spielstand löschen ist nie erlaubt, Verkauf wertvoller Items braucht den `economy`-Scope), Audit-Log im Spiel.
+- [x] **Beobachten**: `get_status` (Ort, Zeit, Saison, Wetter, Energie, Geld), `look_around` (Tiles, Objekte, NPCs, Wildlinge, Spieler im Umkreis als strukturiertes JSON und optional als ASCII-Karte), `get_inventory`, `get_party`, `get_farm_overview` (Felder, Reifezeiten, Jobs, Maschinen), `get_quests`, `get_map`, `get_shop`, `get_battle_state`, `get_dialogue`, `read_chat`, `wait_for_events` (Long-Poll auf Ereignisse wie Kampfbeginn, Dialog, Fisch beißt, Quest erledigt).
+- [x] **Handeln**: `walk_to` (Koordinate, Objekt, NPC oder Map), `interact`, `use_tool` (Tile oder Fläche), `plant`, `water_area`, `harvest_area`, `ship`, `buy`, `sell`, `craft`, `cook`, `equip`, `set_job`, `move_creature`, `dialogue_choose`, `battle_move`, `battle_switch`, `battle_item`, `battle_flee`, `fish` (Minispiel als Entscheidungen: wann einholen), `mine_block`, `place_block`, `enchant`, `casino_*` (Bet, Hit, Stand, Spin …), `chat_say`, `emote`, `sleep`, `narrate`.
+- [x] **Makros** für weniger Tool-Aufrufe: `farm_routine` (alles Reife ernten, gießen, nachpflanzen), `go_shopping(liste)`, `deposit_all`.
+- [x] **Ressourcen**: Spielhandbuch (Mechaniken, Typentabelle, Items, Rezepte, Fische, Erze, Karten) als MCP-Resources, generiert aus `data/*.json`, damit Agenten das Spiel verstehen.
+- [x] **Prompts**: „Spiele als Farmer“, „Hilf mir als Koop-Partner“, „Grinde Kämpfe“, „Optimiere meine Farm“.
+- [x] Schutz: Aktionsbudget pro Minute, keine zerstörerischen Aktionen ohne Scope (Spielstand löschen ist nie erlaubt, Verkauf wertvoller Items braucht den `economy`-Scope), Audit-Log im Spiel.
 
 ### K4 Tests und Doku · M
-- [ ] E2E-Test in der CI: Nakama, `hollowmere-mcp` und ein headless Spielclient, dazu ein Skript-MCP-Client, der ein kurzes Szenario spielt (laufen, pflanzen, ernten, verkaufen, Kampf gewinnen).
-- [ ] Anleitung `docs/agents.md` (bzw. im Spiel verlinkt): Einrichtung für Claude Desktop und Claude.ai (Custom Connector), Claude Code, Cursor sowie generische MCP-Clients.
-- [ ] Datenschutzerklärung ergänzen (Agent-Verbindungen, Logs, Aufbewahrung).
+- [x] E2E-Test in der CI: Nakama, `hollowmere-mcp` und ein headless Spielclient, dazu ein Skript-MCP-Client, der ein kurzes Szenario spielt (laufen, pflanzen, ernten, verkaufen, Kampf gewinnen).
+- [x] Anleitung `docs/agents.md` (bzw. im Spiel verlinkt): Einrichtung für Claude Desktop und Claude.ai (Custom Connector), Claude Code, Cursor sowie generische MCP-Clients.
+- [x] Datenschutzerklärung ergänzen (Agent-Verbindungen, Logs, Aufbewahrung).
 
 ---
 
 ## Phase L – Inhalte, Assets, Balancing
 
 ### L1 Asset-Liste (Generierung über Replicate)
-- [ ] **Tilesets**: Strand, Sand, Wellen; Stege und Pfähle; Gräben und Kanäle (Autotile); Schnee-Overlay; Casino-Innenraum (Marmor, Teppich, Tische, Automaten, Bar); Promenade; Bergbaustadt; Mine-Blöcke (5 Gesteine × Risse) und Erzadern; Kristallgrotten; Magma.
-- [ ] **Gebäude**: Saatguthandlung, Fischerhaus mit Angelshop, Bootshaus, Grand Casino (groß), Hotel, Café, Bergmannsgilde, Mining-Shop, Schmelze, Geologen-Hütte.
-- [ ] **Porträts und Charakter-Sprites**: Saatguthändlerin, Fischer, Fischerin, Vorarbeiter, Mining-Händler, Schmiedin, Geologe, 2 Croupiers, Kassiererin, Barkeeper, Concierge, High-Roller, Sicherheitsmann, 4 saisonale Händler, Gäste-NPCs.
-- [ ] **Wildlinge**: 8–12 saisonale, 4–6 Mining- bzw. Kristall-Wildlinge, 2–4 Wasser- bzw. Strand-Wildlinge (Sprites, Kampf-Sprites, Dex-Einträge, Moves).
-- [ ] **Item-Icons**: etwa 20 Saaten und Pflanzen, 45 Fische, 20 Erze, Kristalle und Barren, Angelzubehör, Werkzeugstufen, Rucksäcke, Bücher, Casino-Items, rund 110 Skill-Icons, Emote-Icons, Coin- und Chip-Icons.
-- [ ] **Animationen**: Emote-Frames pro Paper-Doll-Layer, Angel-Animation, Spitzhacke im Dauerabbau, Schaufel, Eimer.
-- [ ] **Kampf-Hintergründe**: Strand bei Nacht, Kristallgrotte, Magmatiefe.
-- [ ] **Musik** (ace-step-1.5, ruhig, loopbar, passend zu den bestehenden Piano-Loops): Strand, Hafen am Abend, Angel-Minispiel, Bergbaustadt, Tiefe Mine, Casino-Lounge-Jazz, Promenade-Swing, VIP-Piano, Winter-Thema, Herbst-Thema, Festival-Thema, Halloween, Winterfest. Etwa 13 Tracks.
-- [ ] **SFX**: Auswerfen, Biss, Spule, Platscher, Spitzhacke je Material, Block bricht, Fackel, Schaufel, Wasser fließt, Chips, Karten, Roulette, Walzen, Jackpot, Emote-Stings. Synth-Fallbacks in `audio.gd` ergänzen.
-- [ ] **Web-Downloadgröße**: Budget für die `.pck` festlegen. Musik als OGG mit niedriger Bitrate. Neue Gebiets-Musik gegebenenfalls nachladbar (HTTP-Download beim ersten Betreten statt im initialen Paket).
+- [x] **Tilesets**: Strand, Sand, Wellen; Stege und Pfähle; Gräben und Kanäle (Autotile); Schnee-Overlay; Casino-Innenraum (Marmor, Teppich, Tische, Automaten, Bar); Promenade; Bergbaustadt; Mine-Blöcke (5 Gesteine × Risse) und Erzadern; Kristallgrotten; Magma.
+- [x] **Gebäude**: Saatguthandlung, Fischerhaus mit Angelshop, Bootshaus, Grand Casino (groß), Hotel, Café, Bergmannsgilde, Mining-Shop, Schmelze, Geologen-Hütte.
+- [x] **Porträts und Charakter-Sprites**: Saatguthändlerin, Fischer, Fischerin, Vorarbeiter, Mining-Händler, Schmiedin, Geologe, 2 Croupiers, Kassiererin, Barkeeper, Concierge, High-Roller, Sicherheitsmann, 4 saisonale Händler, Gäste-NPCs.
+- [x] **Wildlinge**: 8–12 saisonale, 4–6 Mining- bzw. Kristall-Wildlinge, 2–4 Wasser- bzw. Strand-Wildlinge (Sprites, Kampf-Sprites, Dex-Einträge, Moves).
+- [x] **Item-Icons**: etwa 20 Saaten und Pflanzen, 45 Fische, 20 Erze, Kristalle und Barren, Angelzubehör, Werkzeugstufen, Rucksäcke, Bücher, Casino-Items, rund 110 Skill-Icons, Emote-Icons, Coin- und Chip-Icons.
+- [x] **Animationen**: Emote-Frames pro Paper-Doll-Layer, Angel-Animation, Spitzhacke im Dauerabbau, Schaufel, Eimer.
+- [x] **Kampf-Hintergründe**: Strand bei Nacht, Kristallgrotte, Magmatiefe.
+- [x] **Musik** (ace-step-1.5, ruhig, loopbar, passend zu den bestehenden Piano-Loops): Strand, Hafen am Abend, Angel-Minispiel, Bergbaustadt, Tiefe Mine, Casino-Lounge-Jazz, Promenade-Swing, VIP-Piano, Winter-Thema, Herbst-Thema, Festival-Thema, Halloween, Winterfest. Etwa 13 Tracks.
+- [x] **SFX**: Auswerfen, Biss, Spule, Platscher, Spitzhacke je Material, Block bricht, Fackel, Schaufel, Wasser fließt, Chips, Karten, Roulette, Walzen, Jackpot, Emote-Stings. Synth-Fallbacks in `audio.gd` ergänzen.
+- [x] **Web-Downloadgröße**: Budget für die `.pck` festlegen. Musik als OGG mit niedriger Bitrate. Neue Gebiets-Musik gegebenenfalls nachladbar (HTTP-Download beim ersten Betreten statt im initialen Paket).
 
 ### L2 Balancing · L → C, E, F, G, I
-- [ ] `balance_sim` und `economy_sim` auf das Echtzeit-Modell umstellen: simulierte Spielerprofile (10 min pro Tag, 1 h pro Tag, Hardcore) über 30 echte Tage, mit Kennzahlen Gold pro Stunde, Fortschrittstempo und Offline-Anteil.
-- [ ] Gold-Quellen und -Senken neu kalibrieren: Pflanzen, Fische, Erze, Casino (Erwartungswert negativ, RTP etwa 95 %, damit es keine Gold-Farm wird), Daily Quests. Senken: Saat, Werkzeuge, Rucksäcke, Verzauberungen, Skill-Neuverteilung, Gebäude.
-- [ ] Offline-Fortschritt fühlt sich lohnend an, schlägt aber aktives Spielen nicht (Zielwert: Offline etwa 40–60 % der aktiven Rate).
-- [ ] CI-Grenzen im 112-Tage-Sim auf das neue Modell übertragen.
+- [x] `balance_sim` und `economy_sim` auf das Echtzeit-Modell umstellen: simulierte Spielerprofile (10 min pro Tag, 1 h pro Tag, Hardcore) über 30 echte Tage, mit Kennzahlen Gold pro Stunde, Fortschrittstempo und Offline-Anteil.
+- [x] Gold-Quellen und -Senken neu kalibrieren: Pflanzen, Fische, Erze, Casino (Erwartungswert negativ, RTP etwa 95 %, damit es keine Gold-Farm wird), Daily Quests. Senken: Saat, Werkzeuge, Rucksäcke, Verzauberungen, Skill-Neuverteilung, Gebäude.
+- [x] Offline-Fortschritt fühlt sich lohnend an, schlägt aber aktives Spielen nicht (Zielwert: Offline etwa 40–60 % der aktiven Rate).
+- [x] CI-Grenzen im 112-Tage-Sim auf das neue Modell übertragen.
 
 ---
 
 ## Phase M – Produktionsreife
 
 ### M1 Tests und CI · L
-- [ ] Neue GUT-Unit-Tests: CropGrowth (Stückweise-Integration, Offline-Cap, Zeit rückwärts), Bewässerung und Flood-Fill, SeasonService (Hemisphären, Grenzen), Quest-Engine, Skills und Modifier, Angeln (Fischauswahl), Mining (Generierung deterministisch, Diffs), Verzaubern (Angebote, Kosten), Casino (Auszahlungen, RTP), Profil-Merge, Glyph-Abdeckung, Glossar, Formatierung.
-- [ ] Smoke-Tests für jede neue Map, jeden neuen Tab und jedes neue Panel, mit Screenshots für Store und Regression.
-- [ ] Desync-Test um alle neuen Koop-Aktionen erweitern.
-- [ ] Nakama-Integrationstests: Profil-Sync, komprimierte Saves, Agent-RPCs.
-- [ ] MCP-E2E-Test (K4).
-- [ ] Perf-Bench (`perf_bench.gd`) für Mine mit Licht, Casino-Innenraum, Strand mit Wellen, Farm mit vielen Gräben. Ziel: 60 FPS auf Mittelklasse-Handy im Browser, Laden unter 200 ms für Offline-Catch-up.
+- [x] Neue GUT-Unit-Tests: CropGrowth (Stückweise-Integration, Offline-Cap, Zeit rückwärts), Bewässerung und Flood-Fill, SeasonService (Hemisphären, Grenzen), Quest-Engine, Skills und Modifier, Angeln (Fischauswahl), Mining (Generierung deterministisch, Diffs), Verzaubern (Angebote, Kosten), Casino (Auszahlungen, RTP), Profil-Merge, Glyph-Abdeckung, Glossar, Formatierung.
+- [x] Smoke-Tests für jede neue Map, jeden neuen Tab und jedes neue Panel, mit Screenshots für Store und Regression.
+- [x] Desync-Test um alle neuen Koop-Aktionen erweitern.
+- [x] Nakama-Integrationstests: Profil-Sync, komprimierte Saves, Agent-RPCs.
+- [x] MCP-E2E-Test (K4).
+- [x] Perf-Bench (`perf_bench.gd`) für Mine mit Licht, Casino-Innenraum, Strand mit Wellen, Farm mit vielen Gräben. Ziel: 60 FPS auf Mittelklasse-Handy im Browser, Laden unter 200 ms für Offline-Catch-up.
 
 ### M2 Save-Migration und Datensicherheit · M
-- [ ] Migration v1 → v2 mit echten Spielständen testen (Fixtures `save_v1_m3.json`). Pflanzen-Alter in Tagen wird zu `progress`, `backpack_level` wird zum Rucksack-Item, Jobs, Kalender-Felder.
-- [ ] Vor der Migration automatisch ein Backup (`slot_N.v1.bak`). Ist die Cloud-Version neuer, wird sie bevorzugt.
+- [x] Migration v1 → v2 mit echten Spielständen testen (Fixtures `save_v1_m3.json`). Pflanzen-Alter in Tagen wird zu `progress`, `backpack_level` wird zum Rucksack-Item, Jobs, Kalender-Felder.
+- [x] Vor der Migration automatisch ein Backup (`slot_N.v1.bak`). Ist die Cloud-Version neuer, wird sie bevorzugt.
 
 ### M3 Server und Betrieb · M
-- [ ] `hollowmere.lua`: neue Collections (`profile`), Agent-RPCs, komprimierte Saves, Rate-Limits.
-- [ ] `docker-compose.yml`: Service `hollowmere-mcp`, Secrets in `.env`. nginx: Subdomain `mcp.`, TLS, Rate-Limit, WebSocket bzw. SSE-Timeouts.
-- [ ] Monitoring: Health-Endpoints, Fehlerberichte (gibt es schon) um MCP erweitern, Backups (Postgres) prüfen. `HOSTING.md` aktualisieren.
+- [x] `hollowmere.lua`: neue Collections (`profile`), Agent-RPCs, komprimierte Saves, Rate-Limits.
+- [x] `docker-compose.yml`: Service `hollowmere-mcp`, Secrets in `.env`. nginx: Subdomain `mcp.`, TLS, Rate-Limit, WebSocket bzw. SSE-Timeouts.
+- [x] Monitoring: Health-Endpoints, Fehlerberichte (gibt es schon) um MCP erweitern, Backups (Postgres) prüfen. `HOSTING.md` aktualisieren.
 
 ### M4 Lokalisierung · M
-- [ ] Alle neuen Strings in EN und DE (geschätzt 3.000–4.000 neue Einträge). Glossar-Test, Platzhalter-Test (`%d`, `%s` gleiche Anzahl), Längen-Check für Buttons in DE.
-- [ ] `msgfmt --check-format` sauber bekommen: Datentexte wie „25% schneller“ sind fälschlich als `c-format` markiert (3 Fehler, Godot selbst stört das nicht). Danach den Check in die CI aufnehmen.
+- [x] Alle neuen Strings in EN und DE (geschätzt 3.000–4.000 neue Einträge). Glossar-Test, Platzhalter-Test (`%d`, `%s` gleiche Anzahl), Längen-Check für Buttons in DE.
+- [x] `msgfmt --check-format` sauber bekommen: Datentexte wie „25% schneller“ sind fälschlich als `c-format` markiert (3 Fehler, Godot selbst stört das nicht). Danach den Check in die CI aufnehmen.
 
 ### M5 Barrierefreiheit und Plattformen · M
-- [ ] Alle neuen Minispiele mit Gamepad, Tastatur und Touch spielbar, Einfach-Modi (Angeln, Abbau halten statt tippen), Farbenblind-Palette für Roulette, Typen und Erze, Textgrößen in der neuen Menü-Shell.
+- [x] Alle neuen Minispiele mit Gamepad, Tastatur und Touch spielbar, Einfach-Modi (Angeln, Abbau halten statt tippen), Farbenblind-Palette für Roulette, Typen und Erze, Textgrößen in der neuen Menü-Shell.
 - [ ] Testmatrix: Windows, macOS, Chrome, Safari (iOS und macOS), Firefox, Android Chrome, installierte PWA, Querformat auf dem Handy, Tablet.
 
 ### M6 Recht, Store, Launch · M
-- [ ] Datenschutzerklärung und AGB aktualisieren: Profil-Sync, Chat, KI-Agenten, Casino-Hinweis.
+- [x] Datenschutzerklärung und AGB aktualisieren: Profil-Sync, Chat, KI-Agenten, Casino-Hinweis.
 - [ ] Altersfreigabe (I4) einholen.
 - [ ] `store/STORE_PAGE.md`, Screenshots, Capsules und README um die neuen Features ergänzen, optional einen Trailer.
 - [ ] `RELEASE.md`-Checkliste durchlaufen, Version `1.0.0`, Tag, CI-Exporte, Deployment auf `hollowmere.tretu.de`.

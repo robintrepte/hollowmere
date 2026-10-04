@@ -13251,3 +13251,168 @@ msgstr "Was für ein Ausblick! Ich könnte den ganzen Tag die Jachten anschauen.
 msgid "The Grand Casino is closed for renovation."
 msgstr "Das Grand Casino ist wegen Renovierung geschlossen."
 
+msgid "AI agents"
+msgstr "KI-Agenten"
+
+#, c-format
+msgid "About %d energy / hour"
+msgstr "Etwa %d Energie / Stunde"
+
+msgid "An agent is playing. You are watching."
+msgstr "Ein Agent spielt. Du schaust zu."
+
+msgid "Assign a job"
+msgstr "Job zuweisen"
+
+#, c-format
+msgid "Clears about %d rocks or branches per hour."
+msgstr "Räumt etwa %d Steine oder Äste pro Stunde."
+
+msgid "Could not add a partner (host only, max 3)."
+msgstr "Partner ging nicht (nur Host, max. 3)."
+
+msgid "Emote"
+msgstr "Emote"
+
+msgid "Emote wheel"
+msgstr "Emote-Rad"
+
+msgid "Empty slot"
+msgstr "Leerer Slot"
+
+msgid "Energy recovers faster"
+msgstr "Energie kommt schneller zurück"
+
+msgid "Filter rude words in chat"
+msgstr "Grobheiten im Chat filtern"
+
+msgid "Guards the farm against crows and pests while on duty."
+msgstr "Bewacht den Hof vor Krähen und Schädlingen."
+
+msgid "Harvests ripe crops into the farm chest as they come ready."
+msgstr "Erntet reife Pflanzen in die Hoftruhe, sobald sie fertig sind."
+
+#, c-format
+msgid "Harvests up to %d ripe plants or trees per hour."
+msgstr "Erntet bis zu %d reife Pflanzen oder Bäume pro Stunde."
+
+msgid "Invite helper"
+msgstr "Helfer einladen"
+
+msgid "Keep this tab visible while an agent is playing."
+msgstr "Lass den Tab sichtbar, solange ein Agent spielt."
+
+#, c-format
+msgid "Keeps machines running and tends about %d extra slots."
+msgstr "Hält Maschinen am Laufen und betreut etwa %d extra Slots."
+
+msgid "Keeps planted fields watered through the day."
+msgstr "Hält gepflanzte Felder über den Tag bewässert."
+
+msgid "Let a helper (Claude, Cursor, ...) watch or play. Up to 3 partners. Free for everyone."
+msgstr "Lass einen Helfer (Claude, Cursor, ...) zuschauen oder spielen. Bis zu 3 Partner. Für alle kostenlos."
+
+msgid "Let an agent play (I watch)"
+msgstr "Agent spielen lassen (ich schaue zu)"
+
+msgid "New token (observe + act + chat)"
+msgstr "Neues Token (Beobachten + Handeln + Chat)"
+
+msgid "New token with economy"
+msgstr "Neues Token mit Economy"
+
+#, c-format
+msgid "Now pick an emote for slot %d."
+msgstr "Jetzt ein Emote für Slot %d wählen."
+
+#, c-format
+msgid "Nudges up to %d growing crops each hour."
+msgstr "Schiebt bis zu %d wachsende Pflanzen pro Stunde an."
+
+#, c-format
+msgid "On the farm: %d working, %d resting"
+msgstr "Auf dem Hof: %d bei der Arbeit, %d ruhen"
+
+msgid "Open agent panel"
+msgstr "Agenten-Panel öffnen"
+
+#, c-format
+msgid "Partner %s is on the farm. Point an MCP client at them with actor=%s."
+msgstr "Partner %s ist auf dem Hof. Im MCP-Client actor=%s setzen."
+
+msgid "Partner name"
+msgstr "Partnername"
+
+msgid "Paste the token once into your MCP client. Docs: docs/agents.md"
+msgstr "Token einmal in den MCP-Client einfügen. Doku: docs/agents.md"
+
+#, c-format
+msgid "Pollinates up to %d fields per hour and sometimes finds forage."
+msgstr "Bestäubt bis zu %d Felder pro Stunde und findet manchmal Forage."
+
+#, c-format
+msgid "Preserves about %d batches of crops per hour."
+msgstr "Macht etwa %d Chargen haltbar pro Stunde."
+
+msgid "Preserves crops in the farm chest so they keep."
+msgstr "Macht Pflanzen in der Hoftruhe haltbar."
+
+#, c-format
+msgid "Press %s for the wheel."
+msgstr "%s öffnet das Rad."
+
+#, c-format
+msgid "Press %s for the wheel. Click a slot, then an emote, to change it."
+msgstr "%s öffnet das Rad. Klick auf einen Slot, dann ein Emote, zum Belegen."
+
+msgid "Pushes crops along in real time so they ripen sooner."
+msgstr "Schiebt Pflanzen in Echtzeit an, damit sie früher reif sind."
+
+msgid "Raises farm luck and sometimes finds gems."
+msgstr "Erhöht Hof-Glück und findet manchmal Edelsteine."
+
+msgid "Rests. Energy comes back faster, no work gets done."
+msgstr "Ruht. Energie kommt schneller, es wird nicht gearbeitet."
+
+msgid "Revoke"
+msgstr "Widerrufen"
+
+msgid "Send home"
+msgstr "Nach Hause"
+
+msgid "Sign in to create a token a helper can use from Claude, Cursor or any MCP client."
+msgstr "Melde dich an, um ein Token für Claude, Cursor oder einen MCP-Client zu erzeugen."
+
+msgid "Slow down a little, the chat needs a breather."
+msgstr "Etwas langsamer, der Chat braucht eine Pause."
+
+#, c-format
+msgid "Smelts about %d bars per hour from ore in the farm chest."
+msgstr "Schmelzt etwa %d Barren pro Stunde aus Erz in der Hoftruhe."
+
+msgid "Take control back"
+msgstr "Steuerung zurücknehmen"
+
+msgid "The game must stay open. Background browser tabs pause the world."
+msgstr "Das Spiel muss offen bleiben. Tabs im Hintergrund halten die Welt an."
+
+#, c-format
+msgid "Thinking: %s"
+msgstr "Denkt: %s"
+
+msgid "Token copied. It will not be shown again."
+msgstr "Token kopiert. Es wird nicht noch einmal angezeigt."
+
+msgid "Unmute"
+msgstr "Laut"
+
+#, c-format
+msgid "Virtual partners (%d/%d)"
+msgstr "Virtuelle Partner (%d/%d)"
+
+#, c-format
+msgid "Waters up to %d fields per hour."
+msgstr "Gießt bis zu %d Felder pro Stunde."
+
+msgid "Wheel"
+msgstr "Rad"
