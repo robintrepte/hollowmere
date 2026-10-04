@@ -7,8 +7,13 @@ func before_each() -> void:
 func _p() -> PlayerData:
 	return GameState.local_player()
 
+func after_each() -> void:
+	Seasons.override = "spring"
+
+## Festivals happen in the real season; pin it to the festival's and pick its day of the cycle.
 func _day_of(fest_id: String) -> int:
 	var f: Dictionary = Data.progression.festivals[fest_id]
+	Seasons.override = str(f.season)
 	return Calendar.SEASONS.find(f.season) * Calendar.DAYS_PER_SEASON + int(f.day) - 1
 
 func test_shrine_needs_warden_then_wakes_and_opens_next_region() -> void:

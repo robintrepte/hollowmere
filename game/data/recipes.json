@@ -35,6 +35,7 @@
     "keg":               {"in": {"wood": 30, "copper_bar": 1, "sap": 5}, "unlock": "shrine:1"},
     "preserves_jar":     {"in": {"wood": 30, "stone": 30, "coal": 1}, "unlock": "start"},
     "seed_maker":        {"in": {"wood": 25, "coal": 5, "gold_bar": 1}, "unlock": "shrine:4"},
+    "seed_refiner":      {"in": {"wood": 30, "iron_bar": 2, "quartz": 2}, "unlock": "shrine:3"},
     "basic_fertilizer":  {"in": {"sap": 2}, "unlock": "start"},
     "quality_fertilizer":{"in": {"sap": 4, "clay": 1}, "unlock": "shrine:2"},
     "speed_gro":         {"in": {"sap": 3, "fiber": 5}, "unlock": "shrine:1"},
@@ -54,6 +55,7 @@
     },
     "keg":           {"any": "crop", "prefix": "juice", "time": 1440, "mult": 2.25, "add": 0},
     "preserves_jar": {"any": "crop", "prefix": "jam", "time": 1440, "mult": 2.0, "add": 50},
-    "seed_maker":    {"any": "crop", "seeds": 2, "time": 20}
+    "seed_maker":    {"any": "crop", "seeds": 2, "time": 20},
+    "seed_refiner":  {"refine": [{"in": {"sap": 5}}, {"in": {"gold_bar": 1}}, {"in": {"mystic_bar": 1, "star_shard": 1}}], "batch": 5, "time": 240}
   }
 }

@@ -6,6 +6,8 @@ const SEASONS := ["spring", "summer", "fall", "winter"]
 const STATS := ["hp", "power", "guard", "focus", "speed"]
 const QUALITY_MULT := [1.0, 1.25, 1.5, 2.0]
 const QUALITY_NAMES := ["", "Silver", "Gold", "Star"]
+## Seed quality is its tier: how many harvests the plant gives (see CropGrowth.TIER_HARVESTS).
+const SEED_TIER_NAMES := ["Common", "Refined", "Noble", "Everlasting"]
 const EGG_GROUP_TYPE := {
 	"flora": "leaf", "aqua": "tide", "mineral": "stone", "sky": "gale", "fairy": "glow",
 	"spirit": "shade", "bug": "spark", "field": "wild", "amorphous": "shade", "beast": "ember",
@@ -308,6 +310,8 @@ func item_name(id: String, quality: int = 0) -> String:
 	if it.is_empty():
 		return id
 	var nm := _display_item_name(id, it)
+	if quality > 0 and it.get("cat", "") == "seed":
+		return tr("%s (%s)") % [nm, tr(SEED_TIER_NAMES[clampi(quality, 0, 3)])]
 	if quality > 0:
 		return "%s %s" % [tr(QUALITY_NAMES[quality]), nm]
 	return nm
@@ -357,11 +361,12 @@ func item_desc(id: String) -> String:
 		return tr("A fresh %s. Grows in %s.") % [tr(str(c.name)).to_lower(), season_list(c.seasons)]
 	if it.get("cat") == "seed" and it.has("crop") and crops.has(it.crop):
 		var c: Dictionary = crops[it.crop]
-		var extra := tr(", then regrows every %d days") % int(c.regrow) if int(c.regrow) > 0 else ""
-		return tr("Plant in %s. Takes %d days to grow%s.") % [season_list(c.seasons), int(c.days), extra]
+		var full := CropGrowth.grow_minutes(it.crop) * 60.0
+		var extra := tr(", then again every %s") % TimeService.duration_text(full * (1.0 - CropGrowth.regrow_progress(it.crop))) if int(c.regrow) > 0 else ""
+		return tr("Grows fastest in %s: ripe in %s when watered%s. Grows slower in other seasons, and always well in the greenhouse.") % [season_list(c.seasons), TimeService.duration_text(full), extra]
 	if it.get("cat") == "sapling" and it.has("tree") and trees.has(it.tree):
 		var t: Dictionary = trees[it.tree]
-		return tr("Plant on open farmland. Grows into a tree in %d days, then gives fruit every day in %s.") % [int(t.days), season_list(t.seasons)]
+		return tr("Plant on open farmland. Grows into a tree in %s, then gives fruit every %s in %s.") % [TimeService.duration_text(float(t.days) * CropGrowth.TREE_DAY_SECONDS), TimeService.duration_text(CropGrowth.FRUIT_SECONDS), season_list(t.seasons)]
 	if it.get("cat") == "fruit":
 		return tr("Fresh from the orchard.")
 	if ":" in id:

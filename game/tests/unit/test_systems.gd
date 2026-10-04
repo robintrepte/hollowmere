@@ -197,12 +197,31 @@ func test_end_day_progresses() -> void:
 	g.water(t)
 	GameState.world.shipping.append({"id": "parsnip", "n": 5, "q": 0})
 	var m0 := GameState.money()
+	p.energy = 10.0
 	var rep := GameState.end_day()
 	assert_eq(GameState.day(), 1)
 	assert_gt(GameState.money(), m0)
 	assert_gt(int(rep.ship_total), 0)
-	assert_gt(float(g.crop_at(t).age), 0.0)
-	assert_eq(p.energy, p.max_energy)
+	assert_eq(p.energy, p.max_energy, "sleeping refills energy")
+	var to := float(GameState.world.time.last) + 600.0
+	TimeService.fixed_now = to
+	GameState.idle_advance(to)
+	TimeService.fixed_now = -1.0
+	assert_gt(float(g.crop_at(t).progress), 0.0, "crops grow with the real clock")
+
+func test_night_rolls_over_at_six_without_passing_out() -> void:
+	GameState.new_game({"seed": 43})
+	var p := GameState.local_player()
+	p.map_id = "town"
+	GameState.world.minute = Calendar.DAY_END
+	GameState.advance_minutes(10)
+	assert_eq(GameState.day(), 0, "2:00 no longer knocks you out")
+	assert_eq(p.map_id, "town")
+	GameState.world.minute = Calendar.NIGHT_ROLLOVER - 10
+	GameState.advance_minutes(10)
+	assert_eq(GameState.day(), 1, "the day turns over at 6:00")
+	assert_eq(GameState.minute(), Calendar.DAY_START)
+	assert_eq(p.map_id, "town", "you stay where you are")
 
 func test_world_actions() -> void:
 	GameState.new_game({"seed": 1})

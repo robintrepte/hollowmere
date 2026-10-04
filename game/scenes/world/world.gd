@@ -305,8 +305,7 @@ func _draw_deco(p: Vector2i) -> void:
 
 func _object_sprite_name(o: Dictionary, p: Vector2i) -> String:
 	if o.kind == "tree":
-		var td: Dictionary = Data.trees.get(o.tree, {})
-		var frac := float(o.age) / maxf(1.0, float(td.get("days", 20)))
+		var frac := FarmGrid.tree_growth(o, TimeService.now())
 		if frac >= 1.0:
 			return "fruit_tree"
 		return ["tree_stage0", "tree_stage1", "tree_stage2"][clampi(int(frac * 3.0), 0, 2)]
@@ -362,7 +361,7 @@ func _draw_object(p: Vector2i) -> void:
 				f.position = spots[i]
 				node.add_child(f)
 		if o.kind == "machine":
-			if Machines.is_ready(o, GameState.abs_minute()):
+			if Machines.is_ready(o, TimeService.now()):
 				var bubble := _bubble(Art.item(o.output.get("id", "")))
 				bubble.position = Vector2(0, -sz.y - 6)
 				node.add_child(bubble)
@@ -794,8 +793,7 @@ func is_tile_solid(t: Vector2i) -> bool:
 	var o := grid.object_at(t)
 	if not o.is_empty() and o.kind != "forage":
 		if o.kind == "tree":
-			var td: Dictionary = Data.trees.get(o.tree, {})
-			return float(o.age) >= float(td.get("days", 20)) / 3.0
+			return FarmGrid.tree_growth(o, TimeService.now()) >= 1.0 / 3.0
 		return true
 	return false
 

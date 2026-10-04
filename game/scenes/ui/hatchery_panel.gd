@@ -104,14 +104,14 @@ func _refresh() -> void:
 			v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			v.add_theme_constant_override("separation", 1)
 			h.add_child(v)
-			var days := int(slot.days)
-			v.add_child(UITheme.label(TranslationServer.translate("Hatches %s") % (TranslationServer.translate("tomorrow!") if days <= 1 else TranslationServer.translate("in %d days") % days), 10, UITheme.INK))
+			var left := maxf(0.0, float(slot.get("hatch_at", 0.0)) - TimeService.now())
+			v.add_child(UITheme.label(TranslationServer.translate("Hatches in %s") % TimeService.duration_text(left), 10, UITheme.INK))
 			v.add_child(UITheme.label(egg_hint(egg), 8, UITheme.MUTED))
 			var bar := ProgressBar.new()
 			bar.show_percentage = false
 			bar.custom_minimum_size = Vector2(0, 4)
-			bar.max_value = maxi(1, int(egg.get("days", days)))
-			bar.value = bar.max_value - days
+			bar.max_value = maxf(1.0, float(slot.get("secs", CropGrowth.EGG_DAY_SECONDS)))
+			bar.value = bar.max_value - left
 			v.add_child(bar)
 		else:
 			h.add_child(UITheme.label("An empty nest of warm straw.", 9, UITheme.MUTED))

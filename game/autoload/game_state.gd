@@ -2,7 +2,7 @@ extends Node
 ## The whole simulation state. The host is authoritative; actions here are
 ## called directly offline or via Net RPCs in co-op.
 
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
 const PERSISTENT_MAPS := ["farm", "greenhouse", "terrace"]
 const STARTERS := ["sproutle", "puddlop", "embercub"]
 
@@ -24,6 +24,7 @@ func _ready() -> void:
 	EventBus.creature_befriended.connect(_queue_story.unbind(1))
 	EventBus.farm_level_up.connect(_queue_story.unbind(2))
 	EventBus.shrine_restored.connect(_queue_story.unbind(1))
+	TimeService.tick.connect(_on_time_tick)
 
 func _queue_story() -> void:
 	check_story.call_deferred()
@@ -80,7 +81,7 @@ func new_game(opts: Dictionary) -> void:
 	world.weekly_week = 0
 	world.board = Progression.board_for(0, seed_v)
 	world.board_week = 0
-	world.weather = Calendar.roll_weather(seed_v, 0)
+	world.weather = Calendar.roll_weather(seed_v, 0, season())
 	started = true
 
 func local_player() -> PlayerData:
@@ -363,7 +364,8 @@ func add_egg_to_hatchery(p: PlayerData, uid: String) -> bool:
 		egg = Breeding.wild_egg(Data.species_order[rng.randi() % 30], rng)
 	f.inv.take(uid, 1)
 	var days := int(egg.days) - (1 if has_building("big_hatchery") else 0)
-	world.hatchery.append({"egg": egg, "days": maxi(1, days)})
+	var secs := maxi(1, days) * CropGrowth.EGG_DAY_SECONDS / Modifiers.mult(p, "hatch_speed")
+	world.hatchery.append({"egg": egg, "hatch_at": TimeService.now() + secs, "secs": secs})
 	EventBus.inventory_changed.emit()
 	return true
 
@@ -373,119 +375,247 @@ func advance_minutes(n: int) -> void:
 	world.minute = int(world.minute) + n
 	world.played = float(world.get("played", 0.0)) + n
 	EventBus.time_changed.emit(int(world.minute))
-	if int(world.minute) >= Calendar.DAY_END:
-		EventBus.toast.emit("You're exhausted... you pass out.", "zzz")
-		end_day(true)
+	if int(world.minute) >= Calendar.NIGHT_ROLLOVER:
+		end_day(false)
 
 func abs_minute() -> int:
 	return day() * 1440 + minute()
 
-## Ends the day: shipping, jobs, growth, eggs, weather. Returns the morning report.
-func end_day(passed_out: bool = false) -> Dictionary:
-	SaveManager.set_quiet(true)
-	EventBus.day_ending.emit()
-	var report := {"shipped": [], "ship_total": 0, "jobs": {}, "farm": {}, "hatched": [], "eggs": 0, "passed_out": passed_out}
-	var nrng := RandomNumberGenerator.new()
-	nrng.seed = hash([int(world.seed), day(), "night"])
-	# Auto-shipper: ship sellable farm chest contents (except tools/containers/eggs)
+# --- Real time ---------------------------------------------------------------------------------
+
+## The real-world season at a unix time (tests pin it with Seasons.override).
+func season_at(unix: float) -> String:
+	return Seasons.current(unix, Settings.hemisphere)
+
+func _on_time_tick() -> void:
+	if started and Net.is_authority():
+		idle_advance(TimeService.now())
+
+## Runs the farm forward in real time to `to`: crops, trees, machines, eggs and Wildling jobs.
+## Gaps longer than the offline cap are cut off. Returns what happened (merged into world.time.report).
+func idle_advance(to: float, offline: bool = false) -> Dictionary:
+	if not world.has("time"):
+		world.time = {"last": to}
+	var last := float(world.time.get("last", 0.0))
+	if last <= 0.0:
+		world.time.last = to
+		return {}
+	var from := maxf(last, to - TimeService.OFFLINE_CAP)
+	if to <= from:
+		return {}
+	var rep := {"jobs": FarmJobs.new_report(), "hatched": [], "evolved": [], "eggs": 0, "ripe": 0, "seconds": to - from}
+	var p := local_player()
+	var mult := Modifiers.mult(p, "crop_growth") if p else 1.0
+	var acc := float(world.time.get("job_acc", 0.0)) + (to - from)
+	var ticks := int(acc / FarmJobs.TICK_SECONDS)
+	world.time.job_acc = acc - ticks * FarmJobs.TICK_SECONDS
+	var steps := mini(ticks, 144)
+	var scale := float(ticks) / maxf(1.0, float(steps))
+	var eff := 1.0
+	if offline:
+		eff = minf(1.0, FarmJobs.OFFLINE_EFFICIENCY + (Modifiers.value(p, "offline_efficiency") if p else 0.0))
+	var t := from
+	var span := (to - from) / maxf(1.0, float(steps))
+	for i in steps:
+		_grow_all(t, t + span, mult, rep)
+		t += span
+		_job_tick(t, scale, eff, rep)
+	_grow_all(t, to, mult, rep)
+	_hatch_due(to, rep)
+	world.time.last = to
+	_merge_idle(rep)
+	return rep
+
+func _grow_all(from: float, to: float, mult: float, rep: Dictionary) -> void:
+	if to <= from:
+		return
+	for m in grids:
+		var g: FarmGrid = grids[m]
+		var ripe_before := 0
+		for t in g.planted_tiles():
+			if g.crop_ready(t):
+				ripe_before += 1
+		var changed := g.advance(from, to, {"season_at": season_at, "mult": mult})
+		var ripe_after := 0
+		for t in g.planted_tiles():
+			if g.crop_ready(t):
+				ripe_after += 1
+		rep.ripe = int(rep.ripe) + maxi(0, ripe_after - ripe_before)
+		for k in changed:
+			EventBus.tile_changed.emit(m, Tiles.parse_key(k))
+
+## One Wildling work step standing in for `scale` ten-minute ticks.
+func _job_tick(now: float, scale: float, eff: float, rep: Dictionary) -> void:
+	var trng := RandomNumberGenerator.new()
+	trng.seed = hash([int(world.seed), int(now), "jobs"])
+	var season_now := season_at(now)
+	var jr: Dictionary = FarmJobs.run(ranch, {"grids": farm_grids(), "chest": farm_chest, "rng": trng, "season": season_now, "scale": scale, "efficiency": eff, "now": now})
+	FarmJobs.collect_produce(ranch, farm_chest, trng, jr, scale * eff)
+	FarmJobs.rest(ranch, has_building("wildling_spa"), scale)
+	Machines.apply_power(farm_grids(), int(jr.powered))
+	Machines.automate(farm_grids(), farm_chest, now, int(jr.machine_slots), jr)
+	FarmJobs.merge_report(rep.jobs, jr)
+	for c: Creature in ranch:
+		if c.can_evolve() != "":
+			var from_name: String = c.display_name()
+			var from_species: String = c.species_id
+			c.evolve()
+			Progression.mark(world.dex, c.species_id, true, c.starry)
+			rep.evolved.append({"from": from_name, "from_species": from_species, "to": c.species_id})
+	var breed_f: float = scale * eff * FarmJobs.TICK_SECONDS / float(FarmJobs.BREED_PERIOD)
+	for pair in world.pairs:
+		var a := find_creature(pair[0])
+		var b := find_creature(pair[1])
+		if a and b and a in ranch and b in ranch and trng.randf() < Breeding.egg_chance(a, b) * breed_f:
+			var egg := Breeding.make_egg(a, b, trng, {"heirloom": farm_chest.has("heirloom_charm") or _anyone_has("heirloom_charm"), "starry_mult": 3.0 if _anyone_has("starry_charm") else 1.0, "season": season_now})
+			farm_chest.add("wildling_egg", 1, 0, {"egg": egg})
+			rep.eggs = int(rep.eggs) + 1
+	if trng.randf() < scale / 12.0:
+		for m in grids:
+			for t in grids[m].creep_weeds(trng, 1):
+				EventBus.tile_changed.emit(m, t)
+
+func _hatch_due(now: float, rep: Dictionary) -> void:
+	var still: Array = []
+	var hrng := RandomNumberGenerator.new()
+	hrng.seed = hash([int(world.seed), int(now), "hatch"])
+	for slot in world.hatchery:
+		if float(slot.get("hatch_at", 0.0)) <= now:
+			var c := Breeding.hatch(slot.egg, hrng)
+			var where := add_creature(local_player(), c)
+			bump_stat("hatch")
+			add_farm_xp(Progression.XP.hatch)
+			rep.hatched.append({"species": c.species_id, "starry": c.starry, "where": where})
+			EventBus.egg_hatched.emit(c)
+		else:
+			still.append(slot)
+	world.hatchery = still
+
+## Keeps a running summary until the player next sees a report.
+func _merge_idle(rep: Dictionary) -> void:
+	var acc: Dictionary = world.time.get("report", {})
+	if acc.is_empty():
+		acc = {"jobs": FarmJobs.new_report(), "hatched": [], "evolved": [], "eggs": 0, "ripe": 0, "seconds": 0.0}
+	FarmJobs.merge_report(acc.jobs, rep.jobs)
+	acc.hatched.append_array(rep.hatched)
+	acc.evolved.append_array(rep.evolved)
+	acc.eggs = int(acc.eggs) + int(rep.eggs)
+	acc.ripe = int(acc.ripe) + int(rep.ripe)
+	acc.seconds = float(acc.seconds) + float(rep.seconds)
+	world.time.report = acc
+
+## Hands over the summary collected since the last report and starts a fresh one.
+func take_idle_report() -> Dictionary:
+	var acc: Dictionary = world.get("time", {}).get("report", {})
+	world.time.erase("report")
+	return acc
+
+## After loading: catches the farm up on the time nobody was playing and pays out the shipping
+## bin if a game day's worth of time has passed. Returns the "while you were away" report.
+func catch_up() -> Dictionary:
+	var last := float(world.get("time", {}).get("last", 0.0))
+	var now := TimeService.now()
+	var away := TimeService.elapsed(last, now) if last > 0.0 else 0.0
+	idle_advance(now, true)
+	var rep := take_idle_report()
+	if rep.is_empty():
+		rep = {"jobs": {}, "hatched": [], "evolved": [], "eggs": 0, "ripe": 0}
+	rep["away"] = away
+	if away >= Settings.seconds_per_ten_minutes() * 120.0:
+		var ship := _pay_shipping()
+		rep["shipped"] = ship.shipped
+		rep["ship_total"] = ship.total
+		for pid in players:
+			var pl: PlayerData = players[pid]
+			pl.energy = minf(pl.max_energy, pl.energy + pl.max_energy * clampf(away / (8.0 * 3600.0), 0.0, 1.0))
+	return rep
+
+func _pay_shipping() -> Dictionary:
 	if has_building("auto_shipper"):
 		for e in farm_chest.all_entries().duplicate():
 			var cat: String = Data.get_item(e.id).get("cat", "")
 			if cat in ["crop", "fruit", "artisan", "produce", "forage", "gem"]:
 				world.shipping.append({"id": e.id, "n": int(e.n), "q": int(e.q)})
 				farm_chest.remove(e.id, int(e.n))
-	# Whatever is sitting in the bin sells with the overnight queue.
 	for e in shipping_bin.entries.duplicate():
 		world.shipping.append({"id": e.id, "n": int(e.n), "q": int(e.q)})
 	shipping_bin.entries.clear()
-	# Shipping
+	var shipped: Array = []
 	var total := 0
-	for s in world.shipping:
-		var v := Data.sell_price(s.id, int(s.q)) * int(s.n)
+	for sh in world.shipping:
+		var v := Data.sell_price(sh.id, int(sh.q)) * int(sh.n)
 		total += v
-		report.shipped.append({"id": s.id, "n": int(s.n), "q": int(s.q), "v": v})
-		if Data.get_item(s.id).get("cat", "") == "crop":
-			bump_stat("ship:crop", int(s.n))
+		shipped.append({"id": sh.id, "n": int(sh.n), "q": int(sh.q), "v": v})
+		if Data.get_item(sh.id).get("cat", "") == "crop":
+			bump_stat("ship:crop", int(sh.n))
 	world.shipping = []
-	report.ship_total = total
 	if total > 0:
 		add_money(total)
 		add_farm_xp(int(total / 40))
-	# Farm jobs
-	var season_now := season()
-	var job_rep := FarmJobs.run(ranch, {"grids": farm_grids(), "chest": farm_chest, "rng": nrng, "season": season_now})
-	FarmJobs.collect_produce(ranch, farm_chest, nrng, job_rep)
-	FarmJobs.rest(ranch, has_building("wildling_spa"))
-	report.jobs = job_rep
-	Machines.apply_power(farm_grids(), int(job_rep.powered))
-	Machines.automate(farm_grids(), farm_chest, (day() + 1) * 1440 + Calendar.DAY_START, int(job_rep.machine_slots), job_rep)
-	# Farm work XP can push Wildlings to evolve; they do it overnight in the Den.
-	report["evolved"] = []
+	return {"shipped": shipped, "total": total}
+
+func _job_luck() -> float:
+	var l := 0.0
 	for c: Creature in ranch:
-		if c.can_evolve() != "":
-			var from: String = c.display_name()
-			var from_species: String = c.species_id
-			c.evolve()
-			Progression.mark(world.dex, c.species_id, true, c.starry)
-			report.evolved.append({"from": from, "from_species": from_species, "to": c.species_id})
-	# Breeding
-	for pair in world.pairs:
-		var a := find_creature(pair[0])
-		var b := find_creature(pair[1])
-		if a and b and a in ranch and b in ranch and nrng.randf() < Breeding.egg_chance(a, b):
-			var egg := Breeding.make_egg(a, b, nrng, {"heirloom": farm_chest.has("heirloom_charm") or _anyone_has("heirloom_charm"), "starry_mult": 3.0 if _anyone_has("starry_charm") else 1.0, "season": season_now})
-			farm_chest.add("wildling_egg", 1, 0, {"egg": egg})
-			report.eggs += 1
-	# Hatchery
-	var still: Array = []
-	for slot in world.hatchery:
-		slot.days = int(slot.days) - 1
-		if int(slot.days) <= 0:
-			var c := Breeding.hatch(slot.egg, nrng)
-			var where := add_creature(local_player(), c)
-			bump_stat("hatch")
-			add_farm_xp(Progression.XP.hatch)
-			report.hatched.append({"species": c.species_id, "starry": c.starry, "where": where})
-			EventBus.egg_hatched.emit(c)
-		else:
-			still.append(slot)
-	world.hatchery = still
+		if c.job == "luck" and c.can_do_job("luck") and c.energy > 1.0:
+			l += 0.01 * c.job_power("luck")
+	return l
+
+func _guarded() -> bool:
+	for c: Creature in ranch:
+		if c.job == "guard" and c.can_do_job("guard") and c.energy > 1.0:
+			return true
+	return false
+
+## Ends the game day: shipping, weather, luck, friendships, weekly tasks. Sleeping skips the rest of
+## the night, refills energy and wakes you at the farm; otherwise the clock just rolls over at 6:00.
+## The farm itself runs in real time (idle_advance), so nothing grows here. Returns the report.
+func end_day(slept: bool = true) -> Dictionary:
+	SaveManager.set_quiet(true)
+	EventBus.day_ending.emit()
+	if Net.is_authority():
+		idle_advance(TimeService.now())
+	var report := {"shipped": [], "ship_total": 0, "jobs": {}, "farm": {}, "hatched": [], "eggs": 0, "slept": slept}
+	var nrng := RandomNumberGenerator.new()
+	nrng.seed = hash([int(world.seed), day(), "night"])
+	var ship := _pay_shipping()
+	report.shipped = ship.shipped
+	report.ship_total = ship.total
+	if slept:
+		var idle := take_idle_report()
+		for k in idle:
+			report[k] = idle[k]
 	# Advance the date
-	var prev_season := season_now
 	world.day = day() + 1
 	world.minute = Calendar.DAY_START
-	world.weather = Calendar.roll_weather(int(world.seed), day())
+	world.weather = Calendar.roll_weather(int(world.seed), day(), season())
 	var day_rng := RandomNumberGenerator.new()
 	day_rng.seed = hash([int(world.seed), day(), "luck"])
-	world.luck = day_rng.randf_range(-0.03, 0.05) + float(job_rep.luck)
+	world.luck = day_rng.randf_range(-0.03, 0.05) + _job_luck()
 	for o in grids.farm.objects.values():
 		if o.id == "wishing_well":
 			world.luck = float(world.luck) + 0.02
 	var farm_rep := {}
+	var guarded := _guarded()
 	for m in grids:
 		var g: FarmGrid = grids[m]
-		var r := g.new_day(season(), prev_season, world.weather if m != "greenhouse" else "sun", nrng, int(job_rep.frost_protect), bool(job_rep.guarded))
+		if m != "greenhouse" and Calendar.weather_waters(world.weather):
+			g.rain(TimeService.now())
+		var r := g.night(nrng, guarded)
 		for k in r:
 			farm_rep[k] = int(farm_rep.get(k, 0)) + int(r[k])
 	report.farm = farm_rep
-	# Ranch happiness drift, party fully healed by morning
 	for c in ranch:
 		c.grooming = maxi(0, c.grooming - 10)
 	for pid in players:
 		var p: PlayerData = players[pid]
 		p.heal_party()
-		if passed_out:
-			p.energy = p.max_energy * 0.6
-			var lost := mini(1000, int(int(world.money) * 0.1))
-			if lost > 0 and p.map_id != "farm" and not p.map_id in ["greenhouse", "terrace"]:
-				add_money(-lost)
-				report["lost_money"] = lost
-		else:
+		if slept:
 			p.energy = p.max_energy
+			p.map_id = "farm"
+			var spawn: Array = Data.get_map("farm").spawn
+			p.pos = tile_center(Vector2i(int(spawn[0]), int(spawn[1])))
 		p.water_left = p.water_capacity()
-		p.map_id = "farm"
-		var spawn: Array = Data.get_map("farm").spawn
-		p.pos = tile_center(Vector2i(int(spawn[0]), int(spawn[1])))
 		var new_week := Calendar.weekday(day()) == 0
 		for vid in p.relationships:
 			Relationships.daily_reset(p.relationships[vid], new_week)
@@ -509,6 +639,11 @@ func end_day(passed_out: bool = false) -> Dictionary:
 	SaveManager.set_quiet(false)
 	SaveManager.autosave()
 	return report
+
+func _fix_hatchery_types() -> void:
+	for slot in world.hatchery:
+		slot.hatch_at = float(slot.get("hatch_at", 0.0))
+		slot.secs = float(slot.get("secs", CropGrowth.EGG_DAY_SECONDS))
 
 func _anyone_has(id: String) -> bool:
 	for pid in players:
@@ -578,6 +713,42 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 						p.water_left -= 1
 				r.ok = true
 				r.sfx = "water"
+		"shovel":
+			if g.is_trench(t):
+				if not _spend_energy(p, base_cost):
+					return r
+				g.fill_trench(t)
+				r.ok = true
+				r.sfx = "hoe"
+			elif g.can_dig_trench(t):
+				if not _spend_energy(p, base_cost * 1.5):
+					return r
+				g.dig_trench(t)
+				r.ok = true
+				r.sfx = "hoe"
+			if r.ok:
+				_trench_redraw(map_id, t)
+		"bucket":
+			if g.is_natural_water(t):
+				p.bucket_full = true
+				r.ok = true
+				r.sfx = "refill"
+				r.fx.append([tr("Bucket filled"), Color("#7ac8ff")])
+			elif g.is_trench(t) and p.bucket_full:
+				if g.pour_bucket(t):
+					p.bucket_full = false
+					r.ok = true
+					r.sfx = "water"
+					_trench_redraw(map_id, t)
+			elif g.is_tilled(t) and p.bucket_full:
+				for a in [t, t + Vector2i(1, 0), t + Vector2i(-1, 0), t + Vector2i(0, 1), t + Vector2i(0, -1)]:
+					g.water(a)
+					EventBus.tile_changed.emit(map_id, a)
+				p.bucket_full = false
+				r.ok = true
+				r.sfx = "water"
+			elif not p.bucket_full:
+				r.reason = tr("The bucket is empty. Fill it at a pond, river or the sea.")
 		"pickaxe", "axe", "scythe":
 			if tool == "scythe":
 				if g.crop_ready(t):
@@ -625,7 +796,7 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 			elif tool == "pickaxe" and g.until(t):
 				r.ok = true
 				r.sfx = "hoe"
-			elif tool == "axe" and g.object_at(t).get("kind", "") == "tree" and int(g.object_at(t).age) < int(Data.trees[g.object_at(t).tree].days):
+			elif tool == "axe" and g.object_at(t).get("kind", "") == "tree" and FarmGrid.tree_growth(g.object_at(t), TimeService.now()) < 1.0:
 				var o := g.remove_object(t)
 				give_item(p, o.id, 1)
 				r.ok = true
@@ -637,6 +808,15 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 		for fx in r.fx:
 			EventBus.popup.emit(at, fx[0], fx[1])
 	return r
+
+## Water can flow far along a trench; repaint every trench tile and the soil around them.
+func _trench_redraw(map_id: String, t: Vector2i) -> void:
+	var g := grid(map_id)
+	for k in g.trenches:
+		EventBus.tile_changed.emit(map_id, Tiles.parse_key(k))
+	EventBus.tile_changed.emit(map_id, t)
+	for k in g.soil:
+		EventBus.tile_changed.emit(map_id, Tiles.parse_key(k))
 
 func pick_up_object(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 	var p := player(pid)
@@ -677,13 +857,14 @@ func use_item(pid: String, map_id: String, t: Vector2i, uid: String) -> Dictiona
 	var cat: String = it.get("cat", "")
 	if map_id in PERSISTENT_MAPS:
 		if cat == "seed":
-			if g.plant(t, e.id, season()):
+			if g.plant(t, e.id, season(), int(e.q) + 1):
 				f.inv.take(uid, 1)
 				r.ok = true
 				r.sfx = "plant"
 				add_farm_xp(Progression.XP.plant)
-			elif g.is_tilled(t) and g.crop_at(t).is_empty():
-				r.reason = tr("%s can't grow in %s.") % [Data.item_name(e.id), Data.season_name(season())]
+				var dist := CropGrowth.season_distance(Data.get_item(e.id).crop, season())
+				if dist > 0 and not g.greenhouse:
+					r.fx.append([tr("Grows slowly in %s") % Data.season_name(season()), Color("#ffb070")])
 		elif it.has("fert"):
 			if g.fertilize(t, it.fert):
 				f.inv.take(uid, 1)
@@ -714,8 +895,10 @@ func harvest_at(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 		if not p.inventory.can_add(cid, 1):
 			r.reason = tr("Your pack is full.")
 			return r
-		var h := g.harvest(t, rng, luck(), int(p.skills.get("farming", 0)))
+		var h := g.harvest(t, rng, luck() + Modifiers.value(p, "crop_quality"), int(p.skills.get("farming", 0)), season(), Modifiers.mult(p, "crop_yield"))
 		give_item(p, h.id, int(h.n), int(h.q))
+		if h.spent:
+			r.fx.append([tr("The plant is spent."), Color("#c0a080")])
 		r.ok = true
 		r.sfx = "harvest"
 		var qname: String = Data.QUALITY_NAMES[int(h.q)]
@@ -733,7 +916,7 @@ func harvest_at(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 			r.fx.append(["+%d %s" % [int(fr.n), Data.item_name(fr.id)], Color.WHITE])
 			add_farm_xp(Progression.XP.fruit * int(fr.n), at)
 			bump_stat("harvest", int(fr.n))
-		elif o.get("kind", "") == "machine" and Machines.is_ready(o, abs_minute()):
+		elif o.get("kind", "") == "machine" and Machines.is_ready(o, TimeService.now()):
 			var out: Dictionary = o.output
 			give_item(p, out.id, int(out.n), int(out.q))
 			o.output = {}
@@ -772,10 +955,13 @@ func load_machine(pid: String, map_id: String, t: Vector2i, uid: String) -> Dict
 		r.reason = chk.reason
 		return r
 	for k in chk.consume:
-		p.inventory.remove(k, int(chk.consume[k]))
+		if k == f.entry.id and chk.has("consume_q"):
+			p.inventory.remove_quality(k, int(chk.consume[k]), int(chk.consume_q))
+		else:
+			p.inventory.remove(k, int(chk.consume[k]))
 	o.input = f.entry.id
 	o.output = chk.output
-	o.ready_at = abs_minute() + int(chk.time)
+	o.ready_at = TimeService.now() + Machines.seconds_for(int(chk.time))
 	r.ok = true
 	r.sfx = "machine"
 	EventBus.inventory_changed.emit()
@@ -1506,4 +1692,9 @@ func from_dict(d: Dictionary) -> void:
 		lp.id = Net.local_id()
 		players[lp.id] = lp
 	_map_cache.clear()
+	_fix_hatchery_types()
+	for g in world.get("pending_gifts", []):
+		var pl := player(str(g.pid)) if players.has(str(g.pid)) else local_player()
+		give_item(pl, str(g.id), 1)
+	world.erase("pending_gifts")
 	started = true

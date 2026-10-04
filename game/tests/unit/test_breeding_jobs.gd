@@ -40,19 +40,19 @@ func test_all_ten_jobs_do_something() -> void:
 	for job in FarmJobs.JOBS:
 		var g := _farm()
 		var ready := Vector2i(1, 2)
-		g.crop_at(ready).age = float(Data.crops.parsnip.days)
+		g.crop_at(ready).progress = 1.0
 		var chest := Inventory.new(10, 8)
 		chest.add("copper_ore", 10)
 		chest.add("parsnip", 4)
 		var w := _worker_for(job)
-		var rep := FarmJobs.run([w], {"grids": [g], "chest": chest, "rng": rng, "season": "spring"})
+		var rep := FarmJobs.run([w], {"grids": [g], "chest": chest, "rng": rng, "season": "spring", "scale": 18.0})
 		var v: Variant = rep[expect[job]]
 		assert_true(v is bool and v or (not v is bool and float(v) > 0.0), "%s job produced %s" % [job, expect[job]])
 		assert_eq(int(rep.workers), 1)
 
 func test_tired_workers_skip() -> void:
 	var w := _worker_for("water")
-	w.energy = 5
+	w.energy = 0.5
 	var rep := FarmJobs.run([w], {"grids": [_farm()], "chest": Inventory.new(4, 4), "rng": rng, "season": "spring"})
 	assert_eq(int(rep.tired), 1)
 	assert_eq(int(rep.watered), 0)
@@ -67,10 +67,10 @@ func test_wrong_type_cannot_work() -> void:
 func test_work_gives_xp_and_rest_restores() -> void:
 	var w := _worker_for("water")
 	var xp := w.xp
-	FarmJobs.run([w], {"grids": [_farm()], "chest": Inventory.new(4, 4), "rng": rng, "season": "spring"})
-	assert_gt(w.xp, xp)
+	FarmJobs.run([w], {"grids": [_farm()], "chest": Inventory.new(4, 4), "rng": rng, "season": "spring", "scale": 18.0})
+	assert_gt(w.xp, xp, "three hours of work earn some XP")
 	var e := w.energy
-	FarmJobs.rest([w], false)
+	FarmJobs.rest([w], false, 6.0)
 	assert_gt(w.energy, e)
 
 func test_gene_grades() -> void:
@@ -101,18 +101,16 @@ func test_pairing_eggs_and_hatching_flow() -> void:
 	assert_true(GameState.set_pair(a.uid, b.uid).ok)
 	assert_eq(GameState.pair_of(a.uid), b.uid)
 	assert_eq(GameState.pair_of(b.uid), a.uid)
-	var eggs := 0
-	for i in 10:
-		eggs += int(GameState.end_day().eggs)
-	assert_gt(eggs, 0, "a happy pair lays eggs")
+	var eggs := int(_advance(3 * 86400).eggs)
+	assert_gt(eggs, 0, "a happy pair lays eggs within a few real days")
 	GameState.world.buildings.append("hatchery")
 	var egg: Dictionary = GameState.farm_chest.first_of("wildling_egg")
 	assert_false(egg.is_empty())
 	assert_true(GameState.add_egg_to_hatchery(GameState.local_player(), egg.uid), "eggs go in straight from the farm chest")
-	var hatched := 0
-	for i in 6:
-		hatched += GameState.end_day().hatched.size()
-	assert_gt(hatched, 0)
+	var slot: Dictionary = GameState.world.hatchery[0]
+	assert_gt(float(slot.hatch_at), TimeService.now())
+	assert_eq(_advance(float(slot.hatch_at) - TimeService.now() - 5.0).hatched.size(), 0, "not yet")
+	assert_eq(_advance(10.0).hatched.size(), 1, "hatches right on time")
 	GameState.clear_pair(a.uid)
 	assert_eq(GameState.pair_of(a.uid), "")
 
@@ -122,7 +120,7 @@ func test_overnight_evolution_from_farm_xp() -> void:
 	GameState.ranch.append(c)
 	c.gain_xp(Creature.xp_for_level(17) - c.xp)
 	assert_ne(c.can_evolve(), "")
-	var rep := GameState.end_day()
+	var rep := _advance(FarmJobs.TICK_SECONDS)
 	assert_eq(c.species_id, "bramblet")
 	assert_eq(rep.evolved.size(), 1)
 
@@ -164,3 +162,12 @@ func test_befriended_overflow_goes_to_work_in_the_den() -> void:
 	var c := Creature.create("puddlop", 5, rng)
 	assert_eq(GameState.add_creature(p, c), "den")
 	assert_eq(c.job, "water")
+
+func after_each() -> void:
+	TimeService.fixed_now = -1.0
+
+## Moves the real clock forward and lets the farm catch up.
+func _advance(seconds: float) -> Dictionary:
+	var to := float(GameState.world.time.last) + seconds
+	TimeService.fixed_now = to
+	return GameState.idle_advance(to)

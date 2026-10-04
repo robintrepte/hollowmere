@@ -193,7 +193,7 @@ func delete_slot(slot: int) -> void:
 ## Upgrades older save formats in place, one version step at a time.
 func migrate(d: Dictionary) -> Dictionary:
 	var v: int = int(d.get("version", 0))
-	var steps := [_migrate_0_to_1, _migrate_1_to_2]
+	var steps := [_migrate_0_to_1, _migrate_1_to_2, _migrate_2_to_3]
 	while v < GameState.SAVE_VERSION and v < steps.size():
 		steps[v].call(d.state)
 		v += 1
@@ -215,6 +215,55 @@ func _migrate_1_to_2(state: Dictionary) -> void:
 	for k in ["quests", "skills", "fishing", "mining", "casino", "tutorial"]:
 		if not w.has(k):
 			w[k] = {}
+
+## v3: the farm runs in real time. Day counts become progress and unix timestamps, crops become
+## tier I plants with their full harvests, and everyone gets a shovel and a bucket.
+func _migrate_2_to_3(state: Dictionary) -> void:
+	var w: Dictionary = state.world
+	var now := TimeService.now()
+	var abs_min := int(w.get("day", 0)) * 1440 + int(w.get("minute", Calendar.DAY_START))
+	for m in state.get("grids", {}):
+		var g: Dictionary = state.grids[m]
+		for k in g.get("soil", {}):
+			var s: Dictionary = g.soil[k]
+			s["watered_until"] = now + CropGrowth.WATER_SECONDS if s.get("watered", false) else 0.0
+			s["tilled_at"] = now
+			if s.has("crop"):
+				var c: Dictionary = s.crop
+				var days := float(Data.crops.get(c.get("id", ""), {}).get("days", 1))
+				c["progress"] = clampf(float(c.get("age", 0.0)) / maxf(1.0, days), 0.0, 1.0)
+				c.erase("age")
+				c["tier"] = 1
+				c["harvests"] = CropGrowth.harvests_for_tier(1)
+		for k in g.get("objects", {}):
+			var o: Dictionary = g.objects[k]
+			match o.get("kind", ""):
+				"tree":
+					o["planted_at"] = now - float(o.get("age", 0)) * CropGrowth.TREE_DAY_SECONDS
+					o["fruit_at"] = 0.0
+					o.erase("age")
+				"machine":
+					if not o.get("output", {}).is_empty():
+						o["ready_at"] = now + maxf(0.0, float(o.get("ready_at", 0)) - abs_min) * CropGrowth.MACHINE_SECONDS_PER_MINUTE
+	for slot in w.get("hatchery", []):
+		if not slot.has("hatch_at"):
+			var secs := maxf(1.0, float(slot.get("days", 1))) * CropGrowth.EGG_DAY_SECONDS
+			slot["hatch_at"] = now + secs
+			slot["secs"] = secs
+			slot.erase("days")
+	if not w.has("time"):
+		w["time"] = {"last": now}
+	w.time["last"] = now
+	for pid in state.get("players", {}):
+		var inv: Dictionary = state.players[pid].get("inventory", {})
+		var have := []
+		for e in inv.get("entries", []):
+			have.append(str(e.get("id", "")))
+		var gifts: Array = state.world.get("pending_gifts", [])
+		for t in ["shovel", "bucket"]:
+			if not t in have:
+				gifts.append({"pid": pid, "id": t})
+		state.world["pending_gifts"] = gifts
 
 ## Cloud copies carry the state gzipped and base64-encoded under "z" to stay far below the server limit.
 static func pack_cloud(payload: Dictionary) -> Dictionary:

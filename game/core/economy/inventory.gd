@@ -214,10 +214,11 @@ func all_entries() -> Array:
 			out.append_array(e.inv.all_entries())
 	return out
 
-func count(id: String) -> int:
+## How many of an item, optionally only of one quality (seed tier).
+func count(id: String, q: int = -1) -> int:
 	var t := 0
 	for e in all_entries():
-		if e.id == id:
+		if e.id == id and (q < 0 or int(e.q) == q):
 			t += int(e.n)
 	return t
 
@@ -253,6 +254,14 @@ func remove(id: String, n: int = 1) -> bool:
 		left = _remove_q(id, left, q)
 		if left <= 0:
 			break
+	changed.emit()
+	return true
+
+## Removes n of an item of exactly quality q.
+func remove_quality(id: String, n: int, q: int) -> bool:
+	if count(id, q) < n:
+		return false
+	_remove_q(id, n, q)
 	changed.emit()
 	return true
 

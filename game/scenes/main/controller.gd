@@ -104,6 +104,9 @@ func _on_interact(t: Vector2i) -> void:
 		if g.crop_ready(t):
 			_act("harvest_at", [world.map_id, t])
 			return
+		if not g.crop_at(t).is_empty():
+			EventBus.toast.emit(crop_info(g, t), "")
+			return
 		var o := g.object_at(t)
 		if not o.is_empty():
 			if await _interact_object(t, o):
@@ -114,6 +117,20 @@ func _on_interact(t: Vector2i) -> void:
 		await _interact_static(io)
 		busy = false
 
+## "Parsnip: ripe in 12 min · 2 harvests left · watered"
+static func crop_info(g: FarmGrid, t: Vector2i) -> String:
+	var c := g.crop_at(t)
+	var season := GameState.season()
+	var mult := Modifiers.mult(GameState.local_player(), "crop_growth")
+	var bits: Array = []
+	bits.append(TranslationServer.translate("ripe in %s") % TimeService.duration_text(g.crop_eta(t, season, mult)))
+	var left := int(c.get("harvests", -1))
+	bits.append(TranslationServer.translate("harvests forever") if left < 0 else TranslationServer.translate("%d harvests left") % left)
+	bits.append(TranslationServer.translate("watered") if g.is_watered(t) else TranslationServer.translate("dry: grows slower"))
+	if not g.greenhouse and CropGrowth.season_distance(c.id, season) > 0:
+		bits.append(TranslationServer.translate("off season"))
+	return "%s: %s" % [Data.item_name(c.id), " · ".join(bits)]
+
 func _interact_object(t: Vector2i, o: Dictionary) -> bool:
 	match o.get("kind", ""):
 		"forage":
@@ -123,15 +140,16 @@ func _interact_object(t: Vector2i, o: Dictionary) -> bool:
 			if int(o.get("fruit", 0)) > 0:
 				_act("harvest_at", [world.map_id, t])
 			else:
-				var days := int(Data.trees.get(o.tree, {}).get("days", 0)) - int(o.age)
-				EventBus.toast.emit(tr("This %s needs %d more days to mature.") % [Data.item_name(o.id), days] if days > 0 else "No fruit yet. Fruit trees bear fruit in their season.", "")
+				var grown := FarmGrid.tree_growth(o, TimeService.now())
+				var left_s := (1.0 - grown) * float(Data.trees.get(o.tree, {}).get("days", 10)) * CropGrowth.TREE_DAY_SECONDS
+				EventBus.toast.emit(tr("This %s matures in %s.") % [Data.item_name(o.id), TimeService.duration_text(left_s)] if grown < 1.0 else "No fruit yet. Fruit trees bear fruit in their season.", "")
 			return true
 		"machine":
-			if Machines.is_ready(o, GameState.abs_minute()):
+			if Machines.is_ready(o, TimeService.now()):
 				_act("harvest_at", [world.map_id, t])
 			elif Machines.is_busy(o):
-				var left := maxi(0, int(o.ready_at) - GameState.abs_minute())
-				EventBus.toast.emit(tr("%s: %s ready in %s.") % [Data.item_name(o.id), Data.item_name(o.output.get("id", "")), _dur(left)], "")
+				var left := Machines.remaining(o, TimeService.now())
+				EventBus.toast.emit(tr("%s: %s ready in %s.") % [Data.item_name(o.id), Data.item_name(o.output.get("id", "")), TimeService.duration_text(left)], "")
 			else:
 				var e := _pdata().selected_entry()
 				if not e.is_empty():
@@ -143,13 +161,6 @@ func _interact_object(t: Vector2i, o: Dictionary) -> bool:
 			_open_chest(t, o)
 			return true
 	return false
-
-static func _dur(mins: int) -> String:
-	if mins >= 1440:
-		return "%d day%s" % [ceili(mins / 1440.0), "" if mins < 2880 else "s"]
-	if mins >= 60:
-		return "%dh" % ceili(mins / 60.0)
-	return "%dm" % mins
 
 func _open_chest(t: Vector2i, o: Dictionary) -> void:
 	var spec := Data.container_spec(o.id)

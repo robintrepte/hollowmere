@@ -197,7 +197,7 @@ func test_spark_workers_load_collect_and_refill_machines() -> void:
 	assert_eq(g.object_at(Vector2i(1, 1)).output.id, "juice:blueberry")
 	assert_eq(g.object_at(Vector2i(3, 1)).output.id, "jam:blueberry")
 	assert_true(g.object_at(Vector2i(5, 1)).output.is_empty())
-	Machines.automate(grids, chest, 1000 + 1440, 10, rep)
+	Machines.automate(grids, chest, 1000 + Machines.seconds_for(1440), 10, rep)
 	assert_eq(int(rep.machines_collected), 2)
 	assert_eq(chest.count("juice:blueberry"), 1)
 	assert_eq(chest.count("jam:blueberry"), 1)
@@ -222,6 +222,9 @@ func test_overnight_spark_job_runs_the_line() -> void:
 	assert_true(c.can_do_job("power"))
 	GameState.grids.farm.place_object(Vector2i(10, 12), "keg")
 	GameState.farm_chest.add("blueberry", 3)
-	var rep := GameState.end_day()
+	var to := float(GameState.world.time.last) + FarmJobs.TICK_SECONDS
+	TimeService.fixed_now = to
+	var rep := GameState.idle_advance(to)
+	TimeService.fixed_now = -1.0
 	assert_gt(int(rep.jobs.machines_loaded), 0)
 	assert_eq(GameState.grids.farm.object_at(Vector2i(10, 12)).output.id, "juice:blueberry")

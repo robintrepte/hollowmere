@@ -130,8 +130,16 @@ func _load_slot(slot: int) -> void:
 		await _fade_to(0.0)
 		await ui.say(["That save couldn't be loaded."])
 		return
+	var away := GameState.catch_up()
 	_enter_game()
 	await _fade_to(0.0)
+	if float(away.get("away", 0.0)) >= 600.0:
+		player.locked = true
+		var dr := DayReport.new(away)
+		ui.open(dr)
+		await dr.tree_exited
+		if player:
+			player.locked = false
 
 var _visiting := false
 var _redraw_after_battle := false
@@ -254,6 +262,11 @@ func sleep() -> void:
 
 func _on_day_started(_day: int, report: Dictionary) -> void:
 	if world == null:
+		return
+	if not report.get("slept", true):
+		if int(report.get("ship_total", 0)) > 0:
+			EventBus.toast.emit(tr("A new day: the shipping bin paid %s.") % CoinLabel.text(int(report.ship_total)), "coin")
+			Audio.sfx("coin")
 		return
 	_transitioning = true
 	var pd := GameState.local_player()

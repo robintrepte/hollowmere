@@ -172,7 +172,7 @@ func tile_sync(map_id: String, k: String, ground: int, deco: int, soil_json: Str
 	var s = JSON.parse_string(soil_json)
 	if s is Dictionary:
 		if s.has("crop"):
-			s.crop.age = float(s.crop.age)
+			FarmGrid.fix_crop_types(s.crop)
 		g.soil[k] = s
 	else:
 		g.soil.erase(k)

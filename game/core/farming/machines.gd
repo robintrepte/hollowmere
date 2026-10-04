@@ -1,7 +1,8 @@
 class_name Machines
 extends RefCounted
 ## Artisan machine rules: furnace, keg, preserves jar, seed maker.
-## Machine object state: {id, kind:"machine", input, output:{id,n,q}, ready_at}
+## Machine object state: {id, kind:"machine", input, output:{id,n,q}, ready_at (unix seconds)}.
+## Recipe times are game minutes; each takes CropGrowth.MACHINE_SECONDS_PER_MINUTE real seconds.
 
 ## Returns {ok, consume:{id:n}, output:{id,n,q}, time, reason}
 static func can_load(machine_id: String, item_id: String, q: int, inv: Inventory) -> Dictionary:
@@ -21,6 +22,22 @@ static func can_load(machine_id: String, item_id: String, q: int, inv: Inventory
 					consume[rec.fuel] = 1
 				return {"ok": true, "consume": consume, "output": {"id": rec.out, "n": 1, "q": 0}, "time": int(rec.time)}
 		return {"ok": false, "reason": TranslationServer.translate("The furnace only accepts ore.")}
+	if spec.has("refine"):
+		if it.get("cat", "") != "seed":
+			return {"ok": false, "reason": TranslationServer.translate("Put seeds in.")}
+		if q >= spec.refine.size():
+			return {"ok": false, "reason": TranslationServer.translate("These seeds can't be refined any further.")}
+		var batch := int(spec.get("batch", 5))
+		if inv.count(item_id, q) < batch:
+			return {"ok": false, "reason": TranslationServer.translate("You need %d %s.") % [batch, Data.item_name(item_id, q)]}
+		var need: Dictionary = spec.refine[q].in
+		for mat in need:
+			if inv.count(mat) < int(need[mat]):
+				return {"ok": false, "reason": TranslationServer.translate("You also need %d %s.") % [int(need[mat]), Data.item_name(mat)]}
+		var consume := {item_id: batch}
+		for mat in need:
+			consume[mat] = int(need[mat])
+		return {"ok": true, "consume": consume, "consume_q": q, "output": {"id": item_id, "n": batch, "q": q + 1}, "time": int(spec.time)}
 	if spec.get("any", "") == "crop":
 		if not it.get("cat", "") in ["crop", "fruit"]:
 			return {"ok": false, "reason": TranslationServer.translate("Put a crop or fruit in.")}
@@ -34,28 +51,32 @@ static func can_load(machine_id: String, item_id: String, q: int, inv: Inventory
 		return {"ok": true, "consume": {item_id: 1}, "output": {"id": out_id, "n": 1, "q": q}, "time": int(spec.time)}
 	return {"ok": false, "reason": ""}
 
-static func is_ready(obj: Dictionary, now_abs: int) -> bool:
-	return not obj.get("output", {}).is_empty() and now_abs >= int(obj.get("ready_at", 0))
+static func seconds_for(minutes: int) -> float:
+	return minutes * CropGrowth.MACHINE_SECONDS_PER_MINUTE
+
+static func is_ready(obj: Dictionary, now: float) -> bool:
+	return not obj.get("output", {}).is_empty() and now >= float(obj.get("ready_at", 0))
 
 static func is_busy(obj: Dictionary) -> bool:
 	return not obj.get("output", {}).is_empty()
 
-static func remaining(obj: Dictionary, now_abs: int) -> int:
-	return maxi(0, int(obj.get("ready_at", 0)) - now_abs)
+## Real seconds left.
+static func remaining(obj: Dictionary, now: float) -> float:
+	return maxf(0.0, float(obj.get("ready_at", 0)) - now)
 
-## Spark workers run the machine line overnight: finished goods go into the farm chest, then idle
+## Spark workers run the machine line: finished goods go into the farm chest, then idle
 ## machines are refilled from it with whatever earns the most. Seed makers are left to the player
 ## because they eat crops at a loss. `slots` = machines the workers can service.
-static func automate(grids: Array, chest: Inventory, now_abs: int, slots: int, rep: Dictionary) -> void:
+static func automate(grids: Array, chest: Inventory, now: float, slots: int, rep: Dictionary) -> void:
 	for g in grids:
 		for k in g.objects:
 			if slots <= 0:
 				return
 			var o: Dictionary = g.objects[k]
-			if o.kind != "machine" or o.id == "seed_maker":
+			if o.kind != "machine" or o.id in ["seed_maker", "seed_refiner"]:
 				continue
 			var served := false
-			if is_ready(o, now_abs):
+			if is_ready(o, now):
 				var out: Dictionary = o.output
 				if chest.add(out.id, int(out.n), int(out.q)) > 0:
 					continue
@@ -77,7 +98,7 @@ static func automate(grids: Array, chest: Inventory, now_abs: int, slots: int, r
 							chest.remove(c, int(pick.consume[c]))
 					o.input = pick.id
 					o.output = pick.output
-					o.ready_at = now_abs + int(pick.time)
+					o.ready_at = now + seconds_for(int(pick.time))
 					rep.machines_loaded = int(rep.get("machines_loaded", 0)) + 1
 					served = true
 			if served:
@@ -101,6 +122,7 @@ static func best_input(machine_id: String, chest: Inventory) -> Dictionary:
 			best = chk
 	return best
 
+## Spark workers speed busy machines up by `minutes` game minutes.
 static func apply_power(grids: Array, minutes: int) -> void:
 	if minutes <= 0:
 		return
@@ -108,4 +130,4 @@ static func apply_power(grids: Array, minutes: int) -> void:
 		for k in g.objects:
 			var o: Dictionary = g.objects[k]
 			if o.kind == "machine" and is_busy(o):
-				o.ready_at = int(o.ready_at) - minutes
+				o.ready_at = float(o.ready_at) - seconds_for(minutes)

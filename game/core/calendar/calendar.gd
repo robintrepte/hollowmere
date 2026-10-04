@@ -8,6 +8,8 @@ const WEEKDAYS := ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 const DAY_START := 360   # 6:00
 const DAY_END := 1560    # 2:00 (next day)
 const NIGHT_START := 1200 # 20:00
+## Without sleeping, the game day rolls over at 6:00 the next morning.
+const NIGHT_ROLLOVER := 1800
 
 static func day_of_season(day_index: int) -> int:
 	return (day_index % DAYS_PER_SEASON) + 1
@@ -45,8 +47,16 @@ static func weekday_name(day_index: int) -> String:
 			return str(TranslationServer.translate("Sun"))
 	return WEEKDAYS[weekday(day_index)]
 
-static func date_string(day_index: int) -> String:
-	return "%s, %s %d" % [weekday_name(day_index), Data.season_name(season(day_index)), day_of_season(day_index)]
+## Seasons follow the real calendar; the day number is the farm's own 28-day cycle.
+static func date_string(day_index: int, season_id: String = "") -> String:
+	if season_id == "":
+		season_id = current_season()
+	return "%s, %s %d" % [weekday_name(day_index), Data.season_name(season_id), day_of_season(day_index)]
+
+static func current_season() -> String:
+	if GameState.started:
+		return GameState.season()
+	return Seasons.current(TimeService.now(), Settings.hemisphere)
 
 static func time_string(minutes: int, twelve_hour: bool = true) -> String:
 	var m := minutes % 1440
@@ -67,8 +77,9 @@ static func hhmm(v: int) -> int:
 static func is_night(minutes: int) -> bool:
 	return minutes >= NIGHT_START or minutes < DAY_START
 
-static func festival_on(day_index: int) -> String:
-	var s := season(day_index)
+## Festivals fall on a day of the farm's 28-day cycle within the real season.
+static func festival_on(day_index: int, season_id: String = "") -> String:
+	var s := season_id if season_id != "" else current_season()
 	var d := day_of_season(day_index)
 	var fests: Dictionary = Data.progression.get("festivals", {})
 	for id in fests:
@@ -76,13 +87,15 @@ static func festival_on(day_index: int) -> String:
 			return id
 	return ""
 
-static func roll_weather(world_seed: int, day_index: int) -> String:
-	if festival_on(day_index) != "" or day_of_season(day_index) == 1 or day_index < 2:
+static func roll_weather(world_seed: int, day_index: int, season_id: String = "") -> String:
+	if season_id == "":
+		season_id = season(day_index)
+	if festival_on(day_index, season_id) != "" or day_of_season(day_index) == 1 or day_index < 2:
 		return "sun"
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash([world_seed, day_index, "weather"])
 	var r := rng.randf()
-	match season(day_index):
+	match season_id:
 		"spring":
 			if r < 0.05: return "storm"
 			if r < 0.25: return "rain"

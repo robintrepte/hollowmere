@@ -1,6 +1,8 @@
 {
   "hoe":            {"name": "Hoe", "cat": "tool", "sell": 0, "icon": "hoe", "desc": "Tills soil for planting."},
   "watering_can":   {"name": "Watering Can", "cat": "tool", "sell": 0, "icon": "can", "desc": "Waters crops. Refill at water."},
+  "shovel":         {"name": "Shovel", "cat": "tool", "sell": 0, "icon": "shovel", "desc": "Digs a trench from water to your fields. Use it on a trench again to fill it in."},
+  "bucket":         {"name": "Bucket", "cat": "tool", "sell": 0, "icon": "bucket", "desc": "Scoop water from a pond, river or the sea and pour it into a trench or over your crops."},
   "pickaxe":        {"name": "Pickaxe", "cat": "tool", "sell": 0, "icon": "pick", "desc": "Breaks rocks and ore."},
   "axe":            {"name": "Axe", "cat": "tool", "sell": 0, "icon": "axe", "desc": "Chops branches and stumps."},
   "scythe":         {"name": "Scythe", "cat": "tool", "sell": 0, "icon": "scythe", "desc": "Cuts weeds and harvests crops."},
@@ -92,6 +94,7 @@
   "keg":               {"name": "Keg", "cat": "placeable", "sell": 0, "place": "machine", "color": "#8a5a30", "icon": "keg", "desc": "Turns fruit and veggies into juice."},
   "preserves_jar":     {"name": "Preserves Jar", "cat": "placeable", "sell": 0, "place": "machine", "color": "#c0d8e0", "icon": "jar", "desc": "Turns crops into jam."},
   "seed_maker":        {"name": "Seed Maker", "cat": "placeable", "sell": 0, "place": "machine", "color": "#7a9a5a", "icon": "machine", "desc": "Turns a crop into 2 seeds."},
+  "seed_refiner":   {"name": "Seed Refiner", "cat": "placeable", "sell": 0, "place": "machine", "color": "#8a7ab0", "icon": "machine", "desc": "Refines seeds to the next tier, so the plant gives more harvests."},
   "flower_pot":        {"name": "Flower Pot", "cat": "placeable", "sell": 20, "place": "decor", "color": "#e07070", "icon": "decor", "desc": "A pretty decoration."},
   "wooden_bench":      {"name": "Wooden Bench", "cat": "placeable", "sell": 30, "place": "decor", "color": "#a0703a", "icon": "decor", "desc": "A cozy spot to rest."},
   "stone_lantern":     {"name": "Stone Lantern", "cat": "placeable", "sell": 40, "place": "decor", "light": true, "color": "#b0b0a0", "icon": "decor", "desc": "Glows softly at night."},

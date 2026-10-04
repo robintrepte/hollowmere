@@ -16,6 +16,7 @@ var selected: int = 0
 var party: Array = []           # Array[Creature]; party[0] is the lead
 var tool_levels: Dictionary = {"hoe": 0, "watering_can": 0, "pickaxe": 0, "axe": 0, "scythe": 0}
 var water_left: int = 40
+var bucket_full: bool = false
 var energy: float = 270.0
 var max_energy: float = 270.0
 var backpack_level: int = 0
@@ -37,6 +38,8 @@ func _init() -> void:
 func give_starter_kit() -> void:
 	for t in TOOLS:
 		inventory.add(t, 1)
+	inventory.add("shovel", 1)
+	inventory.add("bucket", 1)
 	inventory.add("parsnip_seeds", 15)
 	inventory.add("basic_treat", 5)
 	inventory.add("lure_charm", 5)
@@ -139,7 +142,7 @@ func to_dict() -> Dictionary:
 		p.append(c.to_dict())
 	return {
 		"id": id, "name": name, "look": look, "hat": hat, "inventory": inventory.to_dict(), "hotbar": hotbar,
-		"selected": selected, "party": p, "tool_levels": tool_levels, "water_left": water_left,
+		"selected": selected, "party": p, "tool_levels": tool_levels, "water_left": water_left, "bucket_full": bucket_full,
 		"energy": energy, "max_energy": max_energy, "backpack_level": backpack_level,
 		"relationships": relationships, "recipes": recipes, "cosmetics": cosmetics, "map_id": map_id,
 		"pos": [pos.x, pos.y], "skills": skills, "stats": stats,
@@ -163,6 +166,7 @@ static func from_dict(d: Dictionary) -> PlayerData:
 	for k in d.get("tool_levels", {}):
 		p.tool_levels[k] = int(d.tool_levels[k])
 	p.water_left = int(d.get("water_left", 40))
+	p.bucket_full = bool(d.get("bucket_full", false))
 	p.energy = float(d.get("energy", 270))
 	p.max_energy = float(d.get("max_energy", 270))
 	p.backpack_level = int(d.get("backpack_level", 0))

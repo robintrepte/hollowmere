@@ -8046,3 +8046,141 @@ msgstr "%s Gold"
 msgid "M"
 msgstr "Mio."
 
+#, c-format
+msgid "%d crops ripened"
+msgstr "%d Pflanzen sind reif geworden"
+
+#, c-format
+msgid "%d harvests"
+msgstr "%d Ernten"
+
+#, c-format
+msgid "%d harvests left"
+msgstr "noch %d Ernten"
+
+#, c-format
+msgid "%s (%s)"
+msgstr "%s (%s)"
+
+#, c-format
+msgid "(the farm only keeps going for %s on its own)"
+msgstr "(der Hof arbeitet höchstens %s allein weiter)"
+
+#, c-format
+msgid ", then again every %s"
+msgstr ", danach alle %s erneut"
+
+#, c-format
+msgid "A new day: the shipping bin paid %s."
+msgstr "Ein neuer Tag: Die Versandkiste hat %s ausgezahlt."
+
+msgid "Bucket"
+msgstr "Eimer"
+
+msgid "Bucket filled"
+msgstr "Eimer gefüllt"
+
+msgid "Common"
+msgstr "Gewöhnlich"
+
+msgid "Digs a trench from water to your fields. Use it on a trench again to fill it in."
+msgstr "Gräbt einen Graben vom Wasser zu deinen Feldern. Auf einem Graben benutzt, schüttet sie ihn wieder zu."
+
+msgid "Everlasting"
+msgstr "Ewig"
+
+#, c-format
+msgid "Grows fastest in %s: ripe in %s when watered%s. Grows slower in other seasons, and always well in the greenhouse."
+msgstr "Wächst am schnellsten im %s: bewässert reif in %s%s. In anderen Jahreszeiten langsamer, im Gewächshaus immer gut."
+
+#, c-format
+msgid "Grows slowly in %s"
+msgstr "Wächst im %s langsam"
+
+msgid "Harvests forever"
+msgstr "Unbegrenzt erntbar"
+
+#, c-format
+msgid "Hatches in %s"
+msgstr "Schlüpft in %s"
+
+msgid "Noble"
+msgstr "Edel"
+
+msgid "Northern hemisphere"
+msgstr "Nordhalbkugel"
+
+msgid "On the farm"
+msgstr "Auf dem Hof"
+
+#, c-format
+msgid "Plant on open farmland. Grows into a tree in %s, then gives fruit every %s in %s."
+msgstr "Auf freiem Ackerland pflanzen. Wird in %s zum Baum und trägt dann alle %s Früchte im %s."
+
+msgid "Put seeds in."
+msgstr "Leg Saatgut hinein."
+
+msgid "Refined"
+msgstr "Veredelt"
+
+msgid "Refines seeds to the next tier, so the plant gives more harvests."
+msgstr "Veredelt Saatgut zur nächsten Stufe, damit die Pflanze öfter geerntet werden kann."
+
+msgid "Scoop water from a pond, river or the sea and pour it into a trench or over your crops."
+msgstr "Schöpft Wasser aus Teich, Fluss oder Meer und gießt es in einen Graben oder über deine Pflanzen."
+
+msgid "Seasons follow"
+msgstr "Jahreszeiten nach"
+
+msgid "Seed Refiner"
+msgstr "Saatveredler"
+
+msgid "Shovel"
+msgstr "Schaufel"
+
+msgid "Southern hemisphere"
+msgstr "Südhalbkugel"
+
+msgid "The bucket is empty. Fill it at a pond, river or the sea."
+msgstr "Der Eimer ist leer. Füll ihn an einem Teich, Fluss oder am Meer."
+
+msgid "The plant is spent."
+msgstr "Die Pflanze ist verbraucht."
+
+msgid "These seeds can't be refined any further."
+msgstr "Dieses Saatgut lässt sich nicht weiter veredeln."
+
+#, c-format
+msgid "This %s matures in %s."
+msgstr "%s ist in %s ausgewachsen."
+
+#, c-format
+msgid "You also need %d %s."
+msgstr "Außerdem brauchst du %d %s."
+
+#, c-format
+msgid "You were gone for %s"
+msgstr "Du warst %s weg"
+
+msgid "Your region"
+msgstr "Deine Region"
+
+msgid "dry: grows slower"
+msgstr "trocken: wächst langsamer"
+
+msgid "harvests forever"
+msgstr "unbegrenzt erntbar"
+
+msgid "off season"
+msgstr "außerhalb der Saison"
+
+#, c-format
+msgid "ripe in %s"
+msgstr "reif in %s"
+
+msgid "While you were away"
+msgstr "Während du weg warst"
+
+msgid "All quiet on the farm."
+msgstr "Auf dem Hof war es ruhig."
+

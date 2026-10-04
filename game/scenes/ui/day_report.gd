@@ -1,6 +1,7 @@
 class_name DayReport
 extends PanelContainer
-## Morning summary (Farm Story style): shipping earnings, Wildling job results, eggs, events.
+## Morning summary after sleeping, or "while you were away" after loading: shipping earnings,
+## Wildling job results, ripe crops, eggs, events.
 
 signal closed
 
@@ -23,10 +24,16 @@ func _ready() -> void:
 	v.add_theme_constant_override("separation", 4)
 	add_child(v)
 	var day_i := int(report.get("day", GameState.day()))
-	var t := UITheme.label("Good morning!", 15, UITheme.WOOD_DK)
+	var away := float(report.get("away", -1.0))
+	var t := UITheme.label(tr("Good morning!") if away < 0.0 else tr("While you were away"), 15, UITheme.WOOD_DK)
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(t)
-	var d := UITheme.label(tr("%s · %s") % [Calendar.date_string(day_i), Calendar.weather_name(GameState.world.weather)], 10, UITheme.MUTED)
+	var sub := tr("%s · %s") % [Calendar.date_string(day_i), Calendar.weather_name(GameState.world.weather)]
+	if away >= 0.0:
+		sub = tr("You were gone for %s") % TimeService.duration_text(away)
+		if away >= TimeService.OFFLINE_CAP:
+			sub += "\n" + tr("(the farm only keeps going for %s on its own)") % TimeService.duration_text(TimeService.OFFLINE_CAP)
+	var d := UITheme.label(sub, 10, UITheme.MUTED)
 	d.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(d)
 	var sc := ScrollContainer.new()
@@ -68,28 +75,26 @@ func _ready() -> void:
 			lines.append(tr("%d %s") % [n, tr(k[1])])
 	if int(jobs.get("tired", 0)) > 0:
 		lines.append(tr("%d Wildlings are tired and need rest") % int(jobs.tired))
+	if int(report.get("ripe", 0)) > 0:
+		lines.push_front(tr("%d crops ripened") % int(report.ripe))
 	if not lines.is_empty():
-		body.add_child(UITheme.label("Your Wildlings worked overnight", 11, UITheme.WOOD))
+		body.add_child(UITheme.label("On the farm", 11, UITheme.WOOD))
 		for l in lines:
 			body.add_child(UITheme.label("· " + l, 9))
 	for h in report.get("hatched", []):
 		body.add_child(UITheme.label(tr("An egg hatched: %s%s!") % [tr("Starry ") if h.starry else "", tr(str(Data.get_species(h.species).get("name", h.species)))], 10, UITheme.LEAF.darkened(0.3)))
 	for ev in report.get("evolved", []):
-		body.add_child(UITheme.label(tr("%s evolved into %s overnight!") % [tr(str(ev.from)), tr(str(Data.get_species(ev.to).get("name", ev.to)))], 10, UITheme.LEAF.darkened(0.3)))
+		body.add_child(UITheme.label(tr("%s evolved into %s!") % [tr(str(ev.from)), tr(str(Data.get_species(ev.to).get("name", ev.to)))], 10, UITheme.LEAF.darkened(0.3)))
 	if int(report.get("eggs", 0)) > 0:
 		body.add_child(UITheme.label(tr("%d new eggs in the farm chest!") % int(report.eggs), 10, UITheme.LEAF.darkened(0.3)))
 	var farm: Dictionary = report.get("farm", {})
 	if int(farm.get("crow", 0)) > 0:
 		body.add_child(UITheme.label(tr("A crow ate %d crop. A scarecrow would help!") % int(farm.crow), 9, UITheme.HEART))
-	if int(farm.get("withered", 0)) > 0:
-		body.add_child(UITheme.label(tr("%d crops withered with the season change.") % int(farm.withered), 9, UITheme.HEART))
-	if report.get("passed_out", false):
-		body.add_child(UITheme.label(tr("You passed out from exhaustion%s.") % (tr(" and lost %dg") % int(report.lost_money) if report.has("lost_money") else ""), 9, UITheme.HEART))
 	var fest: String = report.get("festival", "")
 	if fest != "":
 		body.add_child(UITheme.label(tr("Today: %s in the village!") % fest.capitalize(), 10, UITheme.COIN.darkened(0.3)))
 	if body.get_child_count() == 0:
-		body.add_child(UITheme.label("A quiet night. A fresh day awaits.", 10, UITheme.MUTED))
+		body.add_child(UITheme.label(tr("A quiet night. A fresh day awaits.") if away < 0.0 else tr("All quiet on the farm."), 10, UITheme.MUTED))
 	var b := UITheme.button("Let's go!", func(): closed.emit())
 	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	v.add_child(b)

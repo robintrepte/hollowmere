@@ -44,6 +44,8 @@ func _ready() -> void:
 	_slider(body, "Day length (relaxed ->)", inverse_lerp(0.7, 2.0, Settings.clock_speed), func(x): Settings.clock_speed = lerpf(0.7, 2.0, x))
 	_check(body, "12-hour clock", Settings.twelve_hour, func(on): Settings.twelve_hour = on)
 	_check(body, "Pause time while in menus (solo)", Settings.auto_pause_menus, func(on): Settings.auto_pause_menus = on)
+	_choice(body, "Seasons follow", ["Your region", "Northern hemisphere", "Southern hemisphere"], ["auto", "north", "south"].find(Settings.hemisphere), func(i: int):
+		Settings.hemisphere = ["auto", "north", "south"][i])
 	body.add_child(UITheme.label("Display & accessibility", 11, UITheme.WOOD))
 	if OS.get_name() != "Web":
 		_check(body, "Fullscreen", Settings.fullscreen, func(on): Settings.fullscreen = on; Settings.apply())

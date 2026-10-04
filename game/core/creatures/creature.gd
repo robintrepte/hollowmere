@@ -23,7 +23,9 @@ var status_turns: int = 0
 var starry: bool = false
 var morph: String = ""
 var happiness: int = 70
-var energy: int = 100
+var energy: float = 100.0
+## Fractional job XP between real-time ticks.
+var xp_progress: float = 0.0
 var grooming: int = 0
 var job: String = ""
 var job_manual: bool = false     ## the player picked this job (or rest) by hand
@@ -310,7 +312,7 @@ static func from_dict(d: Dictionary) -> Creature:
 	c.starry = bool(d.get("starry", false))
 	c.morph = d.get("morph", "")
 	c.happiness = int(d.get("happiness", 70))
-	c.energy = int(d.get("energy", 100))
+	c.energy = float(d.get("energy", 100))
 	c.grooming = int(d.get("grooming", 0))
 	c.job = d.get("job", "")
 	c.job_manual = bool(d.get("job_manual", false))
