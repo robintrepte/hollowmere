@@ -5,3 +5,4 @@ plants.png https://replicate.delivery/xezq/HSekpgLMwmyUAyafM6iNFli7UlWxjooCfsWYQ
 adventure.png https://replicate.delivery/xezq/5FThkgJnmTq3HpdHkAhXptBODeuuFSytSaKjlhY8Imt9RvpLA/tmpqzztdf9c.png shrine_ruined:64x64::62x54,shrine:64x64::60x62,treasure:32x32::28x26,festival_egg:32x32::22x24
 fishing.png https://replicate.delivery/xezq/tyRfjUt5783xKyURt12V6FU7pxjXTiPZBcTloNdpjNKgX8pLA/tmpiodou7nj.png crab_pot:32x32::30x28,ferry:96x64::94x60,-
 mining.png https://replicate.delivery/xezq/QNYd7O4gSCKjJ5xOT3Hh17XfuEXwb5bA4Y74WDV5FUh4j8pLA/tmprrf1ti_e.png torch:32x48::16x40,support:32x48::32x46,rail:32x32:center:32x24,minecart:32x32::30x26,elevator:32x48::30x46,crystal:32x32::28x26,ore_silver:32x32::26x22,ore_mithril:32x32::26x22,ore_coal:32x32::26x22
+enchanting.png https://replicate.delivery/xezq/0NNnDJfoLQXZQajMNZ2kxYwpE36mph3ddgYwrb29A0QKx8pLA/tmpxyylor_f.png enchanting_table:32x48::30x40,anvil:32x32::28x28,grindstone:32x48::30x36,bookshelf:32x48::26x44

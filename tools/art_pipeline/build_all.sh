@@ -25,8 +25,8 @@ $PY tools/art_pipeline/derive_icons.py
 
 while read -r f _url names; do
   extra=()
-  # adventure.png has the model's "1 2 3 4" captions under each object.
-  [ "$f" = adventure.png ] && extra=(--drop-small 0.05)
+  # adventure.png has the model's "1 2 3 4" captions under each object; enchanting.png has loose sparkles.
+  case "$f" in adventure.png|enchanting.png) extra=(--drop-small 0.05) ;; esac
   $P sprites "$RAW/world/$f" "$names" game/assets/world ${extra[@]+"${extra[@]}"}
 done < tools/art_pipeline/world_sheets.txt
 # The sheet copy was isometric. This crate faces the camera like the other farm objects.
