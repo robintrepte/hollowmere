@@ -77,6 +77,8 @@ func _refresh() -> void:
 	var arr := _creatures()
 	if _sel == null or not _sel in arr:
 		_sel = arr[0] if arr.size() > 0 else null
+	if tab == "farm" and not arr.is_empty():
+		_list.add_child(_farm_overview(arr))
 	if arr.is_empty():
 		_list.add_child(UITheme.label("No Wildlings live on the farm yet.\nMove some here from your party.", 9, UITheme.MUTED))
 	for c in arr:
@@ -256,6 +258,8 @@ func _show_detail() -> void:
 	# Farm job
 	var job_t: Dictionary = Data.job_info(c.job_type())
 	_detail.add_child(UITheme.label(tr("Farm job: %s. %s") % [job_t.job_name, job_t.job_desc], 9, UITheme.LEAF.darkened(0.35)))
+	if tab == "farm" and c.job != "":
+		_detail.add_child(UITheme.label(FarmJobs.hourly_text(c.job, c.job_power(c.job)), 8, UITheme.MUTED))
 	# Actions
 	var acts := HFlowContainer.new()
 	acts.add_theme_constant_override("h_separation", 4)
@@ -285,25 +289,66 @@ func _show_detail() -> void:
 				_refresh())
 		join.disabled = player.party.size() >= PlayerData.PARTY_MAX
 		acts.add_child(join)
-		var jobs := OptionButton.new()
-		jobs.add_theme_font_size_override("font_size", UITheme.fs(9))
-		jobs.add_item(tr("Rest (no job)"))
-		jobs.set_item_metadata(0, "")
-		var sel_i := 0
-		for t in c.types():
-			var jid: String = Data.types[t].job
-			if c.can_do_job(jid):
-				jobs.add_item(tr("%s (power %d)") % [Data.types[t].job_name, c.job_power(jid)])
-				jobs.set_item_metadata(jobs.item_count - 1, jid)
-				if c.job == jid:
-					sel_i = jobs.item_count - 1
-		jobs.select(sel_i)
-		jobs.item_selected.connect(func(i: int):
-			Coop.act("set_job_act", [c.uid, str(jobs.get_item_metadata(i))])
-			Audio.sfx("tick", 0.0)
-			_refresh())
-		acts.add_child(jobs)
+		_job_cards(c)
 		_breeding_section(c)
+
+func _farm_overview(arr: Array) -> Control:
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 1)
+	var working := 0
+	for c in arr:
+		if c.job != "":
+			working += 1
+	box.add_child(UITheme.label(tr("On the farm: %d working, %d resting") % [working, arr.size() - working], 8, UITheme.WOOD))
+	return box
+
+func _job_cards(c: Creature) -> void:
+	_detail.add_child(UITheme.label("Assign a job", 10, UITheme.WOOD))
+	var flow := HFlowContainer.new()
+	flow.add_theme_constant_override("h_separation", 4)
+	flow.add_theme_constant_override("v_separation", 4)
+	_detail.add_child(flow)
+	flow.add_child(_job_card(c, "", tr("Rest"), FarmJobs.hourly_text("", 1), false))
+	for t in c.types():
+		var jid: String = Data.types[t].job
+		if c.can_do_job(jid):
+			var native := jid == c.job_type()
+			flow.add_child(_job_card(c, jid, Data.types[t].job_name, FarmJobs.hourly_text(jid, c.job_power(jid)), native))
+
+func _job_card(c: Creature, jid: String, title: String, desc: String, native: bool) -> Control:
+	var on := c.job == jid
+	var b := Button.new()
+	b.toggle_mode = true
+	b.button_pressed = on
+	b.custom_minimum_size = Vector2(150, 56)
+	b.add_theme_stylebox_override("normal", UITheme.box(UITheme.CREAM if on else UITheme.PARCHMENT_DK, Color("#ffd23f") if on else Color("#b09060"), 2 if on else 1, 3, 4, false))
+	var v := VBoxContainer.new()
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_theme_constant_override("separation", 1)
+	b.add_child(v)
+	var row := HBoxContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(row)
+	row.add_child(UITheme.label(title, 9, UITheme.WOOD_DK))
+	if native:
+		row.add_child(Badge.new("Fits the type", Color("#c8e6a0")))
+	if on:
+		row.add_child(Badge.new("On duty", UITheme.COIN))
+	if jid != "":
+		var stars := ""
+		for i in mini(5, maxi(1, c.job_power(jid))):
+			stars += "★"
+		v.add_child(UITheme.label(stars, 8, UITheme.COIN))
+	var d := UITheme.label(desc, 7, UITheme.MUTED)
+	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	d.custom_minimum_size = Vector2(140, 0)
+	v.add_child(d)
+	v.add_child(UITheme.label(tr("About %d energy / hour") % int(FarmJobs.energy_per_hour()) if jid != "" else tr("Energy recovers faster"), 7, UITheme.MUTED))
+	b.pressed.connect(func():
+		Coop.act("set_job_act", [c.uid, jid])
+		Audio.sfx("tick", 0.0)
+		_refresh())
+	return b
 
 func _breeding_section(c: Creature) -> void:
 	_detail.add_child(UITheme.label("Breeding", 10, UITheme.WOOD))

@@ -26,6 +26,37 @@ static func job_type(job_id: String) -> String:
 			return t
 	return ""
 
+## What one worker of this power does in an hour (six 10-minute ticks).
+static func hourly_text(job_id: String, power: int) -> String:
+	var p := maxi(1, power)
+	match job_id:
+		"water":
+			return TranslationServer.translate("Waters up to %d fields per hour.") % (p * 12)
+		"grow":
+			return TranslationServer.translate("Nudges up to %d growing crops each hour.") % (p * 18)
+		"clear":
+			return TranslationServer.translate("Clears about %d rocks or branches per hour.") % (p * 3)
+		"harvest":
+			return TranslationServer.translate("Harvests up to %d ripe plants or trees per hour.") % (p * 18)
+		"pollinate":
+			return TranslationServer.translate("Pollinates up to %d fields per hour and sometimes finds forage.") % (p * 24)
+		"smelt":
+			return TranslationServer.translate("Smelts about %d bars per hour from ore in the farm chest.") % (p * 3)
+		"preserve":
+			return TranslationServer.translate("Preserves about %d batches of crops per hour.") % maxi(1, int(p * 1.8))
+		"power":
+			return TranslationServer.translate("Keeps machines running and tends about %d extra slots.") % (p * 2)
+		"guard":
+			return TranslationServer.translate("Guards the farm against crows and pests while on duty.")
+		"luck":
+			return TranslationServer.translate("Raises farm luck and sometimes finds gems.")
+		"":
+			return TranslationServer.translate("Rests. Energy comes back faster, no work gets done.")
+	return ""
+
+static func energy_per_hour() -> float:
+	return JOB_COST * 3600.0 / float(WORK_PERIOD)
+
 static func new_report() -> Dictionary:
 	return {
 		"watered": 0, "grown": 0, "cleared": 0, "smelted": 0, "pollinated": 0, "preserved": 0,

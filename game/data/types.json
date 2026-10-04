@@ -1,16 +1,16 @@
 {
   "order": ["leaf", "tide", "ember", "stone", "gale", "spark", "frost", "shade", "glow", "wild"],
   "info": {
-    "leaf":  {"name": "Leaf",  "abbr": "LF", "color": "#5cb84a", "job": "grow",      "job_name": "Grower",    "job_desc": "Helps crops grow faster overnight."},
-    "tide":  {"name": "Tide",  "abbr": "TD", "color": "#3f8fd8", "job": "water",     "job_name": "Waterer",   "job_desc": "Waters planted crops every morning."},
+    "leaf":  {"name": "Leaf",  "abbr": "LF", "color": "#5cb84a", "job": "grow",      "job_name": "Grower",    "job_desc": "Pushes crops along in real time so they ripen sooner."},
+    "tide":  {"name": "Tide",  "abbr": "TD", "color": "#3f8fd8", "job": "water",     "job_name": "Waterer",   "job_desc": "Keeps planted fields watered through the day."},
     "ember": {"name": "Ember", "abbr": "EM", "color": "#e8642c", "job": "smelt",     "job_name": "Smelter",   "job_desc": "Smelts ore from the farm chest and burns weeds."},
     "stone": {"name": "Stone", "abbr": "ST", "color": "#a08060", "job": "clear",     "job_name": "Digger",    "job_desc": "Clears rocks and branches and gathers stone and wood."},
     "gale":  {"name": "Gale",  "abbr": "GL", "color": "#9fd8d0", "job": "pollinate", "job_name": "Pollinator","job_desc": "Raises crop quality and gathers forage."},
     "spark": {"name": "Spark", "abbr": "SP", "color": "#f2cf3a", "job": "power",     "job_name": "Generator", "job_desc": "Runs the machines: refills them from the farm chest, collects the goods and speeds them up."},
-    "frost": {"name": "Frost", "abbr": "FR", "color": "#a8e0f8", "job": "preserve",  "job_name": "Preserver", "job_desc": "Preserves crops in the farm chest and protects crops from season change."},
-    "shade": {"name": "Shade", "abbr": "SH", "color": "#6a4a8c", "job": "guard",     "job_name": "Guardian",  "job_desc": "Guards the farm at night against crows and pests."},
+    "frost": {"name": "Frost", "abbr": "FR", "color": "#a8e0f8", "job": "preserve",  "job_name": "Preserver", "job_desc": "Preserves crops in the farm chest so they keep."},
+    "shade": {"name": "Shade", "abbr": "SH", "color": "#6a4a8c", "job": "guard",     "job_name": "Guardian",  "job_desc": "Guards the farm against crows and pests while on duty."},
     "glow":  {"name": "Glow",  "abbr": "GW", "color": "#f8e8a0", "job": "luck",      "job_name": "Charmer",   "job_desc": "Brings luck and sometimes finds gems."},
-    "wild":  {"name": "Wild",  "abbr": "WD", "color": "#c8a878", "job": "harvest",   "job_name": "Harvester", "job_desc": "Harvests ripe crops into the farm chest."}
+    "wild":  {"name": "Wild",  "abbr": "WD", "color": "#c8a878", "job": "harvest",   "job_name": "Harvester", "job_desc": "Harvests ripe crops into the farm chest as they come ready."}
   },
   "chart": {
     "leaf":  {"tide": 2, "stone": 2, "spark": 2, "ember": 0.5, "gale": 0.5, "leaf": 0.5, "frost": 0.5},
