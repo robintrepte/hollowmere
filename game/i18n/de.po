@@ -9838,3 +9838,841 @@ msgstr "Handel"
 msgid "Level 1"
 msgstr "Level 1"
 
+#, c-format
+msgid "%s cm"
+msgstr "%s cm"
+
+#, c-format
+msgid "%s on the rod."
+msgstr "%s an der Angel."
+
+msgid "A big crustacean with big claws."
+msgstr "Ein großes Krustentier mit großen Scheren."
+
+msgid "A big flatfish that hugs the bottom."
+msgstr "Ein großer Plattfisch, der am Grund klebt."
+
+msgid "A bright red fish that bites in the rain."
+msgstr "Ein leuchtend roter Fisch, der bei Regen beißt."
+
+msgid "A broad river fish that feeds after dark."
+msgstr "Ein breiter Flussfisch, der nach Einbruch der Dunkelheit frisst."
+
+msgid "A common ocean fish. Great on toast."
+msgstr "Ein häufiger Meeresfisch. Lecker auf Toast."
+
+msgid "A common river fish with a big appetite."
+msgstr "Ein häufiger Flussfisch mit großem Appetit."
+
+msgid "A legend of the village pond, green as new leaves."
+msgstr "Eine Legende des Dorfteichs, grün wie junges Laub."
+
+msgid "A long hunter with a mouth full of needles."
+msgstr "Ein langer Jäger mit einem Maul voller Nadeln."
+
+msgid "A patient pond fish that eats almost anything."
+msgstr "Ein geduldiger Teichfisch, der fast alles frisst."
+
+msgid "A perfect pearl from a fishing treasure chest."
+msgstr "Eine makellose Perle aus einer Schatztruhe vom Angeln."
+
+msgid "A powerful swimmer from the open sea."
+msgstr "Ein kräftiger Schwimmer aus der offenen See."
+
+msgid "A rare striped trout. Hard to fool."
+msgstr "Eine seltene gestreifte Forelle. Schwer zu überlisten."
+
+msgid "A simple bamboo rod. Takes bait."
+msgstr "Eine einfache Bambusangel. Nimmt Köder."
+
+msgid "A small freshwater snail."
+msgstr "Eine kleine Süßwasserschnecke."
+
+msgid "A tiny fish that smells like cucumber."
+msgstr "Ein winziger Fisch, der nach Gurke riecht."
+
+msgid "A tiny freshwater lobster."
+msgstr "Ein winziger Süßwasserhummer."
+
+msgid "A warm bowl that tastes like the river."
+msgstr "Eine warme Schüssel, die nach Fluss schmeckt."
+
+msgid "Abyssal Angler"
+msgstr "Abgrund-Anglerfisch"
+
+msgid "An ancient, armored giant of the river."
+msgstr "Ein uralter, gepanzerter Riese des Flusses."
+
+msgid "Anchovy"
+msgstr "Sardelle"
+
+msgid "Ansel"
+msgstr "Ansel"
+
+msgid "Ansel is mending a net on the pier."
+msgstr "Ansel flickt auf dem Steg ein Netz."
+
+msgid "Ansel presses a worn lure into your hand."
+msgstr "Ansel drückt dir einen abgegriffenen Blinker in die Hand."
+
+msgid "Ansel shows you a faded photo of a boat."
+msgstr "Ansel zeigt dir ein verblasstes Foto von einem Boot."
+
+msgid "Ansel's Bait & Tackle"
+msgstr "Ansels Angelbedarf"
+
+msgid "Ansel's Granddaughter"
+msgstr "Ansels Enkelin"
+
+msgid "Ansel: A crab pot I don't use anymore. Set it in your farm pond."
+msgstr "Ansel: Ein Krabbenkorb, den ich nicht mehr brauche. Setz ihn in deinen Hofteich."
+
+msgid "Ansel: Don't you dare lose it."
+msgstr "Ansel: Wehe, du verlierst ihn."
+
+msgid "Ansel: Hazel pulled me out of the water that night. I owe your family more than fish."
+msgstr "Ansel: Hazel hat mich in jener Nacht aus dem Wasser gezogen. Ich schulde deiner Familie mehr als Fisch."
+
+msgid "Ansel: Hold this end. No, the other one. There."
+msgstr "Ansel: Halt mal dieses Ende. Nein, das andere. So."
+
+msgid "Ansel: My father's. Never lost a fish on it."
+msgstr "Ansel: Der gehörte meinem Vater. Nie einen Fisch daran verloren."
+
+msgid "Ansel: The Gull. My boat, before the storm of '72."
+msgstr "Ansel: Die Möwe. Mein Boot, vor dem Sturm von '72."
+
+msgid "Any fish of this water can bite, whatever the season, time or weather."
+msgstr "Jeder Fisch dieses Gewässers kann beißen, egal zu welcher Saison, Uhrzeit oder bei welchem Wetter."
+
+msgid "Any time"
+msgstr "Jederzeit"
+
+msgid "Any weather"
+msgstr "Jedes Wetter"
+
+msgid "Arctic Char"
+msgstr "Seesaibling"
+
+msgid "Bait"
+msgstr "Köder"
+
+msgid "Bait for the bay"
+msgstr "Köder für die Bucht"
+
+#, c-format
+msgid "Baited (%d)"
+msgstr "Beködert (%d)"
+
+msgid "Bamboo Rod"
+msgstr "Bambusangel"
+
+msgid "Basks near the surface on bright days."
+msgstr "Sonnt sich an hellen Tagen dicht unter der Oberfläche."
+
+msgid "Bream"
+msgstr "Brasse"
+
+msgid "Bring Ansel 20 Bait."
+msgstr "Bring Ansel 20 Köder."
+
+msgid "Bring Wren 2 Crayfish."
+msgstr "Bring Wren 2 Flusskrebse."
+
+msgid "Bring me the fish you catch and I'll pay a little better than the store."
+msgstr "Bring mir deine Fische, ich zahle ein bisschen besser als der Laden."
+
+msgid "Bullhead"
+msgstr "Zwergwels"
+
+msgid "Carp"
+msgstr "Karpfen"
+
+msgid "Cast into water."
+msgstr "Wirf ins Wasser aus."
+
+msgid "Cast into water. Face the water and hold the tool button to cast farther."
+msgstr "Wirf ins Wasser aus. Schau zum Wasser und halte die Werkzeugtaste, um weiter zu werfen."
+
+msgid "Casts far. Takes bait and one tackle."
+msgstr "Wirft weit. Nimmt Köder und ein Zubehör."
+
+msgid "Casts farther, and the catch bar is a little bigger."
+msgstr "Wirft weiter, und der Fangbalken ist etwas größer."
+
+#, c-format
+msgid "Catch %d fish."
+msgstr "Fange %d Fische."
+
+#, c-format
+msgid "Catch %d kinds of fish"
+msgstr "Fange %d Fischarten"
+
+msgid "Catch 10 different kinds of fish."
+msgstr "Fange 10 verschiedene Fischarten."
+
+msgid "Catch 3 fish."
+msgstr "Fange 3 Fische."
+
+msgid "Catch of the day"
+msgstr "Fang des Tages"
+
+msgid "Catfish"
+msgstr "Wels"
+
+#, c-format
+msgid "Caught %d of %d kinds"
+msgstr "%d von %d Arten gefangen"
+
+#, c-format
+msgid "Caught %d · best %s cm"
+msgstr "%d gefangen · Rekord %s cm"
+
+msgid "Cave lake"
+msgstr "Höhlensee"
+
+msgid "Chub"
+msgstr "Döbel"
+
+msgid "Clam"
+msgstr "Venusmuschel"
+
+msgid "Clever and grabby. Holds on to the rocks."
+msgstr "Schlau und greifig. Klammert sich an die Felsen."
+
+msgid "Clings to the rocks in clusters."
+msgstr "Hängt in Büscheln an den Felsen."
+
+msgid "Comes up from the deep when it rains."
+msgstr "Kommt bei Regen aus der Tiefe herauf."
+
+msgid "Comes up to the ice holes at night."
+msgstr "Kommt nachts zu den Eislöchern herauf."
+
+msgid "Cork Bobber"
+msgstr "Korkschwimmer"
+
+msgid "Crab"
+msgstr "Krabbe"
+
+msgid "Crab Cake"
+msgstr "Krabbenküchlein"
+
+msgid "Crab Pot"
+msgstr "Krabbenkorb"
+
+msgid "Craft a Fish Smoker."
+msgstr "Stell eine Fischräucherei her."
+
+msgid "Crayfish"
+msgstr "Flusskrebs"
+
+msgid "Creamy, briny and very comforting."
+msgstr "Cremig, salzig und sehr tröstlich."
+
+msgid "Creek critters"
+msgstr "Bachbewohner"
+
+msgid "Crispy outside, sweet crab inside."
+msgstr "Außen knusprig, innen süße Krabbe."
+
+msgid "Crystal Carp"
+msgstr "Kristallkarpfen"
+
+msgid "Dace"
+msgstr "Hasel"
+
+msgid "Dangles a light in the deepest cave lakes. Few have seen it."
+msgstr "Lässt in den tiefsten Höhlenseen ein Licht baumeln. Nur wenige haben ihn gesehen."
+
+msgid "Day"
+msgstr "Tag"
+
+msgid "Driftwood"
+msgstr "Treibholz"
+
+msgid "East: Gull Bay, the fishing harbor."
+msgstr "Osten: Möwenbucht, der Fischerhafen."
+
+msgid "Easy fishing (the rod reels by itself, slightly lower quality)"
+msgstr "Leichtes Angeln (die Angel holt selbst ein, etwas geringere Qualität)"
+
+msgid "Eel"
+msgstr "Aal"
+
+msgid "Ember Salmon"
+msgstr "Glutlachs"
+
+msgid "Empty the pot first."
+msgstr "Leere zuerst den Korb."
+
+msgid "Fast as an arrow, with a nose to match."
+msgstr "Schnell wie ein Pfeil, mit passender Nase."
+
+msgid "Ferry"
+msgstr "Fähre"
+
+msgid "Fiberglass Rod"
+msgstr "Glasfaserangel"
+
+msgid "Fish"
+msgstr "Fische"
+
+msgid "Fish Smoker"
+msgstr "Fischräucherei"
+
+msgid "Fish Stew"
+msgstr "Fischeintopf"
+
+msgid "Fish and seaweed, rolled up neatly."
+msgstr "Fisch und Seetang, ordentlich aufgerollt."
+
+msgid "Fish bite at dawn and at dusk. The rest of the day they're thinking."
+msgstr "Fische beißen im Morgengrauen und in der Dämmerung. Den Rest des Tages denken sie nach."
+
+msgid "Fish bite sooner, and rare fish show up more often."
+msgstr "Fische beißen früher, und seltene Fische tauchen öfter auf."
+
+msgid "Fish stories"
+msgstr "Anglerlatein"
+
+msgid "Fishing Rod"
+msgstr "Angel"
+
+#, c-format
+msgid "Floor %d and deeper"
+msgstr "Ebene %d und tiefer"
+
+msgid "Flounder"
+msgstr "Flunder"
+
+msgid "Forty years on this pier. Never caught the Sunscale. Maybe you will."
+msgstr "Vierzig Jahre auf diesem Steg. Den Sonnenschuppen-Marlin hab ich nie gefangen. Vielleicht schaffst du es."
+
+msgid "Fresh fish is good. Smoked fish is better, and it keeps. Build yourself a smoker. The recipe's in your crafting book."
+msgstr "Frischer Fisch ist gut. Geräucherter ist besser, und er hält sich. Bau dir eine Räucherei. Das Rezept steht in deinem Crafting-Buch."
+
+msgid "Frost Cod"
+msgstr "Frostdorsch"
+
+msgid "Ghostfish"
+msgstr "Geisterfisch"
+
+msgid "Glacier King"
+msgstr "Gletscherkönig"
+
+msgid "Glowfin"
+msgstr "Glimmflosse"
+
+msgid "Glows like a coal as it leaps the Whisperwood river in fall."
+msgstr "Glüht wie Kohle, wenn er im Herbst den Fluss im Whisperwood hinaufspringt."
+
+msgid "Gold Rod"
+msgstr "Goldangel"
+
+msgid "Grandpa says you're Hazel's grandchild? Then you owe us a fishing story."
+msgstr "Opa sagt, du bist Hazels Enkelkind? Dann schuldest du uns eine Angelgeschichte."
+
+msgid "Grandpa smiles more since you started coming."
+msgstr "Opa lächelt mehr, seit du vorbeikommst."
+
+msgid "Grilled Fish"
+msgstr "Gegrillter Fisch"
+
+msgid "Gull Bay"
+msgstr "Möwenbucht"
+
+msgid "Gull Bay. The biggest fish bite off the end of the long pier."
+msgstr "Möwenbucht. Die größten Fische beißen am Ende des langen Stegs."
+
+msgid "Halibut"
+msgstr "Heilbutt"
+
+msgid "Harbor. Ferry to Lumière: closed for repairs."
+msgstr "Hafen. Fähre nach Lumière: wegen Reparatur geschlossen."
+
+msgid "Hazel used to fish off his pier every summer. Go and meet him. A farmer who can fish never goes hungry."
+msgstr "Hazel hat jeden Sommer von seinem Steg aus geangelt. Geh ihn besuchen. Wer angeln kann, muss nie hungern."
+
+msgid "Hazel's grandchild, eh? She'd skin me if I let you stand on my pier empty-handed. Here, her old rod. Hold the button, let go to cast, and wait for the tug."
+msgstr "Hazels Enkelkind, was? Sie würde mir das Fell über die Ohren ziehen, wenn ich dich mit leeren Händen auf meinem Steg stehen ließe. Hier, ihre alte Angel. Taste halten, loslassen zum Auswerfen, und auf den Ruck warten."
+
+msgid "Herring"
+msgstr "Hering"
+
+msgid "Hold the tool button to cast into water, let go to throw. Upgrade it at the Gull Bay angler."
+msgstr "Halte die Werkzeugtaste, um ins Wasser auszuwerfen, und lass los zum Werfen. Verbessern kannst du sie beim Angler in der Möwenbucht."
+
+msgid "I don't need Lumière anymore. Everything I want is right here."
+msgstr "Ich brauche Lumière nicht mehr. Alles, was ich will, ist genau hier."
+
+msgid "I saved you the good spot on the pier."
+msgstr "Ich hab dir den guten Platz auf dem Steg freigehalten."
+
+msgid "I want to draw a crayfish, but they keep running off. A crab pot in fresh water catches them."
+msgstr "Ich will einen Flusskrebs zeichnen, aber sie laufen immer weg. Ein Krabbenkorb in Süßwasser fängt welche."
+
+msgid "I'm writing down every fish in the bay. You can help."
+msgstr "Ich schreibe jeden Fisch der Bucht auf. Du kannst mir helfen."
+
+msgid "Ice Pike"
+msgstr "Eishecht"
+
+msgid "Ice hole"
+msgstr "Eisloch"
+
+msgid "It got away..."
+msgstr "Er ist entwischt ..."
+
+msgid "Its fins glow faintly under the moon."
+msgstr "Seine Flossen glimmen schwach im Mondlicht."
+
+msgid "Its glassy eyes see well on dark, rainy nights."
+msgstr "Seine glasigen Augen sehen gut in dunklen, verregneten Nächten."
+
+msgid "Its scales are as hard and clear as quartz."
+msgstr "Seine Schuppen sind hart und klar wie Quarz."
+
+msgid "Its scales blaze like the summer sun. Only seen off Gull Bay."
+msgstr "Seine Schuppen lodern wie die Sommersonne. Nur vor der Möwenbucht gesichtet."
+
+msgid "Jade Koi"
+msgstr "Jade-Koi"
+
+msgid "Koi"
+msgstr "Koi"
+
+msgid "Largemouth Bass"
+msgstr "Forellenbarsch"
+
+msgid "Lies flat on the sea floor with both eyes on top."
+msgstr "Liegt flach auf dem Meeresgrund, beide Augen oben."
+
+msgid "Lights up the dark water of the deep caves."
+msgstr "Erhellt das dunkle Wasser der tiefen Höhlen."
+
+msgid "Lobster"
+msgstr "Hummer"
+
+msgid "Long ago, people kept them as pets."
+msgstr "Vor langer Zeit hielt man sie als Haustiere."
+
+msgid "Look at those claws! Hold still, I'm drawing you."
+msgstr "Schau dir diese Scheren an! Halt still, ich zeichne dich."
+
+msgid "Looks exactly like a rock until it bites."
+msgstr "Sieht genau aus wie ein Stein, bis er zubeißt."
+
+msgid "Magic Bait"
+msgstr "Magischer Köder"
+
+msgid "Maki Roll"
+msgstr "Maki-Rolle"
+
+msgid "Master Rod"
+msgstr "Meisterangel"
+
+msgid "Moonfin"
+msgstr "Mondflosse"
+
+msgid "Mussel"
+msgstr "Miesmuschel"
+
+msgid "My hands aren't what they were. Could you make me some bait? Twenty should last me the week."
+msgstr "Meine Hände sind nicht mehr, was sie mal waren. Könntest du mir Köder machen? Zwanzig reichen mir für die Woche."
+
+msgid "My logbook has so many empty pages. Help me fill them? Ten different kinds should do for now."
+msgstr "Mein Logbuch hat so viele leere Seiten. Hilfst du mir, sie zu füllen? Zehn verschiedene Arten reichen fürs Erste."
+
+msgid "New size record!"
+msgstr "Neuer Größenrekord!"
+
+msgid "New to your Fishdex!"
+msgstr "Neu in deinem Fischbuch!"
+
+msgid "Night"
+msgstr "Nacht"
+
+#, c-format
+msgid "Nothing in the pot yet. Next catch in %s."
+msgstr "Noch nichts im Korb. Nächster Fang in %s."
+
+msgid "Octopus"
+msgstr "Krake"
+
+msgid "Old Ansel sent word from Gull Bay. The coast road past the harbor is clear again, east of the square."
+msgstr "Der alte Ansel hat aus der Möwenbucht Nachricht geschickt. Die Küstenstraße am Hafen vorbei ist wieder frei, östlich vom Platz."
+
+msgid "Old Boot"
+msgstr "Alter Stiefel"
+
+msgid "Old Fisher of Gull Bay"
+msgstr "Alter Fischer der Möwenbucht"
+
+msgid "Old smoke"
+msgstr "Alter Rauch"
+
+msgid "One day I'll fix the ferry and see Lumière."
+msgstr "Eines Tages repariere ich die Fähre und sehe Lumière."
+
+#, c-format
+msgid "Out of %s."
+msgstr "Kein %s mehr."
+
+msgid "Oyster"
+msgstr "Auster"
+
+msgid "Painted in red, white and gold. Rare and lucky."
+msgstr "Bemalt in Rot, Weiß und Gold. Selten und glückbringend."
+
+msgid "Pale and nearly see-through. Lives in cave lakes."
+msgstr "Blass und fast durchsichtig. Lebt in Höhlenseen."
+
+msgid "Pearl"
+msgstr "Perle"
+
+msgid "Perch"
+msgstr "Flussbarsch"
+
+msgid "Periwinkle"
+msgstr "Strandschnecke"
+
+msgid "Pike"
+msgstr "Hecht"
+
+msgid "Pinches. Tastes great anyway."
+msgstr "Zwickt. Schmeckt trotzdem super."
+
+msgid "Pond"
+msgstr "Teich"
+
+msgid "Pufferfish"
+msgstr "Kugelfisch"
+
+msgid "Puffs up into a spiky ball when caught."
+msgstr "Bläst sich beim Fang zu einer stacheligen Kugel auf."
+
+msgid "Put a fish in."
+msgstr "Leg einen Fisch hinein."
+
+msgid "Rainbow Trout"
+msgstr "Regenbogenforelle"
+
+msgid "Red Mullet"
+msgstr "Rotbarbe"
+
+msgid "Red Snapper"
+msgstr "Roter Schnapper"
+
+msgid "Rises from the deep on winter nights."
+msgstr "Steigt in Winternächten aus der Tiefe auf."
+
+msgid "River"
+msgstr "Fluss"
+
+msgid "Rod upgrade"
+msgstr "Angel-Upgrade"
+
+msgid "Rods"
+msgstr "Angeln"
+
+msgid "Runs in schools when the river is high."
+msgstr "Zieht in Schwärmen, wenn der Fluss Hochwasser führt."
+
+msgid "Salmon"
+msgstr "Lachs"
+
+msgid "Salmon Dinner"
+msgstr "Lachs-Menü"
+
+msgid "Salmon with a side of kale. Fancy."
+msgstr "Lachs mit Grünkohl als Beilage. Edel."
+
+msgid "Salt and Line"
+msgstr "Salz und Schnur"
+
+msgid "Sardine"
+msgstr "Sardine"
+
+msgid "Sea"
+msgstr "Meer"
+
+msgid "Sea Cucumber"
+msgstr "Seegurke"
+
+msgid "Seafood Chowder"
+msgstr "Meeresfrüchte-Suppe"
+
+msgid "Set it in your farm's water. Catches shellfish on its own every few hours, faster with bait."
+msgstr "Setz ihn ins Wasser auf deinem Hof. Fängt alle paar Stunden von selbst Schalentiere, mit Köder schneller."
+
+msgid "Shad"
+msgstr "Maifisch"
+
+msgid "Shimmers in every color of the stream."
+msgstr "Schimmert in allen Farben des Baches."
+
+msgid "Show Ansel your smoker."
+msgstr "Zeig Ansel deine Räucherei."
+
+msgid "Shrimp"
+msgstr "Garnele"
+
+msgid "Silver flashes in the cold sea."
+msgstr "Silbriges Blitzen im kalten Meer."
+
+msgid "Simple, smoky and filling."
+msgstr "Einfach, rauchig und sättigend."
+
+msgid "Slippery and strong. Hunts on stormy nights."
+msgstr "Glitschig und stark. Jagt in stürmischen Nächten."
+
+msgid "Slow, but it got into your pot."
+msgstr "Langsam, aber sie ist in deinen Korb geraten."
+
+msgid "Slow-smoked over hardwood."
+msgstr "Langsam über Hartholz geräuchert."
+
+msgid "Small and sweet."
+msgstr "Klein und süß."
+
+msgid "Small, silver and always in a hurry."
+msgstr "Klein, silbern und immer in Eile."
+
+#, c-format
+msgid "Smoked %s"
+msgstr "%s, geräuchert"
+
+msgid "Smokes a fish into a tasty snack worth twice as much."
+msgstr "Räuchert einen Fisch zu einem leckeren Snack, der doppelt so viel wert ist."
+
+msgid "Smoothed by the waves. Burns well."
+msgstr "Von den Wellen glattgeschliffen. Brennt gut."
+
+msgid "Snail"
+msgstr "Schnecke"
+
+msgid "Snaps shut when you look at it."
+msgstr "Klappt zu, sobald man sie ansieht."
+
+msgid "Snow Smelt"
+msgstr "Schneestint"
+
+msgid "Soggy Newspaper"
+msgstr "Durchweichte Zeitung"
+
+msgid "Someone lost this a long time ago."
+msgstr "Das hat jemand vor langer Zeit verloren."
+
+msgid "Something huge is on the line!"
+msgstr "Etwas Riesiges hängt an der Leine!"
+
+msgid "Sometimes hides a pearl. Sometimes."
+msgstr "Versteckt manchmal eine Perle. Manchmal."
+
+msgid "Spinner"
+msgstr "Spinner"
+
+msgid "Squid"
+msgstr "Tintenfisch"
+
+msgid "Squishy. Not actually a cucumber."
+msgstr "Matschig. Eigentlich gar keine Gurke."
+
+msgid "Stay for the sunset? The water turns gold."
+msgstr "Bleibst du zum Sonnenuntergang? Das Wasser wird golden."
+
+msgid "Stonefish"
+msgstr "Steinfisch"
+
+#, c-format
+msgid "Story: reach \"%s\""
+msgstr "Story: erreiche „%s“"
+
+msgid "Strikes hard at anything that moves."
+msgstr "Schlägt hart nach allem, was sich bewegt."
+
+msgid "Striped and quick. Bites best in the cold."
+msgstr "Gestreift und flink. Beißt am besten bei Kälte."
+
+msgid "Sturgeon"
+msgstr "Stör"
+
+msgid "Sunfish"
+msgstr "Sonnenbarsch"
+
+msgid "Sunscale Marlin"
+msgstr "Sonnenschuppen-Marlin"
+
+msgid "Swims upstream every fall to spawn."
+msgstr "Schwimmt jeden Herbst zum Laichen flussaufwärts."
+
+msgid "Swordfish"
+msgstr "Schwertfisch"
+
+msgid "Tackle (Gold rod or better). A fish slips away more slowly. Lasts 20 catches."
+msgstr "Zubehör (ab Goldangel). Ein Fisch entwischt langsamer. Hält 20 Fänge."
+
+msgid "Tackle (Gold rod or better). Fish bite sooner. Lasts 20 catches."
+msgstr "Zubehör (ab Goldangel). Fische beißen früher. Hält 20 Fänge."
+
+msgid "Tackle (Gold rod or better). Makes the catch zone bigger. Lasts 20 catches."
+msgstr "Zubehör (ab Goldangel). Vergrößert die Fangzone. Hält 20 Fänge."
+
+msgid "Tackle (Gold rod or better). Treasure shows up far more often. Lasts 20 catches."
+msgstr "Zubehör (ab Goldangel). Schätze tauchen viel öfter auf. Hält 20 Fänge."
+
+msgid "Tackle needs a Gold rod or better."
+msgstr "Zubehör braucht mindestens eine Goldangel."
+
+msgid "Take the coast road (east of the village square) to Gull Bay and catch 5 fish."
+msgstr "Nimm die Küstenstraße (östlich vom Dorfplatz) zur Möwenbucht und fange 5 Fische."
+
+msgid "Tell Wren about your catch."
+msgstr "Erzähl Wren von deinem Fang."
+
+msgid "Ten new pages! You're the best thing that ever happened to this book."
+msgstr "Zehn neue Seiten! Du bist das Beste, was diesem Buch je passiert ist."
+
+msgid "That's a proper smoker. Hazel's smelled like that too."
+msgstr "Das ist eine richtige Räucherei. Hazels hat genauso gerochen."
+
+msgid "The best rod money can buy: longest cast and the biggest catch bar."
+msgstr "Die beste Angel, die man kaufen kann: weitester Wurf und größter Fangbalken."
+
+msgid "The ferry to Lumière isn't running yet. The ferryman says the boat needs repairs first."
+msgstr "Die Fähre nach Lumière fährt noch nicht. Der Fährmann sagt, das Boot muss erst repariert werden."
+
+msgid "The fish got away."
+msgstr "Der Fisch ist entwischt."
+
+msgid "The headline is unreadable. Probably about fish."
+msgstr "Die Schlagzeile ist unleserlich. Vermutlich geht es um Fisch."
+
+msgid "The old king beneath the ice of Frostmere."
+msgstr "Der alte König unter dem Eis von Frostmere."
+
+msgid "The pot is full of bait."
+msgstr "Der Korb ist voller Köder."
+
+msgid "The sea gives back what you're patient for."
+msgstr "Das Meer gibt dir zurück, worauf du geduldig wartest."
+
+msgid "Three! Grandpa caught a boot his first day. Don't tell him I told you."
+msgstr "Drei! Opa hat an seinem ersten Tag einen Stiefel gefangen. Sag ihm nicht, dass ich's dir erzählt hab."
+
+msgid "Thrives under the ice of frozen lakes."
+msgstr "Gedeiht unter dem Eis zugefrorener Seen."
+
+msgid "Tiger Trout"
+msgstr "Tigerforelle"
+
+msgid "Tiny, salty and found in huge schools."
+msgstr "Winzig, salzig und in riesigen Schwärmen unterwegs."
+
+#, c-format
+msgid "Took the %s off the rod."
+msgstr "%s von der Angel genommen."
+
+msgid "Trap Bobber"
+msgstr "Fangschwimmer"
+
+msgid "Treasure Lure"
+msgstr "Schatzblinker"
+
+msgid "Treasure!"
+msgstr "Schatz!"
+
+msgid "Tuna"
+msgstr "Thunfisch"
+
+msgid "Twenty! The fish won't know what hit them."
+msgstr "Zwanzig! Die Fische werden nicht wissen, wie ihnen geschieht."
+
+msgid "Use it on yourself to put it on the rod. Fish bite sooner."
+msgstr "Benutze es an dir selbst, um es an die Angel zu hängen. Fische beißen früher."
+
+msgid "Waits motionless below the ice, then strikes."
+msgstr "Wartet reglos unter dem Eis und schlägt dann zu."
+
+msgid "Walleye"
+msgstr "Zander"
+
+msgid "When I'm gone, look after the pier for me. And for Wren."
+msgstr "Wenn ich nicht mehr bin, kümmere dich um den Steg. Und um Wren."
+
+msgid "Whiskered and grumpy. Lives in the mud."
+msgstr "Bärtig und mürrisch. Lebt im Schlamm."
+
+msgid "Wild Bait"
+msgstr "Wilder Köder"
+
+msgid "Wren"
+msgstr "Wren"
+
+msgid "Wren hands you a shell on a string."
+msgstr "Wren reicht dir eine Muschel an einer Schnur."
+
+msgid "Wren is sitting on the end of the pier."
+msgstr "Wren sitzt am Ende des Stegs."
+
+msgid "Wren waves her notebook at you."
+msgstr "Wren winkt dir mit ihrem Notizbuch zu."
+
+msgid "Wren worries about me. I worry about Wren. That's family."
+msgstr "Wren sorgt sich um mich. Ich sorge mich um Wren. So ist Familie."
+
+msgid "Wren's logbook"
+msgstr "Wrens Logbuch"
+
+msgid "Wren: Forty kinds so far! Well, twelve. Forty is the goal."
+msgstr "Wren: Schon vierzig Arten! Na gut, zwölf. Vierzig ist das Ziel."
+
+msgid "Wren: Here, I drew this map of the good spots."
+msgstr "Wren: Hier, ich hab eine Karte der guten Stellen gezeichnet."
+
+msgid "Wren: I found it the day you first came to the bay."
+msgstr "Wren: Ich hab sie an dem Tag gefunden, als du zum ersten Mal in die Bucht kamst."
+
+msgid "Wren: Keep it. So you always come back."
+msgstr "Wren: Behalt sie. Damit du immer zurückkommst."
+
+msgid "Wren: Mom left on the ferry when I was small. It never came back the same."
+msgstr "Wren: Mama ist mit der Fähre weggefahren, als ich klein war. Danach war nichts mehr wie vorher."
+
+msgid "Wren: That's why I want to fix it. To see where she went."
+msgstr "Wren: Darum will ich sie reparieren. Um zu sehen, wohin sie gefahren ist."
+
+msgid "You caught that one yourself? Show me!"
+msgstr "Den hast du selbst gefangen? Zeig her!"
+
+#, c-format
+msgid "You caught the legendary %s!"
+msgstr "Du hast den legendären %s gefangen!"
+
+msgid "You hold the rod like Hazel did. Too tight. It works anyway."
+msgstr "Du hältst die Angel wie Hazel. Zu fest. Funktioniert trotzdem."
+
+msgid "You need a fishing rod."
+msgstr "Du brauchst eine Angel."
+
+msgid "You reeled in too early."
+msgstr "Du hast zu früh eingeholt."
+
+msgid "You're the best angler this bay has seen since your grandmother."
+msgstr "Du bist der beste Angler, den diese Bucht seit deiner Großmutter gesehen hat."
+
+msgid "You're the new angler? Catch three fish and tell me about every one. I'm keeping a list."
+msgstr "Du bist der neue Angler? Fang drei Fische und erzähl mir von jedem. Ich führe eine Liste."
+
+#, c-format
+msgid "Your %s wore out."
+msgstr "Dein %s ist verschlissen."
+
+msgid "Your rod is already the best there is."
+msgstr "Deine Angel ist schon die beste, die es gibt."
+
+#, c-format
+msgid "Your rod is now a %s."
+msgstr "Deine Angel ist jetzt eine %s."
+

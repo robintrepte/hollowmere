@@ -1,6 +1,6 @@
 {
   "meadow": {
-    "name": "Hollow Meadow", "biome": "grass", "order": 0, "levels": [2, 7], "seed": 101, "music": "route",
+    "name": "Hollow Meadow", "biome": "grass", "order": 0, "levels": [2, 7], "seed": 101, "music": "route", "lake": [7, 27],
     "spawns": [
       ["mossbun", 30], ["nibblet", 30], ["cluckle", 25], ["petalfly", 15, {"s": ["spring", "summer"]}],
       ["pudgepig", 15], ["moocalf", 12], ["burrowpup", 12], ["breezlet", 8], ["voltick", 12, {"w": ["rain", "storm"]}],
@@ -9,7 +9,7 @@
     "forage": {"spring": ["leek", "daffodil", "wild_berry"], "summer": ["wild_berry", "spice_berry"], "fall": ["hazelnut", "mushroom", "wild_berry"], "winter": ["winter_root"]}
   },
   "whisperwood": {
-    "name": "Whisperwood", "biome": "forest", "order": 1, "levels": [6, 14], "seed": 202, "music": "forest", "type": "leaf",
+    "name": "Whisperwood", "biome": "forest", "order": 1, "levels": [6, 14], "seed": 202, "music": "forest", "type": "leaf", "river": 12, "lake": [6, 27],
     "warden": "ivy", "guardian": "verdantis",
     "spawns": [
       ["acornib", 30], ["mossbun", 20], ["mushlet", 25], ["petalfly", 20], ["fluffeather", 12], ["shadeling", 15, {"t": "night"}],
@@ -40,7 +40,7 @@
     "forage": {"spring": ["spice_berry"], "summer": ["spice_berry"], "fall": ["spice_berry"], "winter": ["spice_berry"]}
   },
   "stonehollow": {
-    "name": "Stonehollow Canyon", "biome": "canyon", "order": 4, "levels": [24, 32], "seed": 505, "music": "canyon", "type": "stone",
+    "name": "Stonehollow Canyon", "biome": "canyon", "order": 4, "levels": [24, 32], "seed": 505, "music": "canyon", "type": "stone", "river": 12,
     "warden": "gideon", "guardian": "terragorn",
     "spawns": [
       ["pebblit", 20], ["bouldron", 10], ["crystoad", 15], ["dustail", 25], ["burrowpup", 15], ["digsby", 8],
@@ -50,7 +50,7 @@
     "forage": {"spring": ["hazelnut"], "summer": ["spice_berry"], "fall": ["hazelnut"], "winter": ["winter_root"]}
   },
   "galepeak": {
-    "name": "Galepeak Heights", "biome": "cliffs", "order": 5, "levels": [30, 38], "seed": 606, "music": "peak", "type": "gale",
+    "name": "Galepeak Heights", "biome": "cliffs", "order": 5, "levels": [30, 38], "seed": 606, "music": "peak", "type": "gale", "river": 12,
     "warden": "kai", "guardian": "zephyros",
     "spawns": [
       ["breezlet", 25], ["zephyrkite", 15], ["fluffeather", 20], ["gustmoth", 15, {"t": "night"}], ["chillchick", 15],

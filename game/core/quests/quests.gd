@@ -63,6 +63,10 @@ static func step_of(p: PlayerData, qid: String) -> Dictionary:
 # --- Availability ---------------------------------------------------------------------
 
 ## True when every requirement of a quest definition holds.
+## Story requirements name a chapter id ("coast") or, in older data, its index.
+static func story_index(v: Variant) -> int:
+	return Adventure.chapter_index(v) if v is String else int(v)
+
 static func requirements_met(p: PlayerData, world: Dictionary, req: Dictionary, unix: float) -> bool:
 	for k in req:
 		var v: Variant = req[k]
@@ -81,7 +85,7 @@ static func requirements_met(p: PlayerData, world: Dictionary, req: Dictionary, 
 				if world.shrines.size() < int(v):
 					return false
 			"story":
-				if int(world.quest) < int(v):
+				if int(world.quest) < story_index(v):
 					return false
 			"hearts":
 				var h := p.hearts_dict()
@@ -362,6 +366,8 @@ static func daily_pool(world: Dictionary, unix: float) -> Array:
 		if req.has("farm_level") and int(world.farm.level) < int(req.farm_level):
 			continue
 		if req.has("flag") and not world.flags.get(str(req.flag), false):
+			continue
+		if req.has("story") and int(world.quest) < story_index(req.story):
 			continue
 		out.append(t)
 	return out

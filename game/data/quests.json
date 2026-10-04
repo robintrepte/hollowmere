@@ -1846,6 +1846,180 @@
     "money": 1000,
     "star_charm": 1
    }
+  },
+  {
+   "id": "wren_first_catch",
+   "type": "side",
+   "title": "Fish stories",
+   "giver": "wren",
+   "requires": {
+    "story": "coast"
+   },
+   "intro": [
+    "You're the new angler? Catch three fish and tell me about every one. I'm keeping a list."
+   ],
+   "steps": [
+    {
+     "text": "Catch 3 fish.",
+     "goal": {
+      "stat": "fish",
+      "n": 3
+     }
+    },
+    {
+     "text": "Tell Wren about your catch.",
+     "goal": {
+      "talk": "wren"
+     },
+     "done": [
+      "Three! Grandpa caught a boot his first day. Don't tell him I told you."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 300,
+    "bait": 15,
+    "friendship": {
+     "wren": 80
+    }
+   }
+  },
+  {
+   "id": "wren_crayfish",
+   "type": "side",
+   "title": "Creek critters",
+   "giver": "wren",
+   "requires": {
+    "quests": [
+     "wren_first_catch"
+    ]
+   },
+   "intro": [
+    "I want to draw a crayfish, but they keep running off. A crab pot in fresh water catches them."
+   ],
+   "steps": [
+    {
+     "text": "Bring Wren 2 Crayfish.",
+     "goal": {
+      "deliver": "crayfish",
+      "n": 2,
+      "to": "wren"
+     },
+     "done": [
+      "Look at those claws! Hold still, I'm drawing you."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 500,
+    "wild_bait": 10,
+    "friendship": {
+     "wren": 100
+    }
+   }
+  },
+  {
+   "id": "wren_logbook",
+   "type": "side",
+   "title": "Wren's logbook",
+   "giver": "wren",
+   "requires": {
+    "quests": [
+     "wren_crayfish"
+    ]
+   },
+   "intro": [
+    "My logbook has so many empty pages. Help me fill them? Ten different kinds should do for now."
+   ],
+   "steps": [
+    {
+     "text": "Catch 10 different kinds of fish.",
+     "goal": {
+      "stat": "fish_new",
+      "n": 10
+     },
+     "done": [
+      "Ten new pages! You're the best thing that ever happened to this book."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1500,
+    "magic_bait": 5,
+    "friendship": {
+     "wren": 150
+    }
+   }
+  },
+  {
+   "id": "ansel_smoker",
+   "type": "side",
+   "title": "Old smoke",
+   "giver": "ansel",
+   "requires": {
+    "story": "coast"
+   },
+   "intro": [
+    "Fresh fish is good. Smoked fish is better, and it keeps. Build yourself a smoker. The recipe's in your crafting book."
+   ],
+   "steps": [
+    {
+     "text": "Craft a Fish Smoker.",
+     "goal": {
+      "stat": "craft:smoker",
+      "n": 1
+     }
+    },
+    {
+     "text": "Show Ansel your smoker.",
+     "goal": {
+      "talk": "ansel"
+     },
+     "done": [
+      "That's a proper smoker. Hazel's smelled like that too."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 600,
+    "friendship": {
+     "ansel": 100
+    }
+   }
+  },
+  {
+   "id": "ansel_bait",
+   "type": "side",
+   "title": "Bait for the bay",
+   "giver": "ansel",
+   "requires": {
+    "quests": [
+     "ansel_smoker"
+    ]
+   },
+   "intro": [
+    "My hands aren't what they were. Could you make me some bait? Twenty should last me the week."
+   ],
+   "steps": [
+    {
+     "text": "Bring Ansel 20 Bait.",
+     "goal": {
+      "deliver": "bait",
+      "n": 20,
+      "to": "ansel"
+     },
+     "done": [
+      "Twenty! The fish won't know what hit them."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 400,
+    "cork_bobber": 1,
+    "friendship": {
+     "ansel": 120
+    }
+   }
   }
  ],
  "daily": [
@@ -2029,6 +2203,23 @@
    "money_per": 60,
    "requires": {
     "shrines": 1
+   }
+  },
+  {
+   "id": "fish",
+   "title": "Catch of the day",
+   "text": "Catch %d fish.",
+   "goal": {
+    "stat": "fish"
+   },
+   "n": [
+    3,
+    12
+   ],
+   "money": 120,
+   "money_per": 30,
+   "requires": {
+    "story": "coast"
    }
   }
  ]

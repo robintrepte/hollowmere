@@ -39,6 +39,10 @@ var quests: Dictionary = {}
 var quest_order: Array = []
 var quest_daily: Array = []
 ## Skill tree (data/skills.json): branch id -> {name, icon, color, angle}, and every node.
+var fish: Dictionary = {}
+var shellfish: Dictionary = {}
+## Junk, treasure, water Wildlings and rods from fish.json.
+var fish_meta: Dictionary = {}
 var skill_branches: Dictionary = {}
 var skill_nodes: Array = []
 var _maps: Dictionary = {}
@@ -70,6 +74,9 @@ func load_all() -> void:
 	skill_nodes = sk.get("nodes", [])
 	items = _load_json("res://data/items.json")
 	trees = _load_json("res://data/trees.json")
+	fish_meta = _load_json("res://data/fish.json")
+	fish = fish_meta.get("fish", {})
+	shellfish = fish_meta.get("shell", {})
 	_derive_items()
 	var r: Dictionary = _load_json("res://data/recipes.json")
 	recipes = {"cooking": r.cooking, "crafting": r.crafting}
@@ -260,6 +267,12 @@ func _derive_items() -> void:
 			"icon": "seed", "crop": cid,
 			"desc": "Plant in %s. Takes %d days to grow%s." % [", ".join(c.seasons), c.days, (", then regrows every %d days" % c.regrow) if c.regrow > 0 else ""],
 		}
+	for fid in fish:
+		var f: Dictionary = fish[fid]
+		items[fid] = {"name": f.name, "cat": "fish", "sell": f.price, "icon": fid, "treat": 1.3, "desc": f.desc, "legendary": f.get("legendary", false)}
+	for sid in shellfish:
+		var sh: Dictionary = shellfish[sid]
+		items[sid] = {"name": sh.name, "cat": "fish", "sell": sh.price, "icon": sid, "treat": 1.3, "desc": sh.desc, "shell": true}
 	for tid in trees:
 		var t: Dictionary = trees[tid]
 		items[tid] = {"name": t.name, "cat": "fruit", "sell": t.sell, "energy": int(t.sell / 3), "treat": 1.4, "color": t.color, "icon": "berry", "desc": "Fresh from the orchard."}
@@ -275,7 +288,7 @@ const BIG_ITEMS := {
 }
 const STACKS := {
 	"seed": 99, "crop": 24, "forage": 24, "fruit": 24, "material": 99, "ore": 50, "bar": 20, "gem": 10, "produce": 20,
-	"food": 10, "treat": 20, "charm": 20, "medicine": 10, "artisan": 10, "fertilizer": 50, "placeable": 10,
+	"food": 10, "treat": 20, "fish": 20, "bait": 99, "tackle": 1, "junk": 20, "charm": 20, "medicine": 10, "artisan": 10, "fertilizer": 50, "placeable": 10,
 	"key": 1, "gift": 5, "cosmetic": 1, "tool": 1, "egg": 1, "container": 1, "sapling": 5,
 }
 
@@ -315,6 +328,10 @@ func get_item(id: String) -> Dictionary:
 				d = {"name": base.name + " Juice", "cat": "artisan", "sell": int(base.sell * 2.25), "energy": int(base.get("energy", 20) * 1.5), "treat": 1.5, "icon": "bottle", "color": base.get("color", "#ffffff"), "desc": "Fresh-pressed juice."}
 			"jam":
 				d = {"name": base.name + " Jam", "cat": "artisan", "sell": int(base.sell * 2 + 50), "energy": int(base.get("energy", 20) * 1.5), "treat": 1.6, "icon": "jar", "color": base.get("color", "#ffffff"), "desc": "Sweet preserves."}
+			"smoked":
+				if base.get("cat", "") != "fish":
+					return {}
+				d = {"name": "Smoked " + base.name, "cat": "artisan", "sell": int(base.sell * 2), "energy": maxi(30, int(base.sell / 4)), "treat": 1.5, "icon": parts[1], "desc": "Slow-smoked over hardwood."}
 			"preserved":
 				d = {"name": "Frozen " + base.name, "cat": "artisan", "sell": int(base.sell * 1.6 + 20), "energy": int(base.get("energy", 20)), "treat": 1.3, "icon": "crop", "color": base.get("color", "#ffffff"), "desc": "Preserved by a Frost Wildling."}
 			_:
@@ -351,6 +368,8 @@ func _display_item_name(id: String, it: Dictionary) -> String:
 				return tr("%s Jam") % base_name
 			"preserved":
 				return tr("Frozen %s") % base_name
+			"smoked":
+				return tr("Smoked %s") % base_name
 	return tr(str(it.name))
 
 func season_name(season: String) -> String:
@@ -396,6 +415,8 @@ func item_desc(id: String) -> String:
 				return tr("Sweet preserves.")
 			"preserved":
 				return tr("Preserved by a Frost Wildling.")
+			"smoked":
+				return tr("Slow-smoked over hardwood.")
 	return tr(str(it.get("desc", "")))
 
 func sell_price(id: String, quality: int = 0) -> int:

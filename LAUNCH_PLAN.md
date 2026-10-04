@@ -291,23 +291,23 @@ Das ist der tiefste Eingriff in den Kern. Er muss vor Quests, Skilltree und Bala
 ## Phase E – Skilltree
 
 ### E1 Spieler-XP und Skillpunkte · M → A4
-- [ ] Neue Spieler-Erfahrung (getrennt vom Farmlevel) aus allen Aktivitäten: Farmen, Kämpfen, Angeln, Mining, Crafting, Quests, Casino nur minimal.
-- [ ] Pro Level-up 1 Skillpunkt, Bonuspunkte aus Main-Story-Kapiteln, Schreinen und besonderen Quests. Rund 80 Punkte bis zum Max-Level, gut 110 Knoten im Baum, damit man Schwerpunkte setzen muss.
+- [x] Neue Spieler-Erfahrung (getrennt vom Farmlevel) aus allen Aktivitäten: Farmen, Kämpfen, Angeln, Mining, Crafting, Quests, Casino nur minimal.
+- [x] Pro Level-up 1 Skillpunkt, Bonuspunkte aus Main-Story-Kapiteln, Schreinen und besonderen Quests. Rund 80 Punkte bis zum Max-Level, gut 110 Knoten im Baum, damit man Schwerpunkte setzen muss.
 
 ### E2 Baum und Effekte · L → E1
-- [ ] Sechs Zweige mit je etwa 15–20 Knoten (passive Boni, aktive Fähigkeiten, Freischaltungen, je ein Capstone):
+- [x] Sechs Zweige mit je etwa 15–20 Knoten (passive Boni, aktive Fähigkeiten, Freischaltungen, je ein Capstone):
   - **Farmen**: Wachstumstempo, Ertrag, Qualität, Gieß-Reichweite, längere Bewässerungsdauer, Saisonmalus reduzieren
   - **Wildling-Pflege**: Job-Leistung, Energie-Regeneration, Zucht und Schlüpfen schneller, mehr Hof-Plätze, Freundschaft
   - **Kampf**: Schaden, Heilung, Fangchance, EP, Typ-Spezialisierungen
   - **Erkundung**: Laufgeschwindigkeit, Energie, Map-Reisen, Forage, Truhenglück
   - **Handwerk** (Mining, Angeln, Crafting): Abbau-Tempo, Erz-Glück, Angel-Minispiel leichter, Crafting-Kosten, Verzauberungs-Rabatt
   - **Handel**: Verkaufspreise, Shop-Rabatte, Versand-Bonus, Offline-Effizienz (höherer Anteil der Job-Leistung während der Abwesenheit), Casino-Tagesbonus
-- [ ] Effekte rein datengetrieben über `skills.json` und das Modifier-System (A4).
-- [ ] Neuverteilung gegen Gold (steigend). Pro Spieler, im Koop also jeder seinen eigenen Baum.
+- [x] Effekte rein datengetrieben über `skills.json` und das Modifier-System (A4).
+- [x] Neuverteilung gegen Gold (steigend). Pro Spieler, im Koop also jeder seinen eigenen Baum.
 
 ### E3 Skilltree-UI · M
-- [ ] Eigener Tab in der Menü-Shell: verschiebbarer und zoombarer Knotengraph (Touch: Pinch und Pan), Knoten mit Icon, Zustand (gesperrt, verfügbar, investiert), Tooltip mit Werten „jetzt → nächste Stufe“, Bestätigung beim Investieren.
-- [ ] HUD-Hinweis „Skillpunkt verfügbar“.
+- [x] Eigener Tab in der Menü-Shell: verschiebbarer und zoombarer Knotengraph (Touch: Pinch und Pan), Knoten mit Icon, Zustand (gesperrt, verfügbar, investiert), Tooltip mit Werten „jetzt → nächste Stufe“, Bestätigung beim Investieren.
+- [x] HUD-Hinweis „Skillpunkt verfügbar“.
 - [ ] Rund 110 Knoten-Icons generieren (Lite-Modell, einheitlicher Rahmen pro Zweig).
 
 ---
@@ -315,33 +315,33 @@ Das ist der tiefste Eingriff in den Kern. Er muss vor Quests, Skilltree und Bala
 ## Phase F – Angeln, neue Küste, Teiche und Stege
 
 ### F-1 Angel-Mechanik · L
-- [ ] Werkzeug **Angelrute** in 4 Stufen (Bambus, Glasfaser, Gold, Meister) plus Köder und Zubehör (verzauberbar, siehe Phase H).
-- [ ] Ablauf, voll touch- und gamepadtauglich:
+- [x] Werkzeug **Angelrute** in 4 Stufen (Bambus, Glasfaser, Gold, Meister) plus Köder und Zubehör (verzauberbar, siehe Phase H).
+- [x] Ablauf, voll touch- und gamepadtauglich:
   1. Auswerfen: Halten lädt die Wurfweite auf.
   2. Warten auf den Biss mit sichtbarem Ausschlag, dann rechtzeitig tippen.
   3. Drill-Minispiel: Fisch-Zone mit gehaltener Taste in einer Leiste halten (Stardew-ähnlich, aber großzügiger). Schwierigkeit je Fisch.
-- [ ] Barrierefreiheit: Option „Einfaches Angeln“ (automatischer Drill mit leicht geringerer Qualität).
-- [ ] Gelegentlich hängt ein **Wasser-Wildling** am Haken und startet einen Kampf bzw. eine Befreundung.
-- [ ] Schatztruhen beim Angeln, Fischqualität nach Größe.
-- [ ] Koop: Angeln ist eine Host-validierte Aktion (`fish_cast` und `fish_result` mit Seed vom Host gegen Manipulation).
+- [x] Barrierefreiheit: Option „Einfaches Angeln“ (automatischer Drill mit leicht geringerer Qualität).
+- [x] Gelegentlich hängt ein **Wasser-Wildling** am Haken und startet einen Kampf bzw. eine Befreundung.
+- [x] Schatztruhen beim Angeln, Fischqualität nach Größe.
+- [x] Koop: Angeln ist eine Host-validierte Aktion (`fish_cast` und `fish_result` mit Seed vom Host gegen Manipulation).
 
 ### F-2 Fisch-Inhalte · M
-- [ ] `fish.json` mit etwa 45 Fischen: Ort (Teich, Fluss, Meer, Mine-See, Eisloch), echte Saison, Tageszeit, Wetter, Seltenheit, Schwierigkeit, Größe, Preis. Dazu je ein **legendärer Fisch** pro Saison und Gebiet.
-- [ ] Fischsammlung (Fischdex) im Sammlungs-Tab mit Rekordgrößen. Neue Kochrezepte mit Fisch, Fisch in der Räuchermaschine (Maschinen-Rezept).
-- [ ] **Krabbenkörbe** als Idle-Objekt: werden ins Wasser gesetzt und sammeln in Echtzeit, mit Köder schneller.
-- [ ] Icons für alle Fische und Angelzubehör.
+- [x] `fish.json` mit etwa 45 Fischen: Ort (Teich, Fluss, Meer, Mine-See, Eisloch), echte Saison, Tageszeit, Wetter, Seltenheit, Schwierigkeit, Größe, Preis. Dazu je ein **legendärer Fisch** pro Saison und Gebiet.
+- [x] Fischsammlung (Fischdex) im Sammlungs-Tab (neues `CollectionPanel`, zusammen mit dem Wildling-Dex) mit Rekordgrößen. Neue Kochrezepte mit Fisch, Fisch in der Räuchermaschine (Maschinen-Rezept).
+- [x] **Krabbenkörbe** als Idle-Objekt: werden ins Wasser gesetzt und sammeln in Echtzeit, mit Köder schneller.
+- [x] Icons für alle Fische und Angelzubehör.
 
 ### F-3 Größere Teiche und Stege in bestehenden Gebieten · M
-- [ ] Neue Map-Op `pier` in `map_builder.gd`: begehbare Holzstege über Wasser (Tiles: Planken, Pfähle, Geländer, Enden).
-- [ ] Farm: Teich im Lakeside-Ausbaugebiet vergrößern und mit kleinem Steg versehen. Dorf: Parkteich mit Steg. Whisperwood: Waldsee. Ein Fluss in mindestens einer Region.
+- [x] Neue Map-Op `pier` in `map_builder.gd`: begehbare Holzstege über Wasser (Tiles: Planken, Pfähle, Geländer, Enden).
+- [x] Farm: Teich im Lakeside-Ausbaugebiet vergrößern und mit kleinem Steg versehen. Dorf: Parkteich mit Steg. Whisperwood: Waldsee. Ein Fluss in mindestens einer Region.
 - [ ] Uferkanten mit der neuen Logik aus F7.
 
 ### F-4 Neue Küstenregion „Möwenbucht“ (Arbeitsname) · XL
-- [ ] Handgebaute Map (`data/maps/gull_bay.json`): Sandstrand mit Wellen-Animation, **großer Steg** ins Meer, Bootshafen, Felsenküste mit Gezeitentümpeln.
-- [ ] **Fischerhaus mit Angelshop**: NPC-Fischer (Shop: Ruten, Köder, Zubehör, Krabbenkörbe; Fischankauf mit Bonus), Fischerin-Tochter mit Sidequests, Bootsverleih als Übergang zur Casino-Stadt.
-- [ ] Erreichbar über Tidecove oder das Dorf, eingebunden in Map-Panel und Map-Reisen, mit Wildling-Spawns für den Strand.
-- [ ] Musik „Strand“ und „Hafen am Abend“ (ace-step), Möwen- und Wellen-Ambience.
-- [ ] Questkette „Der alte Fischer“ als Main-Story-Kapitel.
+- [x] Handgebaute Map (`data/maps/gull_bay.json`): Sandstrand mit Wellen-Animation, **großer Steg** ins Meer, Bootshafen, Felsenküste mit Gezeitentümpeln.
+- [x] **Fischerhaus mit Angelshop**: NPC-Fischer (Shop: Ruten, Köder, Zubehör, Krabbenkörbe; Fischankauf mit Bonus), Fischerin-Tochter mit Sidequests, Bootsverleih als Übergang zur Casino-Stadt.
+- [x] Erreichbar über Tidecove oder das Dorf, eingebunden in Map-Panel und Map-Reisen, mit Wildling-Spawns für den Strand.
+- [ ] Musik „Strand“ und „Hafen am Abend“ (ace-step), Möwen- und Wellen-Ambience. (Bis dahin spielt der synthetisierte „beach“-Track; echte Tracks in Phase L.)
+- [x] Questkette „Der alte Fischer“ als Main-Story-Kapitel („Salz und Schnur“, Kapitel 5, Save-Migration v4 verschiebt spätere Kapitel).
 
 ---
 

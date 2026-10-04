@@ -15,7 +15,13 @@
     "corn_chowder":      {"in": {"corn": 1, "milk": 1}, "unlock": "hearts:rowan:3"},
     "starfruit_parfait": {"in": {"starfruit": 1, "honey": 1, "milk": 1}, "unlock": "shrine:6"},
     "glow_tea":          {"in": {"blue_jazz": 1, "honey": 1}, "unlock": "hearts:selene:3"},
-    "hearty_pancakes":   {"in": {"wheat": 2, "cluckle_egg": 1, "honey": 1}, "unlock": "hearts:cora:3"}
+    "hearty_pancakes":   {"in": {"wheat": 2, "cluckle_egg": 1, "honey": 1}, "unlock": "hearts:cora:3"},
+    "grilled_fish":      {"in": {"carp": 1}, "unlock": "fish:1"},
+    "maki_roll":         {"in": {"sardine": 1, "seaweed": 1}, "unlock": "fish:4"},
+    "fish_stew":         {"in": {"bullhead": 1, "potato": 1, "leek": 1}, "unlock": "fish:8"},
+    "crab_cake":         {"in": {"crab": 1, "cluckle_egg": 1, "wheat": 1}, "unlock": "hearts:wren:3"},
+    "seafood_chowder":   {"in": {"clam": 1, "milk": 1, "potato": 1}, "unlock": "fish:15"},
+    "salmon_dinner":     {"in": {"salmon": 1, "kale": 1}, "unlock": "hearts:ansel:3"}
   },
   "crafting": {
     "basic_treat":       {"in": {"fiber": 3, "wild_berry": 1}, "unlock": "start"},
@@ -42,7 +48,15 @@
     "flower_pot":        {"in": {"clay": 2, "stone": 5}, "unlock": "start"},
     "wooden_bench":      {"in": {"wood": 15}, "unlock": "start"},
     "stone_lantern":     {"in": {"stone": 20, "coal": 1}, "unlock": "start"},
-    "hay_bale":          {"in": {"fiber": 30}, "unlock": "start"}
+    "hay_bale":          {"in": {"fiber": 30}, "unlock": "start"},
+    "bait":              {"in": {"fiber": 2, "sap": 1}, "n": 5, "unlock": "fish:1"},
+    "wild_bait":         {"in": {"fiber": 5, "wild_berry": 1, "sap": 2}, "n": 5, "unlock": "fish:10"},
+    "crab_pot":          {"in": {"wood": 25, "copper_bar": 2}, "unlock": "fish:3"},
+    "smoker":            {"in": {"wood": 30, "coal": 10, "copper_bar": 2}, "unlock": "fish:5"},
+    "cork_bobber":       {"in": {"wood": 10, "hardwood": 5, "sap": 10}, "unlock": "fish:8"},
+    "spinner":           {"in": {"iron_bar": 2}, "unlock": "fish:12"},
+    "trap_bobber":       {"in": {"copper_bar": 1, "sap": 10}, "unlock": "fish:15"},
+    "treasure_lure":     {"in": {"gold_bar": 1, "quartz": 1}, "unlock": "fish:20"}
   },
   "machines": {
     "furnace": {
@@ -56,6 +70,7 @@
     "keg":           {"any": "crop", "prefix": "juice", "time": 1440, "mult": 2.25, "add": 0},
     "preserves_jar": {"any": "crop", "prefix": "jam", "time": 1440, "mult": 2.0, "add": 50},
     "seed_maker":    {"any": "crop", "seeds": 2, "time": 20},
+    "smoker":        {"any": "fish", "prefix": "smoked", "time": 120, "mult": 2.0, "add": 0},
     "seed_refiner":  {"refine": [{"in": {"sap": 5}}, {"in": {"gold_bar": 1}}, {"in": {"mystic_bar": 1, "star_shard": 1}}], "batch": 5, "time": 240}
   }
 }

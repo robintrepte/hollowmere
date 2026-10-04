@@ -356,5 +356,45 @@
     "events": {"2": ["Selene: The glade likes you. That's rare."], "5": ["Selene: I was once lost here, as a child. Hollowisp led me out."], "8": ["Selene: A recipe for Glow Tea. It soothes the soul."]},
     "trainer": {"warden": "umbral_glade", "team": ["nocturnyx", "solaria", "lanternoir", "starbloom", "duskmoth", "hollowisp"], "reward": 5000},
     "event_rewards": {"8": {"recipe": "glow_tea"}}
+  },
+  "ansel": {
+    "name": "Ansel", "role": "Old Fisher of Gull Bay", "romance": false, "birthday": ["summer", 22],
+    "look": {"skin": "#d8a880", "hair": "#e8e8e0", "shirt": "#3a6a90"},
+    "loves": ["salmon_dinner", "seafood_chowder", "sturgeon"], "likes": ["grilled_fish", "crab_cake", "pumpkin_soup", "bait"], "dislikes": ["frost_sorbet", "fairy_rose"],
+    "schedule": [[500, "gull_bay", 23, 27], [1300, "gull_bay", 15, 12], [1600, "gull_bay", 37, 20], [2000, "gull_bay", 11, 10]],
+    "first_gift": {"fishing_rod": 1, "bait": 10},
+    "first_gift_line": "Hazel's grandchild, eh? She'd skin me if I let you stand on my pier empty-handed. Here, her old rod. Hold the button, let go to cast, and wait for the tug.",
+    "lines": {
+      "0": ["Fish bite at dawn and at dusk. The rest of the day they're thinking.", "Bring me the fish you catch and I'll pay a little better than the store."],
+      "3": ["You hold the rod like Hazel did. Too tight. It works anyway.", "The sea gives back what you're patient for."],
+      "6": ["Forty years on this pier. Never caught the Sunscale. Maybe you will.", "Wren worries about me. I worry about Wren. That's family."],
+      "9": ["You're the best angler this bay has seen since your grandmother.", "When I'm gone, look after the pier for me. And for Wren."]
+    },
+    "season": {"spring": "Spring rain brings the herring in.", "summer": "Summer: tuna and marlin weather. Bring good bait.", "fall": "Fall is for eels, under the full moon.", "winter": "Winter fish are slow. So am I."},
+    "events": {
+      "2": ["Ansel is mending a net on the pier.", "Ansel: Hold this end. No, the other one. There.", "Ansel: A crab pot I don't use anymore. Set it in your farm pond."],
+      "5": ["Ansel shows you a faded photo of a boat.", "Ansel: The Gull. My boat, before the storm of '72.", "Ansel: Hazel pulled me out of the water that night. I owe your family more than fish."],
+      "8": ["Ansel presses a worn lure into your hand.", "Ansel: My father's. Never lost a fish on it.", "Ansel: Don't you dare lose it."]
+    },
+    "event_rewards": {"2": {"crab_pot": 1}, "8": {"treasure_lure": 1}}
+  },
+  "wren": {
+    "name": "Wren", "role": "Ansel's Granddaughter", "romance": true, "birthday": ["spring", 11],
+    "look": {"skin": "#e8c0a0", "hair": "#c05030", "shirt": "#f0d070"},
+    "loves": ["maki_roll", "aquamarine", "coconut"], "likes": ["crab_cake", "seaweed", "sunflower"], "dislikes": ["coal", "eel"],
+    "schedule": [[700, "gull_bay", 35, 19], [1200, "gull_bay", 20, 13], [1700, "gull_bay", 43, 20], [2100, "gull_bay", 9, 10]],
+    "lines": {
+      "0": ["Grandpa says you're Hazel's grandchild? Then you owe us a fishing story.", "I'm writing down every fish in the bay. You can help."],
+      "3": ["You caught that one yourself? Show me!", "One day I'll fix the ferry and see Lumière."],
+      "6": ["I saved you the good spot on the pier.", "Grandpa smiles more since you started coming."],
+      "9": ["I don't need Lumière anymore. Everything I want is right here.", "Stay for the sunset? The water turns gold."]
+    },
+    "season": {"spring": "Spring is crab season. The pots fill fast.", "summer": "Swimming weather! Grandpa says no.", "fall": "Fall storms wash up the best treasure.", "winter": "The bay never freezes. Grandpa says it's too stubborn."},
+    "events": {
+      "2": ["Wren waves her notebook at you.", "Wren: Forty kinds so far! Well, twelve. Forty is the goal.", "Wren: Here, I drew this map of the good spots."],
+      "5": ["Wren is sitting on the end of the pier.", "Wren: Mom left on the ferry when I was small. It never came back the same.", "Wren: That's why I want to fix it. To see where she went."],
+      "8": ["Wren hands you a shell on a string.", "Wren: I found it the day you first came to the bay.", "Wren: Keep it. So you always come back."]
+    },
+    "event_rewards": {"2": {"wild_bait": 10}, "8": {"aquamarine": 1}}
   }
 }

@@ -1,6 +1,6 @@
 class_name JournalPanel
 extends PanelContainer
-## Journal: the valley (story so far, shrines), villagers (hearts, birthdays, gifts) and the Wildling dex.
+## Journal: the valley (story so far, shrines), villagers (hearts, birthdays, gifts) and the ledger. The Wildling dex and Fishdex render here too, shown by CollectionPanel.
 ## Quests, Village Board requests and weekly challenges live in the QuestLogPanel.
 
 signal closed
@@ -8,9 +8,9 @@ signal closed
 ## Shown as a tab inside the MenuShell: no frame and no close button of its own.
 var embedded := false
 
-const TABS := [["story", "Story"], ["people", "Villagers"], ["dex", "Wildlings"], ["ledger", "Ledger"]]
+const TABS := [["story", "Story"], ["people", "Villagers"], ["ledger", "Ledger"]]
 ## Reasons GameState.add_money records, listed so the catalog picks them up.
-const LEDGER_LABELS := ["Story", "Reward", "Shipping bin", "Shop", "Sold", "Building", "Tool upgrade", "Backpack", "Request board", "Battle", "Show prize", "Fountain", "Casino", "Skill reset"]
+const LEDGER_LABELS := ["Story", "Reward", "Shipping bin", "Shop", "Sold", "Building", "Tool upgrade", "Backpack", "Request board", "Battle", "Show prize", "Fountain", "Casino", "Skill reset", "Rod upgrade"]
 
 var player: PlayerData
 var tab := "story"
@@ -73,6 +73,7 @@ func _render(id: String) -> void:
 		"people": _people()
 		"board": _board()
 		"dex": _dex()
+		"fish": _fishdex()
 		"weekly": _weekly()
 		"ledger": _ledger()
 
@@ -273,6 +274,45 @@ func _dex() -> void:
 		cell.add_child(ic)
 		cell.tooltip_text = tr("#%03d %s%s") % [i + 1, Data.species[sid].name if e.get("seen", false) else "???", "  ★" if e.get("starry", false) else ""]
 		grid.add_child(cell)
+
+## Every fish with where and when it bites; caught ones show their count and best size.
+func _fishdex() -> void:
+	var dex: Dictionary = player.fishing.get("dex", {})
+	var ids: Array = Data.fish.keys()
+	_body.add_child(UITheme.label(tr("Caught %d of %d kinds") % [dex.size(), ids.size()], 10, UITheme.WOOD))
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 4)
+	grid.add_theme_constant_override("v_separation", 3)
+	_body.add_child(grid)
+	for id in ids:
+		var f: Dictionary = Data.fish[id]
+		var e: Dictionary = dex.get(id, {})
+		var pc := PanelContainer.new()
+		pc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		pc.add_theme_stylebox_override("panel", UITheme.box(UITheme.CREAM if not e.is_empty() else UITheme.PARCHMENT_DK, Color("#b09060"), 1, 3, 2, false))
+		grid.add_child(pc)
+		var h := HBoxContainer.new()
+		h.add_theme_constant_override("separation", 4)
+		pc.add_child(h)
+		var ic := UITheme.icon_rect(Art.item(id), 24)
+		if e.is_empty():
+			ic.modulate = Color(0.1, 0.1, 0.15, 0.55)
+		h.add_child(ic)
+		var col := VBoxContainer.new()
+		col.add_theme_constant_override("separation", 0)
+		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		h.add_child(col)
+		var title := Data.item_name(id) if not e.is_empty() else "???"
+		if f.get("legendary", false):
+			title += "  ★"
+		col.add_child(UITheme.label(title, 9, UITheme.INK))
+		var where := UITheme.label(Fishing.habitat_text(id), 7, UITheme.MUTED)
+		where.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		where.custom_minimum_size = Vector2(200, 0)
+		col.add_child(where)
+		if not e.is_empty():
+			col.add_child(UITheme.label(tr("Caught %d · best %s cm") % [int(e.n), Num.decimal(float(e.best))], 7, UITheme.LEAF.darkened(0.3)))
 
 func _weekly() -> void:
 	_body.add_child(UITheme.label("Weekly challenges · reset every Monday", 9, UITheme.MUTED))

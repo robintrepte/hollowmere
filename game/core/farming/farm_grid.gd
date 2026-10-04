@@ -220,6 +220,11 @@ func clear_debris(p: Vector2i, tool: String, tool_level: int, rng: RandomNumberG
 	return {"ok": true, "drops": drops, "energy": int(info.energy)}
 
 func place_object(p: Vector2i, item_id: String) -> bool:
+	if Data.get_item(item_id).get("place", "") == "crab_pot":
+		if not in_bounds(p) or not get_ground(p) in Tiles.WATER_TILES or not object_at(p).is_empty():
+			return false
+		objects[Tiles.key(p)] = {"id": item_id, "kind": "crab_pot", "catch": [], "bait": 0, "next_at": TimeService.now() + Fishing.CRAB_SECONDS}
+		return true
 	if not in_bounds(p) or is_blocked(p) or is_tilled(p) and Data.get_item(item_id).get("place", "") != "sprinkler":
 		return false
 	var it: Dictionary = Data.get_item(item_id)

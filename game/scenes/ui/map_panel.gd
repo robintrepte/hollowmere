@@ -10,7 +10,7 @@ var embedded := false
 const CROSS := [
 	["", "whisperwood", ""],
 	["farm", "town", "tidecove"],
-	["", "meadow", ""],
+	["", "meadow", "gull_bay"],
 ]
 
 func _ready() -> void:
@@ -87,7 +87,7 @@ func _cell(id: String, here: String) -> Control:
 		var gap := Control.new()
 		gap.custom_minimum_size = Vector2(100, 36)
 		return gap
-	var open := id in ["farm", "town"] or GameState.region_unlocked(id)
+	var open := GameState.place_open(id)
 	var here_now := _at(here, id)
 	var b := PanelContainer.new()
 	var edge := UITheme.LEAF if here_now else UITheme.OUTLINE

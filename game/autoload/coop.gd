@@ -13,7 +13,7 @@ const ACTIONS := ["use_tool", "use_item", "harvest_at", "load_machine", "ship", 
 	"craft", "construct", "upgrade_tool", "buy_backpack", "equip_backpack", "deliver_board", "set_pair_act", "clear_pair_act", "incubate", "set_job_act", "move_creature_act",
 	"befriend_act", "dex_seen_act", "reward_act", "warden_won_act", "guardian_result_act", "legend_result_act",
 	"mine_floor_act", "open_treasure_act", "festival_act", "story_seen_act", "chain_act", "show_act", "rematch_won_act", "claim_quest_act",
-	"invest_skill_act", "respec_skills_act"]
+	"invest_skill_act", "respec_skills_act", "fish_cast_act", "fish_result_act", "equip_tackle_act", "unequip_tackle_act", "upgrade_rod_act", "first_gift_act"]
 
 var _chunks: Dictionary = {}       # transfer id -> Array
 var _ready_to_sleep: Dictionary = {}

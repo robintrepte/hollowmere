@@ -49,6 +49,10 @@ static func can_load(machine_id: String, item_id: String, q: int, inv: Inventory
 		if Data.get_item(out_id).is_empty():
 			return {"ok": false, "reason": TranslationServer.translate("That won't work.")}
 		return {"ok": true, "consume": {item_id: 1}, "output": {"id": out_id, "n": 1, "q": q}, "time": int(spec.time)}
+	if spec.get("any", "") == "fish":
+		if it.get("cat", "") != "fish" or it.get("shell", false):
+			return {"ok": false, "reason": TranslationServer.translate("Put a fish in.")}
+		return {"ok": true, "consume": {item_id: 1}, "output": {"id": "%s:%s" % [spec.prefix, item_id], "n": 1, "q": q}, "time": int(spec.time)}
 	return {"ok": false, "reason": ""}
 
 ## Real seconds for a recipe; `speed` is the owner's machine speed multiplier.

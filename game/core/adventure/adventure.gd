@@ -175,6 +175,14 @@ static func cup_level(shrines: int, round_i: int) -> int:
 static func chapters() -> Array:
 	return Data.progression.get("story", [])
 
+## Position of a story chapter by id (past the end if it doesn't exist).
+static func chapter_index(id: String) -> int:
+	var ch := chapters()
+	for i in ch.size():
+		if str(ch[i].id) == id:
+			return i
+	return ch.size() + 1
+
 static func chapter(world: Dictionary) -> Dictionary:
 	var ch := chapters()
 	var i := int(world.get("quest", 0))
@@ -189,6 +197,7 @@ static func story_facts(world: Dictionary, p: PlayerData) -> Dictionary:
 	return {
 		"dex": Progression.owned_count(world.dex), "shrines": world.shrines.size(),
 		"farm_level": int(world.farm.level), "legends": world.legends.size(), "hearts": hearts, "mine": deep,
+		"fish": int(world.get("stats", {}).get("fish", 0)),
 	}
 
 ## [have, need] for a goal; a goal with no keys is never complete (the epilogue).

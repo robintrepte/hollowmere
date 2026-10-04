@@ -1,0 +1,41 @@
+{
+  "id": "gull_bay", "name": "Gull Bay", "w": 48, "h": 34, "base": "sand", "border": "palm", "music": "beach",
+  "biome": "beach", "water": "sea", "levels": [10, 16],
+  "spawns": [
+    ["shelldo", 25], ["ripplefin", 25], ["snailmail", 15], ["splashpup", 15], ["cluckle", 10],
+    ["lumibub", 4, {"t": "night"}], ["wavelash", 2]
+  ],
+  "ops": [
+    ["rect", "tallgrass", 28, 2, 8, 5],
+    ["rect", "tallgrass", 38, 4, 7, 4],
+    ["rect", "path", 0, 16, 41, 2],
+    ["rect", "path", 10, 9, 2, 7],
+    ["rect", "water", 1, 22, 46, 11],
+    ["rect", "deepwater", 1, 28, 46, 5],
+    ["rect", "water", 3, 19, 2, 2],
+    ["rect", "water", 7, 20, 2, 1],
+    ["rect", "wood", 34, 18, 12, 4],
+    ["pier", 22, 18, 2, 13],
+    ["pier", 19, 29, 8, 2],
+    ["pier", 36, 22, 2, 5],
+    ["pier", 42, 22, 2, 4],
+    ["open", "w", 16, 2],
+    ["scatter", "rock", 1, 18, 10, 4, 0.25, 41],
+    ["scatter", "boulder", 1, 18, 10, 4, 0.06, 42],
+    ["scatter", "palm", 1, 1, 46, 10, 0.07, 43],
+    ["scatter", "palm", 12, 18, 8, 3, 0.06, 44],
+    ["scatter", "flowers", 1, 1, 46, 9, 0.03, 45],
+    ["clearpath"]
+  ],
+  "warps": [
+    {"x": 0, "y": 16, "w": 1, "h": 2, "to": "town", "tx": 46, "ty": 27}
+  ],
+  "objects": [
+    {"type": "building", "id": "fisher_house", "x": 8, "y": 5, "w": 6, "h": 4, "label": "Fisher's Hut", "roof": "#3a7aa0", "action": "shop:angler"},
+    {"type": "wayshrine", "x": 3, "y": 12},
+    {"type": "ferry", "x": 38, "y": 25},
+    {"type": "sign", "x": 2, "y": 14, "text": "Gull Bay. The biggest fish bite off the end of the long pier."},
+    {"type": "sign", "x": 33, "y": 15, "text": "Harbor. Ferry to Lumière: closed for repairs."}
+  ],
+  "spawn": [1, 16]
+}

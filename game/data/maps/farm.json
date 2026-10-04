@@ -1,6 +1,9 @@
 {
   "id": "farm", "name": "Your Farm", "w": 48, "h": 34, "base": "grass", "border": "tree", "music": "farm",
-  "farm": true, "tillable": ["grass", "dirt"], "seasonal": true,
+  "farm": true, "tillable": ["grass", "dirt"], "seasonal": true, "water": "pond",
+  "patches": [
+    {"id": "lakeside_pier", "ops": [["rect", "water", 31, 25, 14, 8], ["rect", "bridge", 37, 24, 1, 5]]}
+  ],
   "ops": [
     ["rect", "path", 4, 6, 44, 2],
     ["rect", "path", 7, 5, 1, 1],

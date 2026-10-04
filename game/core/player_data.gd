@@ -31,6 +31,10 @@ var respecs: int = 0
 var mods_cache: Dictionary = {}
 var mods_dirty: bool = true
 var emotes: Array = []
+## Fishdex {dex: {fish: {n, best}}} plus the bait and tackle on the rod.
+var fishing: Dictionary = {}
+## One-off per-player markers (gifts received, first visits).
+var flags: Dictionary = {}
 var energy: float = 270.0
 var max_energy: float = 270.0
 ## The equipped pack and every pack the player owns (switchable any time the contents fit).
@@ -179,6 +183,7 @@ func to_dict() -> Dictionary:
 	return {
 		"id": id, "name": name, "look": look, "hat": hat, "inventory": inventory.to_dict(), "hotbar": hotbar,
 		"selected": selected, "party": p, "tool_levels": tool_levels, "water_left": water_left, "bucket_full": bucket_full, "chips": chips, "quests": quests, "skill_points": skill_points, "emotes": emotes, "level": level, "xp": xp, "tree": tree, "respecs": respecs,
+		"fishing": fishing, "flags": flags,
 		"energy": energy, "max_energy": max_energy, "backpack": backpack, "packs": packs,
 		"relationships": relationships, "recipes": recipes, "cosmetics": cosmetics, "map_id": map_id,
 		"pos": [pos.x, pos.y], "stats": stats,
@@ -211,6 +216,8 @@ static func from_dict(d: Dictionary) -> PlayerData:
 	p.tree = d.get("tree", {})
 	p.respecs = int(d.get("respecs", 0))
 	p.emotes = d.get("emotes", [])
+	p.fishing = d.get("fishing", {})
+	p.flags = d.get("flags", {})
 	p.energy = float(d.get("energy", 270))
 	p.max_energy = float(d.get("max_energy", 270))
 	if d.has("backpack"):

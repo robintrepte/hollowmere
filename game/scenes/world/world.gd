@@ -24,10 +24,11 @@ const CAP_OF := {
 	9: 3, 2: 3, 5: 3, 17: 3,
 	13: 4,
 	15: 5, 12: 5,
+	6: 6,
 }
 const NEIGHBORS := [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
 const DIAGONALS := [Vector2i(1, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(-1, -1)]
-const OBJECT_FOOTPRINT := {"fountain": Vector2i(2, 2), "wayshrine": Vector2i(1, 1), "board": Vector2i(1, 1), "show_ring": Vector2i(0, 0)}
+const OBJECT_FOOTPRINT := {"ferry": Vector2i(2, 1), "fountain": Vector2i(2, 2), "wayshrine": Vector2i(1, 1), "board": Vector2i(1, 1), "show_ring": Vector2i(0, 0)}
 
 var map_id := ""
 var info: Dictionary = {}
@@ -141,6 +142,7 @@ func load_map(id: String) -> void:
 	for k in grid.soil:
 		_draw_soil(Tiles.parse_key(k))
 	_build_static_objects()
+	decals.add_child(PierRails.new(grid))
 	for k in grid.objects:
 		_draw_object(Tiles.parse_key(k))
 	for k in grid.soil:
@@ -360,6 +362,12 @@ func _draw_object(p: Vector2i) -> void:
 				f.scale = Vector2(0.75, 0.75)
 				f.position = spots[i]
 				node.add_child(f)
+		if o.kind == "crab_pot":
+			s.offset.y += 6
+			if not o.get("catch", []).is_empty() or TimeService.now() >= float(o.get("next_at", 0)):
+				var pot_bubble := _bubble(Art.item("crab"))
+				pot_bubble.position = Vector2(0, -sz.y)
+				node.add_child(pot_bubble)
 		if o.kind == "machine":
 			if Machines.is_ready(o, TimeService.now()):
 				var bubble := _bubble(Art.item(o.output.get("id", "")))
@@ -451,7 +459,7 @@ func _build_static_objects() -> void:
 		match o.type:
 			"building":
 				_add_building(o)
-			"shipping_bin", "farm_chest", "sign", "board", "wayshrine", "stairs", "fountain":
+			"shipping_bin", "farm_chest", "sign", "board", "wayshrine", "stairs", "fountain", "ferry":
 				var name: String = o.type
 				var tex := Art.world(name)
 				var fp: Vector2i = OBJECT_FOOTPRINT.get(name, Vector2i(1, 1))
@@ -951,3 +959,54 @@ func _on_popup(at: Vector2, text: String, col: Color, icon: String) -> void:
 	tw.tween_property(l, "position:y", l.position.y - 22, 0.9).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tw.tween_property(l, "modulate:a", 0.0, 0.4).set_delay(0.6)
 	tw.chain().tween_callback(l.queue_free)
+
+
+## Rails, posts and pilings along walkways over water (piers and bridges).
+class PierRails extends Node2D:
+	const WOOD := Color("#8a5a3a")
+	const WOOD_LT := Color("#c08a50")
+	const WOOD_DK := Color("#2a1810")
+	var g: FarmGrid
+
+	func _init(grid: FarmGrid) -> void:
+		g = grid
+
+	func _water(p: Vector2i) -> bool:
+		return g.in_bounds(p) and g.get_ground(p) in Tiles.WATER_TILES
+
+	func _bridge(p: Vector2i) -> bool:
+		return g.in_bounds(p) and g.get_ground(p) == Tiles.GROUND.bridge
+
+	func _draw() -> void:
+		var t := float(Tiles.TILE)
+		for y in g.h:
+			for x in g.w:
+				var p := Vector2i(x, y)
+				if not _bridge(p):
+					continue
+				var o := Vector2(x * t, y * t)
+				if _water(p + Vector2i(0, 1)):
+					for px in [4.0, t - 8.0]:
+						draw_rect(Rect2(o + Vector2(px - 1, t), Vector2(6, 8)), WOOD_DK)
+						draw_rect(Rect2(o + Vector2(px, t), Vector2(4, 6)), WOOD)
+						draw_rect(Rect2(o + Vector2(px - 2, t + 8), Vector2(8, 1)), Color(1, 1, 1, 0.45))
+				var along_x := _bridge(p + Vector2i(1, 0)) or _bridge(p + Vector2i(-1, 0))
+				var along_y := _bridge(p + Vector2i(0, 1)) or _bridge(p + Vector2i(0, -1))
+				if _water(p + Vector2i(-1, 0)) and along_y:
+					_rail(o + Vector2(1, 0), o + Vector2(1, t))
+				if _water(p + Vector2i(1, 0)) and along_y:
+					_rail(o + Vector2(t - 3, 0), o + Vector2(t - 3, t))
+				if _water(p + Vector2i(0, -1)) and along_x and not along_y:
+					_rail(o + Vector2(0, 1), o + Vector2(t, 1))
+				if _water(p + Vector2i(0, 1)) and along_x and not along_y:
+					_rail(o + Vector2(0, t - 4), o + Vector2(t, t - 4))
+
+	func _rail(a: Vector2, b: Vector2) -> void:
+		var vertical := absf(a.x - b.x) < 0.5
+		var r := Rect2(a - Vector2(1, 0), Vector2(4, b.y - a.y)) if vertical else Rect2(a - Vector2(0, 1), Vector2(b.x - a.x, 4))
+		draw_rect(r.grow(1), WOOD_DK)
+		draw_rect(r, WOOD_LT)
+		for k in 2:
+			var at := a.lerp(b, 0.25 + 0.5 * k)
+			draw_rect(Rect2(at - Vector2(3, 4), Vector2(7, 8)), WOOD_DK)
+			draw_rect(Rect2(at - Vector2(2, 3), Vector2(5, 3)), WOOD)

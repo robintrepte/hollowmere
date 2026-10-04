@@ -59,6 +59,8 @@ var sfx_volume: float = 0.8
 var text_scale: float = 1.0
 var ui_font: String = "pixel"          ## pixel (Tiny5) | readable (Nunito)
 var colorblind: bool = false
+## Auto-reels fish (slightly lower quality) for players who find the minigame hard.
+var easy_fishing: bool = false
 var screen_shake: bool = true
 var fullscreen: bool = false
 var twelve_hour: bool = true
@@ -79,11 +81,11 @@ var hemisphere: String = "auto"         ## auto (from the locale) | north | sout
 var profile: Dictionary = {}           ## free-form per-account data: tutorials seen, emote wheel, window spots
 var stamps: Dictionary = {}            ## key -> unix time of the last change, for merging with the account copy
 
-const SAVED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind", "screen_shake",
+const SAVED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind", "easy_fishing", "screen_shake",
 	"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves",
 	"custom_keys", "locale", "error_reports", "analytics", "analytics_asked", "touch_controls", "hemisphere", "profile", "stamps"]
 ## Follows the account to every device. The rest belongs to this device (screen, server, input hardware).
-const SYNCED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind",
+const SYNCED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind", "easy_fishing",
 	"screen_shake", "twelve_hour", "auto_pause_menus", "custom_keys", "locale", "error_reports", "analytics",
 	"analytics_asked", "hemisphere", "profile"]
 const PROFILE_UPLOAD_DELAY := 3.0

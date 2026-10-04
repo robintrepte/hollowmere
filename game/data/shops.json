@@ -59,5 +59,15 @@
       {"id": "gold_sprinkler", "price": 8000}, {"id": "great_charm", "price": 450}, {"id": "crystal_fruit", "price": 350},
       {"id": "storage_crate", "price": 3000}, {"id": "egg_carrier", "price": 1500}, {"id": "starapple_sapling", "price": 30000}
     ]
+  },
+  "angler": {
+    "name": "Ansel's Bait & Tackle", "owner": "ansel", "open": [600, 1900],
+    "stock": [
+      {"id": "fishing_rod"}, {"id": "bait"}, {"id": "wild_bait", "requires": "fish:10"}, {"id": "magic_bait", "requires": "fish:25"},
+      {"id": "spinner", "requires": "fish:15"}, {"id": "cork_bobber", "requires": "fish:15"},
+      {"id": "trap_bobber", "requires": "fish:20"}, {"id": "treasure_lure", "requires": "fish:30"},
+      {"id": "crab_pot", "requires": "fish:5"}
+    ],
+    "backpacks": true, "rods": true, "buys": {"fish": 0.15}
   }
 }

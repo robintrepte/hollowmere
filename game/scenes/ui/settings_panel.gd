@@ -68,6 +68,7 @@ func _ready() -> void:
 	_choice(body, tr("Font"), [tr("Pixel"), tr("Readable")], Settings.FONTS.find(Settings.ui_font), func(i: int):
 		Settings.set_ui_font(Settings.FONTS[i]))
 	_check(body, "Colorblind mode (type names on moves, quality pips)", Settings.colorblind, func(on): Settings.colorblind = on)
+	_check(body, "Easy fishing (the rod reels by itself, slightly lower quality)", Settings.easy_fishing, func(on): Settings.easy_fishing = on)
 	body.add_child(UITheme.label("Privacy", 11, UITheme.WOOD))
 	_check(body, "Send crash and error reports (no personal data)", Settings.error_reports, func(on): Settings.error_reports = on)
 	_check(body, "Share anonymous play stats (session length, progress)", Settings.analytics, func(on):

@@ -90,6 +90,8 @@ static func build_authored(m: Dictionary) -> Dictionary:
 						g.set_deco(p3, Tiles.DECO.fence)
 						keys.append(Tiles.key(p3))
 				g.fences[op[1]] = keys
+			"pier":
+				_pier(g, int(op[1]), int(op[2]), int(op[3]), int(op[4]))
 			"clearpath":
 				for i in g.ground.size():
 					if g.ground[i] != base_id and g.ground[i] != Tiles.GROUND.flowers:
@@ -104,11 +106,40 @@ static func build_authored(m: Dictionary) -> Dictionary:
 		for x in range(int(wp.x), int(wp.x) + int(wp.get("w", 1))):
 			for y in range(int(wp.y), int(wp.y) + int(wp.get("h", 1))):
 				g.set_deco(Vector2i(x, y), 0)
-	return {
+	for patch in m.get("patches", []):
+		apply_patch(g, patch.ops)
+	var out := {
 		"id": m.id, "name": m.get("name", m.id), "grid": g, "warps": m.get("warps", []), "objects": objects,
 		"spawn": m.get("spawn", [2, 2]), "music": m.get("music", "town"), "farm": bool(m.get("farm", false)),
-		"seasonal": bool(m.get("seasonal", false)), "indoor": bool(m.get("indoor", false)), "biome": "grass", "region": "",
+		"seasonal": bool(m.get("seasonal", false)), "indoor": bool(m.get("indoor", false)), "biome": m.get("biome", "grass"), "region": "",
 	}
+	for k in ["spawns", "levels", "water", "water_zones"]:
+		if m.has(k):
+			out[k] = m[k]
+	return out
+
+## Wooden walkway over water (the pier rails and posts are drawn by the world).
+static func _pier(g: FarmGrid, x0: int, y0: int, w: int, h: int) -> void:
+	for x in range(x0, x0 + w):
+		for y in range(y0, y0 + h):
+			var p := Vector2i(x, y)
+			if g.in_bounds(p):
+				g.ground[g.idx(p)] = Tiles.GROUND.bridge
+				g.set_deco(p, 0)
+
+## Later map changes for saved grids: water and piers, skipping tiles the player has built on.
+static func apply_patch(g: FarmGrid, ops: Array) -> void:
+	for op in ops:
+		for x in range(int(op[2]), int(op[2]) + int(op[4])):
+			for y in range(int(op[3]), int(op[3]) + int(op[5])):
+				var p := Vector2i(x, y)
+				if not g.in_bounds(p) or g.is_tilled(p) or not g.object_at(p).is_empty() or g.get_deco(p) == Tiles.DECO.fence:
+					continue
+				var gid := Tiles.id_of(str(op[1]))
+				if gid < 0 or Tiles.is_deco(gid):
+					continue
+				g.ground[g.idx(p)] = gid
+				g.set_deco(p, 0)
 
 static func _open_side(g: FarmGrid, side: String, start: int, length: int, base_id: int) -> void:
 	for i in range(start, start + length):
@@ -206,6 +237,17 @@ static func build_region(region_id: String, world_seed: int) -> Dictionary:
 			g.set_deco(p2, 0)
 		if x < 4:
 			y_cur = 17
+	var zones: Array = []
+	if r.has("river"):
+		var rx := int(r.river)
+		for x in range(rx, rx + 3):
+			for y in range(2, g.h - 2):
+				var pr := Vector2i(x, y)
+				g.ground[g.idx(pr)] = Tiles.GROUND.bridge if g.get_ground(pr) == path_tile else Tiles.GROUND.water
+				g.set_deco(pr, 0)
+		zones.append(["river", rx, 0, 3, g.h])
+	if r.has("lake"):
+		_lake(g, Vector2i(int(r.lake[0]), int(r.lake[1])), 4.2, 2.7)
 	# Entrance clearing
 	for x in range(0, 5):
 		for y in range(15, 20):
@@ -257,7 +299,25 @@ static func build_region(region_id: String, world_seed: int) -> Dictionary:
 		"id": region_id, "name": r.name, "grid": g, "warps": warps, "objects": objects, "spawn": [1, 17],
 		"music": r.get("music", "route"), "farm": false, "seasonal": r.biome in ["grass", "forest", "cliffs"],
 		"indoor": false, "biome": r.biome, "region": region_id, "spawns": r.spawns, "levels": r.levels,
+		"water_zones": zones,
 	}
+
+## An oval lake with a short pier from its north shore.
+static func _lake(g: FarmGrid, c: Vector2i, rx: float, ry: float) -> void:
+	for x in range(c.x - ceili(rx), c.x + ceili(rx) + 1):
+		for y in range(c.y - ceili(ry), c.y + ceili(ry) + 1):
+			var p := Vector2i(x, y)
+			var d := pow((x - c.x) / rx, 2) + pow((y - c.y) / ry, 2)
+			if d <= 1.0 and g.in_bounds(p) and x > 1 and y > 1 and x < g.w - 2 and y < g.h - 2:
+				g.ground[g.idx(p)] = Tiles.GROUND.water
+				g.set_deco(p, 0)
+	var top := c.y - floori(ry)
+	for y in range(top - 1, c.y + 1):
+		var p := Vector2i(c.x, y)
+		g.ground[g.idx(p)] = Tiles.GROUND.bridge
+		g.set_deco(p, 0)
+	for x in range(c.x - 1, c.x + 2):
+		g.set_deco(Vector2i(x, top - 2), 0)
 
 static func _carve_path(g: FarmGrid, from: Vector2i, target_y: int, base: int) -> void:
 	var p := from
@@ -333,6 +393,8 @@ static func build_mine(region_id: String, floor_n: int, world_seed: int, day_ind
 				ore_types[Tiles.key(cell)] = ores[idx_o]
 			elif roll < 0.16:
 				g.deco[i] = Tiles.DECO.rock
+	if floor_n % 5 == 0 or rng.randf() < 0.3:
+		_cave_lake(g, rng, entry, ladder)
 	g.set_deco(entry, Tiles.DECO.ladder_up)
 	var objects: Array = []
 	var bottom := Adventure.is_bottom(region_id, floor_n)
@@ -356,6 +418,28 @@ static func build_mine(region_id: String, floor_n: int, world_seed: int, day_ind
 		"mine": true, "floor": floor_n, "max_floor": int(mine.floors), "ore_types": ore_types, "ladder": [ladder.x, ladder.y], "entry": [entry.x, entry.y],
 		"bottom": bottom,
 	}
+
+## Floods a pocket of cave wall next to open floor, so the paths through the floor stay as they were.
+static func _cave_lake(g: FarmGrid, rng: RandomNumberGenerator, entry: Vector2i, ladder: Vector2i) -> void:
+	for tries in 40:
+		var c := Vector2i(rng.randi_range(3, g.w - 4), rng.randi_range(3, g.h - 4))
+		if g.get_deco(c) != Tiles.DECO.cavewall or c.distance_to(entry) < 5.0 or c.distance_to(ladder) < 4.0:
+			continue
+		var opens := false
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			if g.get_deco(c + d) == 0:
+				opens = true
+		if not opens:
+			continue
+		for x in range(c.x - 2, c.x + 3):
+			for y in range(c.y - 2, c.y + 3):
+				var p := Vector2i(x, y)
+				if x <= 0 or y <= 0 or x >= g.w - 1 or y >= g.h - 1 or Vector2(p - c).length() > 2.3:
+					continue
+				if g.get_deco(p) == Tiles.DECO.cavewall:
+					g.set_deco(p, 0)
+					g.ground[g.idx(p)] = Tiles.GROUND.water
+		return
 
 ## Picks a spawn entry for current conditions. Returns species id or "".
 static func pick_spawn(spawns: Array, season: String, weather: String, night: bool, rng: RandomNumberGenerator, bonus: Array = []) -> String:

@@ -245,6 +245,9 @@ func wayshrine() -> void:
 	for rid in Data.region_order:
 		if rid != here and GameState.region_unlocked(rid):
 			dests.append(rid)
+	for pid in GameState.PLACE_REQUIRES:
+		if pid != here and GameState.place_open(pid):
+			dests.append(pid)
 	var opts: Array = []
 	for d in dests:
 		opts.append("Hollowmere Village" if d == "town" else Data.region_name(d))

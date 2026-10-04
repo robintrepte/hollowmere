@@ -14,6 +14,8 @@ static func meets(req: String, ctx: Dictionary) -> bool:
 			return int(ctx.get("farm_level", 1)) >= int(parts[1])
 		"hearts":
 			return int(ctx.get("hearts", {}).get(parts[1], 0)) >= int(parts[2])
+		"fish":
+			return int(ctx.get("fish", 0)) >= int(parts[1])
 	return req in ctx.get("buildings", [])
 
 static func req_text(req: String) -> String:
@@ -25,6 +27,12 @@ static func req_text(req: String) -> String:
 			return str(TranslationServer.translate("Farm Level %d")) % int(parts[1])
 		"hearts":
 			return str(TranslationServer.translate("%d hearts with %s")) % [int(parts[2]), Data.villager_name(parts[1])]
+		"fish":
+			return str(TranslationServer.translate("Catch %d kinds of fish")) % int(parts[1])
+		"story":
+			var ci := Adventure.chapter_index(parts[1])
+			var chs := Adventure.chapters()
+			return str(TranslationServer.translate("Story: reach \"%s\"")) % (TranslationServer.translate(str(chs[ci].title)) if ci < chs.size() else parts[1])
 	if Data.buildings.has(req):
 		return str(TranslationServer.translate("Requires %s")) % str(TranslationServer.translate(Data.buildings[req].name))
 	return req
@@ -112,7 +120,7 @@ static func make(kind: String, id: String, invs: Array) -> bool:
 	if not first.can_add(id, 1):
 		return false
 	consume(invs, recipe(kind, id).in)
-	first.add(id, 1)
+	first.add(id, int(recipe(kind, id).get("n", 1)))
 	return true
 
 static func building_ok(id: String, ctx: Dictionary, money: int, invs: Array) -> Dictionary:

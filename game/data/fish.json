@@ -1,0 +1,1261 @@
+{
+ "fish": {
+  "carp": {
+   "name": "Carp",
+   "where": [
+    "pond"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 30,
+   "diff": 15,
+   "move": "smooth",
+   "size": [
+    30,
+    60
+   ],
+   "price": 30,
+   "desc": "A patient pond fish that eats almost anything."
+  },
+  "sunfish": {
+   "name": "Sunfish",
+   "where": [
+    "pond"
+   ],
+   "seasons": [
+    "spring",
+    "summer"
+   ],
+   "time": "day",
+   "weather": "sun",
+   "w": 30,
+   "diff": 20,
+   "move": "mixed",
+   "size": [
+    10,
+    25
+   ],
+   "price": 30,
+   "desc": "Basks near the surface on bright days."
+  },
+  "bullhead": {
+   "name": "Bullhead",
+   "where": [
+    "pond"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 20,
+   "diff": 30,
+   "move": "smooth",
+   "size": [
+    15,
+    40
+   ],
+   "price": 75,
+   "desc": "Whiskered and grumpy. Lives in the mud."
+  },
+  "largemouth_bass": {
+   "name": "Largemouth Bass",
+   "where": [
+    "pond"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "day",
+   "weather": "any",
+   "w": 15,
+   "diff": 50,
+   "move": "mixed",
+   "size": [
+    30,
+    70
+   ],
+   "price": 100,
+   "desc": "Strikes hard at anything that moves."
+  },
+  "perch": {
+   "name": "Perch",
+   "where": [
+    "pond",
+    "river"
+   ],
+   "seasons": [
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 25,
+   "diff": 35,
+   "move": "dart",
+   "size": [
+    15,
+    35
+   ],
+   "price": 55,
+   "desc": "Striped and quick. Bites best in the cold."
+  },
+  "pike": {
+   "name": "Pike",
+   "where": [
+    "pond",
+    "river"
+   ],
+   "seasons": [
+    "summer",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 10,
+   "diff": 60,
+   "move": "dart",
+   "size": [
+    40,
+    100
+   ],
+   "price": 100,
+   "desc": "A long hunter with a mouth full of needles."
+  },
+  "koi": {
+   "name": "Koi",
+   "where": [
+    "pond"
+   ],
+   "seasons": [
+    "summer",
+    "fall"
+   ],
+   "time": "day",
+   "weather": "sun",
+   "w": 4,
+   "diff": 70,
+   "move": "mixed",
+   "size": [
+    40,
+    80
+   ],
+   "price": 300,
+   "desc": "Painted in red, white and gold. Rare and lucky."
+  },
+  "catfish": {
+   "name": "Catfish",
+   "where": [
+    "pond",
+    "river"
+   ],
+   "seasons": [
+    "spring",
+    "fall"
+   ],
+   "time": "any",
+   "weather": "rain",
+   "w": 10,
+   "diff": 75,
+   "move": "mixed",
+   "size": [
+    40,
+    120
+   ],
+   "price": 200,
+   "desc": "Comes up from the deep when it rains."
+  },
+  "moonfin": {
+   "name": "Moonfin",
+   "where": [
+    "pond"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "night",
+   "weather": "any",
+   "w": 6,
+   "diff": 55,
+   "move": "floater",
+   "size": [
+    15,
+    30
+   ],
+   "price": 160,
+   "desc": "Its fins glow faintly under the moon."
+  },
+  "rainbow_trout": {
+   "name": "Rainbow Trout",
+   "where": [
+    "river"
+   ],
+   "seasons": [
+    "spring",
+    "summer"
+   ],
+   "time": "day",
+   "weather": "any",
+   "w": 25,
+   "diff": 40,
+   "move": "mixed",
+   "size": [
+    25,
+    60
+   ],
+   "price": 65,
+   "desc": "Shimmers in every color of the stream."
+  },
+  "salmon": {
+   "name": "Salmon",
+   "where": [
+    "river"
+   ],
+   "seasons": [
+    "fall"
+   ],
+   "time": "day",
+   "weather": "any",
+   "w": 25,
+   "diff": 45,
+   "move": "mixed",
+   "size": [
+    50,
+    90
+   ],
+   "price": 75,
+   "desc": "Swims upstream every fall to spawn."
+  },
+  "chub": {
+   "name": "Chub",
+   "where": [
+    "river"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 30,
+   "diff": 25,
+   "move": "dart",
+   "size": [
+    15,
+    35
+   ],
+   "price": 50,
+   "desc": "A common river fish with a big appetite."
+  },
+  "dace": {
+   "name": "Dace",
+   "where": [
+    "river"
+   ],
+   "seasons": [
+    "spring",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 25,
+   "diff": 30,
+   "move": "smooth",
+   "size": [
+    10,
+    25
+   ],
+   "price": 40,
+   "desc": "Small, silver and always in a hurry."
+  },
+  "shad": {
+   "name": "Shad",
+   "where": [
+    "river"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall"
+   ],
+   "time": "any",
+   "weather": "rain",
+   "w": 15,
+   "diff": 45,
+   "move": "smooth",
+   "size": [
+    30,
+    60
+   ],
+   "price": 60,
+   "desc": "Runs in schools when the river is high."
+  },
+  "walleye": {
+   "name": "Walleye",
+   "where": [
+    "river"
+   ],
+   "seasons": [
+    "fall",
+    "winter"
+   ],
+   "time": "night",
+   "weather": "rain",
+   "w": 8,
+   "diff": 55,
+   "move": "smooth",
+   "size": [
+    30,
+    70
+   ],
+   "price": 105,
+   "desc": "Its glassy eyes see well on dark, rainy nights."
+  },
+  "sturgeon": {
+   "name": "Sturgeon",
+   "where": [
+    "river"
+   ],
+   "seasons": [
+    "summer",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 4,
+   "diff": 80,
+   "move": "mixed",
+   "size": [
+    80,
+    180
+   ],
+   "price": 200,
+   "desc": "An ancient, armored giant of the river."
+  },
+  "eel": {
+   "name": "Eel",
+   "where": [
+    "river"
+   ],
+   "seasons": [
+    "spring",
+    "fall"
+   ],
+   "time": "night",
+   "weather": "rain",
+   "w": 8,
+   "diff": 70,
+   "move": "smooth",
+   "size": [
+    40,
+    100
+   ],
+   "price": 85,
+   "desc": "Slippery and strong. Hunts on stormy nights."
+  },
+  "bream": {
+   "name": "Bream",
+   "where": [
+    "river"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "night",
+   "weather": "any",
+   "w": 20,
+   "diff": 35,
+   "move": "smooth",
+   "size": [
+    20,
+    45
+   ],
+   "price": 45,
+   "desc": "A broad river fish that feeds after dark."
+  },
+  "tiger_trout": {
+   "name": "Tiger Trout",
+   "where": [
+    "river"
+   ],
+   "seasons": [
+    "fall",
+    "winter"
+   ],
+   "time": "day",
+   "weather": "any",
+   "w": 6,
+   "diff": 60,
+   "move": "dart",
+   "size": [
+    30,
+    60
+   ],
+   "price": 150,
+   "desc": "A rare striped trout. Hard to fool."
+  },
+  "anchovy": {
+   "name": "Anchovy",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "spring",
+    "fall"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 30,
+   "diff": 25,
+   "move": "dart",
+   "size": [
+    5,
+    15
+   ],
+   "price": 30,
+   "desc": "Tiny, salty and found in huge schools."
+  },
+  "sardine": {
+   "name": "Sardine",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "spring",
+    "fall",
+    "winter"
+   ],
+   "time": "day",
+   "weather": "any",
+   "w": 30,
+   "diff": 25,
+   "move": "dart",
+   "size": [
+    5,
+    20
+   ],
+   "price": 40,
+   "desc": "A common ocean fish. Great on toast."
+  },
+  "herring": {
+   "name": "Herring",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "spring",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 25,
+   "diff": 30,
+   "move": "dart",
+   "size": [
+    15,
+    35
+   ],
+   "price": 30,
+   "desc": "Silver flashes in the cold sea."
+  },
+  "tuna": {
+   "name": "Tuna",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "summer",
+    "winter"
+   ],
+   "time": "day",
+   "weather": "any",
+   "w": 10,
+   "diff": 70,
+   "move": "smooth",
+   "size": [
+    60,
+    180
+   ],
+   "price": 100,
+   "desc": "A powerful swimmer from the open sea."
+  },
+  "red_snapper": {
+   "name": "Red Snapper",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "summer",
+    "fall"
+   ],
+   "time": "any",
+   "weather": "rain",
+   "w": 12,
+   "diff": 40,
+   "move": "mixed",
+   "size": [
+    30,
+    70
+   ],
+   "price": 50,
+   "desc": "A bright red fish that bites in the rain."
+  },
+  "flounder": {
+   "name": "Flounder",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "spring",
+    "summer"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 15,
+   "diff": 50,
+   "move": "sinker",
+   "size": [
+    20,
+    50
+   ],
+   "price": 100,
+   "desc": "Lies flat on the sea floor with both eyes on top."
+  },
+  "halibut": {
+   "name": "Halibut",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "winter"
+   ],
+   "time": "day",
+   "weather": "any",
+   "w": 12,
+   "diff": 50,
+   "move": "sinker",
+   "size": [
+    40,
+    120
+   ],
+   "price": 80,
+   "desc": "A big flatfish that hugs the bottom."
+  },
+  "pufferfish": {
+   "name": "Pufferfish",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "summer"
+   ],
+   "time": "day",
+   "weather": "sun",
+   "w": 6,
+   "diff": 80,
+   "move": "floater",
+   "size": [
+    10,
+    30
+   ],
+   "price": 200,
+   "desc": "Puffs up into a spiky ball when caught."
+  },
+  "octopus": {
+   "name": "Octopus",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "summer"
+   ],
+   "time": "day",
+   "weather": "any",
+   "w": 5,
+   "diff": 90,
+   "move": "sinker",
+   "size": [
+    30,
+    80
+   ],
+   "price": 150,
+   "desc": "Clever and grabby. Holds on to the rocks."
+  },
+  "squid": {
+   "name": "Squid",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "winter"
+   ],
+   "time": "night",
+   "weather": "any",
+   "w": 12,
+   "diff": 65,
+   "move": "sinker",
+   "size": [
+    30,
+    70
+   ],
+   "price": 80,
+   "desc": "Rises from the deep on winter nights."
+  },
+  "sea_cucumber": {
+   "name": "Sea Cucumber",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "fall",
+    "winter"
+   ],
+   "time": "day",
+   "weather": "any",
+   "w": 12,
+   "diff": 40,
+   "move": "sinker",
+   "size": [
+    15,
+    30
+   ],
+   "price": 75,
+   "desc": "Squishy. Not actually a cucumber."
+  },
+  "red_mullet": {
+   "name": "Red Mullet",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "summer",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 15,
+   "diff": 55,
+   "move": "smooth",
+   "size": [
+    20,
+    40
+   ],
+   "price": 75,
+   "desc": "Long ago, people kept them as pets."
+  },
+  "swordfish": {
+   "name": "Swordfish",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "summer",
+    "fall"
+   ],
+   "time": "day",
+   "weather": "sun",
+   "w": 3,
+   "diff": 85,
+   "move": "dart",
+   "size": [
+    120,
+    300
+   ],
+   "price": 250,
+   "desc": "Fast as an arrow, with a nose to match."
+  },
+  "ghostfish": {
+   "name": "Ghostfish",
+   "where": [
+    "mine"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 30,
+   "diff": 50,
+   "move": "mixed",
+   "size": [
+    20,
+    40
+   ],
+   "price": 45,
+   "desc": "Pale and nearly see-through. Lives in cave lakes."
+  },
+  "stonefish": {
+   "name": "Stonefish",
+   "where": [
+    "mine"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 20,
+   "diff": 65,
+   "move": "sinker",
+   "size": [
+    15,
+    30
+   ],
+   "price": 150,
+   "desc": "Looks exactly like a rock until it bites.",
+   "min_floor": 4
+  },
+  "glowfin": {
+   "name": "Glowfin",
+   "where": [
+    "mine"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 12,
+   "diff": 75,
+   "move": "floater",
+   "size": [
+    10,
+    25
+   ],
+   "price": 250,
+   "desc": "Lights up the dark water of the deep caves.",
+   "min_floor": 7
+  },
+  "crystal_carp": {
+   "name": "Crystal Carp",
+   "where": [
+    "mine"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 6,
+   "diff": 80,
+   "move": "mixed",
+   "size": [
+    30,
+    60
+   ],
+   "price": 400,
+   "desc": "Its scales are as hard and clear as quartz.",
+   "min_floor": 9
+  },
+  "arctic_char": {
+   "name": "Arctic Char",
+   "where": [
+    "ice"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 30,
+   "diff": 45,
+   "move": "mixed",
+   "size": [
+    30,
+    60
+   ],
+   "price": 90,
+   "desc": "Thrives under the ice of frozen lakes."
+  },
+  "snow_smelt": {
+   "name": "Snow Smelt",
+   "where": [
+    "ice"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 30,
+   "diff": 30,
+   "move": "dart",
+   "size": [
+    8,
+    20
+   ],
+   "price": 60,
+   "desc": "A tiny fish that smells like cucumber."
+  },
+  "ice_pike": {
+   "name": "Ice Pike",
+   "where": [
+    "ice"
+   ],
+   "seasons": [
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 12,
+   "diff": 70,
+   "move": "dart",
+   "size": [
+    50,
+    110
+   ],
+   "price": 180,
+   "desc": "Waits motionless below the ice, then strikes."
+  },
+  "frost_cod": {
+   "name": "Frost Cod",
+   "where": [
+    "ice"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "night",
+   "weather": "any",
+   "w": 10,
+   "diff": 60,
+   "move": "smooth",
+   "size": [
+    40,
+    90
+   ],
+   "price": 140,
+   "desc": "Comes up to the ice holes at night."
+  },
+  "jade_koi": {
+   "name": "Jade Koi",
+   "where": [
+    "pond"
+   ],
+   "seasons": [
+    "spring"
+   ],
+   "time": "day",
+   "weather": "any",
+   "w": 1,
+   "diff": 95,
+   "move": "floater",
+   "size": [
+    60,
+    90
+   ],
+   "price": 2000,
+   "desc": "A legend of the village pond, green as new leaves.",
+   "legendary": true,
+   "maps": [
+    "town"
+   ]
+  },
+  "sunscale_marlin": {
+   "name": "Sunscale Marlin",
+   "where": [
+    "sea"
+   ],
+   "seasons": [
+    "summer"
+   ],
+   "time": "day",
+   "weather": "sun",
+   "w": 1,
+   "diff": 98,
+   "move": "dart",
+   "size": [
+    250,
+    400
+   ],
+   "price": 3000,
+   "desc": "Its scales blaze like the summer sun. Only seen off Gull Bay.",
+   "legendary": true,
+   "maps": [
+    "gull_bay"
+   ]
+  },
+  "ember_salmon": {
+   "name": "Ember Salmon",
+   "where": [
+    "river"
+   ],
+   "seasons": [
+    "fall"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 1,
+   "diff": 95,
+   "move": "mixed",
+   "size": [
+    90,
+    140
+   ],
+   "price": 2500,
+   "desc": "Glows like a coal as it leaps the Whisperwood river in fall.",
+   "legendary": true,
+   "maps": [
+    "whisperwood"
+   ]
+  },
+  "glacier_king": {
+   "name": "Glacier King",
+   "where": [
+    "ice"
+   ],
+   "seasons": [
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 1,
+   "diff": 100,
+   "move": "sinker",
+   "size": [
+    120,
+    200
+   ],
+   "price": 4000,
+   "desc": "The old king beneath the ice of Frostmere.",
+   "legendary": true,
+   "maps": [
+    "frostmere"
+   ]
+  },
+  "abyssal_angler": {
+   "name": "Abyssal Angler",
+   "where": [
+    "mine"
+   ],
+   "seasons": [
+    "spring",
+    "summer",
+    "fall",
+    "winter"
+   ],
+   "time": "any",
+   "weather": "any",
+   "w": 1,
+   "diff": 100,
+   "move": "mixed",
+   "size": [
+    60,
+    100
+   ],
+   "price": 5000,
+   "desc": "Dangles a light in the deepest cave lakes. Few have seen it.",
+   "legendary": true,
+   "min_floor": 10
+  }
+ },
+ "shell": {
+  "crab": {
+   "name": "Crab",
+   "where": [
+    "sea"
+   ],
+   "w": 30,
+   "price": 100,
+   "desc": "Pinches. Tastes great anyway."
+  },
+  "shrimp": {
+   "name": "Shrimp",
+   "where": [
+    "sea"
+   ],
+   "w": 25,
+   "price": 60,
+   "desc": "Small and sweet."
+  },
+  "lobster": {
+   "name": "Lobster",
+   "where": [
+    "sea"
+   ],
+   "w": 8,
+   "price": 120,
+   "desc": "A big crustacean with big claws."
+  },
+  "clam": {
+   "name": "Clam",
+   "where": [
+    "sea"
+   ],
+   "w": 25,
+   "price": 50,
+   "desc": "Snaps shut when you look at it."
+  },
+  "mussel": {
+   "name": "Mussel",
+   "where": [
+    "sea"
+   ],
+   "w": 20,
+   "price": 30,
+   "desc": "Clings to the rocks in clusters."
+  },
+  "oyster": {
+   "name": "Oyster",
+   "where": [
+    "sea"
+   ],
+   "w": 10,
+   "price": 40,
+   "desc": "Sometimes hides a pearl. Sometimes."
+  },
+  "crayfish": {
+   "name": "Crayfish",
+   "where": [
+    "pond",
+    "river",
+    "mine"
+   ],
+   "w": 30,
+   "price": 75,
+   "desc": "A tiny freshwater lobster."
+  },
+  "snail": {
+   "name": "Snail",
+   "where": [
+    "pond",
+    "river",
+    "mine",
+    "ice"
+   ],
+   "w": 30,
+   "price": 65,
+   "desc": "Slow, but it got into your pot."
+  },
+  "periwinkle": {
+   "name": "Periwinkle",
+   "where": [
+    "pond",
+    "river",
+    "ice"
+   ],
+   "w": 30,
+   "price": 20,
+   "desc": "A small freshwater snail."
+  }
+ },
+ "junk": [
+  [
+   "driftwood",
+   40
+  ],
+  [
+   "old_boot",
+   30
+  ],
+  [
+   "soggy_newspaper",
+   30
+  ]
+ ],
+ "treasure": [
+  [
+   "copper_ore",
+   12,
+   5,
+   10
+  ],
+  [
+   "iron_ore",
+   8,
+   3,
+   6
+  ],
+  [
+   "gold_ore",
+   4,
+   2,
+   4
+  ],
+  [
+   "coal",
+   10,
+   3,
+   8
+  ],
+  [
+   "quartz",
+   6,
+   1,
+   2
+  ],
+  [
+   "amethyst",
+   4,
+   1,
+   1
+  ],
+  [
+   "topaz",
+   4,
+   1,
+   1
+  ],
+  [
+   "emerald",
+   2,
+   1,
+   1
+  ],
+  [
+   "aquamarine",
+   3,
+   1,
+   1
+  ],
+  [
+   "ruby",
+   2,
+   1,
+   1
+  ],
+  [
+   "diamond",
+   1,
+   1,
+   1
+  ],
+  [
+   "bait",
+   10,
+   5,
+   10
+  ],
+  [
+   "wild_bait",
+   6,
+   3,
+   5
+  ],
+  [
+   "spinner",
+   3,
+   1,
+   1
+  ],
+  [
+   "cork_bobber",
+   3,
+   1,
+   1
+  ],
+  [
+   "trap_bobber",
+   3,
+   1,
+   1
+  ],
+  [
+   "treasure_lure",
+   2,
+   1,
+   1
+  ],
+  [
+   "pearl",
+   1,
+   1,
+   1
+  ]
+ ],
+ "wildlings": {
+  "pond": [
+   "puddlop",
+   "bubbloo",
+   "ripplefin"
+  ],
+  "river": [
+   "ripplefin",
+   "splashpup",
+   "bubbloo"
+  ],
+  "sea": [
+   "ripplefin",
+   "shelldo",
+   "zapfin",
+   "wavelash"
+  ],
+  "mine": [
+   "crystoad",
+   "shelldo"
+  ],
+  "ice": [
+   "iciclaw",
+   "frostpip"
+  ]
+ },
+ "rods": [
+  {
+   "name": "Bamboo Rod",
+   "price": 0,
+   "desc": "A simple bamboo rod. Takes bait."
+  },
+  {
+   "name": "Fiberglass Rod",
+   "price": 1800,
+   "desc": "Casts farther, and the catch bar is a little bigger.",
+   "requires": "fish:5"
+  },
+  {
+   "name": "Gold Rod",
+   "price": 6000,
+   "desc": "Casts far. Takes bait and one tackle.",
+   "requires": "fish:15"
+  },
+  {
+   "name": "Master Rod",
+   "price": 20000,
+   "desc": "The best rod money can buy: longest cast and the biggest catch bar.",
+   "requires": "fish:30"
+  }
+ ]
+}

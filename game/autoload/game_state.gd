@@ -2,9 +2,10 @@ extends Node
 ## The whole simulation state. The host is authoritative; actions here are
 ## called directly offline or via Net RPCs in co-op.
 
-const SAVE_VERSION := 3
+const SAVE_VERSION := 4
 const PERSISTENT_MAPS := ["farm", "greenhouse", "terrace"]
 const STARTERS := ["sproutle", "puddlop", "embercub"]
+const PLACE_REQUIRES := {"gull_bay": "story:coast"}
 
 var world: Dictionary = {}
 var grids: Dictionary = {}            # persistent FarmGrids
@@ -58,6 +59,7 @@ func new_game(opts: Dictionary) -> void:
 	_map_cache.clear()
 	for m in PERSISTENT_MAPS:
 		grids[m] = MapBuilder.build_authored(Data.get_map(m)).grid
+		_mark_patches(m)
 	farm_chest = Inventory.new(10, 8)
 	shipping_bin = _new_shipping_bin()
 	ranch.clear()
@@ -135,6 +137,7 @@ func ctx() -> Dictionary:
 	return {
 		"shrines": world.shrines.size(), "farm_level": int(world.farm.level),
 		"hearts": p.hearts_dict() if p else {}, "recipes": p.recipes if p else [], "buildings": world.buildings,
+		"fish": Fishing.species_caught(p),
 	}
 
 func has_building(id: String) -> bool:
@@ -159,11 +162,21 @@ func hatchery_capacity() -> int:
 func region_unlocked(rid: String) -> bool:
 	return rid in world.regions
 
+## Places on the valley map: regions open with their shrines, the rest by their road's requirement.
+func place_open(id: String) -> bool:
+	if id in ["farm", "town"]:
+		return true
+	if Data.regions.has(id):
+		return region_unlocked(id)
+	return is_open_requirement(str(PLACE_REQUIRES.get(id, "")))
+
 func is_open_requirement(req: String) -> bool:
 	if req == "":
 		return true
 	if req.begins_with("region:"):
 		return region_unlocked(req.substr(7))
+	if req.begins_with("story:"):
+		return int(world.get("quest", 0)) >= Adventure.chapter_index(req.substr(6))
 	if Data.buildings.has(req):
 		return has_building(req)
 	return Economy.meets(req, ctx())
@@ -172,6 +185,10 @@ func luck() -> float:
 	return float(world.get("luck", 0.0))
 
 # --- Maps -----------------------------------------------------------------------------
+
+func _mark_patches(m: String) -> void:
+	for patch in Data.get_map(m).get("patches", []):
+		world.flags["patch:" + str(patch.id)] = true
 
 func map_info(map_id: String) -> Dictionary:
 	if map_id.begins_with("mine:") and map_id.split(":").size() == 3:
@@ -556,11 +573,12 @@ func catch_up() -> Dictionary:
 	return rep
 
 ## What a shopkeeper pays this player for one item, with their sell bonus.
-func sell_value(p: PlayerData, id: String, q: int, shipping: bool = false) -> int:
+func sell_value(p: PlayerData, id: String, q: int, shipping: bool = false, shop_id: String = "") -> int:
 	var base := Data.sell_price(id, q)
 	if base <= 0:
 		return 0
 	var bonus := Modifiers.value(p, "sell_price") + (Modifiers.value(p, "ship_bonus") if shipping else 0.0)
+	bonus += float(Data.shops.get(shop_id, {}).get("buys", {}).get(str(Data.get_item(id).get("cat", "")), 0.0))
 	return maxi(1, int(round(base * (1.0 + bonus))))
 
 ## A shop price after this player's discount (at most half off).
@@ -859,7 +877,7 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 				give_item(p, o.id, 1)
 				r.ok = true
 				r.sfx = "chop"
-			elif tool == "pickaxe" and not g.object_at(t).is_empty() and g.object_at(t).kind in ["machine", "sprinkler", "scarecrow", "decor", "chest"]:
+			elif tool == "pickaxe" and not g.object_at(t).is_empty() and g.object_at(t).kind in ["machine", "sprinkler", "scarecrow", "decor", "chest", "crab_pot"]:
 				return pick_up_object(pid, map_id, t)
 	if r.ok:
 		EventBus.tile_changed.emit(map_id, t)
@@ -892,6 +910,9 @@ func pick_up_object(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 	if o.kind == "machine" and Machines.is_busy(o):
 		r.reason = tr("It's busy.")
 		return r
+	if o.kind == "crab_pot" and not o.get("catch", []).is_empty():
+		r.reason = tr("Empty the pot first.")
+		return r
 	if not p.inventory.can_add(o.id, 1):
 		r.reason = tr("No room in your pack.")
 		return r
@@ -913,6 +934,20 @@ func use_item(pid: String, map_id: String, t: Vector2i, uid: String) -> Dictiona
 	var e: Dictionary = f.entry
 	var it: Dictionary = Data.get_item(e.id)
 	var cat: String = it.get("cat", "")
+	if map_id in PERSISTENT_MAPS and cat == "bait" and g.object_at(t).get("kind", "") == "crab_pot":
+		var pot := g.object_at(t)
+		if int(pot.get("bait", 0)) >= 5:
+			r.reason = tr("The pot is full of bait.")
+			return r
+		f.inv.take(uid, 1)
+		pot["bait"] = int(pot.get("bait", 0)) + 1
+		if pot.get("catch", []).size() < Fishing.CRAB_HOLD:
+			pot.next_at = minf(float(pot.next_at), TimeService.now() + Fishing.CRAB_BAIT_SECONDS)
+		r.ok = true
+		r.sfx = "plant"
+		r.fx.append([tr("Baited (%d)") % int(pot.bait), Color("#a0e080")])
+		EventBus.inventory_changed.emit()
+		return r
 	if map_id in PERSISTENT_MAPS:
 		if cat == "seed":
 			if g.plant(t, e.id, season(), int(e.q) + 1):
@@ -988,6 +1023,8 @@ func harvest_at(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 			r.sfx = "harvest"
 			r.fx.append(["+%d %s" % [int(out.n), Data.item_name(out.id)], Color.WHITE])
 			add_farm_xp(Progression.XP.craft, at)
+		elif o.get("kind", "") == "crab_pot":
+			_collect_crab_pot(p, map_id, t, o, r)
 		elif o.get("kind", "") == "forage":
 			g.remove_object(t)
 			var fl := Modifiers.value(p, "forage_luck")
@@ -1144,13 +1181,13 @@ func _purchase_note(item_id: String, n: int, before: Dictionary, after: Dictiona
 	return tr("Bought %d %s (%s)") % [n, name, ", ".join(parts)]
 
 ## Sells straight to a shopkeeper (instant, unlike the shipping bin).
-func sell(pid: String, uid: String, n: int = -1) -> Dictionary:
+func sell(pid: String, uid: String, n: int = -1, shop_id: String = "") -> Dictionary:
 	var p := player(pid)
 	var r := _res(false)
 	var f := p.inventory.find(uid) if p else {}
 	if f.is_empty():
 		return r
-	var price := sell_value(p, f.entry.id, int(f.entry.q))
+	var price := sell_value(p, f.entry.id, int(f.entry.q), false, shop_id)
 	if price <= 0 or Data.get_item(f.entry.id).get("cat", "") in ["tool", "key"]:
 		r.reason = tr("They won't buy that.")
 		return r
@@ -1640,6 +1677,216 @@ func respec_skills_act(pid: String) -> Dictionary:
 	EventBus.skills_changed.emit(pid)
 	return _res(true)
 
+# --- Fishing -----------------------------------------------------------------------------
+
+## What each player has on the hook (host only, never saved).
+var _hooked: Dictionary = {}
+
+## Casts at a water tile. The host rolls the catch now; the client only learns how it fights.
+func fish_cast_act(pid: String, map_id: String, t: Vector2i) -> Dictionary:
+	var p := player(pid)
+	var r := _res(false)
+	if p == null:
+		return r
+	if p.inventory.count("fishing_rod") == 0:
+		r.reason = tr("You need a fishing rod.")
+		return r
+	var info := map_info(map_id)
+	var kind := Fishing.water_kind(info, t)
+	if kind == "":
+		r.reason = tr("Cast into water.")
+		return r
+	var rod := p.tool_level("fishing_rod")
+	if not _spend_energy(p, Fishing.energy_cost(rod)):
+		return r
+	var bait := str(p.fishing.get("bait", ""))
+	if bait != "":
+		if p.inventory.remove(bait, 1):
+			EventBus.inventory_changed.emit()
+		else:
+			p.fishing.erase("bait")
+			r.fx.append([tr("Out of %s.") % Data.item_name(bait), Color("#ffb070")])
+			bait = ""
+	var tackle := str(p.fishing.get("tackle", "")) if Fishing.takes_tackle(rod) else ""
+	var lv: Array = info.get("levels", [2 + int(world.farm.level), 6 + int(world.farm.level)])
+	var c := Fishing.roll({
+		"kind": kind, "map": map_id, "season": season(), "night": Calendar.is_night(minute()),
+		"weather": str(world.get("weather", "sun")), "floor": int(info.get("floor", 0)), "dex": p.fishing.get("dex", {}),
+		"rod": rod, "bait": bait, "tackle": tackle, "luck": Modifiers.value(p, "fish_luck") + luck() * 0.5,
+		"bite": Modifiers.value(p, "fish_bite"), "levels": lv,
+	}, rng)
+	c["at"] = Time.get_ticks_msec() / 1000.0
+	c["tackle"] = tackle
+	_hooked[pid] = c
+	r.ok = true
+	r["bite"] = float(c.bite)
+	r["hook"] = str(c.kind)
+	r["diff"] = int(c.diff)
+	r["move"] = str(c.move)
+	r["treasure"] = bool(c.treasure)
+	r["legendary"] = bool(Fishing.fish(str(c.id)).get("legendary", false))
+	r["zone"] = Fishing.zone_size(rod, tackle, Modifiers.value(p, "fish_zone"))
+	r["escape"] = Fishing.escape_mult(tackle)
+	return r
+
+## Ends a cast. outcome: "caught", "perfect", "easy" (auto-reeled), "lost" or "missed".
+func fish_result_act(pid: String, outcome: String, got_treasure: bool = false) -> Dictionary:
+	var p := player(pid)
+	var c: Dictionary = _hooked.get(pid, {})
+	_hooked.erase(pid)
+	var r := _res(false)
+	if p == null or c.is_empty():
+		return r
+	if outcome in ["lost", "missed"]:
+		r.ok = true
+		r["lost"] = true
+		return r
+	var fight := 0.0 if c.kind == "wild" else Fishing.MIN_FIGHT
+	if Time.get_ticks_msec() / 1000.0 - float(c.at) < (float(c.bite) + fight) * 0.9:
+		r.reason = tr("The fish got away.")
+		return r
+	r.ok = true
+	match str(c.kind):
+		"wild":
+			r["wild"] = str(c.id)
+			r["level"] = int(c.level)
+			return r
+		"junk":
+			give_item(p, str(c.id), 1)
+			r["id"] = str(c.id)
+			r.fx.append(["+1 %s" % Data.item_name(str(c.id)), Color("#c0b090")])
+		"fish":
+			var id := str(c.id)
+			var q := Fishing.quality(id, float(c.size), outcome == "perfect", outcome == "easy")
+			var is_new: bool = not p.fishing.get("dex", {}).has(id)
+			var rec := Fishing.record(p, id, float(c.size))
+			give_item(p, id, 1, q)
+			r["id"] = id
+			r["size"] = float(c.size)
+			r["q"] = q
+			r["new"] = is_new
+			r["record"] = rec and not is_new
+			r.fx.append(["+1 %s" % Data.item_name(id, q), [Color.WHITE, Color("#d8e0f0"), Color("#ffd447"), Color("#c890ff")][q]])
+			bump_stat("fish", 1, pid)
+			p.stat_add("fish:" + id)
+			if is_new:
+				p.stat_add("fish_new")
+			if Fishing.fish(id).get("legendary", false):
+				p.stat_add("fish_legend")
+				EventBus.toast.emit(tr("You caught the legendary %s!") % Data.item_name(id), "star")
+			add_farm_xp(Progression.XP.harvest * 2)
+			if got_treasure and c.treasure:
+				var loot := Fishing.treasure_loot(rng, Modifiers.value(p, "fish_luck"))
+				r["treasure"] = loot
+				for e in loot:
+					give_item(p, str(e[0]), int(e[1]))
+					r.fx.append(["+%d %s" % [int(e[1]), Data.item_name(str(e[0]))], Color("#ffd447")])
+	var tackle := str(c.get("tackle", ""))
+	if tackle != "" and str(p.fishing.get("tackle", "")) == tackle:
+		var uses := int(p.fishing.get("tackle_uses", Fishing.TACKLE_USES)) - 1
+		if uses <= 0:
+			p.fishing.erase("tackle")
+			p.fishing.erase("tackle_uses")
+			r.fx.append([tr("Your %s wore out.") % Data.item_name(tackle), Color("#ffb070")])
+		else:
+			p.fishing["tackle_uses"] = uses
+	r.sfx = "harvest"
+	EventBus.inventory_changed.emit()
+	return r
+
+## Puts bait or tackle on the rod (the same item again takes it off).
+func equip_tackle_act(pid: String, uid: String) -> Dictionary:
+	var p := player(pid)
+	var r := _res(false)
+	var f := p.inventory.find(uid) if p else {}
+	if f.is_empty():
+		return r
+	var id: String = f.entry.id
+	match str(Data.get_item(id).get("cat", "")):
+		"bait":
+			if str(p.fishing.get("bait", "")) == id:
+				p.fishing.erase("bait")
+				r.fx.append([tr("Took the %s off the rod.") % Data.item_name(id), Color.WHITE])
+			else:
+				p.fishing["bait"] = id
+				r.fx.append([tr("%s on the rod.") % Data.item_name(id), Color("#a0e080")])
+		"tackle":
+			if not Fishing.takes_tackle(p.tool_level("fishing_rod")):
+				r.reason = tr("Tackle needs a Gold rod or better.")
+				return r
+			var taken: Dictionary = f.inv.take(uid, 1)
+			var old := str(p.fishing.get("tackle", ""))
+			if old != "":
+				give_item(p, old, 1, 0, {"uses": int(p.fishing.get("tackle_uses", Fishing.TACKLE_USES))})
+			p.fishing["tackle"] = id
+			p.fishing["tackle_uses"] = int(taken.get("meta", {}).get("uses", Fishing.TACKLE_USES))
+			r.fx.append([tr("%s on the rod.") % Data.item_name(id), Color("#a0e080")])
+		_:
+			return r
+	r.ok = true
+	r.sfx = "pickup"
+	EventBus.inventory_changed.emit()
+	return r
+
+## Takes tackle off the rod and back into the pack.
+func unequip_tackle_act(pid: String) -> Dictionary:
+	var p := player(pid)
+	if p == null or not p.fishing.has("tackle"):
+		return _res(false)
+	give_item(p, str(p.fishing.tackle), 1, 0, {"uses": int(p.fishing.get("tackle_uses", Fishing.TACKLE_USES))})
+	p.fishing.erase("tackle")
+	p.fishing.erase("tackle_uses")
+	return _res(true)
+
+func upgrade_rod_act(pid: String) -> Dictionary:
+	var p := player(pid)
+	if p == null:
+		return _res(false)
+	var lvl := p.tool_level("fishing_rod")
+	var spec := Fishing.rod_spec(lvl + 1)
+	if spec.is_empty():
+		return _res(false, tr("Your rod is already the best there is."))
+	var req := str(spec.get("requires", ""))
+	if not Economy.meets(req, {"fish": Fishing.species_caught(p)}):
+		return _res(false, Economy.req_text(req))
+	if not spend(buy_value(p, int(spec.price)), "Rod upgrade"):
+		return _res(false, tr("Not enough gold."))
+	p.tool_levels["fishing_rod"] = lvl + 1
+	var r := _res(true)
+	r.sfx = "levelup"
+	r["note"] = tr("Your rod is now a %s.") % Fishing.rod_name(lvl + 1)
+	return r
+
+## A villager's one-time welcome gift (Ansel's first rod).
+func first_gift_act(pid: String, vid: String) -> Dictionary:
+	var p := player(pid)
+	var gift: Dictionary = Data.villagers.get(vid, {}).get("first_gift", {})
+	if p == null or gift.is_empty() or p.flags.has("gift:" + vid):
+		return _res(false)
+	p.flags["gift:" + vid] = true
+	grant(gift, p)
+	return _res(true)
+
+## Collects whatever a crab pot caught.
+func _collect_crab_pot(p: PlayerData, map_id: String, t: Vector2i, o: Dictionary, r: Dictionary) -> void:
+	var now := TimeService.now()
+	var was_full: bool = o.get("catch", []).size() >= Fishing.CRAB_HOLD
+	Fishing.crab_step(o, now, Fishing.water_kind(map_info(map_id), t), rng)
+	var got: Array = o.get("catch", [])
+	if got.is_empty():
+		r.reason = tr("Nothing in the pot yet. Next catch in %s.") % TimeService.duration_text(maxf(0.0, float(o.next_at) - now))
+		return
+	for id in got:
+		give_item(p, str(id), 1)
+		r.fx.append(["+1 %s" % Data.item_name(str(id)), Color.WHITE])
+	o["catch"] = []
+	if was_full or float(o.next_at) < now:
+		o.next_at = now + Fishing.crab_period(o)
+	bump_stat("crab", got.size(), p.id)
+	r.ok = true
+	r.sfx = "harvest"
+	EventBus.objects_changed.emit(map_id)
+
 ## Quest rewards: money, items, recipe, friendship {villager: points}, skill points, emotes, chips, flags.
 func grant_quest_reward(p: PlayerData, reward: Dictionary) -> void:
 	var rest := {}
@@ -1835,8 +2082,12 @@ func from_dict(d: Dictionary) -> void:
 	for m in PERSISTENT_MAPS:
 		if d.grids.has(m):
 			grids[m] = FarmGrid.from_dict(d.grids[m])
+			for patch in Data.get_map(m).get("patches", []):
+				if not world.flags.has("patch:" + str(patch.id)):
+					MapBuilder.apply_patch(grids[m], patch.ops)
 		else:
 			grids[m] = MapBuilder.build_authored(Data.get_map(m)).grid
+		_mark_patches(m)
 	farm_chest = Inventory.new(10, 8)
 	farm_chest.from_dict(d.get("farm_chest", {}))
 	_load_shipping_bin(d)

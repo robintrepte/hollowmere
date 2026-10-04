@@ -57,6 +57,8 @@ func _ready() -> void:
 		_tabs.add_child(UITheme.button("Upgrade tools", func(): _tab = "upgrades"; _refresh()))
 	if shop.get("backpacks", false):
 		_tabs.add_child(UITheme.button("Backpacks", func(): _tab = "backpacks"; _refresh()))
+	if shop.get("rods", false):
+		_tabs.add_child(UITheme.button("Rods", func(): _tab = "rods"; _refresh()))
 	var sc := ScrollContainer.new()
 	sc.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -95,6 +97,8 @@ func _refresh() -> void:
 		_upgrade_list()
 	elif _tab == "backpacks":
 		_backpack_list()
+	elif _tab == "rods":
+		_rod_list()
 	else:
 		var p := GameState.local_player()
 		var seen := {}
@@ -141,7 +145,7 @@ func _sell_row(e: Dictionary) -> Control:
 	var n := UITheme.label(tr("%s  x%d") % [Data.item_name(e.id, int(e.q)), int(e.n)], 10)
 	n.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	h.add_child(n)
-	var price := GameState.sell_value(GameState.local_player(), e.id, int(e.q))
+	var price := GameState.sell_value(GameState.local_player(), e.id, int(e.q), false, shop_id)
 	var sell := CoinLabel.button(price, func(): _sell(e.uid, 1), tr("Sell 1"))
 	sell.remove_theme_color_override("font_color")
 	h.add_child(sell)
@@ -184,9 +188,11 @@ func _act(action: String, args: Array) -> void:
 	if _buying:
 		return
 	_buying = true
-	var r: Dictionary = Coop.act(action, args)
+	var r: Dictionary = await Coop.act_async(action, args)
 	if r.ok:
 		Audio.sfx(r.get("sfx", "coin") if r.get("sfx", "") != "" else "coin")
+		if str(r.get("note", "")) != "":
+			EventBus.toast.emit(str(r.note), "star")
 	elif r.reason != "":
 		Audio.sfx("error")
 		EventBus.toast.emit(r.reason, "")
@@ -235,6 +241,23 @@ func _upgrade_list() -> void:
 			desc = tr("%s → %s. Holds more water and soaks a wider area.") % [cur_name, next_name]
 		_list.add_child(_offer(Art.item(tool), tr("%s %s") % [next_name, Data.item_name(tool)], desc, costs, tr("Upgrade"),
 			GameState.money() >= int(spec.price) and have >= int(spec.n), func(): _act("upgrade_tool", [tool])))
+
+func _rod_list() -> void:
+	var p := GameState.local_player()
+	var lvl := p.tool_level("fishing_rod")
+	for i in range(1, Fishing.MAX_ROD + 1):
+		var spec := Fishing.rod_spec(i)
+		var price := GameState.buy_value(p, int(spec.price))
+		var req := str(spec.get("requires", ""))
+		var req_ok := Economy.meets(req, GameState.ctx())
+		var costs: Array = []
+		if i > lvl:
+			costs.append([price, GameState.money() >= price])
+			if not req_ok:
+				costs.append([Economy.req_text(req), false])
+		var done := tr("Owned ✓") if i <= lvl else ""
+		_list.add_child(_offer(Art.item("fishing_rod"), Fishing.rod_name(i), tr(str(spec.desc)), costs, tr("Upgrade"),
+			i == lvl + 1 and req_ok and GameState.money() >= price, func(): _act("upgrade_rod_act", []), done))
 
 func _backpack_list() -> void:
 	var p := GameState.local_player()
@@ -288,7 +311,7 @@ func _sell(uid: String, n: int) -> void:
 	if _buying:
 		return
 	_buying = true
-	var r: Dictionary = Coop.act("sell", [uid, n])
+	var r: Dictionary = Coop.act("sell", [uid, n, shop_id])
 	if r.ok:
 		Audio.sfx("coin")
 	await get_tree().process_frame

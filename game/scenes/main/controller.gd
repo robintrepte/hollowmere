@@ -9,6 +9,7 @@ var player: Player
 var busy := false
 var adventure: AdventureFlow
 var quests: QuestFlow
+var fishing: FishingFlow
 
 func setup(m: Node, u: UIRoot, w: World, p: Player) -> void:
 	main = m
@@ -19,6 +20,8 @@ func setup(m: Node, u: UIRoot, w: World, p: Player) -> void:
 	add_child(adventure)
 	quests = QuestFlow.new(self)
 	add_child(quests)
+	fishing = FishingFlow.new(self)
+	add_child(fishing)
 	player.use_pressed.connect(_on_use)
 	player.interact_pressed.connect(_on_interact)
 	Coop.act_result.connect(_feedback)
@@ -54,6 +57,10 @@ func _on_use(t: Vector2i) -> void:
 		return
 	var it: Dictionary = Data.get_item(e.id)
 	var cat: String = it.get("cat", "")
+	if e.id == "fishing_rod":
+		if not fishing.active() and not player.doll.is_swinging():
+			fishing.start()
+		return
 	if cat == "tool":
 		if player.doll.is_swinging():
 			return
@@ -68,6 +75,12 @@ func _on_use(t: Vector2i) -> void:
 	var o: Dictionary = g.object_at(t) if g else {}
 	if o.get("kind", "") == "machine" and not Machines.is_busy(o):
 		_act("load_machine", [world.map_id, t, e.uid])
+		return
+	if cat == "bait" and o.get("kind", "") == "crab_pot":
+		_act("use_item", [world.map_id, t, e.uid])
+		return
+	if cat in ["bait", "tackle"]:
+		_act("equip_tackle_act", [e.uid])
 		return
 	if cat in ["seed", "sapling"] or it.has("fert") or it.has("place"):
 		_act("use_item", [world.map_id, t, e.uid])
@@ -163,6 +176,9 @@ func _interact_object(t: Vector2i, o: Dictionary) -> bool:
 		"chest":
 			_open_chest(t, o)
 			return true
+		"crab_pot":
+			_act("harvest_at", [world.map_id, t])
+			return true
 	return false
 
 func _open_chest(t: Vector2i, o: Dictionary) -> void:
@@ -218,6 +234,8 @@ func _interact_static(io: Dictionary) -> void:
 				EventBus.map_change_requested.emit(io.to, Vector2i(int(io.tx), int(io.ty)))
 			else:
 				await ui.say([tr("It's blocked. (%s)") % Economy.req_text(io.get("requires", ""))])
+		"ferry":
+			await ui.say(["The ferry to Lumière isn't running yet. The ferryman says the boat needs repairs first."], tr("Ferry"))
 		"lot":
 			await ui.say([tr("An empty lot for the %s. Robin at the Carpenter's can build it.") % io.get("label", io.id).to_lower()])
 		"building":
@@ -345,7 +363,8 @@ func _talk(npc: Npc) -> void:
 	elif await quests.talk(vid):
 		pass
 	elif ev != "":
-		var lines: Array = Data.villagers[vid].events[ev].get("lines", [])
+		var evd: Variant = Data.villagers[vid].events[ev]
+		var lines: Array = evd if evd is Array else evd.get("lines", [])
 		await ui.say(lines, name, _portrait(vid))
 		st.events.append(ev)
 		var rw: Dictionary = Data.villagers[vid].get("event_rewards", {}).get(ev, {})
@@ -360,6 +379,12 @@ func _talk(npc: Npc) -> void:
 		if Relationships.hearts(st) > before:
 			npc.show_heart_hint("+♥")
 			Audio.sfx("heart")
+	var gift_line := str(Data.villagers.get(vid, {}).get("first_gift_line", ""))
+	if gift_line != "" and not p.flags.has("gift:" + vid):
+		await ui.say([gift_line], name, _portrait(vid))
+		var gr: Dictionary = await Coop.act_async("first_gift_act", [vid])
+		if gr.get("ok", false):
+			Audio.sfx("gift")
 	EventBus.inventory_changed.emit()
 	player.locked = false
 	busy = false
