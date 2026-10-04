@@ -63,7 +63,7 @@ msgstr ""
 msgid " (%d ribbons)"
 msgstr ""
 
-#: scenes/main/main.gd:98
+#: scenes/main/main.gd:99
 #, c-format
 msgid " (%s)"
 msgstr ""
@@ -151,7 +151,7 @@ msgstr ""
 msgid "%d hearts with %s"
 msgstr ""
 
-#: autoload/game_state.gd:879
+#: autoload/game_state.gd:881
 #, c-format
 msgid "%d in %s"
 msgstr ""
@@ -321,17 +321,17 @@ msgstr ""
 msgid "%s can't battle right now."
 msgstr ""
 
-#: autoload/game_state.gd:674
+#: autoload/game_state.gd:676
 #, c-format
 msgid "%s can't grow in %s."
 msgstr ""
 
-#: scenes/main/main.gd:461
+#: scenes/main/main.gd:463
 #, c-format
 msgid "%s chain x%d! Starry odds x%.1f%s"
 msgstr ""
 
-#: scenes/main/main.gd:352
+#: scenes/main/main.gd:354
 #, c-format
 msgid "%s challenges you to a friendly battle! (Nothing is lost, win or lose.)"
 msgstr ""
@@ -391,7 +391,7 @@ msgstr ""
 msgid "%s has received enough gifts this week."
 msgstr ""
 
-#: autoload/game_state.gd:1339
+#: autoload/game_state.gd:1341
 #, c-format
 msgid "%s has to keep at least one Wildling."
 msgstr ""
@@ -431,7 +431,7 @@ msgstr ""
 msgid "%s is hurt by its burn!"
 msgstr ""
 
-#: autoload/game_state.gd:951
+#: autoload/game_state.gd:953
 #, c-format
 msgid "%s is ready!"
 msgstr ""
@@ -461,7 +461,7 @@ msgstr ""
 msgid "%s isn't convinced yet."
 msgstr ""
 
-#: scenes/main/main.gd:430
+#: scenes/main/main.gd:432
 #, c-format
 msgid "%s joined %s!"
 msgstr ""
@@ -516,12 +516,12 @@ msgstr ""
 msgid "%s nature · %s"
 msgstr ""
 
-#: autoload/game_state.gd:1334
+#: autoload/game_state.gd:1336
 #, c-format
 msgid "%s no longer has that Wildling."
 msgstr ""
 
-#: autoload/game_state.gd:1330
+#: autoload/game_state.gd:1332
 #, c-format
 msgid "%s no longer has that item."
 msgstr ""
@@ -531,7 +531,7 @@ msgstr ""
 msgid "%s offers"
 msgstr ""
 
-#: autoload/game_state.gd:1286
+#: autoload/game_state.gd:1288
 #, c-format
 msgid "%s only takes one rematch a week."
 msgstr ""
@@ -611,7 +611,7 @@ msgstr ""
 msgid "%s wants to be your friend!"
 msgstr ""
 
-#: scenes/main/main.gd:369
+#: scenes/main/main.gd:371
 #, c-format
 msgid "%s wants to trade with you."
 msgstr ""
@@ -829,7 +829,7 @@ msgstr ""
 msgid "+%d energy"
 msgstr ""
 
-#: autoload/game_state.gd:739
+#: autoload/game_state.gd:741
 #, c-format
 msgid "+1 %s"
 msgstr ""
@@ -1316,7 +1316,7 @@ msgstr ""
 msgid "All eight shrines are restored! The valley is whole again. Seasonal legends now roam the land, and the Deep Hollow goes ever deeper."
 msgstr ""
 
-#: scenes/main/main.gd:105
+#: scenes/main/main.gd:106
 msgid "All save slots are full. Delete a farm from the Load menu first."
 msgstr ""
 
@@ -1324,11 +1324,11 @@ msgstr ""
 msgid "Already built."
 msgstr ""
 
-#: autoload/game_state.gd:1008
+#: autoload/game_state.gd:1010
 msgid "Already delivered."
 msgstr ""
 
-#: autoload/game_state.gd:1051
+#: autoload/game_state.gd:1053
 msgid "Already on the farm."
 msgstr ""
 
@@ -1460,7 +1460,7 @@ msgstr ""
 msgid "Backpacks"
 msgstr ""
 
-#: autoload/game_state.gd:1048
+#: autoload/game_state.gd:1050
 msgid "Bad creature."
 msgstr ""
 
@@ -1528,7 +1528,7 @@ msgstr ""
 msgid "Battle three village champions in a row!"
 msgstr ""
 
-#: scenes/main/adventure_flow.gd:72 scenes/main/main.gd:352
+#: scenes/main/adventure_flow.gd:72 scenes/main/main.gd:354
 msgid "Battle!"
 msgstr ""
 
@@ -1598,7 +1598,7 @@ msgstr ""
 msgid "Befriended %d · Seen %d · Total %d"
 msgstr ""
 
-#: scenes/main/main.gd:422
+#: scenes/main/main.gd:424
 #, c-format
 msgid "Befriended in %s at Lv%d"
 msgstr ""
@@ -1696,17 +1696,17 @@ msgstr ""
 msgid "Both Wildlings must live in the Den."
 msgstr ""
 
-#: autoload/game_state.gd:873 scenes/ui/shop_panel.gd:260
+#: autoload/game_state.gd:875 scenes/ui/shop_panel.gd:260
 #, c-format
 msgid "Bought %d %s"
 msgstr ""
 
-#: autoload/game_state.gd:880
+#: autoload/game_state.gd:882
 #, c-format
 msgid "Bought %d %s (%s)"
 msgstr ""
 
-#: autoload/game_state.gd:876
+#: autoload/game_state.gd:878
 #, c-format
 msgid "Bought %d %s (in %s)"
 msgstr ""
@@ -1808,7 +1808,7 @@ msgstr ""
 msgid "Brews a thunderstorm for 5 turns. Spark and Gale moves surge."
 msgstr ""
 
-#: autoload/game_state.gd:967
+#: autoload/game_state.gd:969
 #, c-format
 msgid "Bring %d %s."
 msgstr ""
@@ -1817,7 +1817,7 @@ msgstr ""
 msgid "Bring ore, get bars. Bring bars, get better tools."
 msgstr ""
 
-#: autoload/game_state.gd:1259
+#: autoload/game_state.gd:1261
 msgid "Bring the Wildling along in your party."
 msgstr ""
 
@@ -1905,7 +1905,7 @@ msgstr ""
 msgid "Can't fall asleep. Farm: happiness never drops."
 msgstr ""
 
-#: autoload/game_state.gd:687
+#: autoload/game_state.gd:689
 msgid "Can't place that here."
 msgstr ""
 
@@ -1935,7 +1935,7 @@ msgstr ""
 msgid "Chapter %d · %s"
 msgstr ""
 
-#: scenes/main/main.gd:98
+#: scenes/main/main.gd:99
 #, c-format
 msgid "Chapter complete: %s%s"
 msgstr ""
@@ -2531,7 +2531,7 @@ msgstr ""
 msgid "Eggs you have"
 msgstr ""
 
-#: scenes/main/main.gd:100
+#: scenes/main/main.gd:101
 msgid "Elder Barley has something to tell you."
 msgstr ""
 
@@ -2583,7 +2583,7 @@ msgstr ""
 msgid "Emerald"
 msgstr ""
 
-#: autoload/game_state.gd:640
+#: autoload/game_state.gd:642
 msgid "Empty the chest first."
 msgstr ""
 
@@ -3507,7 +3507,7 @@ msgstr ""
 msgid "Heirloom Charm"
 msgstr ""
 
-#: scenes/main/main.gd:120
+#: scenes/main/main.gd:121
 msgid "Help make Hollowmere better? Share anonymous play stats: how long you play and how far your farm gets. Nothing personal, and you can change it in Settings."
 msgstr ""
 
@@ -3978,7 +3978,7 @@ msgstr ""
 msgid "It's blocked. (%s)"
 msgstr ""
 
-#: autoload/game_state.gd:643
+#: autoload/game_state.gd:645
 msgid "It's busy."
 msgstr ""
 
@@ -4346,7 +4346,7 @@ msgstr ""
 msgid "Let's go!"
 msgstr ""
 
-#: scenes/main/main.gd:369
+#: scenes/main/main.gd:371
 msgid "Let's trade"
 msgstr ""
 
@@ -4605,7 +4605,7 @@ msgstr ""
 msgid "Mira: She always said a valley grows as much as its people do."
 msgstr ""
 
-#: autoload/game_state.gd:922
+#: autoload/game_state.gd:924
 msgid "Missing ingredients."
 msgstr ""
 
@@ -4815,11 +4815,11 @@ msgstr ""
 msgid "No requests pinned up right now."
 msgstr ""
 
-#: autoload/game_state.gd:646
+#: autoload/game_state.gd:648
 msgid "No room in your pack."
 msgstr ""
 
-#: scenes/main/main.gd:120 scenes/main/main.gd:369
+#: scenes/main/main.gd:121 scenes/main/main.gd:371
 msgid "No thanks"
 msgstr ""
 
@@ -4839,7 +4839,7 @@ msgstr ""
 msgid "North: Whisperwood. Restore the Grove Shrine there."
 msgstr ""
 
-#: autoload/game_state.gd:836 autoload/game_state.gd:970 autoload/game_state.gd:992
+#: autoload/game_state.gd:838 autoload/game_state.gd:972 autoload/game_state.gd:994
 msgid "Not enough gold."
 msgstr ""
 
@@ -4847,7 +4847,7 @@ msgstr ""
 msgid "Not enough money."
 msgstr ""
 
-#: scenes/main/controller.gd:299 scenes/main/main.gd:352
+#: scenes/main/controller.gd:299 scenes/main/main.gd:354
 msgid "Not now"
 msgstr ""
 
@@ -5423,7 +5423,7 @@ msgstr ""
 msgid "Red Cabbage"
 msgstr ""
 
-#: autoload/game_state.gd:552
+#: autoload/game_state.gd:554
 msgid "Refilled!"
 msgstr ""
 
@@ -6438,7 +6438,7 @@ msgstr ""
 msgid "Super Salve"
 msgstr ""
 
-#: scenes/main/main.gd:120
+#: scenes/main/main.gd:121
 msgid "Sure"
 msgstr ""
 
@@ -6531,7 +6531,7 @@ msgstr ""
 msgid "Thanks for joining the %s! See you next year."
 msgstr ""
 
-#: autoload/game_state.gd:803
+#: autoload/game_state.gd:805
 msgid "That can't be shipped."
 msgstr ""
 
@@ -6543,11 +6543,11 @@ msgstr ""
 msgid "That old farm of yours has good bones."
 msgstr ""
 
-#: scenes/main/main.gd:130
+#: scenes/main/main.gd:131
 msgid "That save couldn't be loaded."
 msgstr ""
 
-#: autoload/game_state.gd:963
+#: autoload/game_state.gd:965
 msgid "That tool is already the best it can be."
 msgstr ""
 
@@ -6559,7 +6559,7 @@ msgstr ""
 msgid "That's not a machine."
 msgstr ""
 
-#: autoload/game_state.gd:828
+#: autoload/game_state.gd:830
 msgid "That's not for sale right now."
 msgstr ""
 
@@ -6613,7 +6613,7 @@ msgstr ""
 msgid "The Grove Shrines have been dark for many years."
 msgstr ""
 
-#: autoload/game_state.gd:1034
+#: autoload/game_state.gd:1036
 msgid "The Hatchery is full."
 msgstr ""
 
@@ -6673,7 +6673,7 @@ msgstr ""
 msgid "The canyon has many secrets underground."
 msgstr ""
 
-#: autoload/game_state.gd:1121
+#: autoload/game_state.gd:1123
 msgid "The cave is blocked."
 msgstr ""
 
@@ -6690,7 +6690,7 @@ msgstr ""
 msgid "The coin sparkles as it sinks. You feel a little luckier today."
 msgstr ""
 
-#: scenes/main/main.gd:155
+#: scenes/main/main.gd:156
 msgid "The connection to the farm was lost."
 msgstr ""
 
@@ -6796,11 +6796,11 @@ msgstr ""
 msgid "The rain stopped."
 msgstr ""
 
-#: autoload/game_state.gd:811
+#: autoload/game_state.gd:813
 msgid "The shipping bin is full."
 msgstr ""
 
-#: autoload/game_state.gd:1106
+#: autoload/game_state.gd:1108
 msgid "The shrine glows!"
 msgstr ""
 
@@ -6808,7 +6808,7 @@ msgstr ""
 msgid "The shrine is cold and dark. Its orb is cracked through."
 msgstr ""
 
-#: autoload/game_state.gd:1092
+#: autoload/game_state.gd:1094
 msgid "The shrine is still dark."
 msgstr ""
 
@@ -6886,7 +6886,7 @@ msgstr ""
 msgid "The way is blocked."
 msgstr ""
 
-#: scenes/main/main.gd:244
+#: scenes/main/main.gd:246
 #, c-format
 msgid "The way is blocked. (%s)"
 msgstr ""
@@ -6895,7 +6895,7 @@ msgstr ""
 msgid "The wayshrine hums. Its stones remember every road you've opened."
 msgstr ""
 
-#: autoload/game_state.gd:1254
+#: autoload/game_state.gd:1256
 msgid "The weekly Creature Show is held on Saturdays."
 msgstr ""
 
@@ -6947,15 +6947,15 @@ msgstr ""
 msgid "Theo: Try this. Honest opinion... You like it? I'll call it Veggie Stew."
 msgstr ""
 
-#: autoload/game_state.gd:1083
+#: autoload/game_state.gd:1085
 msgid "There's no Warden there."
 msgstr ""
 
-#: autoload/game_state.gd:1166
+#: autoload/game_state.gd:1168
 msgid "There's no festival today."
 msgstr ""
 
-#: autoload/game_state.gd:1041
+#: autoload/game_state.gd:1043
 msgid "There's no room there."
 msgstr ""
 
@@ -6963,7 +6963,7 @@ msgstr ""
 msgid "These two don't seem interested in each other."
 msgstr ""
 
-#: autoload/game_state.gd:891
+#: autoload/game_state.gd:893
 msgid "They won't buy that."
 msgstr ""
 
@@ -7205,12 +7205,12 @@ msgstr ""
 msgid "Umbral Glade"
 msgstr ""
 
-#: scenes/main/main.gd:201
+#: scenes/main/main.gd:203
 #, c-format
 msgid "Unknown map %s"
 msgstr ""
 
-#: autoload/game_state.gd:1337
+#: autoload/game_state.gd:1339
 msgid "Unknown offer."
 msgstr ""
 
@@ -7747,7 +7747,7 @@ msgstr ""
 msgid "You don't flinch from the heat. Respect."
 msgstr ""
 
-#: autoload/game_state.gd:915
+#: autoload/game_state.gd:917
 msgid "You don't know that recipe yet."
 msgstr ""
 
@@ -7795,15 +7795,15 @@ msgstr ""
 msgid "You have an eye for quality."
 msgstr ""
 
-#: autoload/game_state.gd:1202
+#: autoload/game_state.gd:1204
 msgid "You have nothing to display. Bring crops, artisan goods or gems."
 msgstr ""
 
-#: autoload/game_state.gd:1124
+#: autoload/game_state.gd:1126
 msgid "You haven't been that deep yet."
 msgstr ""
 
-#: autoload/game_state.gd:1180
+#: autoload/game_state.gd:1182
 msgid "You haven't found any eggs yet."
 msgstr ""
 
@@ -7832,16 +7832,16 @@ msgstr ""
 msgid "You make the valley more colorful."
 msgstr ""
 
-#: autoload/game_state.gd:1011 core/farming/machines.gd:16
+#: autoload/game_state.gd:1013 core/farming/machines.gd:16
 #, c-format
 msgid "You need %d %s."
 msgstr ""
 
-#: autoload/game_state.gd:1187
+#: autoload/game_state.gd:1189
 msgid "You need a Wildling to enter."
 msgstr ""
 
-#: autoload/game_state.gd:918
+#: autoload/game_state.gd:920
 msgid "You need a kitchen to cook."
 msgstr ""
 
@@ -7951,7 +7951,7 @@ msgstr ""
 msgid "You're the reason I keep coming back."
 msgstr ""
 
-#: autoload/game_state.gd:517
+#: autoload/game_state.gd:519
 msgid "You're too tired. Eat something or go to bed."
 msgstr ""
 
@@ -7969,12 +7969,12 @@ msgstr ""
 msgid "You've already given %s a gift today."
 msgstr ""
 
-#: autoload/game_state.gd:1168
+#: autoload/game_state.gd:1170
 #, c-format
 msgid "You've already joined this year's %s."
 msgstr ""
 
-#: autoload/game_state.gd:1256
+#: autoload/game_state.gd:1258
 msgid "You've already shown a Wildling today. Come back next Saturday!"
 msgstr ""
 
@@ -8039,7 +8039,7 @@ msgstr ""
 msgid "Your Wildlings are rested and fully healed!"
 msgstr ""
 
-#: scenes/main/adventure_flow.gd:25 scenes/main/main.gd:398
+#: scenes/main/adventure_flow.gd:25 scenes/main/main.gd:400
 msgid "Your Wildlings are too tired to battle. Rest at home or the Wildling Center."
 msgstr ""
 
@@ -8076,7 +8076,7 @@ msgstr ""
 msgid "Your name"
 msgstr ""
 
-#: autoload/game_state.gd:703 autoload/game_state.gd:833 autoload/game_state.gd:848 autoload/game_state.gd:925
+#: autoload/game_state.gd:705 autoload/game_state.gd:835 autoload/game_state.gd:850 autoload/game_state.gd:927
 msgid "Your pack is full."
 msgstr ""
 
@@ -8088,7 +8088,7 @@ msgstr ""
 msgid "Your veggies make the best stew. Seriously."
 msgstr ""
 
-#: autoload/game_state.gd:555
+#: autoload/game_state.gd:557
 msgid "Your watering can is empty. Refill it at water."
 msgstr ""
 
@@ -8180,15 +8180,15 @@ msgstr ""
 msgid "summer"
 msgstr ""
 
-#: scenes/main/main.gd:430
+#: scenes/main/main.gd:432
 msgid "the Sanctuary"
 msgstr ""
 
-#: scenes/main/main.gd:430
+#: scenes/main/main.gd:432
 msgid "the farm Den"
 msgstr ""
 
-#: autoload/game_state.gd:871
+#: autoload/game_state.gd:873
 msgid "the farm chest"
 msgstr ""
 
@@ -8230,7 +8230,7 @@ msgstr ""
 msgid "working as a %s"
 msgstr ""
 
-#: scenes/main/main.gd:430
+#: scenes/main/main.gd:432
 msgid "your party"
 msgstr ""
 
