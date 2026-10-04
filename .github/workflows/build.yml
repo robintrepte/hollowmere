@@ -190,6 +190,10 @@ jobs:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
         run: |
+          if [ -z "$DEPLOY_HOST" ] || [ -z "$DEPLOY_KEY" ]; then
+            echo "::warning::Set DEPLOY_HOST and DEPLOY_SSH_KEY to rsync the web build (HOSTING.md)."
+            exit 0
+          fi
           mkdir -p ~/.ssh && echo "$DEPLOY_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
           rsync -az --delete site/web/ deploy@"$DEPLOY_HOST":/srv/hollowmere/site/

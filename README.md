@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/robintrepte/hollowmere/actions/workflows/build.yml"><img src="https://github.com/robintrepte/hollowmere/actions/workflows/build.yml/badge.svg" alt="Build & Test"></a>
+  <a href="https://github.com/robintrepte/hollowmere/actions/workflows/build.yml?query=branch%3Amain"><img src="https://github.com/robintrepte/hollowmere/actions/workflows/build.yml/badge.svg?branch=main" alt="Build & Test"></a>
   <img src="https://img.shields.io/badge/Godot-4.7.2-478cbf?logo=godotengine&logoColor=white" alt="Godot 4.7.2">
   <img src="https://img.shields.io/badge/version-1.0.0-blue.svg" alt="1.0.0">
   <img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="MIT License">
