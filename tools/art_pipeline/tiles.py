@@ -711,6 +711,31 @@ def wall(top, face, dark, rim, seed):
     return Image.fromarray(img, "RGBA")
 
 
+MINE_BLOCKS = {
+    "block_dirt": (["#8a6444", "#9a7250", "#a8805c"], ["#5a3e2a", "#6a4a32", "#7a5638", "#885f40"], "#2e2016", "#b08a62", 11),
+    "block_stone": (["#7c7688", "#8a8496", "#9892a4"], ["#4e4a5a", "#5a5666", "#686474", "#747082"], "#24202c", "#a8a2b4", 12),
+    "block_deep": (["#4a4a66", "#56567a", "#62628a"], ["#2e2e44", "#383852", "#42425e", "#4c4c6a"], "#14141e", "#7070a0", 13),
+    "block_basalt": (["#4a4246", "#564c50", "#62585c"], ["#2a2426", "#342c30", "#3e363a", "#4a4044"], "#120e10", "#7a3a2a", 14),
+    "block_obsidian": (["#2a2040", "#34284e", "#40325e"], ["#16101e", "#1e1628", "#281e36", "#342848"], "#08060c", "#8a6ad0", 15),
+}
+
+
+def mine_blocks(world):
+    for name, spec in MINE_BLOCKS.items():
+        wall(*spec).save(os.path.join(world, f"{name}.png"))
+    fossil = np.array(wall(*MINE_BLOCKS["block_stone"]))
+    bone = hexc("#e8dcc0")
+    shade = hexc("#a89878")
+    cx, cy = 16, 31
+    for i in range(70):
+        a = i * 0.32
+        r = 1.0 + i * 0.11
+        x, y = int(round(cx + np.cos(a) * r)), int(round(cy + np.sin(a) * r * 0.8))
+        if 0 <= x < T and 17 <= y < 46:
+            fossil[y, x, :3] = bone if i % 9 else shade
+    Image.fromarray(fossil, "RGBA").save(os.path.join(world, "block_fossil.png"))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=".")
@@ -729,6 +754,7 @@ def main():
     shore_fringe().save(os.path.join(out, "shore_fringe.png"))
     wall(GRASS["summer"], ["#6a5a4a", "#7c6a56", "#8c7a62", "#9a8870"], "#3a2e24", "#4a6a32", 5).save(os.path.join(world, "cliff.png"))
     wall(["#3a3240", "#463c4c", "#524658"], ["#2a2430", "#363040", "#433b4e", "#4e465a"], "#16121c", "#5e5264", 6).save(os.path.join(world, "cavewall.png"))
+    mine_blocks(world)
     print("tiles written to", out)
 
 

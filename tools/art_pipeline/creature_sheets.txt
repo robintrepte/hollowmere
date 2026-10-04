@@ -9,3 +9,4 @@ sheet_08.png nocturnyx,gloomrat,duskrat,glimmer,radiantelle,solaria,wishmite,sta
 sheet_09.png truffleboar,nibblet,squeakster,moocalf,meadowmoo,cluckle,roostrum,burrowpup,digsby
 sheet_10.png snailmail,couriersnail,mimicrate,hollowisp,verdantis,maelstride,pyrrhex,terragorn,zephyros
 sheet_11.png voltaris,glaciel,eclipsar,vernalis,solstara,harvestus,hibernox,egg,egg_starry
+sheet_12.png moleup,drillmole,glintbat,gloomwing,prismite,prismarch,magmite,magmaul,cinderwyrm

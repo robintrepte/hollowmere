@@ -15,3 +15,8 @@ house_a 5 https://replicate.delivery/xezq/nOMZPuJJgIY0HNqfG7rd0x8SdGZ0cOyPvdwYKe
 house_b 5 https://replicate.delivery/xezq/ShdH1f0OAJQnUqmvb0JMVvTHcGACKwjnsw1fYQL8xyi6whTXA/tmpocehfk2c.png
 house_c 5 https://replicate.delivery/xezq/9dubjCFTxKoFJ9Kf6c8ekDsB9ind1RixfnRfGZiKyavsAHOdB/tmpfqghd1e8.png
 fisher_house 6 https://replicate.delivery/xezq/oBy7WHYgCKbCDNEDqXda0HEQfSVPRgfKHHQ5eOyS4rzAeiPdB/tmpl_yth84w.png
+mine_guild 6 https://replicate.delivery/xezq/95CBV0HbN94OHxxLbS3n4Wa9FCUr2KhLW0N6dbAeCi4cj8pLA/tmpb42iq3tf.png
+ore_shop 5 https://replicate.delivery/xezq/gfu4jYxwWhSf606VldWvzHTE8MLeDTo0ngefJSsG97zs3If0F/tmpx1ub1i6i.png
+forge 5 https://replicate.delivery/xezq/UO1WorUDTQqgJ5xUhxGSrrwuHn10zcZxBgvKXkA73sbwRepLA/tmp2gbwwm0s.png
+geologist 4 https://replicate.delivery/xezq/SaaH49e4B7V7QaWNCq6L6vA3Nf0QToZWXUZpq99dDgEFH5TXA/tmpclasfi5k.png
+mine_lift 5 https://replicate.delivery/xezq/hA4QRqbmrSLIEZmJg4Bm84EqnW3WLiuuHlSEGvqs1SByRepLA/tmp6z0vlp65.png
