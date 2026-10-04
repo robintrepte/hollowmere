@@ -8039,3 +8039,10 @@ msgstr "%d Min."
 msgid "%d s"
 msgstr "%d Sek."
 
+#, c-format
+msgid "%s gold"
+msgstr "%s Gold"
+
+msgid "M"
+msgstr "Mio."
+

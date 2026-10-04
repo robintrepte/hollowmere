@@ -392,6 +392,11 @@ msgstr ""
 msgid "%s gained %d XP!"
 msgstr ""
 
+#: scenes/common/coin_label.gd:42
+#, c-format
+msgid "%s gold"
+msgstr ""
+
 #: core/battle/battle_engine.gd:109
 #, c-format
 msgid "%s got soaked!"
@@ -2075,7 +2080,7 @@ msgstr ""
 msgid "Clips the foe with wings."
 msgstr ""
 
-#: scenes/ui/account_panel.gd:40 scenes/ui/coop_panel.gd:40 scenes/ui/craft_panel.gd:37 scenes/ui/hatchery_panel.gd:31 ...
+#: scenes/common/floating_window.gd:40 scenes/ui/account_panel.gd:40 scenes/ui/coop_panel.gd:40 scenes/ui/craft_panel.gd:37 ...
 msgid "Close"
 msgstr ""
 
@@ -4505,6 +4510,10 @@ msgstr ""
 #: scenes/battle/battle_screen.gd:231
 #, c-format
 msgid "Lv%d"
+msgstr ""
+
+#: scenes/common/num.gd:33
+msgid "M"
 msgstr ""
 
 #: scenes/ui/craft_panel.gd:185
