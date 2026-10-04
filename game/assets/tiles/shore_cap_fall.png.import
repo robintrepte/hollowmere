@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cshorecapfal01"
-path="res://.godot/imported/shore_cap_fall.png-c3e5a7d91f4b60a8c2e3capfal.ctex"
+uid="uid://clymq4681x7j2"
+path="res://.godot/imported/shore_cap_fall.png-c01b164d09b9552b9cf6cec532c9f9a4.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/tiles/shore_cap_fall.png"
-dest_files=["res://.godot/imported/shore_cap_fall.png-c3e5a7d91f4b60a8c2e3capfal.ctex"]
+dest_files=["res://.godot/imported/shore_cap_fall.png-c01b164d09b9552b9cf6cec532c9f9a4.ctex"]
 
 [params]
 

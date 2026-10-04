@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cshorecapsum01"
-path="res://.godot/imported/shore_cap_summer.png-b2d4f6c80e3a59f7b1d2capsum.ctex"
+uid="uid://bi0o14cxq3h5t"
+path="res://.godot/imported/shore_cap_summer.png-db9f41c40174a22131de39ec2ca12615.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/tiles/shore_cap_summer.png"
-dest_files=["res://.godot/imported/shore_cap_summer.png-b2d4f6c80e3a59f7b1d2capsum.ctex"]
+dest_files=["res://.godot/imported/shore_cap_summer.png-db9f41c40174a22131de39ec2ca12615.ctex"]
 
 [params]
 
