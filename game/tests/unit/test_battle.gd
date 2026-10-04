@@ -121,3 +121,26 @@ func test_default_moves_fit_the_attacker() -> void:
 					fits += 1
 		assert_gt(damaging, 1, "%s has attacks" % sid)
 		assert_true(fits * 2 > damaging, "%s mostly attacks with its stronger stat (%s): %s" % [sid, want, c.moves])
+
+func test_move_preview_rolls_nothing_and_matches_real_damage() -> void:
+	var eng := BattleEngine.new([_mk("puddlop", 20)], [_mk("embercub", 20)], BattleEngine.Kind.WILD, 7)
+	eng.start()
+	var state := eng.rng.state
+	var pv := eng.preview(0, "bubble_burst")
+	assert_eq(eng.rng.state, state, "previewing does not shift the battle's random sequence")
+	assert_eq(float(pv.eff), 2.0, "Tide on Ember")
+	assert_true(pv.stab)
+	assert_eq(int(pv.max), int(eng.calc_damage(0, "bubble_burst", true).damage), "top of the range is a no-roll hit")
+	assert_between(int(pv.min), 1, int(pv.max))
+	for i in 40:
+		var d := int(eng.calc_damage(0, "bubble_burst").damage)
+		if not eng.calc_damage(0, "bubble_burst", true).crit:
+			assert_true(d >= int(pv.min) and d <= int(ceil(int(pv.max) * 1.5)), "%d within %d..%d (crits go above)" % [d, pv.min, pv.max])
+
+func test_move_preview_reports_knockouts_and_immunity() -> void:
+	var eng := BattleEngine.new([_mk("puddlop", 30)], [_mk("embercub", 5)], BattleEngine.Kind.WILD, 7)
+	eng.start()
+	eng.active(1).hp = 1
+	assert_eq(eng.preview(0, "bubble_burst").ko, "sure")
+	assert_eq(eng.preview(0, "drench").cat, "status")
+	assert_eq(int(eng.preview(0, "drench").max), 0)

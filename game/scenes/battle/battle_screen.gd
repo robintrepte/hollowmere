@@ -28,6 +28,8 @@ var _wx: Control
 var _wx_kind := ""
 var _wx_parts: Array = []
 var _wx_flash := 0.0
+var _preview: Dictionary = {}
+var _ghost_tw: Tween
 
 func _init(s: Dictionary = {}) -> void:
 	setup = s
@@ -81,7 +83,10 @@ func _ready() -> void:
 	bar.add_child(h)
 	_msg = UITheme.label("", 12, UITheme.INK)
 	_msg.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# Wrapped text would otherwise report its full height and push the bar off the screen.
+	_msg.clip_text = true
 	_msg.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_msg.size_flags_vertical = Control.SIZE_FILL
 	_msg.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	h.add_child(_msg)
 	_cmd = GridContainer.new()
@@ -196,7 +201,12 @@ func _info_box(pos: Vector2, mine: bool) -> Dictionary:
 	hp.max_value = 1.0
 	hp.step = 0.0
 	v.add_child(hp)
-	var d := {"panel": p, "name": name, "lvl": lvl, "hp": hp, "status": status, "pips": pips}
+	var ghost := Control.new()
+	ghost.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	ghost.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ghost.draw.connect(func(): _draw_ghost(ghost, hp))
+	hp.add_child(ghost)
+	var d := {"panel": p, "name": name, "lvl": lvl, "hp": hp, "ghost": ghost, "status": status, "pips": pips}
 	if mine:
 		var nums := UITheme.label("", 9, UITheme.INK)
 		nums.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -244,6 +254,35 @@ func _set_hp_bar(side: int, frac: float) -> void:
 	b.hp.value = frac
 	var col := Color("#5ccf5c") if frac > 0.5 else (Color("#f0c040") if frac > 0.2 else Color("#e84a3a"))
 	b.hp.add_theme_stylebox_override("fill", UITheme.box(col, Color(0, 0, 0, 0), 0, 2, 0, false))
+
+## The slice of the foe's HP bar the highlighted move would take: solid for the least it
+## can do, faded up to the most.
+func _draw_ghost(ghost: Control, hp: ProgressBar) -> void:
+	if _preview.is_empty() or hp != _foe_box.get("hp") or int(_preview.max) <= 0:
+		return
+	var w := ghost.size.x
+	var h := ghost.size.y
+	var now := float(hp.value)
+	var max_hp := float(maxi(1, int(_preview.max_hp)))
+	var sure := clampf(now - float(_preview.min) / max_hp, 0.0, 1.0)
+	var maybe := clampf(now - float(_preview.max) / max_hp, 0.0, 1.0)
+	ghost.draw_rect(Rect2(maybe * w, 0, (sure - maybe) * w, h), Color(1.0, 0.45, 0.3, 0.6))
+	ghost.draw_rect(Rect2(sure * w, 0, (now - sure) * w, h), Color(0.9, 0.15, 0.12))
+
+func _set_preview(p: Dictionary) -> void:
+	_preview = p
+	if _ghost_tw:
+		_ghost_tw.kill()
+		_ghost_tw = null
+	var ghost: Control = _foe_box.get("ghost")
+	if ghost == null:
+		return
+	ghost.modulate.a = 1.0
+	ghost.queue_redraw()
+	if not p.is_empty():
+		_ghost_tw = create_tween().set_loops()
+		_ghost_tw.tween_property(ghost, "modulate:a", 0.7, 0.45)
+		_ghost_tw.tween_property(ghost, "modulate:a", 1.0, 0.45)
 
 func _tween_hp(side: int, to_frac: float) -> void:
 	var from: float = _hp_shown[side]
@@ -617,6 +656,7 @@ func _hit(side: int, e: Dictionary) -> void:
 	var home := s.position
 	if Settings.screen_shake and (float(e.eff) > 1.0 or e.get("crit", false)):
 		_shake_root()
+	_pop_damage(side, e)
 	for i in 3:
 		s.modulate.a = 0.2
 		await get_tree().create_timer(0.05).timeout
@@ -626,6 +666,21 @@ func _hit(side: int, e: Dictionary) -> void:
 	if side == 0:
 		_me_box.nums.text = tr("%d / %d") % [int(e.hp), int(e.max)]
 	await _tween_hp(side, float(e.hp) / float(maxi(1, int(e.max))))
+
+func _pop_damage(side: int, e: Dictionary) -> void:
+	var eff := float(e.get("eff", 1.0))
+	var big: bool = eff > 1.0 or e.get("crit", false)
+	var col := Color("#ffd23f") if eff > 1.0 else (Color("#d0d0d0") if eff < 1.0 else Color.WHITE)
+	var l := UITheme.label("-%d%s" % [int(e.get("amount", 0)), "!" if e.get("crit", false) else ""], 16 if big else 13, col, true)
+	l.add_theme_color_override("font_outline_color", Color(0.15, 0.05, 0.05))
+	l.add_theme_constant_override("outline_size", 6)
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	l.position = (ME_POS if side == 0 else FOE_POS) + Vector2(-14, -96)
+	root.add_child(l)
+	var tw := create_tween().set_parallel()
+	tw.tween_property(l, "position:y", l.position.y - 28.0, 0.9).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(l, "modulate:a", 0.0, 0.35).set_delay(0.6)
+	tw.chain().tween_callback(l.queue_free)
 
 func _shake_root() -> void:
 	var tw := create_tween()
@@ -696,6 +751,8 @@ func _befriend_anim(shakes: int, success: bool) -> void:
 # --- Choosing actions --------------------------------------------------------------------
 
 func _clear_cmd() -> void:
+	_set_preview({})
+	_detail_text(false)
 	for c in _cmd.get_children():
 		c.queue_free()
 	_cmd.columns = 2
@@ -714,6 +771,9 @@ func _cmd_button(text: String, cb: Callable, col: Color = UITheme.WOOD, two_line
 				sb.content_margin_top = 1
 				sb.content_margin_bottom = 1
 			b.add_theme_stylebox_override(st, sb)
+		if col.get_luminance() > 0.55:
+			for fc in ["font_color", "font_hover_color", "font_focus_color", "font_pressed_color"]:
+				b.add_theme_color_override(fc, UITheme.INK)
 	if two_line:
 		b.add_theme_font_size_override("font_size", UITheme.fs(8))
 		b.clip_text = true
@@ -725,6 +785,8 @@ func _choose_action() -> Dictionary:
 	_show_main_menu()
 	var a: Dictionary = await _picked
 	_cmd.visible = false
+	_set_preview({})
+	_detail_text(false)
 	return a
 
 func _show_main_menu() -> void:
@@ -765,24 +827,117 @@ func _show_moves() -> void:
 	var wide := maxi(1, c.moves.size()) + 1 > 4
 	if wide:
 		_cmd.columns = 3
+	var best := recommended_move()
 	for i in c.moves.size():
 		var m: Dictionary = Data.get_move(c.moves[i])
-		var label := tr("%s\n%s%s") % [tr(str(m.name)), Data.type_name(m.type), (tr(" · %d") % int(m.power)) if int(m.power) > 0 else tr(" · status")]
+		var pv := engine.preview(0, c.moves[i])
 		var idx := i
-		var b := _cmd_button(label, func(): _picked.emit({"k": "move", "i": idx}), Data.type_color(m.type).darkened(0.25), true)
+		var b := _cmd_button(_move_label(m, pv), func(): _picked.emit({"k": "move", "i": idx}), Data.type_color(m.type).darkened(0.25), true)
 		b.tooltip_text = tr(str(m.get("desc", "")))
-		var eff := Data.type_mult(m.type, engine.active(1).types()) if int(m.power) > 0 else 1.0
-		if eff > 1.0:
-			b.text += " ▲"
-		elif eff < 1.0:
-			b.text += " ▼"
-		if first == null:
+		if i == best:
+			_mark_recommended(b, Data.type_color(m.type).darkened(0.25))
+		b.focus_entered.connect(_show_move_detail.bind(i, best))
+		b.mouse_entered.connect(_show_move_detail.bind(i, best))
+		if first == null or i == best:
 			first = b
 	if c.moves.is_empty():
 		_cmd_button("Struggle", func(): _picked.emit({"k": "move", "i": 0}))
 	_cmd_button("Back", _show_main_menu)
 	if first:
 		first.call_deferred("grab_focus")
+
+## Index of the move the smart opponent AI would pick in our place, or -1 if nothing helps.
+func recommended_move() -> int:
+	var c := engine.active(0)
+	var best := -1
+	var best_score := 0.0
+	for i in c.moves.size():
+		var sc := BattleAI.score_move(engine, 0, c.moves[i], 2)
+		if sc > best_score:
+			best_score = sc
+			best = i
+	return best
+
+static func mult_text(eff: float) -> String:
+	if eff <= 0.0:
+		return "×0"
+	if eff >= 1.0:
+		return "×%d" % int(eff)
+	return "×%s" % String.num(eff, 2)
+
+## A gold frame rather than a ★: the fallback font's taller line would grow the button.
+func _mark_recommended(b: Button, col: Color) -> void:
+	b.set_meta("recommended", true)
+	for st in ["normal", "hover", "pressed", "focus"]:
+		var sb := UITheme.box(col if st != "hover" else col.lightened(0.15), Color("#ffd23f"), 2, 3, 4)
+		sb.content_margin_left = 4
+		sb.content_margin_right = 4
+		sb.content_margin_top = 1
+		sb.content_margin_bottom = 1
+		b.add_theme_stylebox_override(st, sb)
+
+## Two lines: the name, then the share of the foe's HP it takes, the type multiplier and
+## the type. The most useful part comes first so trimming hurts least.
+func _move_label(m: Dictionary, pv: Dictionary) -> String:
+	var top := tr(str(m.name))
+	if pv.cat == "status":
+		return top + "\n" + tr("Status · %s") % Data.type_name(m.type)
+	if float(pv.eff) <= 0.0:
+		return top + "\n" + tr("No effect · %s") % Data.type_name(m.type)
+	var hp := float(maxi(1, int(pv.hp)))
+	var lo := mini(100, roundi(float(pv.min) * 100.0 / hp))
+	var hi := mini(100, roundi(float(pv.max) * 100.0 / hp))
+	var eff := "" if is_equal_approx(float(pv.eff), 1.0) else " " + mult_text(float(pv.eff))
+	var dmg := ("%d%%" % hi) if lo == hi else ("%d–%d%%" % [lo, hi])
+	return top + "\n" + dmg + eff + " · " + Data.type_name(m.type)
+
+func _show_move_detail(i: int, best: int) -> void:
+	var c := engine.active(0)
+	if i >= c.moves.size():
+		return
+	var m: Dictionary = Data.get_move(c.moves[i])
+	var pv := engine.preview(0, c.moves[i])
+	var acc := tr("Never misses") if float(pv.acc) <= 0.0 else tr("Accuracy %d%%") % roundi(float(pv.acc))
+	var cat: String = {"phys": tr("Physical"), "spec": tr("Special"), "status": tr("Status")}.get(str(pv.cat), "")
+	var head := tr("%s · %s %s") % [tr(str(m.name)), Data.type_name(m.type), cat] + ("  ★ " + tr("Recommended") if i == best else "")
+	_detail_text(true)
+	if pv.cat == "status":
+		_set_preview({})
+		var line := tr(str(m.get("desc", "")))
+		if BattleAI.score_move(engine, 0, c.moves[i], 2) <= 0.0:
+			line = tr("Won't help right now.") + " " + line
+		_msg.text = head + "\n" + acc + "\n" + line
+		_fit_detail()
+		return
+	_set_preview(pv)
+	var eff := float(pv.eff)
+	var stats := tr("Power %d") % int(pv.power) + " · " + acc
+	if pv.stab:
+		stats += " · " + tr("Own type +50%")
+	var bits: Array = []
+	if eff <= 0.0:
+		bits.append(tr("No effect"))
+	elif eff > 1.0:
+		bits.append(tr("Super effective %s") % mult_text(eff))
+	elif eff < 1.0:
+		bits.append(tr("Not very effective %s") % mult_text(eff))
+	if pv.ko == "sure":
+		bits.append(tr("Knocks it out"))
+	elif pv.ko == "possible":
+		bits.append(tr("Can knock it out"))
+	_msg.text = head + "\n" + stats + ("\n" + " · ".join(bits) if not bits.is_empty() else "")
+	_fit_detail()
+
+## Move details are longer than battle prompts and share the bar with five buttons.
+func _detail_text(on: bool) -> void:
+	_msg.add_theme_font_size_override("font_size", UITheme.fs(9 if on else 12))
+
+## Large text settings and long German descriptions can need more lines than the bar has.
+func _fit_detail() -> void:
+	for px in [9, 8, 7]:
+		_msg.add_theme_font_size_override("font_size", UITheme.fs(px))
+		if _msg.get_visible_line_count() >= _msg.get_line_count():
+			return
 
 func _bag_items() -> Array:
 	var out: Array = []
@@ -847,7 +1002,7 @@ func _choose_party(forced: bool) -> int:
 		var row := HBoxContainer.new()
 		v.add_child(row)
 		row.add_child(UITheme.icon_rect(Art.creature(c.species_id, true), 32))
-		var b := UITheme.button(tr("%s  Lv%d   HP %d/%d%s") % [c.display_name(), c.level, c.hp, c.max_hp(), tr("  (out)") if i == engine.sides[0].active else ""], func():
+		var b := UITheme.button(tr("%s  Lv%d   HP %d/%d%s") % [c.display_name(), c.level, c.hp, c.max_hp(), tr("  (out)") if i == engine.sides[0].active else _matchup_tag(c)], func():
 			result[0] = i
 			_advance.emit())
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -860,6 +1015,21 @@ func _choose_party(forced: bool) -> int:
 		await _advance
 	_close_overlay()
 	return result[0]
+
+## How a party member would fare against the current foe, by type alone.
+func _matchup_tag(c: Creature) -> String:
+	if c.is_fainted():
+		return ""
+	var foe := engine.active(1)
+	var offense := 0.0
+	for t in c.types():
+		offense = maxf(offense, Data.type_mult(t, foe.types()))
+	var threat := BattleAI._matchup(foe, c)
+	if threat > 1.0:
+		return "  · " + tr("Risky matchup")
+	if offense > 1.0 or threat < 1.0:
+		return "  · " + tr("Good matchup")
+	return ""
 
 func _list_overlay(title: String) -> PanelContainer:
 	_close_overlay()

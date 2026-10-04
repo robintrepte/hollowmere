@@ -374,11 +374,7 @@ func _execute_move(side: int, move_id: String, ev: Array) -> void:
 	var m: Dictionary = Data.get_move(move_id)
 	ev.append({"t": "move", "side": side, "move": move_id, "name": m.name, "type": m.type, "cat": m.cat})
 	ev.append({"t": "text", "msg": tr("%s used %s!") % [user.display_name(), tr(str(m.name))]})
-	var acc := float(m.acc)
-	if weather == "fog" and not "shade" in user.types():
-		acc *= 0.85
-	if weather == "storm" and m.type == "spark":
-		acc = 0.0
+	var acc := accuracy(side, m)
 	if acc > 0.0 and (m.cat != "status" or _targets_foe(m)):
 		if rng.randf() * 100.0 >= acc:
 			ev.append({"t": "miss", "side": side})
@@ -419,7 +415,46 @@ func _targets_foe(m: Dictionary) -> bool:
 	return false
 
 ## Damage calculation. Returns {damage, eff, crit}.
-func calc_damage(side: int, move_id: String, force_no_random: bool = false) -> Dictionary:
+## Hit chance in percent after weather. 0 means the move cannot miss.
+func accuracy(side: int, m: Dictionary) -> float:
+	var acc := float(m.acc)
+	if weather == "fog" and not "shade" in active(side).types():
+		acc *= 0.85
+	if weather == "storm" and m.type == "spark":
+		acc = 0.0
+	return acc
+
+## What a move would do right now, for the move picker. Rolls nothing, so it never
+## shifts the battle's random sequence (co-op and PvP replay it on both ends).
+func preview(side: int, move_id: String) -> Dictionary:
+	var m: Dictionary = Data.get_move(move_id)
+	var user := active(side)
+	var target_side := foe_of(side)
+	var target := active(target_side)
+	var out := {"cat": str(m.cat), "type": str(m.type), "power": int(m.power), "acc": accuracy(side, m),
+		"eff": 1.0, "stab": false, "min": 0, "max": 0, "hp": target.hp, "max_hp": target.max_hp(), "ko": ""}
+	if m.cat == "status":
+		return out
+	var core := _damage_core(side, move_id)
+	out.eff = core.eff
+	out.stab = m.type in user.types()
+	if core.eff <= 0.0:
+		return out
+	var lo := maxi(1, int(floor(core.raw * 0.85)))
+	var hi := maxi(1, int(floor(core.raw)))
+	if target.trait_id == "sturdy" and target.hp == target.max_hp() and not sides[target_side].sturdy_used.has(target.uid):
+		lo = mini(lo, target.hp - 1)
+		hi = mini(hi, target.hp - 1)
+	out.min = lo
+	out.max = hi
+	if lo >= target.hp:
+		out.ko = "sure"
+	elif hi >= target.hp:
+		out.ko = "possible"
+	return out
+
+## Damage before the critical-hit and random rolls: {base, mult, raw, eff}.
+func _damage_core(side: int, move_id: String) -> Dictionary:
 	var user := active(side)
 	var target_side := foe_of(side)
 	var target := active(target_side)
@@ -442,6 +477,16 @@ func calc_damage(side: int, move_id: String, force_no_random: bool = false) -> D
 	if m.type == "spark" and target.status == "soak":
 		mult *= 1.5
 	mult *= float(Data.traits.get(target.trait_id, {}).get("damage_taken_mult", 1.0))
+	return {"base": base, "mult": mult, "raw": base * mult, "eff": eff}
+
+func calc_damage(side: int, move_id: String, force_no_random: bool = false) -> Dictionary:
+	var target := active(foe_of(side))
+	var m: Dictionary = Data.get_move(move_id)
+	var utr: Dictionary = Data.traits.get(active(side).trait_id, {})
+	var core := _damage_core(side, move_id)
+	var base: float = core.base
+	var eff: float = core.eff
+	var mult: float = core.mult
 	var crit := false
 	if not force_no_random and target.trait_id != "thick_hide":
 		var crit_chance := 1.0 / 16.0

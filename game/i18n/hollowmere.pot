@@ -13,7 +13,7 @@ msgstr ""
 msgid "\nSells for %dg"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:818
+#: scenes/battle/battle_screen.gd:973
 #, c-format
 msgid "   (%d%%)"
 msgstr ""
@@ -22,7 +22,7 @@ msgstr ""
 msgid "  (guest)"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:850
+#: scenes/battle/battle_screen.gd:1005
 msgid "  (out)"
 msgstr ""
 
@@ -91,15 +91,6 @@ msgstr ""
 msgid " with genes %d+"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:770
-#, c-format
-msgid " · %d"
-msgstr ""
-
-#: scenes/battle/battle_screen.gd:770
-msgid " · status"
-msgstr ""
-
 #: core/social/relationships.gd:72
 msgid "\"How thoughtful. Thank you!\""
 msgstr ""
@@ -126,7 +117,7 @@ msgstr ""
 msgid "%d %s"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:237 scenes/battle/battle_screen.gd:519 scenes/battle/battle_screen.gd:627 scenes/ui/craft_panel.gd:160
+#: scenes/battle/battle_screen.gd:247 scenes/battle/battle_screen.gd:558 scenes/battle/battle_screen.gd:667 scenes/ui/craft_panel.gd:160
 #, c-format
 msgid "%d / %d"
 msgstr ""
@@ -181,11 +172,6 @@ msgstr ""
 msgid "%s\n%s"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:770
-#, c-format
-msgid "%s\n%s%s"
-msgstr ""
-
 #: scenes/ui/party_panel.gd:335
 #, c-format
 msgid "%s  %d%%"
@@ -206,12 +192,12 @@ msgstr ""
 msgid "%s  Lv%d"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:850
+#: scenes/battle/battle_screen.gd:1005
 #, c-format
 msgid "%s  Lv%d   HP %d/%d%s"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:816 scenes/ui/shop_panel.gd:140
+#: scenes/battle/battle_screen.gd:971 scenes/ui/shop_panel.gd:140
 #, c-format
 msgid "%s  x%d"
 msgstr ""
@@ -306,12 +292,12 @@ msgstr ""
 msgid "%s blushes. \"Maybe when we know each other better...\""
 msgstr ""
 
-#: core/battle/battle_engine.gd:669
+#: core/battle/battle_engine.gd:714
 #, c-format
 msgid "%s broke free of the roots!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:735
+#: core/battle/battle_engine.gd:780
 #, c-format
 msgid "%s can now use %s! (Equip it from the Party menu.)"
 msgstr ""
@@ -341,12 +327,12 @@ msgstr ""
 msgid "%s closed the trade."
 msgstr ""
 
-#: core/battle/battle_engine.gd:497
+#: core/battle/battle_engine.gd:542
 #, c-format
 msgid "%s curled up for a cozy nap!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:675
+#: core/battle/battle_engine.gd:720
 #, c-format
 msgid "%s dried off."
 msgstr ""
@@ -356,7 +342,7 @@ msgstr ""
 msgid "%s evolved into %s overnight!"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:487
+#: scenes/battle/battle_screen.gd:526
 #, c-format
 msgid "%s evolved into %s!"
 msgstr ""
@@ -371,7 +357,7 @@ msgstr ""
 msgid "%s forfeited."
 msgstr ""
 
-#: core/battle/battle_engine.gd:726
+#: core/battle/battle_engine.gd:771
 #, c-format
 msgid "%s gained %d XP!"
 msgstr ""
@@ -381,7 +367,7 @@ msgstr ""
 msgid "%s got soaked!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:731
+#: core/battle/battle_engine.gd:776
 #, c-format
 msgid "%s grew to level %d!"
 msgstr ""
@@ -396,12 +382,12 @@ msgstr ""
 msgid "%s has to keep at least one Wildling."
 msgstr ""
 
-#: core/battle/battle_engine.gd:399
+#: core/battle/battle_engine.gd:395
 #, c-format
 msgid "%s hung on with Sturdy!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:683
+#: core/battle/battle_engine.gd:728
 #, c-format
 msgid "%s is chilled by the snow!"
 msgstr ""
@@ -421,12 +407,12 @@ msgstr ""
 msgid "%s is fast asleep."
 msgstr ""
 
-#: core/battle/battle_engine.gd:490
+#: core/battle/battle_engine.gd:535
 #, c-format
 msgid "%s is hit with recoil!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:657
+#: core/battle/battle_engine.gd:702
 #, c-format
 msgid "%s is hurt by its burn!"
 msgstr ""
@@ -451,12 +437,12 @@ msgstr ""
 msgid "%s is too dazed to move!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:519
+#: core/battle/battle_engine.gd:564
 #, c-format
 msgid "%s is unaffected!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:644
+#: core/battle/battle_engine.gd:689
 #, c-format
 msgid "%s isn't convinced yet."
 msgstr ""
@@ -476,12 +462,12 @@ msgstr ""
 msgid "%s keeps watch here. Perhaps a battle would prove your bond with your Wildlings."
 msgstr ""
 
-#: core/battle/battle_engine.gd:735
+#: core/battle/battle_engine.gd:780
 #, c-format
 msgid "%s learned %s!"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:387
+#: scenes/battle/battle_screen.gd:426
 #, c-format
 msgid "%s left the battle."
 msgstr ""
@@ -496,7 +482,7 @@ msgstr ""
 msgid "%s lingers nearby. Perhaps it would join you, if you asked kindly with a charm."
 msgstr ""
 
-#: core/battle/battle_engine.gd:543
+#: core/battle/battle_engine.gd:588
 #, c-format
 msgid "%s lowered %s's %s!"
 msgstr ""
@@ -536,12 +522,12 @@ msgstr ""
 msgid "%s only takes one rematch a week."
 msgstr ""
 
-#: core/battle/battle_engine.gd:589
+#: core/battle/battle_engine.gd:634
 #, c-format
 msgid "%s recovered %d HP."
 msgstr ""
 
-#: core/battle/battle_engine.gd:561
+#: core/battle/battle_engine.gd:606
 #, c-format
 msgid "%s restored HP!"
 msgstr ""
@@ -581,7 +567,7 @@ msgstr ""
 msgid "%s snapped out of its daze!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:644
+#: core/battle/battle_engine.gd:689
 #, c-format
 msgid "%s sniffed it, then looked away."
 msgstr ""
@@ -591,7 +577,7 @@ msgstr ""
 msgid "%s used %s!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:575
+#: core/battle/battle_engine.gd:620
 #, c-format
 msgid "%s used a %s."
 msgstr ""
@@ -606,7 +592,7 @@ msgstr ""
 msgid "%s wants to battle!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:639
+#: core/battle/battle_engine.gd:684
 #, c-format
 msgid "%s wants to be your friend!"
 msgstr ""
@@ -621,12 +607,12 @@ msgstr ""
 msgid "%s was burned!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:594
+#: core/battle/battle_engine.gd:639
 #, c-format
 msgid "%s was cured!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:579
+#: core/battle/battle_engine.gd:624
 #, c-format
 msgid "%s was revived!"
 msgstr ""
@@ -651,7 +637,7 @@ msgstr ""
 msgid "%s woke up!"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:359
+#: scenes/battle/battle_screen.gd:398
 #, c-format
 msgid "%s won the friendly battle. Good match!"
 msgstr ""
@@ -669,6 +655,11 @@ msgstr ""
 #: scenes/ui/party_panel.gd:149
 #, c-format
 msgid "%s · %s\n%s"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:902
+#, c-format
+msgid "%s · %s %s"
 msgstr ""
 
 #: scenes/ui/title_screen.gd:238
@@ -721,7 +712,7 @@ msgstr ""
 msgid "%s%s  Lv%d"
 msgstr ""
 
-#: core/battle/battle_engine.gd:698
+#: core/battle/battle_engine.gd:743
 #, c-format
 msgid "%s%s fainted!"
 msgstr ""
@@ -731,32 +722,32 @@ msgstr ""
 msgid "%s's %s"
 msgstr ""
 
-#: core/battle/battle_engine.gd:549
+#: core/battle/battle_engine.gd:594
 #, c-format
 msgid "%s's %s fell sharply!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:551
+#: core/battle/battle_engine.gd:596
 #, c-format
 msgid "%s's %s fell!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:545
+#: core/battle/battle_engine.gd:590
 #, c-format
 msgid "%s's %s rose sharply!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:547
+#: core/battle/battle_engine.gd:592
 #, c-format
 msgid "%s's %s rose!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:537
+#: core/battle/battle_engine.gd:582
 #, c-format
 msgid "%s's %s won't go any higher!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:537
+#: core/battle/battle_engine.gd:582
 #, c-format
 msgid "%s's %s won't go any lower!"
 msgstr ""
@@ -837,6 +828,11 @@ msgstr ""
 #: autoload/data.gd:240 autoload/data.gd:360
 #, c-format
 msgid ", then regrows every %d days"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:674
+#, c-format
+msgid "-%d%s"
 msgstr ""
 
 #: data/villagers.json
@@ -968,7 +964,7 @@ msgstr ""
 msgid "A cozy spot to rest."
 msgstr ""
 
-#: core/battle/battle_engine.gd:403
+#: core/battle/battle_engine.gd:399
 msgid "A critical hit!"
 msgstr ""
 
@@ -1288,6 +1284,11 @@ msgstr ""
 msgid "Above the Clouds"
 msgstr ""
 
+#: scenes/battle/battle_screen.gd:900
+#, c-format
+msgid "Accuracy %d%%"
+msgstr ""
+
 #: data/creatures.json
 msgid "Acornib"
 msgstr ""
@@ -1448,7 +1449,7 @@ msgstr ""
 msgid "Baby Wildlings inherit genes from both parents."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:783 scenes/battle/battle_screen.gd:838 scenes/battle/battle_screen.gd:858 scenes/ui/new_game_panel.gd:95 ...
+#: scenes/battle/battle_screen.gd:1013 scenes/battle/battle_screen.gd:845 scenes/battle/battle_screen.gd:993 scenes/ui/new_game_panel.gd:95 ...
 msgid "Back"
 msgstr ""
 
@@ -1464,7 +1465,7 @@ msgstr ""
 msgid "Bad creature."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:736 scenes/ui/hatchery_panel.gd:75
+#: scenes/battle/battle_screen.gd:798 scenes/ui/hatchery_panel.gd:75
 msgid "Bag"
 msgstr ""
 
@@ -1861,11 +1862,11 @@ msgstr ""
 msgid "Bursting bubbles. May soak the foe."
 msgstr ""
 
-#: core/battle/battle_engine.gd:501 core/battle/battle_engine.gd:514
+#: core/battle/battle_engine.gd:546 core/battle/battle_engine.gd:559
 msgid "But it failed!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:385
+#: core/battle/battle_engine.gd:381
 msgid "But it missed!"
 msgstr ""
 
@@ -1883,6 +1884,10 @@ msgstr ""
 
 #: data/moves.json
 msgid "Calls harsh sunlight for 5 turns. Ember moves grow stronger."
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:927
+msgid "Can knock it out"
 msgstr ""
 
 #: data/villagers.json
@@ -1972,7 +1977,7 @@ msgstr ""
 msgid "Chillchick"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:841
+#: scenes/battle/battle_screen.gd:996
 msgid "Choose a Wildling"
 msgstr ""
 
@@ -2781,7 +2786,7 @@ msgstr ""
 msgid "Fierce"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:735
+#: scenes/battle/battle_screen.gd:797
 msgid "Fight"
 msgstr ""
 
@@ -2887,11 +2892,11 @@ msgstr ""
 msgid "Forager"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:744 scenes/battle/battle_screen.gd:757
+#: scenes/battle/battle_screen.gd:806 scenes/battle/battle_screen.gd:819
 msgid "Forfeit"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:756
+#: scenes/battle/battle_screen.gd:818
 msgid "Forfeit the friendly battle?"
 msgstr ""
 
@@ -3222,6 +3227,10 @@ msgstr ""
 
 #: data/items.json
 msgid "Gold Sprinkler"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:1031
+msgid "Good matchup"
 msgstr ""
 
 #: scenes/ui/day_report.gd:26
@@ -3860,11 +3869,11 @@ msgstr ""
 msgid "It guides lost travelers home, if they're polite."
 msgstr ""
 
-#: core/battle/battle_engine.gd:582
+#: core/battle/battle_engine.gd:627
 msgid "It had no effect."
 msgstr ""
 
-#: core/battle/battle_engine.gd:393
+#: core/battle/battle_engine.gd:389
 msgid "It had no effect..."
 msgstr ""
 
@@ -3968,7 +3977,7 @@ msgstr ""
 msgid "It won't open."
 msgstr ""
 
-#: core/battle/battle_engine.gd:625
+#: core/battle/battle_engine.gd:670
 #, c-format
 msgid "It's %s's favorite food!"
 msgstr ""
@@ -3998,7 +4007,7 @@ msgstr ""
 msgid "It's not hoarding if it's organized."
 msgstr ""
 
-#: core/battle/battle_engine.gd:407
+#: core/battle/battle_engine.gd:403
 msgid "It's not very effective..."
 msgstr ""
 
@@ -4006,7 +4015,7 @@ msgstr ""
 msgid "It's raining."
 msgstr ""
 
-#: core/battle/battle_engine.gd:405
+#: core/battle/battle_engine.gd:401
 msgid "It's super effective!"
 msgstr ""
 
@@ -4014,7 +4023,7 @@ msgstr ""
 msgid "It's the weekly Creature Show! The judges score grooming, happiness, genes, level and a little flair."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:809
+#: scenes/battle/battle_screen.gd:964
 msgid "Items stay in the bag during friendly battles."
 msgstr ""
 
@@ -4216,7 +4225,7 @@ msgstr ""
 msgid "Keep"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:758
+#: scenes/battle/battle_screen.gd:820
 msgid "Keep going"
 msgstr ""
 
@@ -4259,6 +4268,10 @@ msgstr ""
 
 #: scenes/ui/coop_panel.gd:127
 msgid "Knocking on the farm gate..."
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:925
+msgid "Knocks it out"
 msgstr ""
 
 #: data/title_tips.json
@@ -4459,7 +4472,7 @@ msgstr ""
 msgid "Lure Charm"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:221
+#: scenes/battle/battle_screen.gd:231
 #, c-format
 msgid "Lv%d"
 msgstr ""
@@ -4711,6 +4724,10 @@ msgstr ""
 msgid "Never fails. Extremely rare."
 msgstr ""
 
+#: scenes/battle/battle_screen.gd:900
+msgid "Never misses"
+msgstr ""
+
 #: scenes/ui/title_screen.gd:118
 msgid "New Farm"
 msgstr ""
@@ -4795,6 +4812,15 @@ msgstr ""
 msgid "No crops were harmed. Some were eaten."
 msgstr ""
 
+#: scenes/battle/battle_screen.gd:919
+msgid "No effect"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:886
+#, c-format
+msgid "No effect · %s"
+msgstr ""
+
 #: scenes/ui/hatchery_panel.gd:120
 msgid "No eggs to add. Pair Wildlings in the Den and eggs appear in the farm chest."
 msgstr ""
@@ -4867,11 +4893,16 @@ msgstr ""
 msgid "Not today"
 msgstr ""
 
+#: scenes/battle/battle_screen.gd:923
+#, c-format
+msgid "Not very effective %s"
+msgstr ""
+
 #: scenes/main/adventure_flow.gd:132 scenes/main/adventure_flow.gd:308 scenes/main/adventure_flow.gd:312 scenes/main/adventure_flow.gd:391 ...
 msgid "Not yet"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:811
+#: scenes/battle/battle_screen.gd:966
 msgid "Nothing useful to use here."
 msgstr ""
 
@@ -5000,6 +5031,11 @@ msgstr ""
 msgid "Overgrowth"
 msgstr ""
 
+#: scenes/battle/battle_screen.gd:916
+#, c-format
+msgid "Own type +50%"
+msgstr ""
+
 #: scenes/ui/shop_panel.gd:249
 msgid "Owned ✓"
 msgstr ""
@@ -5034,7 +5070,7 @@ msgstr ""
 msgid "Partners in research. And... maybe more?"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:737 scenes/battle/battle_screen.gd:841 scenes/ui/pause_menu.gd:35
+#: scenes/battle/battle_screen.gd:799 scenes/battle/battle_screen.gd:996 scenes/ui/pause_menu.gd:35
 msgid "Party"
 msgstr ""
 
@@ -5099,7 +5135,7 @@ msgstr ""
 msgid "Photosynth"
 msgstr ""
 
-#: scenes/ui/party_panel.gd:149
+#: scenes/battle/battle_screen.gd:901 scenes/ui/party_panel.gd:149
 msgid "Physical"
 msgstr ""
 
@@ -5207,6 +5243,11 @@ msgstr ""
 
 #: data/crops.json
 msgid "Potato"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:914
+#, c-format
+msgid "Power %d"
 msgstr ""
 
 #: data/title_tips.json
@@ -5419,6 +5460,10 @@ msgstr ""
 msgid "Ready"
 msgstr ""
 
+#: scenes/battle/battle_screen.gd:902
+msgid "Recommended"
+msgstr ""
+
 #: data/crops.json
 msgid "Red Cabbage"
 msgstr ""
@@ -5515,6 +5560,10 @@ msgstr ""
 msgid "Ripplefin"
 msgstr ""
 
+#: scenes/battle/battle_screen.gd:1029
+msgid "Risky matchup"
+msgstr ""
+
 #: data/moves.json
 msgid "Rock Slide"
 msgstr ""
@@ -5555,7 +5604,7 @@ msgstr ""
 msgid "Rootdeep Hollow"
 msgstr ""
 
-#: core/battle/battle_engine.gd:663
+#: core/battle/battle_engine.gd:708
 #, c-format
 msgid "Roots drain %s's energy!"
 msgstr ""
@@ -5621,7 +5670,7 @@ msgstr ""
 msgid "Rucksack"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:744
+#: scenes/battle/battle_screen.gd:806
 msgid "Run"
 msgstr ""
 
@@ -6044,7 +6093,7 @@ msgstr ""
 msgid "Snowpear saplings and Wildling Statues are available!"
 msgstr ""
 
-#: core/battle/battle_engine.gd:644
+#: core/battle/battle_engine.gd:689
 #, c-format
 msgid "So close! %s almost came over!"
 msgstr ""
@@ -6130,7 +6179,7 @@ msgstr ""
 msgid "Sparks fly from its whiskers when it purrs."
 msgstr ""
 
-#: scenes/ui/party_panel.gd:149
+#: scenes/battle/battle_screen.gd:901 scenes/ui/party_panel.gd:149
 msgid "Special"
 msgstr ""
 
@@ -6277,8 +6326,13 @@ msgstr ""
 msgid "Staticat"
 msgstr ""
 
-#: scenes/ui/party_panel.gd:149
+#: scenes/battle/battle_screen.gd:901 scenes/ui/party_panel.gd:149
 msgid "Status"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:884
+#, c-format
+msgid "Status · %s"
 msgstr ""
 
 #: scenes/main/adventure_flow.gd:207
@@ -6390,7 +6444,7 @@ msgstr ""
 msgid "String Lights"
 msgstr ""
 
-#: data/moves.json scenes/battle/battle_screen.gd:782
+#: data/moves.json scenes/battle/battle_screen.gd:844
 msgid "Struggle"
 msgstr ""
 
@@ -6436,6 +6490,11 @@ msgstr ""
 
 #: data/items.json
 msgid "Super Salve"
+msgstr ""
+
+#: scenes/battle/battle_screen.gd:921
+#, c-format
+msgid "Super effective %s"
 msgstr ""
 
 #: scenes/main/main.gd:121
@@ -6899,7 +6958,7 @@ msgstr ""
 msgid "The weekly Creature Show is held on Saturdays."
 msgstr ""
 
-#: core/battle/battle_engine.gd:698
+#: core/battle/battle_engine.gd:743
 msgid "The wild "
 msgstr ""
 
@@ -7339,7 +7398,7 @@ msgstr ""
 msgid "Waiting for %s to accept..."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:398 scenes/battle/battle_screen.gd:411 scenes/battle/battle_screen.gd:435 scenes/battle/battle_screen.gd:439
+#: scenes/battle/battle_screen.gd:437 scenes/battle/battle_screen.gd:450 scenes/battle/battle_screen.gd:474 scenes/battle/battle_screen.gd:478
 #, c-format
 msgid "Waiting for %s..."
 msgstr ""
@@ -7509,12 +7568,12 @@ msgstr ""
 msgid "Welcome to the Sleepy Sprout! Take a seat anywhere."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:733
+#: scenes/battle/battle_screen.gd:795
 #, c-format
 msgid "What will %s do?"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:478
+#: scenes/battle/battle_screen.gd:517
 #, c-format
 msgid "What? %s is evolving!"
 msgstr ""
@@ -7676,6 +7735,10 @@ msgstr ""
 msgid "Without you, the Grove Shrines would still be dark."
 msgstr ""
 
+#: scenes/battle/battle_screen.gd:908
+msgid "Won't help right now."
+msgstr ""
+
 #: data/items.json
 msgid "Wood"
 msgstr ""
@@ -7718,7 +7781,7 @@ msgstr ""
 msgid "You are in %s"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:461
+#: scenes/battle/battle_screen.gd:500
 #, c-format
 msgid "You beat %s!"
 msgstr ""
@@ -7731,7 +7794,7 @@ msgstr ""
 msgid "You can't befriend a rock. We tried."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:748
+#: scenes/battle/battle_screen.gd:810
 msgid "You can't run from a trainer battle!"
 msgstr ""
 
@@ -7773,7 +7836,7 @@ msgstr ""
 msgid "You found %s."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:467
+#: scenes/battle/battle_screen.gd:506
 #, c-format
 msgid "You got %dg for winning."
 msgstr ""
@@ -7807,12 +7870,12 @@ msgstr ""
 msgid "You haven't found any eggs yet."
 msgstr ""
 
-#: core/battle/battle_engine.gd:620
+#: core/battle/battle_engine.gd:665
 #, c-format
 msgid "You held up the %s!"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:470
+#: scenes/battle/battle_screen.gd:509
 msgid "You hurry back home to rest."
 msgstr ""
 
@@ -7853,7 +7916,7 @@ msgstr ""
 msgid "You offer"
 msgstr ""
 
-#: core/battle/battle_engine.gd:623
+#: core/battle/battle_engine.gd:668
 #, c-format
 msgid "You offered the %s %s."
 msgstr ""
@@ -7895,7 +7958,7 @@ msgstr ""
 msgid "You won the %s! The whole village chants your name."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:357
+#: scenes/battle/battle_screen.gd:396
 msgid "You won the friendly battle!"
 msgstr ""
 
@@ -8027,7 +8090,7 @@ msgstr ""
 msgid "Your Tetris skills finally pay off!"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:469
+#: scenes/battle/battle_screen.gd:508
 msgid "Your Wildlings are all worn out..."
 msgstr ""
 
@@ -8196,7 +8259,7 @@ msgstr ""
 msgid "the guardian"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:461
+#: scenes/battle/battle_screen.gd:500
 msgid "the trainer"
 msgstr ""
 

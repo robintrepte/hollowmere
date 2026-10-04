@@ -7956,3 +7956,62 @@ msgstr "3."
 msgid "4th"
 msgstr "4."
 
+#, c-format
+msgid "%s · %s %s"
+msgstr "%s · %s %s"
+
+#, c-format
+msgid "-%d%s"
+msgstr "-%d%s"
+
+#, c-format
+msgid "Accuracy %d%%"
+msgstr "Genauigkeit %d%%"
+
+msgid "Can knock it out"
+msgstr "KO möglich"
+
+msgid "Good matchup"
+msgstr "Guter Typvorteil"
+
+msgid "Knocks it out"
+msgstr "Sicherer KO"
+
+msgid "Never misses"
+msgstr "Trifft immer"
+
+msgid "No effect"
+msgstr "Wirkungslos"
+
+#, c-format
+msgid "No effect · %s"
+msgstr "Wirkungslos · %s"
+
+#, c-format
+msgid "Not very effective %s"
+msgstr "Wenig effektiv %s"
+
+msgid "Own type +50%"
+msgstr "Eigener Typ +50%"
+
+#, c-format
+msgid "Power %d"
+msgstr "Stärke %d"
+
+msgid "Recommended"
+msgstr "Empfohlen"
+
+msgid "Risky matchup"
+msgstr "Riskanter Typnachteil"
+
+#, c-format
+msgid "Status · %s"
+msgstr "Status · %s"
+
+#, c-format
+msgid "Super effective %s"
+msgstr "Sehr effektiv %s"
+
+msgid "Won't help right now."
+msgstr "Bringt gerade nichts."
+

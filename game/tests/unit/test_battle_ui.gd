@@ -56,7 +56,55 @@ func test_move_buttons_match_command_buttons() -> void:
 	var view := s.root.get_viewport_rect()
 	var prompt: Rect2 = s._msg.get_global_rect()
 	assert_true(view.encloses(prompt), "prompt stays on screen: %s view %s" % [prompt, view])
+	assert_gt(menu_prompt.size.y, 20.0, "the prompt is tall enough to read")
 	assert_lte(prompt.end.y, menu_prompt.end.y + 1.0, "move menu does not push the prompt lower than the command menu")
 	for b in _live_buttons(s):
 		assert_eq(b.size, menu_size, "same size as Fight/Bag/Party/Run: %s" % b.text)
 		assert_true(view.encloses(b.get_global_rect()), b.text)
+
+func _foe(s: BattleScreen, id: String) -> void:
+	var foe := Creature.create(id, 5, GameState.rng)
+	s.engine = BattleEngine.new(GameState.local_player().party, [foe], BattleEngine.Kind.WILD, 1, "", "Hero")
+
+func test_recommends_the_super_effective_move() -> void:
+	var s := _screen_with_moves(2, ["splash_jab", "vine_lash"])
+	_foe(s, "embercub")
+	assert_eq(s.recommended_move(), 0, "Tide beats Ember")
+	s._show_moves()
+	await wait_frames(2)
+	var first: Button = _live_buttons(s)[0]
+	assert_true(first.has_meta("recommended"), first.text)
+	assert_true(first.text.contains("×2"), first.text)
+	assert_true(first.text.contains("%"), "shows how much HP it takes: %s" % first.text)
+	assert_false(_live_buttons(s)[1].has_meta("recommended"))
+
+func test_highlighting_a_move_previews_it_on_the_foe_bar() -> void:
+	var s := _screen_with_moves(2, ["splash_jab", "vine_lash"])
+	_foe(s, "embercub")
+	s._show_moves()
+	s._show_move_detail(0, 0)
+	assert_false(s._preview.is_empty())
+	assert_true(s._msg.text.contains("×2"), s._msg.text)
+	s._show_main_menu()
+	assert_true(s._preview.is_empty(), "leaving the move list clears the preview")
+
+func test_move_details_fit_in_german_at_large_text() -> void:
+	var locale := TranslationServer.get_locale()
+	var scale := Settings.text_scale
+	TranslationServer.set_locale("de")
+	Settings.set_text_scale(1.4)
+	UITheme.reset()
+	var s := _screen_with_moves(4, ["cozy_nap", "halo_bash", "radiant_burst", "eclipse_beam"])
+	s.root.theme = UITheme.theme()
+	s._show_moves()
+	for i in 4:
+		s._show_move_detail(i, 0)
+		await wait_frames(2)
+		var view := s.root.get_viewport_rect()
+		assert_true(view.encloses(s._msg.get_global_rect()), "move %d detail stays on screen: %s" % [i, s._msg.get_global_rect()])
+		assert_eq(s._msg.get_visible_line_count(), s._msg.get_line_count(), "move %d detail shows every line" % i)
+		var bar: Control = s._msg.get_parent().get_parent()
+		assert_true(view.encloses(bar.get_global_rect()), "move %d: the bar stays on screen: %s" % [i, bar.get_global_rect()])
+	TranslationServer.set_locale(locale)
+	Settings.set_text_scale(scale)
+	UITheme.reset()
