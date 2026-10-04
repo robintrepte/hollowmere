@@ -19,6 +19,8 @@ done < tools/art_pipeline/icon_sheets.txt
 $P icons "$RAW/icons/hoe_fix.png" hoe game/assets/items --auto
 # Cropped from raw/world/adventure.png (the egg cell, without its caption).
 $P icons "$RAW/icons/festival_egg.png" festival_egg game/assets/items --auto
+# The purple pot in icons_fish_c keys out against magenta; this cyan pot is cropped from raw/world/fishing.png.
+$P single "$RAW/icons/magic_bait.png" game/assets/items/magic_bait.png --w 16 --h 16 --colors 12 --anchor center
 $PY tools/art_pipeline/derive_icons.py
 
 while read -r f _url names; do

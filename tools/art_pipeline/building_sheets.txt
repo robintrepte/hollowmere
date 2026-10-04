@@ -14,3 +14,4 @@ elder_house 5 https://replicate.delivery/xezq/1FEzfjab9720YCUkLICjHqzN9H7lHQ1rQK
 house_a 5 https://replicate.delivery/xezq/nOMZPuJJgIY0HNqfG7rd0x8SdGZ0cOyPvdwYKe1YfuViI5muA/tmp3vv7sa2j.png
 house_b 5 https://replicate.delivery/xezq/ShdH1f0OAJQnUqmvb0JMVvTHcGACKwjnsw1fYQL8xyi6whTXA/tmpocehfk2c.png
 house_c 5 https://replicate.delivery/xezq/9dubjCFTxKoFJ9Kf6c8ekDsB9ind1RixfnRfGZiKyavsAHOdB/tmpfqghd1e8.png
+fisher_house 6 https://replicate.delivery/xezq/oBy7WHYgCKbCDNEDqXda0HEQfSVPRgfKHHQ5eOyS4rzAeiPdB/tmpl_yth84w.png

@@ -73,7 +73,7 @@ static func tileset(season: String) -> TileSet:
 	_add_atlas(ts, "res://assets/tiles/water_edge.png", 16, 64, 2)
 	_add_atlas(ts, "res://assets/tiles/grass_edge_%s.png" % season, 16, 16, 3)
 	_add_atlas(ts, "res://assets/tiles/shore_fringe.png", 16, 16, 4)
-	_add_atlas(ts, "res://assets/tiles/shore_cap_%s.png" % season, 16, 384, 5)
+	_add_atlas(ts, "res://assets/tiles/shore_cap_%s.png" % season, 16, 448, 5)
 	_tilesets[season] = ts
 	return ts
 

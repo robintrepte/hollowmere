@@ -514,7 +514,7 @@ def _water_tile(sides, corners, variant):
 
 
 # Row blocks in shore_cap_<season>.png. Neighbors that are not listed fall back to grass.
-CAP_TERRAINS = ["grass", "darkgrass", "sand", "dirt", "marsh", "canyon"]
+CAP_TERRAINS = ["grass", "darkgrass", "sand", "dirt", "marsh", "canyon", "cave"]
 
 
 def _cap_tile(sides, corners, variant, fill):
