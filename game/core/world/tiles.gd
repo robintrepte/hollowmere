@@ -10,7 +10,7 @@ const DECO_START := 24
 const GROUND := {
 	"grass": 0, "tallgrass": 1, "path": 2, "sand": 3, "water": 4, "plaza": 5, "cave": 6, "snow": 7,
 	"ice": 8, "dirt": 9, "bridge": 10, "flowers": 11, "ash": 12, "marsh": 13, "twilight": 14,
-	"canyon": 15, "lava": 16, "wood": 17, "darkgrass": 18, "deepwater": 19,
+	"canyon": 15, "lava": 16, "wood": 17, "darkgrass": 18, "deepwater": 19, "marble": 20, "carpet": 21,
 }
 const DECO := {
 	"tree": 24, "pine": 25, "palm": 26, "deadtree": 27, "crystaltree": 28, "rock": 29, "boulder": 30,
@@ -18,7 +18,7 @@ const DECO := {
 	"iceblock": 38, "ore": 39, "ladder": 40, "cave_entrance": 41, "ladder_up": 42,
 	"dirtblock": 43, "stoneblock": 44, "deepstone": 45, "basalt": 46, "obsidian": 47,
 	"vein": 48, "crystal": 49, "fossil": 50, "torch": 51, "support": 52, "rail": 53, "minecart": 54,
-	"elevator": 55,
+	"elevator": 55, "wallpaper": 56,
 }
 const BLOCKING_GROUND := [4, 16, 19]
 const NON_BLOCKING_DECO := [31, 40, 41, 42, 51, 53]

@@ -389,40 +389,40 @@ Das ist der tiefste Eingriff in den Kern. Er muss vor Quests, Skilltree und Bala
   - Universal: Sparsamkeit (weniger Energie)
 - [x] **Amboss**: Verzauberungsbücher anwenden und kombinieren. **Schleifstein**: Verzauberung entfernen und Teil der Essenz zurück.
 - [x] Verzauberte Werkzeuge schimmern im Paper-Doll und in der Hotbar. (Hotbar und Inventar schimmern violett, beim Schwingen sprühen Funken.)
-- [ ] Bücher als Loot in Truhen, beim Angeln und im Casino-Shop. (Truhen und Angeln erledigt, Casino-Shop folgt mit Phase I.)
+- [x] Bücher als Loot in Truhen, beim Angeln und im Casino-Shop. (Die Casino-Boutique führt Glück II, Effizienz II, Glück des Meeres II und für VIPs Fülle I.)
 
 ---
 
 ## Phase I – Casino
 
 ### I1 Casino-Stadt „Lumière“ (Arbeitsname, Monte-Carlo-Stil) · XL
-- [ ] Neue Region an der Küste: Promenade mit Palmen, Yachthafen (Bootsfahrt von der Möwenbucht), Belle-Époque-Fassaden, Brunnen, Café und Hotel als Kulisse.
-- [ ] **Großes Casino-Gebäude** als Außen-Sprite (großformatig) und eigene Innen-Map: Marmorboden, roter Teppich, Kronleuchter, Spieltische, Automatenreihen, Bar, Kassenschalter, VIP-Salon (freigeschaltet über Chip-Umsatz oder Quest).
-- [ ] **Neue NPCs** mit Porträts, Dialogen und Tagesabläufen: Croupier(s), Kassiererin, Barkeeper, Concierge bzw. Host, ein exzentrischer High-Roller als Rivale (Sidequest-Kette), Sicherheitsmann. Dazu Gäste als Ambience-NPCs.
-- [ ] Musik: Lounge-Jazz (Casino-Halle), Swing (Promenade), ruhiger Piano-Track (VIP). Sounds: Chips, Karten mischen und austeilen, Roulettekessel und Kugel, Walzen, Jackpot-Fanfare, Gemurmel-Ambience.
-- [ ] Erreichbar nach einem Main-Story-Kapitel, damit Neueinsteiger nicht direkt im Casino landen.
+- [x] Neue Region an der Küste: Promenade mit Palmen, Yachthafen (Bootsfahrt von der Möwenbucht), Belle-Époque-Fassaden, Brunnen, Café und Hotel als Kulisse. (Lumière: Fähre in beide Richtungen, Wayshrine, Café Lumière als Shop, im Hôtel Lumière für 500 Gold ausruhen: volle Energie und geheilte Party.)
+- [x] **Großes Casino-Gebäude** als Außen-Sprite (großformatig) und eigene Innen-Map: Marmorboden, roter Teppich, Kronleuchter, Spieltische, Automatenreihen, Bar, Kassenschalter, VIP-Salon (freigeschaltet über Chip-Umsatz oder Quest). (Neue Bodenkacheln Marmor und Teppich plus Tapetenwand. VIP über 25.000 Chips Umsatz oder Rosalinds Quest-Kette; im Salon Flügel, Roulette, Blackjack und Video-Poker. Die höheren VIP-Limits gelten pro Spieler an allen Tischen.)
+- [x] **Neue NPCs** mit Porträts, Dialogen und Tagesabläufen: Croupier(s), Kassiererin, Barkeeper, Concierge bzw. Host, ein exzentrischer High-Roller als Rivale (Sidequest-Kette), Sicherheitsmann. Dazu Gäste als Ambience-NPCs. (Dorian, Margaux, Marcel, Céleste, Rosalind mit fünf Quests und drei Herz-Events, Bruno; je zwei Side-Quests. Namenlose Gäste schlendern zwischen festen Punkten jeder Map und haben eigene Sätze.)
+- [x] Musik: Lounge-Jazz (Casino-Halle), Swing (Promenade), ruhiger Piano-Track (VIP). Sounds: Chips, Karten mischen und austeilen, Roulettekessel und Kugel, Walzen, Jackpot-Fanfare, Gemurmel-Ambience. (Als synthetisierte Beds und SFX wie die übrige Musik; echte Tracks folgen mit L. Platten aus der Boutique spielen auf einer Jukebox den Track auf dem Hof.)
+- [x] Erreichbar nach einem Main-Story-Kapitel, damit Neueinsteiger nicht direkt im Casino landen. (Kapitel „Kindred“; vorher fährt die Fähre nicht.)
 
 ### I2 Chips und Casino-Shop · M
-- [ ] Kassenschalter: Gold ↔ Chips in beide Richtungen (fester Kurs, ohne Gebühr). Chip-Stand im HUD, solange man im Casino ist.
-- [ ] **Casino-Shop** (nur Chips): exklusive Kosmetik (Outfits, Hüte), Möbel und Deko, Emotes, Verzauberungsbücher, seltene Eier, Casino-Rucksack, Musik-Platten für die Farm.
-- [ ] Täglicher Gratis-Chip-Bonus (Skilltree-Knoten erhöht ihn).
-- [ ] Selbstschutz-Optionen in den Einstellungen: Tageslimit für Einsätze (standardmäßig **aus**), Casino ausblenden.
+- [x] Kassenschalter: Gold ↔ Chips in beide Richtungen (fester Kurs, ohne Gebühr). Chip-Stand im HUD, solange man im Casino ist.
+- [x] **Casino-Shop** (nur Chips): exklusive Kosmetik (Outfits, Hüte), Möbel und Deko, Emotes, Verzauberungsbücher, seltene Eier, Casino-Rucksack, Musik-Platten für die Farm. (Hüte sind jetzt tragbar, mit eigener Paper-Doll-Ebene für 8 Hutformen. Glücksei mit seltenem Wildling und doppelter Sternen-Chance. Emotes kommen mit J dazu; Outfits beschränken sich auf Hüte.)
+- [x] Täglicher Gratis-Chip-Bonus (Skilltree-Knoten erhöht ihn). (Lucky Chip und High Roller im Handelszweig.)
+- [x] Selbstschutz-Optionen in den Einstellungen: Tageslimit für Einsätze (standardmäßig **aus**), Casino ausblenden. (Das Limit liegt am Spieler und wird vom Host durchgesetzt. Ausblenden schließt die Türen und versteckt die Casino-Quests.)
 
 ### I3 Spielbare Spiele (alle mit echten Regeln) · XL
-- [ ] **Roulette** (europäisch, einfache Null): komplettes Tableau mit Plein, Cheval, Transversale, Carré, Sixain, Rot/Schwarz, Gerade/Ungerade, Manque/Passe, Dutzende, Kolonnen. Animierter Kessel, Verlauf der letzten Zahlen.
-- [ ] **Blackjack**: 6-Deck-Schuh mit Mischkarte, Dealer steht auf Soft 17, Double, Split, Versicherung, Blackjack zahlt 3:2. Optionale Strategie-Hilfe.
-- [ ] **Spielautomaten**: 3 Themen (Klassik-Früchte, Wildlinge, Saisonal), 5 Walzen, Gewinnlinien, Paytable einsehbar, Ziel-RTP etwa 95 % per Simulation verifiziert, lokaler progressiver Jackpot.
-- [ ] **Video Poker** (Jacks or Better) mit vollständiger Paytable.
-- [ ] **Wildling-Rennen**: Wetten auf 6 Läufer mit sichtbaren Quoten aus Werten und Form, animiertes Rennen. Passt thematisch.
-- [ ] **Glücksrad** am Eingang (einmal täglich gratis).
-- [ ] Gemeinsamer Tisch-Code: `CasinoGame`-Basisklasse, deterministischer RNG mit Seed. Speichern nach jedem Einsatz, damit es kein Save-Scumming gibt.
-- [ ] Koop: Spieler am selben Tisch sehen sich gegenseitig (Roulette und Blackjack als gemeinsame Tische, Host rechnet).
-- [ ] Tests: Auszahlungs-Unit-Tests für jede Wettart, RTP-Simulation in der CI (1 Mio. Runden headless), Blackjack-Regel-Tests.
-- [ ] Tutorials (D6) für jedes Spiel.
+- [x] **Roulette** (europäisch, einfache Null): komplettes Tableau mit Plein, Cheval, Transversale, Carré, Sixain, Rot/Schwarz, Gerade/Ungerade, Manque/Passe, Dutzende, Kolonnen. Animierter Kessel, Verlauf der letzten Zahlen.
+- [x] **Blackjack**: 6-Deck-Schuh mit Mischkarte, Dealer steht auf Soft 17, Double, Split, Versicherung, Blackjack zahlt 3:2. Optionale Strategie-Hilfe.
+- [x] **Spielautomaten**: 3 Themen (Klassik-Früchte, Wildlinge, Saisonal), 5 Walzen, Gewinnlinien, Paytable einsehbar, Ziel-RTP etwa 95 % per Simulation verifiziert, lokaler progressiver Jackpot.
+- [x] **Video Poker** (Jacks or Better) mit vollständiger Paytable.
+- [x] **Wildling-Rennen**: Wetten auf 6 Läufer mit sichtbaren Quoten aus Werten und Form, animiertes Rennen. Passt thematisch.
+- [x] **Glücksrad** am Eingang (einmal täglich gratis).
+- [x] Gemeinsamer Tisch-Code: `CasinoGame`-Basisklasse, deterministischer RNG mit Seed. Speichern nach jedem Einsatz, damit es kein Save-Scumming gibt.
+- [x] Koop: Spieler am selben Tisch sehen sich gegenseitig (Roulette und Blackjack als gemeinsame Tische, Host rechnet). (Der Host rechnet alles. Roulette ist ein gemeinsamer Kessel; jede Tischanzeige hat einen Feed, was die anderen gerade setzen und gewinnen. Blackjack-Hände spielt jeder für sich, die verdeckte Dealer-Karte und die Ersatzkarten beim Poker bleiben beim Host.)
+- [x] Tests: Auszahlungs-Unit-Tests für jede Wettart, RTP-Simulation in der CI (1 Mio. Runden headless), Blackjack-Regel-Tests. (Dazu Map-Tests für Lumière: keine Überlappungen, jede Tür erreichbar, Fähren und Warps landen auf freiem Boden.)
+- [x] Tutorials (D6) für jedes Spiel.
 
 ### I4 Rechtliches und Einstufung · S
-- [ ] Simuliertes Glücksspiel beeinflusst die Altersfreigabe (IARC-Fragebogen für Web, itch und Microsoft, PEGI und USK über IARC, Steam-Fragebogen). Fragebogen vorab ausfüllen und das Ergebnis bewerten.
-- [ ] Klarstellung in Store-Texten, AGB und Spiel: keine Echtgeld-Käufe, keine Auszahlung, Chips haben keinen realen Wert.
+- [x] Simuliertes Glücksspiel beeinflusst die Altersfreigabe (IARC-Fragebogen für Web, itch und Microsoft, PEGI und USK über IARC, Steam-Fragebogen). Fragebogen vorab ausfüllen und das Ergebnis bewerten. (`store/RATING.md`: Australien stuft simuliertes Glücksspiel seit 09/2024 als R 18+ ein, IARC generisch 18+, PEGI vermutlich 12 bis 18. Für eine Fassung ab etwa 7 Jahren gibt es das Export-Feature `no_casino`.)
+- [x] Klarstellung in Store-Texten, AGB und Spiel: keine Echtgeld-Käufe, keine Auszahlung, Chips haben keinen realen Wert. (Store-Seite, Entwurf `store/TERMS.md`, Hinweis beim ersten Casino-Besuch, Schilder und Fußzeile jedes Casino-Fensters.)
 
 ---
 

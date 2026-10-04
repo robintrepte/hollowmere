@@ -54,6 +54,7 @@ func _ready() -> void:
 	_remote_target = position
 
 var _pack_shown := ""
+var _hat_shown := ""
 
 func _sync_pack() -> void:
 	var p := GameState.player(pid)
@@ -61,6 +62,13 @@ func _sync_pack() -> void:
 		return
 	_pack_shown = p.backpack
 	doll.set_pack(Art.color(Economy.backpack_spec(p.backpack).get("tint", "#8a6a48")))
+
+func _sync_hat() -> void:
+	var p := GameState.player(pid)
+	if p == null or p.hat == _hat_shown:
+		return
+	_hat_shown = p.hat
+	doll.set_hat(p.hat)
 
 func set_remote_state(pos: Vector2, face: Vector2, mov: bool) -> void:
 	var now := Time.get_ticks_msec() * 0.001
@@ -78,6 +86,7 @@ func set_remote_state(pos: Vector2, face: Vector2, mov: bool) -> void:
 
 func _physics_process(delta: float) -> void:
 	_sync_pack()
+	_sync_hat()
 	if not local:
 		position = position.lerp(_remote_target, minf(1.0, delta * 12.0))
 		if position.distance_to(_remote_target) > 96:

@@ -50,6 +50,15 @@ func _ready() -> void:
 	_check(body, "Pause time while in menus (solo)", Settings.auto_pause_menus, func(on): Settings.auto_pause_menus = on)
 	_choice(body, "Seasons follow", ["Your region", "Northern hemisphere", "Southern hemisphere"], ["auto", "north", "south"].find(Settings.hemisphere), func(i: int):
 		Settings.hemisphere = ["auto", "north", "south"][i])
+	if Casino.built_in():
+		body.add_child(UITheme.label("Casino", 11, UITheme.WOOD))
+		var limits: Array = [0, 500, 1000, 2500, 5000, 10000]
+		var limit_names: Array = [tr("No limit")] + limits.slice(1).map(func(n): return tr("%s chips a day") % Num.group(int(n)))
+		_choice(body, "Daily stake limit", limit_names, maxi(0, limits.find(Settings.casino_daily_limit)), func(i: int):
+			Settings.casino_daily_limit = limits[i]
+			if GameState.started:
+				Coop.act("casino_prefs_act", [Settings.casino_daily_limit]))
+		_check(body, "Hide the casino (closes it and hides its quests)", Settings.hide_casino, func(on): Settings.hide_casino = on)
 	body.add_child(UITheme.label("Display & accessibility", 11, UITheme.WOOD))
 	if OS.get_name() != "Web":
 		_check(body, "Fullscreen", Settings.fullscreen, func(on): Settings.fullscreen = on; Settings.apply())

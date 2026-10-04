@@ -62,6 +62,15 @@ const SYNTH := {
 	"bite": [[660, 880, 0.06, "sine", 0.26], [660, 880, 0.06, "sine", 0.26]],
 	"reel": [[440, 470, 0.05, "sine", 0.08]],
 	"catch": [[392, 494, 0.1, "sine", 0.24], [587, 740, 0.12, "sine", 0.24], [784, 784, 0.26, "sine", 0.22]],
+	"equip": [[262, 392, 0.08, "sine", 0.22], [392, 392, 0.06, "noise", 0.08]],
+	"chips": [[2400, 1800, 0.03, "noise", 0.16], [2200, 1600, 0.04, "noise", 0.13], [2600, 2000, 0.03, "noise", 0.1]],
+	"deal": [[1800, 600, 0.06, "noise", 0.16]],
+	"wheel": [[180, 220, 0.5, "noise", 0.08], [220, 160, 0.6, "noise", 0.06]],
+	"ball": [[1400, 1400, 0.03, "noise", 0.14], [1200, 1200, 0.04, "noise", 0.1], [1000, 1000, 0.05, "noise", 0.08]],
+	"reels": [[330, 330, 0.05, "sine", 0.1], [294, 294, 0.05, "sine", 0.1], [330, 330, 0.05, "sine", 0.1], [294, 294, 0.05, "sine", 0.1]],
+	"reels_win": [[523, 523, 0.08, "sine", 0.22], [659, 659, 0.08, "sine", 0.22], [784, 784, 0.18, "sine", 0.2]],
+	"jackpot": [[523, 523, 0.1, "sine", 0.24], [659, 659, 0.1, "sine", 0.24], [784, 784, 0.1, "sine", 0.24], [1046, 1046, 0.1, "sine", 0.24], [784, 784, 0.1, "sine", 0.22], [1046, 1046, 0.4, "sine", 0.24]],
+	"race": [[392, 392, 0.18, "sine", 0.22], [392, 392, 0.18, "sine", 0.22], [784, 784, 0.4, "sine", 0.24]],
 }
 
 var _players: Array = []
@@ -244,6 +253,9 @@ const BEDS := {
 	"deep": {"root": 82.41, "scale": [0, 3, 7, 8], "color": 3, "step": 3.0, "pulse": false},
 	"battle": {"root": 130.81, "scale": [0, 3, 5, 7, 10], "color": 3, "step": 1.05, "pulse": true},
 	"trainer": {"root": 116.54, "scale": [0, 3, 5, 7, 10], "color": 3, "step": 0.95, "pulse": true},
+	"promenade": {"root": 174.61, "scale": [0, 2, 4, 7, 9, 11], "color": 11, "step": 1.3, "pulse": false},
+	"casino": {"root": 155.56, "scale": [0, 2, 3, 5, 7, 10], "color": 10, "step": 0.85, "pulse": false, "murmur": 0.05},
+	"vip": {"root": 138.59, "scale": [0, 2, 3, 7, 9, 10], "color": 9, "step": 1.6, "pulse": false},
 }
 const BED_SECONDS := 16.0
 const BED_RATE := 11025
@@ -372,6 +384,9 @@ func _mix_bed(name: String) -> PackedByteArray:
 			jump = 1 if rng.randf() < 0.5 else -1
 		idx = posmod(idx + jump, scale.size())
 		t += step * rng.randf_range(0.9, 1.25)
+	var murmur := float(spec.get("murmur", 0.0))
+	if murmur > 0.0:
+		_murmur(mix, murmur, rng)
 	var peak := 0.001
 	for i in n:
 		peak = maxf(peak, absf(mix[i]))
@@ -382,6 +397,19 @@ func _mix_bed(name: String) -> PackedByteArray:
 		var sample := int(clampf(mix[i] * gain, -1.0, 1.0) * 32767.0)
 		data.encode_s16(i * 2, sample)
 	return data
+
+## Crowd murmur: band-limited noise that swells in slow waves. The swell periods divide the loop length.
+func _murmur(mix: PackedFloat32Array, vol: float, rng: RandomNumberGenerator) -> void:
+	var lo := 0.0
+	var lo2 := 0.0
+	var n := mix.size()
+	for i in n:
+		var x := rng.randf_range(-1.0, 1.0)
+		lo += (x - lo) * 0.12
+		lo2 += (lo - lo2) * 0.12
+		var ph := float(i) / float(n) * TAU
+		var swell := 0.6 + 0.25 * sin(ph * 3.0) + 0.15 * sin(ph * 7.0 + 1.3)
+		mix[i] += lo2 * vol * swell * 6.0
 
 func _snap(f: float) -> float:
 	return float(maxi(1, roundi(f * BED_SECONDS))) / BED_SECONDS

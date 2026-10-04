@@ -49,7 +49,7 @@ func test_quest_data_is_consistent() -> void:
 			if err != "":
 				problems.append("%s: %s" % [qid, err])
 		for k in d.reward:
-			if not k in ["money", "friendship", "recipe", "skill_points", "emote", "chips", "flag"] and not Data.has_item(k):
+			if not k in ["money", "friendship", "recipe", "skill_points", "emote", "chips", "flag", "player_flag"] and not Data.has_item(k):
 				problems.append("%s: reward %s" % [qid, k])
 			if k == "recipe" and not Economy.recipe("cooking", str(d.reward[k])).size() and not Economy.recipe("crafting", str(d.reward[k])).size():
 				problems.append("%s: recipe %s" % [qid, d.reward[k]])

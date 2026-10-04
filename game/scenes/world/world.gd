@@ -10,6 +10,7 @@ const DECO_SPRITES := {
 	38: "iceblock", 39: "ore_copper", 40: "ladder", 41: "cave_entrance", 42: "ladder_up",
 	43: "block_dirt", 44: "block_stone", 45: "block_deep", 46: "block_basalt", 47: "block_obsidian",
 	48: "block_stone", 49: "crystal", 50: "block_fossil", 51: "torch", 52: "support", 53: "rail", 54: "minecart", 55: "elevator",
+	56: "wallpaper",
 }
 const FLAT_DECO := [40, 31, 53]
 ## Drawn by MineFx when there is no sprite for them.
@@ -57,6 +58,7 @@ var _static_nodes: Array = []
 var blockers: Dictionary = {}        # Vector2i -> true
 var interactables: Dictionary = {}   # Vector2i -> Dictionary (authored map objects)
 var npcs: Dictionary = {}            # vid -> Npc
+var guests: Array = []               # unnamed ambience Npcs (casino guests, strollers)
 var creatures: Array = []            # WildCreature nodes (wild + ranch)
 var actors: Node2D
 var astar: AStarGrid2D
@@ -122,6 +124,9 @@ func load_map(id: String) -> void:
 		n.queue_free()
 	for n in npcs.values():
 		n.queue_free()
+	for n in guests:
+		n.queue_free()
+	guests.clear()
 	_deco_nodes.clear()
 	_object_nodes.clear()
 	_static_nodes.clear()
@@ -160,6 +165,7 @@ func load_map(id: String) -> void:
 		darkness = DarknessFx.new(self, float(info.dark))
 		add_child(darkness)
 	_spawn_npcs()
+	_spawn_guests()
 	_spawn_creatures()
 	_on_time(GameState.minute())
 	_apply_weather()
@@ -652,6 +658,8 @@ func _add_building(o: Dictionary) -> void:
 		blockers[Vector2i(p.x + w / 2, p.y + h - 1)] = true
 		return
 	var tex := Art.building(bid + ("_ruined" if ruined else ""))
+	if tex == null:
+		tex = Art.world(bid)
 	if tex:
 		var s := Sprite2D.new()
 		s.texture = tex
@@ -790,6 +798,32 @@ func _spawn_npcs() -> void:
 		ysort.add_child(n)
 		npcs[vid] = n
 
+const GUEST_SKIN := ["#f4d0b0", "#f0c8a0", "#e0b088", "#c08860", "#a06a48", "#7a4a30"]
+const GUEST_HAIR := ["#1e1a22", "#5a4030", "#b0502a", "#e8d8a0", "#e8e8f0", "#7a3a2a", "#3a2a4a"]
+const GUEST_SHIRT := ["#2a2430", "#7a2a36", "#2a3a6a", "#3a6a4a", "#e8e8f0", "#9a5ad0", "#c89a40"]
+
+## A handful of nameless guests that stroll between the map's guest spots; same faces all day.
+func _spawn_guests() -> void:
+	var spots: Array = []
+	for s in info.get("guests", []):
+		spots.append(Vector2i(int(s[0]), int(s[1])))
+	if spots.is_empty():
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash([map_id, GameState.day(), "guests"])
+	var count := mini(spots.size(), int(info.get("guest_count", ceili(spots.size() / 2.0))))
+	var free := spots.duplicate()
+	for i in count:
+		var n := Npc.new()
+		n.world = self
+		n.guest_look = {"skin": GUEST_SKIN[rng.randi() % GUEST_SKIN.size()], "hair": GUEST_HAIR[rng.randi() % GUEST_HAIR.size()],
+			"shirt": GUEST_SHIRT[rng.randi() % GUEST_SHIRT.size()], "style": rng.randi() % Art.HAIR_STYLES.size()}
+		n.wander = spots
+		var at: Vector2i = free.pop_at(rng.randi() % free.size())
+		n.position = GameState.tile_center(_nearest_open(at))
+		ysort.add_child(n)
+		guests.append(n)
+
 func _update_npcs() -> void:
 	for vid in Data.villagers:
 		var loc := Relationships.location(vid, GameState.minute(), GameState.world.weather)
@@ -808,7 +842,7 @@ func _update_npcs() -> void:
 			npcs[vid].walk_to(Vector2i(loc[1], loc[2]))
 
 func npc_at(t: Vector2i) -> Npc:
-	for n in npcs.values():
+	for n in npcs.values() + guests:
 		if GameState.to_tile(n.position) == t or GameState.to_tile(n.position + Vector2(0, -16)) == t:
 			return n
 	return null

@@ -56,6 +56,7 @@ func _ready() -> void:
 	Net.coop_ended.connect(_on_coop_ended)
 	EventBus.battle_requested.connect(_on_battle_requested)
 	EventBus.story_advanced.connect(_on_story_advanced)
+	EventBus.jukebox_changed.connect(func(): if battle == null: Audio.music(map_music()))
 	Settings.text_scale_changed.connect(_rebuild_hud)
 	get_viewport().size_changed.connect(_on_view_resized)
 	show_title()
@@ -236,8 +237,16 @@ func _go_to(map_id: String, pos: Vector2) -> void:
 	for pid in remotes.keys():
 		var rp: PlayerData = GameState.player(pid)
 		remotes[pid].visible = rp != null and rp.map_id == map_id
-	Audio.music(world.info.get("music", "farm"))
+	Audio.music(map_music())
 	EventBus.map_changed.emit(map_id)
+
+## The map's own music, or on the farm the record playing on the jukebox.
+func map_music() -> String:
+	if bool(world.info.get("farm", false)):
+		var track := str(GameState.world.get("flags", {}).get("jukebox", ""))
+		if track != "":
+			return track
+	return str(world.info.get("music", "farm"))
 
 func _setup_camera() -> void:
 	var sz := world.map_size_px()
@@ -493,7 +502,7 @@ func _on_battle_requested(s: Dictionary) -> void:
 	if _redraw_after_battle:
 		_redraw_after_battle = false
 		world.refresh_all()
-	Audio.music(world.info.get("music", "farm"))
+	Audio.music(map_music())
 	EventBus.party_changed.emit()
 	await _fade_to(0.0, 0.3)
 	if res.result == "befriend":

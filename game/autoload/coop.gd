@@ -14,7 +14,8 @@ const ACTIONS := ["use_tool", "use_item", "harvest_at", "load_machine", "ship", 
 	"befriend_act", "dex_seen_act", "reward_act", "warden_won_act", "guardian_result_act", "legend_result_act",
 	"mine_floor_act", "open_treasure_act", "festival_act", "story_seen_act", "chain_act", "show_act", "rematch_won_act", "claim_quest_act",
 	"invest_skill_act", "respec_skills_act", "fish_cast_act", "fish_result_act", "equip_tackle_act", "unequip_tackle_act", "upgrade_rod_act", "first_gift_act",
-	"deep_enter_act", "deep_boss_act", "crack_geode_act", "donate_museum_act", "enchant_act", "anvil_act", "grindstone_act", "battle_spoils_act"]
+	"deep_enter_act", "deep_boss_act", "crack_geode_act", "donate_museum_act", "enchant_act", "anvil_act", "grindstone_act", "battle_spoils_act",
+	"casino_exchange_act", "casino_prefs_act", "casino_bonus_act", "casino_wheel_act", "roulette_act", "blackjack_act", "slots_act", "poker_act", "race_act", "race_card_act", "wear_hat_act", "hotel_act", "jukebox_act"]
 
 var _chunks: Dictionary = {}       # transfer id -> Array
 var _ready_to_sleep: Dictionary = {}
@@ -392,6 +393,16 @@ func _sync_player(pid: String) -> void:
 	if pid == Net.local_id():
 		EventBus.inventory_changed.emit()
 		EventBus.party_changed.emit()
+
+## Host: tells every player about a finished casino round so shared tables show each other's play.
+func table_news(game: String, text: String) -> void:
+	EventBus.casino_news.emit(game, text)
+	if Net.is_online() and Net.is_authority():
+		rpc("casino_news", game, text)
+
+@rpc("authority", "reliable")
+func casino_news(game: String, text: String) -> void:
+	EventBus.casino_news.emit(game, text)
 
 func _notify(pid: String, text: String) -> void:
 	if pid == Net.local_id():

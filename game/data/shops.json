@@ -93,5 +93,29 @@
       {"id": "geode", "price": 200}, {"id": "quartz", "price": 150}, {"id": "glimmer_dust", "price": 45, "requires": "depth:1"}, {"id": "amethyst", "price": 500, "requires": "depth:2"}, {"id": "gem_case", "price": 3000}
     ],
     "buys": {"gem": 0.25, "artifact": 0.25}
+  },
+  "casino": {
+    "name": "Grand Casino Boutique",
+    "owner": "margaux",
+    "currency": "chips",
+    "backpacks": true,
+    "stock": [
+      {"id": "lucky_cap", "price": 600}, {"id": "dealer_visor", "price": 800}, {"id": "velvet_beret", "price": 1200}, {"id": "fedora", "price": 1500}, {"id": "top_hat", "price": 2500}, {"id": "record_casino", "price": 1000}, {"id": "record_promenade", "price": 1000}, {"id": "record_beach", "price": 800}, {"id": "record_farm", "price": 800}, {"id": "record_vip", "price": 1500, "requires": "vip"}, {"id": "jukebox", "price": 3000}, {"id": "potted_palm", "price": 400}, {"id": "velvet_rope", "price": 600}, {"id": "slot_red", "price": 2000}, {"id": "book:fortune:2", "price": 3000}, {"id": "book:efficiency:2", "price": 2500}, {"id": "book:sea_luck:2", "price": 2500}, {"id": "book:abundance:1", "price": 4000, "requires": "vip"}, {"id": "lucky_egg", "price": 4000}
+    ]
+  },
+  "casino_bar": {
+    "name": "Marcel's Bar",
+    "owner": "marcel",
+    "open": [1100, 2400],
+    "stock": [
+      {"id": "glow_tea", "price": 300}, {"id": "honey_cake", "price": 420}, {"id": "cream_pudding", "price": 480}, {"id": "starfruit_parfait", "price": 1400}
+    ]
+  },
+  "lumiere_cafe": {
+    "name": "Café Lumière",
+    "open": [700, 2000],
+    "stock": [
+      {"id": "berry_tart", "price": 380}, {"id": "hearty_pancakes", "price": 420}, {"id": "honey_cake", "price": 400}, {"id": "glow_tea", "price": 280}
+    ]
   }
 }

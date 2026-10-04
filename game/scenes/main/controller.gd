@@ -85,11 +85,14 @@ func _on_use(t: Vector2i) -> void:
 	if cat in ["bait", "tackle"]:
 		_act("equip_tackle_act", [e.uid])
 		return
+	if it.has("hat"):
+		_act("wear_hat_act", [e.uid])
+		return
 	if cat in ["seed", "sapling"] or it.has("fert") or it.has("place") or it.has("mine_place") or it.has("blast"):
 		_act("use_item", [world.map_id, t, e.uid])
 		return
 	var npc := world.npc_at(t)
-	if npc:
+	if npc and npc.vid != "":
 		_gift(npc, e)
 		return
 	if Data.is_edible(e.id):
@@ -110,6 +113,9 @@ func _on_interact(t: Vector2i) -> void:
 		return
 	player.face_tile(t)
 	var npc := world.npc_at(t)
+	if npc and npc.vid == "":
+		await _talk_guest(npc)
+		return
 	if npc:
 		await _talk(npc)
 		await _offer_battle(npc.vid)
@@ -190,7 +196,40 @@ func _interact_object(t: Vector2i, o: Dictionary) -> bool:
 		"station":
 			ui.open(EnchantPanel.new(_pdata(), str(o.id), world.map_id, t))
 			return true
+		"decor":
+			if Data.get_item(str(o.get("id", ""))).get("jukebox", false):
+				busy = true
+				await _jukebox()
+				busy = false
+				return true
 	return false
+
+func _jukebox() -> void:
+	var tracks: Array = GameState.record_tracks(_pdata())
+	if tracks.is_empty():
+		await ui.say(["The jukebox is ready, but you have no records. The casino boutique in Lumière sells them."], tr("Jukebox"))
+		return
+	var names: Array = []
+	for tr_id in tracks:
+		names.append(_record_name(str(tr_id)))
+	var opts: Array = names + ["Farm music", "Leave it"]
+	var c: int = await ui.ask("Which record should the jukebox play?", opts)
+	if c < 0 or c > tracks.size():
+		return
+	var track: String = "" if c == tracks.size() else str(tracks[c])
+	var r: Dictionary = await Coop.act_async("jukebox_act", [track])
+	if r.get("ok", false):
+		if track == "":
+			GameState.world.flags.erase("jukebox")
+		else:
+			GameState.world.flags["jukebox"] = track
+		EventBus.jukebox_changed.emit()
+
+func _record_name(track: String) -> String:
+	for id in Data.items:
+		if str(Data.items[id].get("track", "")) == track:
+			return Data.item_name(id)
+	return track.capitalize()
 
 func _open_chest(t: Vector2i, o: Dictionary) -> void:
 	var spec := Data.container_spec(o.id)
@@ -246,14 +285,80 @@ func _interact_static(io: Dictionary) -> void:
 			else:
 				await ui.say([tr("It's blocked. (%s)") % Economy.req_text(io.get("requires", ""))])
 		"ferry":
-			await ui.say(["The ferry to Lumière isn't running yet. The ferryman says the boat needs repairs first."], tr("Ferry"))
+			await _ferry(io)
 		"lot":
 			await ui.say([tr("An empty lot for the %s. Robin at the Carpenter's can build it.") % io.get("label", io.id).to_lower()])
 		"building":
 			await _building(io)
 
+func _ferry(io: Dictionary) -> void:
+	var dest := str(io.get("dest", ""))
+	if str(io.get("to", "")) == "":
+		await ui.say(["The ferry isn't running today."], tr("Ferry"))
+		return
+	var req := str(io.get("requires", ""))
+	if not GameState.is_open_requirement(req):
+		await ui.say([tr("The ferry to %s isn't running yet. (%s)") % [tr(dest), Economy.req_text(req)]], tr("Ferry"))
+		return
+	var c: int = await ui.ask(tr("Take the ferry to %s?") % tr(dest), ["Set sail", "Stay"])
+	if c == 0:
+		Audio.sfx("splash")
+		EventBus.map_change_requested.emit(str(io.to), Vector2i(int(io.tx), int(io.ty)))
+
+func _casino_game(game: String, arg: String) -> void:
+	var panel: Control
+	match game:
+		"cashier": panel = CashierPanel.new()
+		"roulette": panel = RoulettePanel.new()
+		"blackjack": panel = BlackjackPanel.new()
+		"slots": panel = SlotsPanel.new(arg if arg != "" else "orchard")
+		"poker": panel = PokerPanel.new()
+		"race": panel = RacePanel.new()
+		"wheel": panel = WheelPanel.new()
+	if panel:
+		Audio.sfx("chips")
+		ui.open(panel)
+
+func _enter_casino() -> void:
+	if not Casino.built_in():
+		await ui.say(["The Grand Casino is closed for renovation."])
+		return
+	if Settings.hide_casino:
+		await ui.say(["The doors of the Grand Casino stay closed for you. (You can show the casino again in the settings.)"])
+		return
+	if not Settings.profile.get("casino_notice_seen", false):
+		await ui.say(["Welcome to the Grand Casino Lumière!", "Chips are play money. They can't be bought with real money and can't be paid out. You trade them for in-game gold at the cashier.", "Play for fun. You can set a daily stake limit or hide the casino completely in the settings."], tr("Grand Casino"))
+		Settings.profile["casino_notice_seen"] = true
+		Settings.save_settings()
+	Coop.act("casino_prefs_act", [Settings.casino_daily_limit])
+	Audio.sfx("door")
+	var sp: Array = Data.get_map("casino").get("spawn", [15, 20])
+	EventBus.map_change_requested.emit("casino", Vector2i(int(sp[0]), int(sp[1])))
+
+func _vip_door() -> void:
+	if Casino.vip(_pdata()):
+		Audio.sfx("door")
+		var sp: Array = Data.get_map("casino_vip").get("spawn", [8, 11])
+		EventBus.map_change_requested.emit("casino_vip", Vector2i(int(sp[0]), int(sp[1])))
+		return
+	await ui.say(["Members only. Stake 25,000 chips at our tables, or have a regular vouch for you, and the salon is yours."], Data.villager_name("bruno"), _portrait("bruno"))
+
+func _hotel() -> void:
+	var c: int = await ui.ask(tr("A suite at the Hôtel Lumière: rest, a warm bath and a healed party. (%s)") % CoinLabel.text(GameState.HOTEL_PRICE), ["Rest", "Not now"])
+	if c != 0:
+		return
+	var r: Dictionary = await Coop.act_async("hotel_act", [])
+	if r.get("ok", false):
+		await ui.say(["You wake up refreshed. Your Wildlings look pampered."], tr("Hôtel Lumière"))
+	elif str(r.get("reason", "")) != "":
+		EventBus.toast.emit(str(r.reason), "")
+
 func _building(io: Dictionary) -> void:
 	var action: String = io.get("action", "")
+	if action.begins_with("casino:"):
+		var parts := action.split(":")
+		_casino_game(parts[1], parts[2] if parts.size() > 2 else "")
+		return
 	if action.begins_with("shop:"):
 		var sid := action.substr(5)
 		var shop: Dictionary = Data.shops.get(sid, {})
@@ -305,8 +410,14 @@ func _building(io: Dictionary) -> void:
 			await ui.say(["The Wildling Spa. Tired workers rest twice as fast here."])
 		"ruined":
 			await ui.say([tr("The %s is in ruins. Maybe the village could help restore it...") % io.get("label", "building").to_lower()])
+		"casino_enter":
+			await _enter_casino()
+		"vip":
+			await _vip_door()
+		"hotel":
+			await _hotel()
 		_:
-			await ui.say(["It's locked."])
+			await ui.say([io.get("text", "It's locked.")])
 
 func _board() -> void:
 	Audio.sfx("open")
@@ -365,6 +476,15 @@ func _offer_battle(vid: String) -> void:
 
 func _portrait(vid: String) -> Texture2D:
 	return Art.portrait(vid)
+
+func _talk_guest(npc: Npc) -> void:
+	var lines: Array = world.info.get("guest_lines", [])
+	if lines.is_empty():
+		return
+	busy = true
+	npc.face(player.position - npc.position)
+	await ui.say([lines[randi() % lines.size()]], tr("Guest"))
+	busy = false
 
 func _talk(npc: Npc) -> void:
 	busy = true

@@ -11740,3 +11740,1514 @@ msgstr "Du brauchst %d Arkane Essenz."
 msgid "You need the tool in your pack."
 msgstr "Das Werkzeug muss in deinem Rucksack sein."
 
+#, c-format
+msgid " (%d scatters)"
+msgstr " (%d Scatter)"
+
+#, c-format
+msgid " and won %d chips"
+msgstr " und gewann %d Chips"
+
+#, c-format
+msgid "%.1f"
+msgstr "%.1f"
+
+#, c-format
+msgid "%d %s. No luck this time."
+msgstr "%d %s. Diesmal kein Glück."
+
+#, c-format
+msgid "%d %s. You win %s chips!"
+msgstr "%d %s. Du gewinnst %s Chips!"
+
+#, c-format
+msgid "%d coins = %d chips. Press Deal."
+msgstr "%d Münzen = %d Chips. Drück auf Geben."
+
+#, c-format
+msgid "%s chips"
+msgstr "%s Chips"
+
+#, c-format
+msgid "%s chips a day"
+msgstr "%s Chips am Tag"
+
+#, c-format
+msgid "%s drew a %s at video poker."
+msgstr "%s hat beim Video-Poker ein %s gezogen."
+
+#, c-format
+msgid "%s hit the jackpot: %d chips!"
+msgstr "%s hat den Jackpot geknackt: %d Chips!"
+
+#, c-format
+msgid "%s spun %d at roulette%s."
+msgstr "%s hat beim Roulette die %d gedreht%s."
+
+#, c-format
+msgid "%s wins! You collect %s chips."
+msgstr "%s gewinnt! Du kassierst %s Chips."
+
+#, c-format
+msgid "%s wins. Better luck next race."
+msgstr "%s gewinnt. Beim nächsten Rennen mehr Glück."
+
+#, c-format
+msgid "%s won %d chips at blackjack."
+msgstr "%s hat beim Blackjack %d Chips gewonnen."
+
+#, c-format
+msgid "%s won %d chips on %s."
+msgstr "%s hat %d Chips mit %s gewonnen."
+
+#, c-format
+msgid "%s! You win %s chips."
+msgstr "%s! Du gewinnst %s Chips."
+
+#, c-format
+msgid "+%d chips"
+msgstr "+%d Chips"
+
+#, c-format
+msgid "+%d chips. Good luck!"
+msgstr "+%d Chips. Viel Glück!"
+
+#, c-format
+msgid "+%s"
+msgstr "+%s"
+
+#, c-format
+msgid "-%s"
+msgstr "-%s"
+
+msgid "...Thanks. Really. Now go, before someone sees me smiling."
+msgstr "...Danke. Wirklich. Und jetzt geh, bevor mich jemand lächeln sieht."
+
+#, c-format
+msgid "1 chip = %s, both ways, no fee."
+msgstr "1 Chip = %s, in beide Richtungen, ohne Gebühr."
+
+msgid "1st 12"
+msgstr "1. Dutzend"
+
+msgid "2nd 12"
+msgstr "2. Dutzend"
+
+#, c-format
+msgid "3 = %d, 4 = %d, 5 = JACKPOT"
+msgstr "3 = %d, 4 = %d, 5 = JACKPOT"
+
+msgid "3rd 12"
+msgstr "3. Dutzend"
+
+msgid "A"
+msgstr "A"
+
+msgid "A Wildling Egg! Place it in the Hatchery."
+msgstr "Ein Wildling-Ei! Leg es in die Brutstätte."
+
+msgid "A cake for the staff"
+msgstr "Kuchen fürs Personal"
+
+msgid "A farmer at the tables! How delightful. Do try not to bet the cow."
+msgstr "Ein Farmer an den Tischen! Wie reizend. Versuch bitte, nicht die Kuh zu setzen."
+
+msgid "A free spin"
+msgstr "Eine Gratis-Drehung"
+
+msgid "A golden egg from the casino boutique. A rare Wildling is inside, and the odds of a Starry one are doubled."
+msgstr "Ein goldenes Ei aus der Casino-Boutique. Darin steckt ein seltener Wildling, und die Chance auf einen Sternen-Wildling ist verdoppelt."
+
+msgid "A grand piano. It plays itself after midnight, they say."
+msgstr "Ein Flügel. Nach Mitternacht soll er von allein spielen."
+
+msgid "A green visor like the croupiers wear. Keeps the chandelier glare away."
+msgstr "Ein grüner Augenschirm wie bei den Croupiers. Hält das Licht der Kronleuchter ab."
+
+msgid "A palm in a golden pot, straight from the casino lobby."
+msgstr "Eine Palme im goldenen Topf, direkt aus der Casino-Lobby."
+
+msgid "A potted palm in a golden pot."
+msgstr "Eine Palme in einem goldenen Topf."
+
+msgid "A potted palm. Someone has hidden a chip in the soil. It is glued down."
+msgstr "Eine Topfpalme. Jemand hat einen Chip in der Erde versteckt. Er ist festgeklebt."
+
+msgid "A red cap with a gold star. It is not actually lucky. Probably."
+msgstr "Eine rote Kappe mit goldenem Stern. Sie bringt eigentlich kein Glück. Vermutlich."
+
+msgid "A retired slot machine. The lights still blink; it no longer takes chips."
+msgstr "Ein ausrangierter Spielautomat. Die Lichter blinken noch, Chips nimmt er keine mehr."
+
+msgid "A soft felt hat with a dent on top. Looks good at any card table."
+msgstr "Ein weicher Filzhut mit Delle oben. Macht an jedem Kartentisch eine gute Figur."
+
+#, c-format
+msgid "A suite at the Hôtel Lumière: rest, a warm bath and a healed party. (%s)"
+msgstr "Eine Suite im Hôtel Lumière: Ruhe, ein warmes Bad und eine geheilte Party. (%s)"
+
+msgid "A suite at the Hôtel restores you completely. Ask at the door."
+msgstr "Eine Suite im Hôtel bringt dich wieder ganz zu Kräften. Frag an der Tür."
+
+msgid "A taste for risk"
+msgstr "Lust am Risiko"
+
+msgid "A velvet rope. Bruno watches it like a hawk."
+msgstr "Eine Samtkordel. Bruno bewacht sie wie ein Falke."
+
+msgid "A very important guest arrives next week and asked for pearls on the pillows. Don't ask. Three would do."
+msgstr "Nächste Woche kommt ein sehr wichtiger Gast und wünscht sich Perlen auf den Kissen. Frag nicht. Drei würden reichen."
+
+msgid "And they're off!"
+msgstr "Und sie sind gestartet!"
+
+msgid "B"
+msgstr "B"
+
+msgid "Back a runner at the Wildling Races. Faster Wildlings in good form win more often but pay less."
+msgstr "Setz bei den Wildling-Rennen auf einen Läufer. Schnelle Wildlinge in guter Form gewinnen öfter, zahlen aber weniger."
+
+msgid "Back the runner"
+msgstr "Auf den Läufer setzen"
+
+msgid "Barkeeper"
+msgstr "Barkeeper"
+
+#, c-format
+msgid "Bet: %s"
+msgstr "Einsatz: %s"
+
+msgid "Between us: I've never placed a bet in my life. Watching is enough."
+msgstr "Unter uns: Ich habe in meinem Leben noch nie gewettet. Zuschauen reicht mir."
+
+msgid "Blackjack"
+msgstr "Blackjack"
+
+msgid "Blackjack!"
+msgstr "Blackjack!"
+
+msgid "Book"
+msgstr "Buch"
+
+msgid "Brass posts and a red rope. Makes any corner of the farm feel exclusive."
+msgstr "Messingpfosten und eine rote Kordel. Macht jede Ecke des Hofs exklusiv."
+
+msgid "Bring Bruno 3 Honey Cakes."
+msgstr "Bring Bruno 3 Honigkuchen."
+
+msgid "Bring Céleste 3 Pearls."
+msgstr "Bring Céleste 3 Perlen."
+
+msgid "Bring Céleste 5 Fairy Roses."
+msgstr "Bring Céleste 5 Feenrosen."
+
+msgid "Bring Dorian 2 Honey Cakes."
+msgstr "Bring Dorian 2 Honigkuchen."
+
+msgid "Bring Marcel 2 Cream Puddings."
+msgstr "Bring Marcel 2 Sahnepuddings."
+
+msgid "Bring Marcel 3 Glow Tea."
+msgstr "Bring Marcel 3 Leuchttee."
+
+msgid "Bring Margaux 4 Tulips."
+msgstr "Bring Margaux 4 Tulpen."
+
+msgid "Bruno"
+msgstr "Bruno"
+
+msgid "Bruno only lets members past the rope. Prove you can win, not just play: take 2,500 chips off my tables, all told, and I'll vouch for you."
+msgstr "Bruno lässt nur Mitglieder hinter die Kordel. Zeig, dass du gewinnen kannst, nicht nur spielen: Hol dir an meinen Tischen insgesamt 2.500 Chips, dann bürge ich für dich."
+
+msgid "Bruno pretends he doesn't like my cakes. He has two a night."
+msgstr "Bruno tut so, als mag er meine Kuchen nicht. Er isst zwei pro Nacht."
+
+msgid "Bruno! This one's with me. From now on, always."
+msgstr "Bruno! Die Person gehört zu mir. Ab jetzt immer."
+
+msgid "Bust"
+msgstr "Überkauft"
+
+msgid "Buy a few chips at the cashier. Ten gold buys one chip, and you can always cash out at the same rate."
+msgstr "Kauf an der Kasse ein paar Chips. Zehn Gold kosten einen Chip, und du kannst jederzeit zum gleichen Kurs auszahlen."
+
+msgid "Buy chips:"
+msgstr "Chips kaufen:"
+
+msgid "C"
+msgstr "C"
+
+msgid "Café Lumière"
+msgstr "Café Lumière"
+
+msgid "Cash out all"
+msgstr "Alles auszahlen"
+
+msgid "Cash out:"
+msgstr "Auszahlen:"
+
+msgid "Cashier"
+msgstr "Kasse"
+
+msgid "Casino Cashier"
+msgstr "Casino-Kassiererin"
+
+msgid "Casino Security"
+msgstr "Casino-Sicherheit"
+
+#, c-format
+msgid "Casino VIP: stake %s chips in total"
+msgstr "Casino-VIP: insgesamt %s Chips einsetzen"
+
+msgid "Chips are play money with no real-world value."
+msgstr "Chips sind Spielgeld ohne echten Wert."
+
+msgid "Chips are play money. They can't be bought with real money and can't be paid out. You trade them for in-game gold at the cashier."
+msgstr "Chips sind Spielgeld. Man kann sie nicht mit echtem Geld kaufen und nicht auszahlen lassen. An der Kasse tauschst du sie gegen Gold aus dem Spiel."
+
+msgid "Chips are play money: they cannot be bought with real money and have no real-world value. Set a daily limit in the settings if you like."
+msgstr "Chips sind Spielgeld: Man kann sie nicht mit echtem Geld kaufen, und sie haben keinen echten Wert. In den Einstellungen kannst du ein Tageslimit festlegen."
+
+msgid "Click cards to hold them, then draw."
+msgstr "Klick Karten an, um sie zu halten, dann zieh neu."
+
+msgid "Coins:"
+msgstr "Münzen:"
+
+#, c-format
+msgid "Collect today's %d free chips"
+msgstr "Heutige %d Gratis-Chips abholen"
+
+msgid "Come back tomorrow for your next spin."
+msgstr "Komm morgen für die nächste Drehung wieder."
+
+msgid "Croupier"
+msgstr "Croupier"
+
+msgid "Céleste"
+msgstr "Céleste"
+
+msgid "D"
+msgstr "D"
+
+#, c-format
+msgid "Daily limit: %s · staked today: %s"
+msgstr "Tageslimit: %s · heute gesetzt: %s"
+
+msgid "Daily stake limit"
+msgstr "Tägliches Einsatzlimit"
+
+msgid "Deal"
+msgstr "Geben"
+
+msgid "Dealer"
+msgstr "Dealer"
+
+msgid "Dealer's Visor"
+msgstr "Dealer-Schirm"
+
+msgid "Dorian"
+msgstr "Dorian"
+
+msgid "Double"
+msgstr "Verdoppeln"
+
+msgid "Double shift"
+msgstr "Doppelschicht"
+
+msgid "Double shift tonight. I can't leave the rope. Three Honey Cakes. Don't tell Marcel they're not his."
+msgstr "Heute Doppelschicht. Ich kann nicht von der Kordel weg. Drei Honigkuchen. Sag Marcel nicht, dass sie nicht von ihm sind."
+
+msgid "Draw"
+msgstr "Ziehen"
+
+msgid "E"
+msgstr "E"
+
+msgid "European roulette with one zero. Click a number for a straight bet (35:1), the line between two numbers for a split (17:1), the bottom edge of a column of three for a street (11:1), the point where four numbers meet for a corner (8:1) and the bottom corner between two columns for a six line (5:1). Dozens and columns pay 2:1; red, black, even, odd, 1-18 and 19-36 pay 1:1 and lose on zero. Right-click a chip to take it back. Everyone in the casino plays the same wheel."
+msgstr "Europäisches Roulette mit einer Null. Klick auf eine Zahl für Plein (35:1), auf die Linie zwischen zwei Zahlen für Cheval (17:1), auf die Unterkante einer Dreierreihe für Transversale (11:1), auf den Punkt zwischen vier Zahlen für Carré (8:1) und auf die untere Ecke zwischen zwei Reihen für Sixain (5:1). Dutzende und Kolonnen zahlen 2:1; Rot, Schwarz, Gerade, Ungerade, 1-18 und 19-36 zahlen 1:1 und verlieren bei Null. Rechtsklick auf einen Chip nimmt ihn zurück. Alle im Casino spielen am selben Kessel."
+
+msgid "Even"
+msgstr "Gerade"
+
+msgid "Even. Your chips come back."
+msgstr "Unentschieden. Du bekommst deine Chips zurück."
+
+msgid "Every gambler remembers their first number. Win a straight-up bet at roulette. One number, thirty-five to one."
+msgstr "Jeder Spieler erinnert sich an seine erste Zahl. Gewinn beim Roulette eine Plein-Wette. Eine Zahl, fünfunddreißig zu eins."
+
+msgid "Every spin is fresh. The wheel has no memory, whatever the regulars say."
+msgstr "Jede Drehung ist neu. Der Kessel hat kein Gedächtnis, egal was die Stammgäste sagen."
+
+msgid "Exactly. No pattern. Anyone who says otherwise is selling something."
+msgstr "Genau. Kein Muster. Wer etwas anderes behauptet, will dir was verkaufen."
+
+msgid "Exquisite. The lobby will be the talk of the coast."
+msgstr "Exquisit. Über die Lobby wird man an der ganzen Küste reden."
+
+msgid "F"
+msgstr "F"
+
+msgid "Farm music"
+msgstr "Hof-Musik"
+
+msgid "Fedora"
+msgstr "Fedora"
+
+msgid "Finish this hand first."
+msgstr "Spiel erst diese Hand zu Ende."
+
+msgid "Five spins, no fuss. You follow rules. I respect that."
+msgstr "Fünf Drehungen, kein Theater. Du hältst dich an Regeln. Das respektiere ich."
+
+msgid "Five! You stood on sixteen against a ten, didn't you? Brave. Wrong, but brave."
+msgstr "Fünf! Du bist bei sechzehn gegen eine Zehn stehen geblieben, oder? Mutig. Falsch, aber mutig."
+
+msgid "Flowers for the lobby"
+msgstr "Blumen für die Lobby"
+
+msgid "Form"
+msgstr "Form"
+
+msgid "Four Seasons"
+msgstr "Vier Jahreszeiten"
+
+msgid "Get closer to 21 than the dealer without going over. Number cards count their value, faces count 10, aces 1 or 11. Blackjack (an ace and a ten on the first two cards) pays 3:2, other wins pay 1:1, ties push. The dealer draws to 16 and stands on all 17s, including soft 17, and checks for blackjack first. Double on any two cards, also after a split. Split equal cards up to four hands; split aces get one card each. When the dealer shows an ace you may take insurance for half your bet, which pays 2:1 if the dealer has blackjack. Six decks, shuffled when the cut card comes out."
+msgstr "Komm näher an 21 als der Dealer, ohne darüber zu gehen. Zahlenkarten zählen ihren Wert, Bilder 10, Asse 1 oder 11. Blackjack (ein Ass und eine Zehn als erste zwei Karten) zahlt 3:2, andere Gewinne 1:1, bei Gleichstand gibt es den Einsatz zurück. Der Dealer zieht bis 16 und bleibt bei jeder 17 stehen, auch bei Soft 17, und prüft zuerst auf Blackjack. Verdoppeln geht bei zwei beliebigen Karten, auch nach einem Split. Gleiche Karten lassen sich auf bis zu vier Hände splitten; gesplittete Asse bekommen je eine Karte. Zeigt der Dealer ein Ass, kannst du dich für den halben Einsatz versichern; das zahlt 2:1, wenn der Dealer Blackjack hat. Sechs Decks, gemischt wird, wenn die Schnittkarte kommt."
+
+msgid "Good taste! Here, this rope never made it onto the shelves."
+msgstr "Guter Geschmack! Hier, diese Kordel hat es nie ins Regal geschafft."
+
+msgid "Got it"
+msgstr "Verstanden"
+
+msgid "Grand Casino"
+msgstr "Grand Casino"
+
+msgid "Grand Casino Boutique"
+msgstr "Grand-Casino-Boutique"
+
+msgid "Grand Casino Lumière. Chips are play money with no real-world value. Play for fun."
+msgstr "Grand Casino Lumière. Chips sind Spielgeld ohne echten Wert. Spiel zum Spaß."
+
+msgid "HOLD"
+msgstr "HALTEN"
+
+msgid "Harbor. The ferry to Lumière leaves from the end of the dock."
+msgstr "Hafen. Die Fähre nach Lumière legt am Ende des Stegs ab."
+
+msgid "Hide the casino (closes it and hides its quests)"
+msgstr "Casino ausblenden (schließt es und blendet seine Quests aus)"
+
+msgid "High Roller of Lumière"
+msgstr "High Roller von Lumière"
+
+#, c-format
+msgid "Hint: %s"
+msgstr "Tipp: %s"
+
+msgid "Hint: basic strategy never takes insurance."
+msgstr "Tipp: Die Grundstrategie nimmt nie eine Versicherung."
+
+msgid "Hit"
+msgstr "Karte"
+
+msgid "Hm. Yours is better. Don't tell anyone. Here, for your silence."
+msgstr "Hm. Deiner ist besser. Sag es niemandem. Hier, für dein Schweigen."
+
+msgid "Hotel"
+msgstr "Hotel"
+
+msgid "Hotel Concierge"
+msgstr "Hotel-Concierge"
+
+msgid "House rules"
+msgstr "Hausregeln"
+
+msgid "Hôtel Lumière"
+msgstr "Hôtel Lumière"
+
+msgid "I came to Lumière forty years ago with three chips and a hat. I still have the hat."
+msgstr "Ich kam vor vierzig Jahren mit drei Chips und einem Hut nach Lumière. Den Hut habe ich noch."
+
+msgid "I count about a million chips a week. I dream in stacks of ten."
+msgstr "Ich zähle etwa eine Million Chips pro Woche. Ich träume in Zehnerstapeln."
+
+msgid "I don't smile on duty. I'm smiling on the inside."
+msgstr "Im Dienst lächle ich nicht. Ich lächle innerlich."
+
+msgid "I know every guest by name and every secret by heart. Discretion is the job."
+msgstr "Ich kenne jeden Gast beim Namen und jedes Geheimnis auswendig. Diskretion ist mein Beruf."
+
+msgid "I raised Wildlings before I raised the stakes. Win three races and I'll give you something to listen to on that farm of yours."
+msgstr "Ich habe Wildlinge großgezogen, bevor ich die Einsätze erhöht habe. Gewinn drei Rennen, dann bekommst du etwas zum Anhören für deinen Hof."
+
+msgid "I was a ship's cook for twenty years. Then I saw that chandelier and stayed."
+msgstr "Ich war zwanzig Jahre Schiffskoch. Dann sah ich diesen Kronleuchter und bin geblieben."
+
+msgid "I'm trying a new recipe, but I need a benchmark. Bring me two Cream Puddings, and be honest when I ask which is better."
+msgstr "Ich probiere ein neues Rezept, brauche aber einen Vergleich. Bring mir zwei Sahnepuddings und sei ehrlich, wenn ich frage, welcher besser ist."
+
+msgid "I've dealt for Rosalind for six years. She's never once been rude to staff."
+msgstr "Ich gebe seit sechs Jahren für Rosalind. Sie war nie ein einziges Mal unhöflich zum Personal."
+
+msgid "If you ever need anything in Lumière, anything at all, ask me first."
+msgstr "Wenn du in Lumière je etwas brauchst, egal was, frag zuerst mich."
+
+msgid "If you ever open a bar on your farm, I'll come and judge it."
+msgstr "Wenn du je eine Bar auf deinem Hof eröffnest, komme ich und bewerte sie."
+
+msgid "If you're losing, take a walk on the promenade. The sea is free."
+msgstr "Wenn du verlierst, geh auf der Promenade spazieren. Das Meer kostet nichts."
+
+#, c-format
+msgid "Insurance (%d)"
+msgstr "Versicherung (%d)"
+
+msgid "J"
+msgstr "J"
+
+#, c-format
+msgid "JACKPOT! %s chips!"
+msgstr "JACKPOT! %s Chips!"
+
+msgid "Jackpot"
+msgstr "Jackpot"
+
+#, c-format
+msgid "Jacks or Better. You get five cards; click the ones you want to keep, then draw to replace the rest. The final hand pays by the table, per coin. A pair of jacks, queens, kings or aces is the smallest paying hand. A royal flush pays 800 per coin when you play all five coins, so max coins is the best play. One coin costs %d chips. With perfect play the machine returns about 99.5 %%."
+msgstr "Jacks or Better. Du bekommst fünf Karten; klick die an, die du behalten willst, und zieh dann für den Rest neu. Die fertige Hand zahlt laut Tabelle pro Münze. Ein Paar Buben, Damen, Könige oder Asse ist die kleinste Gewinnhand. Ein Royal Flush zahlt 800 pro Münze, wenn du alle fünf Münzen spielst, also lohnt sich der Höchsteinsatz. Eine Münze kostet %d Chips. Bei perfektem Spiel gibt der Automat etwa 99,5 %% zurück."
+
+msgid "Jukebox"
+msgstr "Jukebox"
+
+msgid "K"
+msgstr "K"
+
+msgid "Leave it"
+msgstr "Lassen"
+
+msgid "Line bet:"
+msgstr "Einsatz pro Linie:"
+
+msgid "Line wins are multiplied by the line bet."
+msgstr "Liniengewinne werden mit dem Einsatz pro Linie multipliziert."
+
+msgid "Lose"
+msgstr "Verloren"
+
+msgid "Lost a hand? Have a pudding. It's cheaper."
+msgstr "Eine Hand verloren? Nimm einen Pudding. Der ist billiger."
+
+msgid "Lucky Cap"
+msgstr "Glückskappe"
+
+msgid "Lucky Egg"
+msgstr "Glücksei"
+
+msgid "Lumière"
+msgstr "Lumière"
+
+msgid "Lumière harbor. Ferry to Gull Bay at the end of the pier."
+msgstr "Hafen von Lumière. Fähre zur Möwenbucht am Ende des Stegs."
+
+msgid "Marcel"
+msgstr "Marcel"
+
+msgid "Marcel's Bar"
+msgstr "Marcels Bar"
+
+msgid "Marcel's pudding is the only thing that gets me through a double shift."
+msgstr "Marcels Pudding ist das Einzige, was mich durch eine Doppelschicht bringt."
+
+msgid "Margaux"
+msgstr "Margaux"
+
+msgid "Members only behind this door. VIPs, that is."
+msgstr "Hinter dieser Tür nur Mitglieder. VIPs, um genau zu sein."
+
+msgid "Members only. Stake 25,000 chips at our tables, or have a regular vouch for you, and the salon is yours."
+msgstr "Nur für Mitglieder. Setz 25.000 Chips an unseren Tischen oder lass einen Stammgast für dich bürgen, dann gehört der Salon dir."
+
+msgid "Most guests play three spins and leave. Play twenty and you'll see what the wheel really does: nothing you can predict."
+msgstr "Die meisten Gäste spielen drei Runden und gehen. Spiel zwanzig, dann siehst du, was der Kessel wirklich macht: nichts, was man vorhersagen kann."
+
+msgid "My cashier window looks so grey. Four tulips would brighten the whole counter."
+msgstr "Mein Kassenschalter sieht so grau aus. Vier Tulpen würden den ganzen Tresen aufhellen."
+
+msgid "My little girl wants to be a farmer now. Your fault, I think."
+msgstr "Meine Kleine will jetzt Farmerin werden. Deine Schuld, glaube ich."
+
+msgid "My tea supplier missed the ferry. Could you bring me three Glow Teas? The regulars get grumpy without them."
+msgstr "Mein Teelieferant hat die Fähre verpasst. Kannst du mir drei Leuchttee bringen? Ohne werden die Stammgäste grantig."
+
+msgid "New blood! Let's see if you have the nerve. Play ten rounds, at any table you like, then come and tell me about it."
+msgstr "Frisches Blut! Mal sehen, ob du Nerven hast. Spiel zehn Runden an beliebigen Tischen und erzähl mir dann davon."
+
+msgid "No daily limit set. You can set one in Settings."
+msgstr "Kein Tageslimit festgelegt. Du kannst eins in den Einstellungen setzen."
+
+msgid "No insurance"
+msgstr "Keine Versicherung"
+
+msgid "No limit"
+msgstr "Kein Limit"
+
+msgid "No win. Deal again?"
+msgstr "Kein Gewinn. Noch einmal geben?"
+
+msgid "Nobody cheats in my casino. Mostly because nobody can."
+msgstr "In meinem Casino schummelt niemand. Vor allem, weil es niemand kann."
+
+msgid "Odd"
+msgstr "Ungerade"
+
+msgid "Odds"
+msgstr "Quote"
+
+msgid "Off the record: I have a Sproutle at home. Her name is Princess."
+msgstr "Unter uns: Ich habe zu Hause ein Sproutle. Sie heißt Prinzessin."
+
+msgid "On quiet mornings I feed the gulls by the fountain. Don't tell the manager."
+msgstr "An ruhigen Morgen füttere ich die Möwen am Brunnen. Sag es nicht dem Manager."
+
+msgid "One free spin every day. Every prize is shown on the wheel; the purple fields hold items instead of chips. Nothing to stake, nothing to lose."
+msgstr "Jeden Tag eine Gratis-Drehung. Alle Preise stehen auf dem Rad; die lila Felder enthalten Items statt Chips. Kein Einsatz, nichts zu verlieren."
+
+msgid "Orchard Classic"
+msgstr "Obstgarten-Klassiker"
+
+msgid "Paytable"
+msgstr "Gewinntabelle"
+
+msgid "Pearls for the suite"
+msgstr "Perlen für die Suite"
+
+msgid "Perfect! Customers smile before they even reach the window now."
+msgstr "Perfekt! Die Kunden lächeln jetzt schon, bevor sie am Schalter sind."
+
+msgid "Pick a runner."
+msgstr "Wähl einen Läufer."
+
+msgid "Place a bet first."
+msgstr "Platzier zuerst einen Einsatz."
+
+msgid "Place it on the farm and use it to play one of your records instead of the farm music."
+msgstr "Stell sie auf den Hof und spiel damit eine deiner Platten statt der Hof-Musik."
+
+msgid "Place your bet."
+msgstr "Platzier deinen Einsatz."
+
+msgid "Place your bets, please. No more bets once the ball drops."
+msgstr "Machen Sie Ihr Spiel. Sobald die Kugel fällt, geht nichts mehr."
+
+msgid "Play 10 rounds at the casino."
+msgstr "Spiel 10 Runden im Casino."
+
+msgid "Play 20 spins of roulette."
+msgstr "Spiel 20 Runden Roulette."
+
+msgid "Play a hand of blackjack. Tick \"Strategy hints\" if you want advice for every decision."
+msgstr "Spiel eine Hand Blackjack. Hak „Strategie-Tipps“ an, wenn du bei jeder Entscheidung einen Rat willst."
+
+msgid "Play a hand of video poker: deal, click the cards you keep, then draw."
+msgstr "Spiel eine Hand Video-Poker: geben, die Karten anklicken, die du behältst, dann ziehen."
+
+msgid "Play a spin of roulette. Click the table to place chips; the Rules button explains every bet."
+msgstr "Spiel eine Runde Roulette. Klick auf den Tisch, um Chips zu setzen; der Regeln-Button erklärt jede Wette."
+
+msgid "Play for fun. You can set a daily stake limit or hide the casino completely in the settings."
+msgstr "Spiel zum Spaß. In den Einstellungen kannst du ein tägliches Einsatzlimit festlegen oder das Casino ganz ausblenden."
+
+msgid "Potted Palm"
+msgstr "Topfpalme"
+
+msgid "Push"
+msgstr "Unentschieden"
+
+msgid "Q"
+msgstr "Q"
+
+msgid "Rebet"
+msgstr "Wiederholen"
+
+msgid "Record: Gull Bay Breeze"
+msgstr "Platte: Möwenbucht-Brise"
+
+msgid "Record: Home Fields"
+msgstr "Platte: Heimische Felder"
+
+msgid "Record: Lounge Nights"
+msgstr "Platte: Lounge-Nächte"
+
+msgid "Record: Promenade Swing"
+msgstr "Platte: Promenaden-Swing"
+
+msgid "Record: Velvet Piano"
+msgstr "Platte: Samtpiano"
+
+msgid "Red velvet, worn at a slight angle. Very Lumière."
+msgstr "Roter Samt, leicht schräg getragen. Sehr Lumière."
+
+msgid "Remember that number. You'll bet it again on bad days. Everyone does."
+msgstr "Merk dir diese Zahl. An schlechten Tagen wirst du sie wieder setzen. Das machen alle."
+
+msgid "Report to Bruno at the velvet rope."
+msgstr "Melde dich bei Bruno an der Samtkordel."
+
+msgid "Report to Rosalind."
+msgstr "Melde dich bei Rosalind."
+
+msgid "Rest"
+msgstr "Ausruhen"
+
+msgid "Rosalind"
+msgstr "Rosalind"
+
+msgid "Rosalind calls me 'the wardrobe'. I take it as a compliment."
+msgstr "Rosalind nennt mich „den Kleiderschrank“. Ich nehme das als Kompliment."
+
+msgid "Rosalind drinks glow tea with a slice of starfruit. Don't tell her I told you."
+msgstr "Rosalind trinkt Leuchttee mit einer Scheibe Sternfrucht. Sag ihr nicht, dass ich es dir verraten habe."
+
+msgid "Rosalind has had the same suite for forty years. Room 17, naturally."
+msgstr "Rosalind hat seit vierzig Jahren dieselbe Suite. Zimmer 17, natürlich."
+
+msgid "Rosalind is looking at an old photo by the bar."
+msgstr "Rosalind betrachtet an der Bar ein altes Foto."
+
+msgid "Rosalind presses a velvet case into your hands."
+msgstr "Rosalind drückt dir ein Samtetui in die Hände."
+
+msgid "Rosalind tips me in flowers. Best customer in Lumière."
+msgstr "Rosalind gibt mir Trinkgeld in Blumen. Beste Kundin in Lumière."
+
+msgid "Rosalind waves you over to the roulette table."
+msgstr "Rosalind winkt dich zum Roulettetisch."
+
+msgid "Rosalind. Remember it; the croupiers do."
+msgstr "Rosalind. Merk dir den Namen; die Croupiers tun es auch."
+
+msgid "Rosalind: Here, a little something for your first big night."
+msgstr "Rosalind: Hier, eine Kleinigkeit für deine erste große Nacht."
+
+msgid "Rosalind: I've lost more than I've won since. I've never regretted the hat."
+msgstr "Rosalind: Seitdem habe ich mehr verloren als gewonnen. Den Hut habe ich nie bereut."
+
+msgid "Rosalind: My first win. Three chips on seventeen. I bought this hat with it."
+msgstr "Rosalind: Mein erster Gewinn. Drei Chips auf die Siebzehn. Davon habe ich diesen Hut gekauft."
+
+msgid "Rosalind: My lucky visor. I don't need luck anymore. I have company."
+msgstr "Rosalind: Mein Glücksschirm. Ich brauche kein Glück mehr. Ich habe Gesellschaft."
+
+msgid "Rosalind: Watch the croupier's wrist, not the wheel. She can't control it either, but it's prettier."
+msgstr "Rosalind: Schau aufs Handgelenk der Croupière, nicht auf den Kessel. Sie kann ihn auch nicht steuern, aber es ist hübscher."
+
+msgid "Rosalind: Wear it badly. It annoys Bruno."
+msgstr "Rosalind: Trag ihn schief. Das ärgert Bruno."
+
+msgid "Roulette"
+msgstr "Roulette"
+
+msgid "Roulette is for dreamers. Blackjack is for thinkers. Win five hands and I'll take you seriously."
+msgstr "Roulette ist für Träumer. Blackjack ist für Denker. Gewinn fünf Hände, dann nehme ich dich ernst."
+
+msgid "Rule one: everyone gets a free spin on the Wheel of Fortune each day. Use it. Five days, five spins, then we talk."
+msgstr "Regel eins: Jeder bekommt täglich eine Gratis-Drehung am Glücksrad. Nutz sie. Fünf Tage, fünf Drehungen, dann reden wir."
+
+msgid "Rules"
+msgstr "Regeln"
+
+msgid "Runner"
+msgstr "Läufer"
+
+msgid "S"
+msgstr "S"
+
+msgid "Saved! On the house, next time. And the time after."
+msgstr "Gerettet! Nächstes Mal geht aufs Haus. Und das übernächste auch."
+
+#, c-format
+msgid "Scatter: 3 = x%d, 4 = x%d, 5 = x%d total bet"
+msgstr "Scatter: 3 = x%d, 4 = x%d, 5 = x%d Gesamteinsatz"
+
+msgid "Set sail"
+msgstr "Ablegen"
+
+msgid "Set yourself a daily limit in the settings if you like. I'd do it."
+msgstr "Leg dir in den Einstellungen ein Tageslimit fest, wenn du magst. Ich würde es tun."
+
+msgid "Seventeen came up four times last night. Means nothing. People still cheered."
+msgstr "Letzte Nacht kam viermal die Siebzehn. Hat nichts zu bedeuten. Gejubelt haben trotzdem alle."
+
+msgid "Shift-click to buy 5 · Prices in chips"
+msgstr "Shift-Klick kauft 5 · Preise in Chips"
+
+msgid "Sit, sit. The tables will still be there."
+msgstr "Setz dich, setz dich. Die Tische laufen nicht weg."
+
+msgid "Six wildlings line up for each race. Their chance to win comes from their base speed and today's form; the odds already include the house's share. Pick one runner and place your bet. If your runner crosses the line first you get your bet times the odds back (odds of 3.5 turn 10 chips into 35). A new card is drawn after every race."
+msgstr "Bei jedem Rennen treten sechs Wildlinge an. Ihre Siegchance hängt von ihrem Grundtempo und der heutigen Form ab; der Anteil des Hauses steckt schon in den Quoten. Wähl einen Läufer und platzier deinen Einsatz. Läuft er als Erster ins Ziel, bekommst du Einsatz mal Quote zurück (bei einer Quote von 3,5 werden aus 10 Chips 35). Nach jedem Rennen gibt es ein neues Starterfeld."
+
+msgid "Slot Machine"
+msgstr "Spielautomat"
+
+msgid "Slot machines"
+msgstr "Spielautomaten"
+
+msgid "Spend 1,000 chips in the casino boutique."
+msgstr "Gib in der Casino-Boutique 1.000 Chips aus."
+
+msgid "Spin"
+msgstr "Drehen"
+
+msgid "Spin a slot machine. The Paytable shows what every symbol pays."
+msgstr "Dreh an einem Spielautomaten. Die Gewinntabelle zeigt, was jedes Symbol zahlt."
+
+msgid "Spin the free Wheel of Fortune 5 times (once a day)."
+msgstr "Dreh 5-mal am Gratis-Glücksrad (einmal pro Tag)."
+
+msgid "Spin the free Wheel of Fortune by the entrance. One spin a day, nothing to stake."
+msgstr "Dreh am Gratis-Glücksrad beim Eingang. Eine Drehung am Tag, ohne Einsatz."
+
+msgid "Split"
+msgstr "Splitten"
+
+msgid "Stake twenty-five thousand chips at our tables, or win over the right people, and the salon is yours."
+msgstr "Setz fünfundzwanzigtausend Chips an unseren Tischen oder gewinn die richtigen Leute für dich, dann gehört der Salon dir."
+
+#, c-format
+msgid "Stake: %s chips"
+msgstr "Einsatz: %s Chips"
+
+msgid "Stand"
+msgstr "Stehen"
+
+msgid "Start race"
+msgstr "Rennen starten"
+
+msgid "Straight up"
+msgstr "Plein"
+
+msgid "Strategy hints"
+msgstr "Strategie-Tipps"
+
+#, c-format
+msgid "Table limits: %d to %d chips per spin."
+msgstr "Tischlimits: %d bis %d Chips pro Drehung."
+
+#, c-format
+msgid "Table limits: %d to %d chips."
+msgstr "Tischlimits: %d bis %d Chips."
+
+msgid "Take the ferry from Gull Bay to Lumière and step into the Grand Casino."
+msgstr "Nimm die Fähre von der Möwenbucht nach Lumière und betritt das Grand Casino."
+
+#, c-format
+msgid "Take the ferry to %s?"
+msgstr "Mit der Fähre nach %s fahren?"
+
+msgid "Tall, black and very serious. Rosalind approves."
+msgstr "Hoch, schwarz und sehr seriös. Rosalind ist einverstanden."
+
+msgid "Tea for the house"
+msgstr "Tee fürs Haus"
+
+msgid "Tell Dorian what you noticed."
+msgstr "Erzähl Dorian, was dir aufgefallen ist."
+
+msgid "Tell Rosalind how it went."
+msgstr "Erzähl Rosalind, wie es lief."
+
+msgid "Tell Rosalind your number."
+msgstr "Sag Rosalind deine Zahl."
+
+msgid "Tell Rosalind."
+msgstr "Sag es Rosalind."
+
+msgid "Ten gold buys one chip, one chip sells for ten gold. No fees, no tricks."
+msgstr "Zehn Gold kaufen einen Chip, ein Chip bringt zehn Gold. Keine Gebühren, keine Tricks."
+
+msgid "Ten lines run across five reels from left to right. Three or more equal symbols on a line from the first reel pay that symbol's amount times your line bet. The wild stands in for every line symbol except the jackpot. Scatters pay anywhere on the reels, times your total bet. Five jackpot symbols on a line win the progressive jackpot, scaled by your line bet (the full pot at the top line bet). One chip in every hundred staked grows the pot. Over many spins the machine returns about 95 % of what goes in."
+msgstr "Zehn Linien laufen von links nach rechts über fünf Walzen. Drei oder mehr gleiche Symbole auf einer Linie ab der ersten Walze zahlen den Wert des Symbols mal deinen Einsatz pro Linie. Das Wild ersetzt jedes Liniensymbol außer dem Jackpot. Scatter zahlen überall auf den Walzen, mal deinen Gesamteinsatz. Fünf Jackpot-Symbole auf einer Linie gewinnen den progressiven Jackpot, anteilig nach deinem Einsatz pro Linie (der volle Pot beim höchsten Einsatz). Von hundert gesetzten Chips wandert einer in den Pot. Über viele Drehungen gibt der Automat etwa 95 Prozent des Einsatzes zurück."
+
+msgid "Ten rounds and still smiling. You'll do."
+msgstr "Zehn Runden und immer noch am Lächeln. Du machst dich."
+
+msgid "That would go over your daily casino limit."
+msgstr "Damit würdest du dein tägliches Casino-Limit überschreiten."
+
+msgid "The Grand Casino"
+msgstr "Das Grand Casino"
+
+msgid "The Hôtel lobby needs fresh flowers before the summer guests arrive. Five Fairy Roses would be perfect."
+msgstr "Die Lobby des Hôtels braucht frische Blumen, bevor die Sommergäste kommen. Fünf Feenrosen wären perfekt."
+
+msgid "The boutique is mine too. The top hats sell out every fall."
+msgstr "Die Boutique gehört auch mir. Die Zylinder sind jeden Herbst ausverkauft."
+
+msgid "The boutique's new stock arrived. Spend a thousand chips there and I'll throw in something from the back room."
+msgstr "Die neue Ware für die Boutique ist da. Gib dort tausend Chips aus, dann lege ich etwas aus dem Lager dazu."
+
+msgid "The dealer shows an ace. Insurance?"
+msgstr "Der Dealer zeigt ein Ass. Versicherung?"
+
+msgid "The dealer shuffles a fresh shoe."
+msgstr "Der Dealer mischt einen neuen Schlitten."
+
+msgid "The doors of the Grand Casino stay closed for you. (You can show the casino again in the settings.)"
+msgstr "Die Türen des Grand Casinos bleiben für dich geschlossen. (In den Einstellungen kannst du das Casino wieder einblenden.)"
+
+msgid "The ferry isn't running today."
+msgstr "Die Fähre fährt heute nicht."
+
+msgid "The ferry leaves for Gull Bay whenever you like. The captain owes me a favor."
+msgstr "Die Fähre zur Möwenbucht legt ab, wann immer du willst. Der Kapitän schuldet mir einen Gefallen."
+
+#, c-format
+msgid "The ferry to %s isn't running yet. (%s)"
+msgstr "Die Fähre nach %s fährt noch nicht. (%s)"
+
+msgid "The guest was speechless. So was I, honestly."
+msgstr "Der Gast war sprachlos. Ehrlich gesagt, ich auch."
+
+msgid "The house always wins in the end, darling. The trick is enjoying the middle."
+msgstr "Am Ende gewinnt immer das Haus, Liebes. Der Trick ist, die Mitte zu genießen."
+
+#, c-format
+msgid "The house wins %s chips."
+msgstr "Das Haus gewinnt %s Chips."
+
+msgid "The jazz of the casino hall. Play it on a jukebox at the farm."
+msgstr "Der Jazz aus dem Casinosaal. Spiel ihn auf einer Jukebox auf dem Hof."
+
+msgid "The jukebox is ready, but you have no records. The casino boutique in Lumière sells them."
+msgstr "Die Jukebox ist bereit, aber du hast keine Platten. Die Casino-Boutique in Lumière verkauft welche."
+
+msgid "The night shift hasn't eaten since noon. Two Honey Cakes would save us."
+msgstr "Die Nachtschicht hat seit Mittag nichts gegessen. Zwei Honigkuchen würden uns retten."
+
+msgid "The pudding test"
+msgstr "Der Puddingtest"
+
+msgid "The quiet piano of the VIP salon. Play it on a jukebox at the farm."
+msgstr "Das leise Piano aus dem VIP-Salon. Spiel es auf einer Jukebox auf dem Hof."
+
+msgid "The swing tune of the Lumière promenade. Play it on a jukebox at the farm."
+msgstr "Die Swing-Melodie der Promenade von Lumière. Spiel sie auf einer Jukebox auf dem Hof."
+
+msgid "The tune of your own farm, for when you miss it. Play it on a jukebox."
+msgstr "Die Melodie deines eigenen Hofs, für wenn du ihn vermisst. Spiel sie auf einer Jukebox."
+
+msgid "The velvet rope"
+msgstr "Die Samtkordel"
+
+msgid "The wheel is yours once a day. Come back tomorrow."
+msgstr "Das Rad gehört dir einmal am Tag. Komm morgen wieder."
+
+msgid "Three winners. You read form like a farmer reads clouds."
+msgstr "Drei Sieger. Du liest die Form wie ein Farmer die Wolken."
+
+msgid "Today's free chips are collected. Come back tomorrow."
+msgstr "Die heutigen Gratis-Chips sind abgeholt. Komm morgen wieder."
+
+msgid "Top Hat"
+msgstr "Zylinder"
+
+#, c-format
+msgid "Total bet: %d chips"
+msgstr "Gesamteinsatz: %d Chips"
+
+msgid "Tulips for the window"
+msgstr "Tulpen für den Schalter"
+
+msgid "Twenty spins"
+msgstr "Zwanzig Drehungen"
+
+msgid "Twenty-one"
+msgstr "Einundzwanzig"
+
+msgid "VIP Salon"
+msgstr "VIP-Salon"
+
+msgid "VIP Salon. Higher table limits for members."
+msgstr "VIP-Salon. Höhere Tischlimits für Mitglieder."
+
+msgid "Velvet Beret"
+msgstr "Samtbaskenmütze"
+
+msgid "Velvet Rope"
+msgstr "Samtkordel"
+
+msgid "Video Poker"
+msgstr "Video-Poker"
+
+msgid "Video poker"
+msgstr "Video-Poker"
+
+msgid "Visit Margaux at the cashier."
+msgstr "Besuch Margaux an der Kasse."
+
+msgid "Visit Rosalind."
+msgstr "Besuch Rosalind."
+
+msgid "W"
+msgstr "W"
+
+msgid "Want to know a secret? The vault door squeaks. Every time."
+msgstr "Willst du ein Geheimnis hören? Die Tresortür quietscht. Jedes Mal."
+
+msgid "Waves and gulls from the bay. Play it on a jukebox at the farm."
+msgstr "Wellen und Möwen aus der Bucht. Spiel sie auf einer Jukebox auf dem Hof."
+
+msgid "Wear"
+msgstr "Tragen"
+
+msgid "Welcome to Lumière. The Grand Casino is open day and night; the Hôtel is open to you."
+msgstr "Willkommen in Lumière. Das Grand Casino hat Tag und Nacht geöffnet, und das Hôtel steht dir offen."
+
+msgid "Welcome to the Grand Casino Lumière!"
+msgstr "Willkommen im Grand Casino Lumière!"
+
+msgid "What'll it be? Tea, cake, pudding. I don't serve anything stronger than a good story."
+msgstr "Was darf's sein? Tee, Kuchen, Pudding. Stärkeres als eine gute Geschichte gibt's bei mir nicht."
+
+msgid "Wheel of Fortune"
+msgstr "Glücksrad"
+
+msgid "When I'm gone, the seat by the roulette wheel is yours. Don't let anyone argue."
+msgstr "Wenn ich nicht mehr bin, gehört der Platz am Roulettekessel dir. Lass dir da nichts einreden."
+
+msgid "Which record should the jukebox play?"
+msgstr "Welche Platte soll die Jukebox spielen?"
+
+#, c-format
+msgid "Wild: %s"
+msgstr "Wild: %s"
+
+msgid "Wildling Races"
+msgstr "Wildling-Rennen"
+
+msgid "Wildling Wilds"
+msgstr "Wilde Wildlinge"
+
+msgid "Wildling races"
+msgstr "Wildling-Rennen"
+
+msgid "Win"
+msgstr "Gewonnen"
+
+msgid "Win 2,500 chips in total across your winning rounds."
+msgstr "Gewinn insgesamt 2.500 Chips in deinen Gewinnrunden."
+
+msgid "Win 3 Wildling races."
+msgstr "Gewinn 3 Wildling-Rennen."
+
+msgid "Win 5 hands of blackjack."
+msgstr "Gewinn 5 Hände Blackjack."
+
+msgid "Win a straight-up bet at roulette."
+msgstr "Gewinn beim Roulette eine Plein-Wette."
+
+msgid "Win or lose, I tip the croupier. Dorian has a family to feed."
+msgstr "Ob ich gewinne oder verliere, ich gebe dem Croupier Trinkgeld. Dorian hat eine Familie zu ernähren."
+
+msgid "Window shopping"
+msgstr "Schaufensterbummel"
+
+msgid "You already collected today's chips. Come back tomorrow."
+msgstr "Du hast die heutigen Chips schon abgeholt. Komm morgen wieder."
+
+#, c-format
+msgid "You have: %s"
+msgstr "Du hast: %s"
+
+msgid "You play with your head, not your heart. That's rarer than you think."
+msgstr "Du spielst mit dem Kopf, nicht mit dem Herzen. Das ist seltener, als du denkst."
+
+msgid "You wake up refreshed. Your Wildlings look pampered."
+msgstr "Du wachst erholt auf. Deine Wildlinge sehen verwöhnt aus."
+
+#, c-format
+msgid "You win %s chips%s."
+msgstr "Du gewinnst %s Chips%s."
+
+#, c-format
+msgid "You win %s chips."
+msgstr "Du gewinnst %s Chips."
+
+#, c-format
+msgid "You won %s chips!"
+msgstr "Du hast %s Chips gewonnen!"
+
+#, c-format
+msgid "You won %s!"
+msgstr "Du hast %s gewonnen!"
+
+msgid "You're a hero to every croupier in this building."
+msgstr "Für jeden Croupier in diesem Haus bist du ein Held."
+
+msgid "You're alright, farmer. I'd let you in even without the card."
+msgstr "Du bist in Ordnung, Farmer. Ich würde dich auch ohne Karte reinlassen."
+
+msgid "You're family now. Family eats for free. Mostly."
+msgstr "Du gehörst jetzt zur Familie. Familie isst umsonst. Meistens."
+
+msgid "You're good company on a slow night. Thank you."
+msgstr "Du bist gute Gesellschaft in einer ruhigen Nacht. Danke."
+
+msgid "You're my favorite regular. Don't tell Rosalind."
+msgstr "Du bist mein Lieblingsstammgast. Sag es nicht Rosalind."
+
+msgid "You're the only one in this town who beats me and still asks how my day was."
+msgstr "Du bist der Einzige in dieser Stadt, der mich schlägt und trotzdem fragt, wie mein Tag war."
+
+msgid "You've become a regular, and the town is better for it."
+msgstr "Du bist Stammgast geworden, und die Stadt ist besser dadurch."
+
+msgid "Your free chips for the day are waiting at the counter, if you haven't collected them."
+msgstr "Deine Gratis-Chips für heute warten am Schalter, falls du sie noch nicht abgeholt hast."
+
+msgid "Your move."
+msgstr "Du bist dran."
+
+#, c-format
+msgid "bet %s"
+msgstr "Einsatz %s"
+
+#, c-format
+msgid "pays %s"
+msgstr "zahlt %s"
+
+msgid "Cold melon soup! Trust me."
+msgstr "Kalte Melonensuppe! Vertrau mir."
+
+msgid "Corn! Summer is all about corn."
+msgstr "Mais! Im Sommer dreht sich alles um Mais."
+
+msgid "Egg Hunt is the best day ever!"
+msgstr "Die Eiersuche ist der beste Tag überhaupt!"
+
+msgid "Even in spring, the ridge is hot."
+msgstr "Selbst im Frühling ist es auf dem Kamm heiß."
+
+msgid "Fall evenings are for mystery novels."
+msgstr "Herbstabende sind für Krimis da."
+
+msgid "Fall gusts are the strongest."
+msgstr "Die Herbstböen sind die stärksten."
+
+msgid "Fall is building season. Everyone wants a barn."
+msgstr "Im Herbst wird gebaut. Alle wollen eine Scheune."
+
+msgid "Fall is cart season. I've sold forty rails this week."
+msgstr "Herbst ist Lorenzeit. Ich habe diese Woche vierzig Schienen verkauft."
+
+msgid "Fall is for eels, under the full moon."
+msgstr "Der Herbst gehört den Aalen, bei Vollmond."
+
+msgid "Fall is invention season."
+msgstr "Der Herbst ist Erfinderzeit."
+
+msgid "Fall is my season. My birthday, and the high-limit tables reopen."
+msgstr "Der Herbst ist meine Jahreszeit. Mein Geburtstag, und die High-Limit-Tische öffnen wieder."
+
+msgid "Fall is quiet here. Good."
+msgstr "Im Herbst ist es hier ruhig. Gut so."
+
+msgid "Fall is quieter. Real players only."
+msgstr "Im Herbst ist es ruhiger. Nur echte Spieler."
+
+msgid "Fall is when the best truffles turn up."
+msgstr "Im Herbst tauchen die besten Trüffel auf."
+
+msgid "Fall is when the carts run day and night."
+msgstr "Im Herbst fahren die Loren Tag und Nacht."
+
+msgid "Fall light makes crystals glow. Have you noticed?"
+msgstr "Herbstlicht bringt Kristalle zum Leuchten. Ist dir das aufgefallen?"
+
+msgid "Fall means pudding season."
+msgstr "Herbst heißt Puddingzeit."
+
+msgid "Fall orders pile up. Everyone wants new tools for winter."
+msgstr "Im Herbst stapeln sich die Aufträge. Alle wollen neues Werkzeug für den Winter."
+
+msgid "Fall ore from Cinder Ridge is the finest."
+msgstr "Herbsterz vom Cinder Ridge ist das feinste."
+
+msgid "Fall storms bring rare shells."
+msgstr "Herbststürme bringen seltene Muscheln."
+
+msgid "Fall storms wash up the best treasure."
+msgstr "Herbststürme spülen die besten Schätze an."
+
+msgid "Fall winds carry the embers far."
+msgstr "Herbstwinde tragen die Glut weit."
+
+msgid "First frost in fall. It begins."
+msgstr "Erster Frost im Herbst. Es geht los."
+
+msgid "Frost Wildlings come down from the mountains in winter."
+msgstr "Im Winter kommen Frost-Wildlinge aus den Bergen herunter."
+
+msgid "Harvest Fair is mine this year."
+msgstr "Den Erntemarkt gewinne dieses Jahr ich."
+
+msgid "Hot cocoa is free for farmers in winter."
+msgstr "Im Winter gibt es für Farmer heißen Kakao umsonst."
+
+msgid "Hot days are good for drying wood."
+msgstr "Heiße Tage sind gut zum Holztrocknen."
+
+msgid "Hot in this suit. Don't mention it."
+msgstr "Heiß in diesem Anzug. Sprich es nicht an."
+
+msgid "I fix tools in winter. Quiet work."
+msgstr "Im Winter repariere ich Werkzeug. Ruhige Arbeit."
+
+msgid "I'm gonna catch a Ripplefin with my hands!"
+msgstr "Ich fang einen Ripplefin mit bloßen Händen!"
+
+msgid "Ice cracks stone in winter. Even stone has limits."
+msgstr "Im Winter sprengt Eis den Stein. Selbst Stein hat Grenzen."
+
+msgid "In fall the town belongs to the locals again."
+msgstr "Im Herbst gehört die Stadt wieder den Einheimischen."
+
+msgid "In fall, we give thanks to the Guardians."
+msgstr "Im Herbst danken wir den Wächtern."
+
+msgid "Melons sell for a fortune in summer!"
+msgstr "Melonen bringen im Sommer ein Vermögen!"
+
+msgid "My birthday is in fall. I like cake."
+msgstr "Mein Geburtstag ist im Herbst. Ich mag Kuchen."
+
+msgid "My birthday is in winter. The staff bake me a cake shaped like a chip."
+msgstr "Mein Geburtstag ist im Winter. Das Personal backt mir einen Kuchen in Chipform."
+
+msgid "My birthday's in fall. Just mentioning it."
+msgstr "Mein Geburtstag ist im Herbst. Nur so nebenbei."
+
+msgid "New tea in spring. Smell that."
+msgstr "Neuer Tee im Frühling. Riech mal."
+
+msgid "Nothing beats a warm forge in winter."
+msgstr "Nichts geht über eine warme Schmiede im Winter."
+
+msgid "Pumpkin season! Best season!"
+msgstr "Kürbiszeit! Beste Zeit!"
+
+msgid "Pumpkins fly off the shelves in fall."
+msgstr "Im Herbst gehen Kürbisse weg wie nichts."
+
+msgid "Shade Wildlings get bolder in fall."
+msgstr "Im Herbst werden Schatten-Wildlinge mutiger."
+
+msgid "Snow is the hardest thing to paint. It's all blue, really."
+msgstr "Schnee ist am schwersten zu malen. Eigentlich ist er ganz blau."
+
+msgid "Snow melts before it touches the ridge."
+msgstr "Schnee schmilzt, bevor er den Kamm berührt."
+
+msgid "Snowball fights with Frostpips!"
+msgstr "Schneeballschlachten mit Frostpips!"
+
+msgid "Spirit's Eve is sacred in the glade."
+msgstr "Der Geisterabend ist auf der Lichtung heilig."
+
+msgid "Spirit's Eve is spooky! I love it!"
+msgstr "Der Geisterabend ist gruselig! Ich liebe ihn!"
+
+msgid "Spring brings many Leaf Wildlings out."
+msgstr "Im Frühling kommen viele Blatt-Wildlinge heraus."
+
+msgid "Spring brings rare seeds from the south."
+msgstr "Der Frühling bringt seltenes Saatgut aus dem Süden."
+
+msgid "Spring brings tourists. They always bet on red."
+msgstr "Der Frühling bringt Touristen. Die setzen immer auf Rot."
+
+msgid "Spring cleaning at the library. So many dusty books!"
+msgstr "Frühjahrsputz in der Bibliothek. So viele staubige Bücher!"
+
+msgid "Spring in Lumière: the yachts come back and the gossip with them."
+msgstr "Frühling in Lumière: Die Jachten kehren zurück und mit ihnen der Klatsch."
+
+msgid "Spring is crab season. The pots fill fast."
+msgstr "Im Frühling ist Krabbenzeit. Die Körbe füllen sich schnell."
+
+msgid "Spring is for fixing what winter broke."
+msgstr "Im Frühling repariert man, was der Winter kaputt gemacht hat."
+
+msgid "Spring is perfect for field research."
+msgstr "Der Frühling ist perfekt für Feldforschung."
+
+msgid "Spring is the best season for parsnips. Trust me."
+msgstr "Der Frühling ist die beste Zeit für Pastinaken. Vertrau mir."
+
+msgid "Spring is when the valley remembers how to live."
+msgstr "Im Frühling erinnert sich das Tal, wie man lebt."
+
+msgid "Spring means broken hoes. Lots of them."
+msgstr "Frühling heißt kaputte Hacken. Jede Menge."
+
+msgid "Spring melt floods the upper tunnels. Watch your boots."
+msgstr "Die Schneeschmelze flutet die oberen Stollen. Pass auf deine Stiefel auf."
+
+msgid "Spring planting! The best feeling."
+msgstr "Frühlingsaussaat! Das beste Gefühl."
+
+msgid "Spring rain brings the herring in."
+msgstr "Frühlingsregen bringt die Heringe."
+
+msgid "Spring rain uncovers fossils on the cliffs."
+msgstr "Frühlingsregen legt Fossilien an den Klippen frei."
+
+msgid "Spring rain warps the lumber. Keep it dry!"
+msgstr "Frühlingsregen verzieht das Holz. Halt es trocken!"
+
+msgid "Spring rains carve the canyon."
+msgstr "Frühlingsregen formt die Schlucht."
+
+msgid "Spring rush! Everyone wants new gear."
+msgstr "Frühlingsansturm! Alle wollen neue Ausrüstung."
+
+msgid "Spring salads are my favorite."
+msgstr "Frühlingssalate mag ich am liebsten."
+
+msgid "Spring showers are good for charging!"
+msgstr "Frühlingsschauer sind gut zum Aufladen!"
+
+msgid "Spring tides are the highest."
+msgstr "Die Springfluten sind die höchsten."
+
+msgid "Spring tourists. Lots of tourists."
+msgstr "Frühlingstouristen. Sehr viele Touristen."
+
+msgid "Spring twilight lasts the longest."
+msgstr "Die Frühlingsdämmerung dauert am längsten."
+
+msgid "Spring winds are gentle and warm."
+msgstr "Frühlingswinde sind sanft und warm."
+
+msgid "Spring: the season opens and the yachts return."
+msgstr "Frühling: Die Saison beginnt und die Jachten kehren zurück."
+
+msgid "Static electricity in winter is the best."
+msgstr "Statische Aufladung im Winter ist die beste."
+
+msgid "Storm season! Spark Wildlings everywhere!"
+msgstr "Sturmzeit! Überall Funken-Wildlinge!"
+
+msgid "Summer at the forge is a special kind of hot."
+msgstr "Sommer in der Schmiede ist eine besondere Art von heiß."
+
+msgid "Summer guests want sea views. All of them."
+msgstr "Sommergäste wollen Meerblick. Alle."
+
+msgid "Summer here is unbearable. I love it."
+msgstr "Der Sommer hier ist unerträglich. Ich liebe ihn."
+
+msgid "Summer is field season. I barely sleep."
+msgstr "Im Sommer ist Feldsaison. Ich schlafe kaum."
+
+msgid "Summer is loud in the forest."
+msgstr "Im Sommer ist der Wald laut."
+
+msgid "Summer is perfect for reading under a tree."
+msgstr "Der Sommer ist perfekt, um unter einem Baum zu lesen."
+
+msgid "Summer is short here. Enjoy it."
+msgstr "Der Sommer ist hier kurz. Genieß ihn."
+
+msgid "Summer markets are wild out east."
+msgstr "Die Sommermärkte im Osten sind wild."
+
+msgid "Summer means long queues at the window."
+msgstr "Sommer heißt lange Schlangen am Schalter."
+
+msgid "Summer nights are bright here."
+msgstr "Die Sommernächte sind hier hell."
+
+msgid "Summer nights the tables never empty."
+msgstr "In Sommernächten werden die Tische nie leer."
+
+msgid "Summer on the beach! The best!"
+msgstr "Sommer am Strand! Das Beste!"
+
+msgid "Summer storms once lit up the Sparkmarsh like day."
+msgstr "Sommerstürme haben den Sparkmarsh einst taghell erleuchtet."
+
+msgid "Summer storms! My favorite!"
+msgstr "Sommerstürme! Meine Lieblinge!"
+
+msgid "Summer thermals go up for miles!"
+msgstr "Die Sommerthermik reicht kilometerweit nach oben!"
+
+msgid "Summer! My birthday and the busiest bar in the bay."
+msgstr "Sommer! Mein Geburtstag und die vollste Bar der Bucht."
+
+msgid "Summer's cool down there. Best place in the valley."
+msgstr "Im Sommer ist es da unten kühl. Bester Ort im Tal."
+
+msgid "Summer's slow. More time to chat."
+msgstr "Im Sommer ist wenig los. Mehr Zeit zum Plaudern."
+
+msgid "Summer: tuna and marlin weather. Bring good bait."
+msgstr "Sommer: Thunfisch- und Marlinwetter. Bring guten Köder mit."
+
+msgid "Sunflowers are the happiest flowers."
+msgstr "Sonnenblumen sind die fröhlichsten Blumen."
+
+msgid "Swimming weather! Grandpa says no."
+msgstr "Badewetter! Opa sagt nein."
+
+msgid "The bay never freezes. Grandpa says it's too stubborn."
+msgstr "Die Bucht friert nie zu. Opa sagt, sie ist zu stur."
+
+msgid "The boutique gets the new hats in fall."
+msgstr "Im Herbst bekommt die Boutique die neuen Hüte."
+
+msgid "The canyon bakes in summer."
+msgstr "Im Sommer glüht die Schlucht."
+
+msgid "The forest sleeps. Walk quietly."
+msgstr "Der Wald schläft. Geh leise."
+
+msgid "The forest wakes in spring."
+msgstr "Im Frühling erwacht der Wald."
+
+msgid "The forge in summer is miserable. I love it."
+msgstr "Die Schmiede im Sommer ist eine Qual. Ich liebe es."
+
+msgid "The lake thaws a little in spring."
+msgstr "Im Frühling taut der See ein wenig auf."
+
+msgid "The leaves are falling. A time for rest."
+msgstr "Die Blätter fallen. Eine Zeit der Ruhe."
+
+msgid "The leaves give me so many new colors."
+msgstr "Die Blätter geben mir so viele neue Farben."
+
+msgid "The sea is grey, the chandeliers are gold. I know where I want to be."
+msgstr "Das Meer ist grau, die Kronleuchter sind golden. Ich weiß, wo ich sein will."
+
+msgid "The tulips are blooming! I'm painting all day."
+msgstr "Die Tulpen blühen! Ich male den ganzen Tag."
+
+msgid "The winter sea is beautiful and dangerous."
+msgstr "Das Wintermeer ist schön und gefährlich."
+
+msgid "This is my season."
+msgstr "Das ist meine Jahreszeit."
+
+msgid "Too hot for the promenade. The casino has the best air in town."
+msgstr "Zu heiß für die Promenade. Das Casino hat die beste Luft der Stadt."
+
+msgid "Tulips on the promenade! My favorite week."
+msgstr "Tulpen auf der Promenade! Meine Lieblingswoche."
+
+msgid "Watch for Spark Wildlings during storms."
+msgstr "Achte bei Gewitter auf Funken-Wildlinge."
+
+msgid "Winter crops are tricky, but Frost Wildlings help."
+msgstr "Winterpflanzen sind knifflig, aber Frost-Wildlinge helfen."
+
+msgid "Winter fish are slow. So am I."
+msgstr "Winterfische sind langsam. Ich auch."
+
+msgid "Winter in Lumière is a well-kept secret."
+msgstr "Der Winter in Lumière ist ein gut gehütetes Geheimnis."
+
+msgid "Winter is calm. I like calm."
+msgstr "Der Winter ist ruhig. Ich mag Ruhe."
+
+msgid "Winter is for cataloguing. So many drawers."
+msgstr "Der Winter ist zum Katalogisieren da. So viele Schubladen."
+
+msgid "Winter is for writing papers. Ugh."
+msgstr "Im Winter schreibt man Fachartikel. Uff."
+
+msgid "Winter is long, but it always ends."
+msgstr "Der Winter ist lang, aber er endet immer."
+
+msgid "Winter is quiet. I finally get to read."
+msgstr "Im Winter ist es ruhig. Endlich komme ich zum Lesen."
+
+msgid "Winter means long nights and longer books."
+msgstr "Winter heißt lange Nächte und noch längere Bücher."
+
+msgid "Winter means torches. So many torches."
+msgstr "Winter heißt Fackeln. So viele Fackeln."
+
+msgid "Winter or not, the mine's the same. That's why I love it."
+msgstr "Winter oder nicht, in der Mine ist alles gleich. Darum liebe ich sie."
+
+msgid "Winter roads are rough. Worth it to see you."
+msgstr "Die Winterstraßen sind hart. Für dich lohnt es sich."
+
+msgid "Winter stars are the clearest."
+msgstr "Die Wintersterne sind die klarsten."
+
+msgid "Winter wind bites, but the view is worth it."
+msgstr "Der Winterwind beißt, aber die Aussicht lohnt sich."
+
+msgid "Winter's for resting. And battling."
+msgstr "Der Winter ist zum Ausruhen da. Und zum Kämpfen."
+
+msgid "Winter's my season. Best place to be is right here."
+msgstr "Der Winter ist meine Jahreszeit. Der beste Ort ist genau hier."
+
+msgid "Winter? Everyone wants something warm. I am ready."
+msgstr "Winter? Alle wollen etwas Warmes. Ich bin bereit."
+
+msgid "Bruno let me in. I think he likes my hat."
+msgstr "Bruno hat mich reingelassen. Ich glaube, er mag meinen Hut."
+
+msgid "Café Lumière does the best tarts on the whole coast."
+msgstr "Das Café Lumière macht die besten Törtchen an der ganzen Küste."
+
+msgid "Glow tea in a crystal glass. It's that kind of place."
+msgstr "Leuchttee im Kristallglas. So ein Ort ist das hier."
+
+msgid "Guest"
+msgstr "Gast"
+
+msgid "Have you seen Rosalind play blackjack? Terrifying."
+msgstr "Hast du Rosalind mal Blackjack spielen sehen? Furchteinflößend."
+
+msgid "High limits, low lights. Perfect."
+msgstr "Hohe Limits, gedämpftes Licht. Perfekt."
+
+msgid "I set myself a daily limit. Best decision I ever made."
+msgstr "Ich habe mir ein Tageslimit gesetzt. Beste Entscheidung meines Lebens."
+
+msgid "I won twelve chips last week. I'm framing one."
+msgstr "Letzte Woche habe ich zwölf Chips gewonnen. Einen lasse ich einrahmen."
+
+msgid "I'm only here for the free spin. And Marcel's pudding."
+msgstr "Ich bin nur wegen der Gratis-Drehung hier. Und wegen Marcels Pudding."
+
+msgid "I'm saving up for one night at the Hôtel. Just one."
+msgstr "Ich spare auf eine Nacht im Hôtel. Nur eine."
+
+msgid "Red came up five times in a row. Black is due! ...That's not how it works, is it?"
+msgstr "Fünfmal hintereinander Rot. Jetzt ist Schwarz dran! ...So funktioniert das nicht, oder?"
+
+msgid "The chandeliers alone are worth the ferry ride."
+msgstr "Allein die Kronleuchter sind die Fährfahrt wert."
+
+msgid "The ferry from Gull Bay is half the fun of coming here."
+msgstr "Die Fähre von der Möwenbucht ist schon der halbe Spaß."
+
+msgid "They say Rosalind once won a yacht at roulette. Then lost it the same night."
+msgstr "Man sagt, Rosalind hat mal beim Roulette eine Jacht gewonnen. Und sie in derselben Nacht wieder verloren."
+
+msgid "What a view! I could watch the yachts all day."
+msgstr "Was für ein Ausblick! Ich könnte den ganzen Tag die Jachten anschauen."
+
+msgid "The Grand Casino is closed for renovation."
+msgstr "Das Grand Casino ist wegen Renovierung geschlossen."
+

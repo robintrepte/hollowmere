@@ -101,6 +101,9 @@ static func requirements_met(p: PlayerData, world: Dictionary, req: Dictionary, 
 			"region":
 				if not GameState.region_unlocked(str(v)):
 					return false
+			"casino":
+				if Casino.hidden():
+					return false
 	return true
 
 ## dates = ["MM-DD", "MM-DD"] (inclusive, may wrap over new year), in local time.

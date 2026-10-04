@@ -75,7 +75,7 @@ func _check() -> void:
 
 func refresh_markers() -> void:
 	for n in get_tree().get_nodes_in_group("npcs"):
-		if n is Npc:
+		if n is Npc and n.vid != "":
 			n.set_marker(marker_for(n.vid))
 
 ## Pays out one quest; returns its reward. Quiet claims leave the toast to the caller.

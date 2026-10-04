@@ -8,9 +8,9 @@ signal closed
 var embedded := false
 
 const CROSS := [
-	["eisenkamm", "whisperwood", ""],
-	["farm", "town", "tidecove"],
-	["", "meadow", "gull_bay"],
+	["eisenkamm", "whisperwood", "", ""],
+	["farm", "town", "tidecove", ""],
+	["", "meadow", "gull_bay", "lumiere"],
 ]
 
 func _ready() -> void:
@@ -19,8 +19,8 @@ func _ready() -> void:
 	anchor_right = 0.5
 	anchor_top = 0.5
 	anchor_bottom = 0.5
-	offset_left = -168
-	offset_right = 168
+	offset_left = -220
+	offset_right = 220
 	offset_top = -150
 	offset_bottom = 150
 	var v := VBoxContainer.new()
@@ -38,7 +38,7 @@ func _ready() -> void:
 	where.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v.add_child(where)
 	var grid := GridContainer.new()
-	grid.columns = 3
+	grid.columns = 4
 	grid.add_theme_constant_override("h_separation", 4)
 	grid.add_theme_constant_override("v_separation", 4)
 	v.add_child(grid)
@@ -77,6 +77,8 @@ func _at(here: String, place: String) -> bool:
 	if here == place:
 		return true
 	if place == "farm" and here in ["greenhouse", "terrace"]:
+		return true
+	if place == "lumiere" and here in ["casino", "casino_vip"]:
 		return true
 	if here.begins_with("mine:") and here.split(":")[1] == place:
 		return true

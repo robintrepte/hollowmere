@@ -1,0 +1,23 @@
+{
+  "id": "casino_vip", "name": "VIP Salon", "w": 18, "h": 13, "base": "carpet", "border": "wallpaper", "music": "vip", "indoor": true,
+  "guests": [[6, 9], [12, 9], [14, 5], [4, 5]], "guest_count": 2,
+  "guest_lines": ["Glow tea in a crystal glass. It's that kind of place.", "Bruno let me in. I think he likes my hat.", "High limits, low lights. Perfect."],
+  "ops": [
+    ["rect", "wallpaper", 0, 0, 18, 2],
+    ["rect", "marble", 7, 9, 4, 4],
+    ["open", "s", 8, 2]
+  ],
+  "warps": [
+    {"x": 8, "y": 12, "w": 2, "h": 1, "to": "casino", "tx": 28, "ty": 5}
+  ],
+  "objects": [
+    {"type": "building", "id": "grand_piano", "x": 2, "y": 2, "w": 3, "h": 2, "label": "Grand Piano", "text": "A grand piano. It plays itself after midnight, they say."},
+    {"type": "building", "id": "casino_roulette", "x": 3, "y": 6, "w": 4, "h": 2, "label": "High-Limit Roulette", "action": "casino:roulette"},
+    {"type": "building", "id": "casino_blackjack", "x": 11, "y": 6, "w": 3, "h": 2, "label": "High-Limit Blackjack", "action": "casino:blackjack"},
+    {"type": "building", "id": "poker_machine", "x": 14, "y": 2, "w": 1, "h": 2, "label": "Video Poker", "action": "casino:poker"},
+    {"type": "building", "id": "potted_palm", "x": 1, "y": 10, "w": 1, "h": 1, "label": "Palm", "text": "A potted palm in a golden pot."},
+    {"type": "building", "id": "potted_palm", "x": 16, "y": 10, "w": 1, "h": 1, "label": "Palm", "text": "A potted palm in a golden pot."},
+    {"type": "sign", "x": 11, "y": 10, "text": "VIP Salon. Higher table limits for members."}
+  ],
+  "spawn": [8, 11]
+}

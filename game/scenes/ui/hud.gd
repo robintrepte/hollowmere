@@ -10,6 +10,8 @@ var _time: Label
 var _weather: Label
 var _dial: DayDial
 var _money: Label
+var _chip_row: HBoxContainer
+var _chip_label: Label
 var _money_shown := 0.0
 var _coin_icon: TextureRect
 var _energy: EnergyPips
@@ -133,6 +135,13 @@ func _ready() -> void:
 	mrow.add_child(_coin_icon)
 	_money = UITheme.label("0", 12, UITheme.WOOD_DK)
 	mrow.add_child(_money)
+	_chip_row = HBoxContainer.new()
+	_chip_row.add_theme_constant_override("separation", 3)
+	_chip_row.add_child(UITheme.icon_rect(Art.item("_chip"), 16))
+	_chip_label = UITheme.label("0", 12, UITheme.WOOD_DK)
+	_chip_row.add_child(_chip_label)
+	mrow.add_child(_chip_row)
+	_refresh_chips()
 
 	var hb := PanelContainer.new()
 	hb.add_theme_stylebox_override("panel", UITheme.wood(3))
@@ -228,7 +237,8 @@ func _ready() -> void:
 			_refresh_quest())
 	EventBus.story_advanced.connect(func(_c): _refresh_quest())
 	EventBus.creature_befriended.connect(func(_c): _refresh_quest.call_deferred())
-	EventBus.map_changed.connect(func(_m): _refresh_quest())
+	EventBus.map_changed.connect(func(_m): _refresh_quest(); _refresh_chips())
+	EventBus.chips_changed.connect(_refresh_chips)
 	_refresh_all()
 
 func _pill(pad: int) -> StyleBoxFlat:
@@ -439,6 +449,13 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("hotbar_prev"):
 		select_slot((p.selected + PlayerData.HOTBAR_SIZE - 1) % PlayerData.HOTBAR_SIZE)
 		get_viewport().set_input_as_handled()
+
+## Chips show next to the gold while the player is inside the casino.
+func _refresh_chips() -> void:
+	var me := GameState.local_player() if GameState.started else null
+	_chip_row.visible = me != null and me.map_id in ["casino", "casino_vip"]
+	if _chip_row.visible:
+		_chip_label.text = Num.group(Casino.chips(me))
 
 func _process(delta: float) -> void:
 	_toasts.position.y = _lv_panel.position.y + _lv_panel.size.y + 6

@@ -33,9 +33,9 @@
   "objects": [
     {"type": "building", "id": "fisher_house", "x": 8, "y": 5, "w": 6, "h": 4, "label": "Fisher's Hut", "roof": "#3a7aa0", "action": "shop:angler"},
     {"type": "wayshrine", "x": 3, "y": 12},
-    {"type": "ferry", "x": 38, "y": 25},
+    {"type": "ferry", "x": 38, "y": 25, "to": "lumiere", "tx": 32, "ty": 21, "requires": "story:friends", "dest": "Lumière"},
     {"type": "sign", "x": 2, "y": 14, "text": "Gull Bay. The biggest fish bite off the end of the long pier."},
-    {"type": "sign", "x": 33, "y": 15, "text": "Harbor. Ferry to Lumière: closed for repairs."}
+    {"type": "sign", "x": 33, "y": 15, "text": "Harbor. The ferry to Lumière leaves from the end of the dock."}
   ],
   "spawn": [1, 16]
 }

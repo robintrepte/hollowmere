@@ -2384,6 +2384,720 @@
      "tobin": 100
     }
    }
+  },
+  {
+   "id": "tut_casino",
+   "type": "tutorial",
+   "title": "The Grand Casino",
+   "requires": {
+    "story": "friends",
+    "casino": true
+   },
+   "steps": [
+    {
+     "text": "Take the ferry from Gull Bay to Lumi\u00e8re and step into the Grand Casino.",
+     "goal": {
+      "visit": "casino"
+     }
+    },
+    {
+     "text": "Buy a few chips at the cashier. Ten gold buys one chip, and you can always cash out at the same rate.",
+     "goal": {
+      "stat": "casino_buy",
+      "n": 1
+     }
+    }
+   ],
+   "reward": {
+    "chips": 50
+   }
+  },
+  {
+   "id": "tut_casino_wheel",
+   "type": "tutorial",
+   "title": "A free spin",
+   "requires": {
+    "quests": [
+     "tut_casino"
+    ],
+    "casino": true
+   },
+   "steps": [
+    {
+     "text": "Spin the free Wheel of Fortune by the entrance. One spin a day, nothing to stake.",
+     "goal": {
+      "stat": "casino_wheel",
+      "n": 1
+     }
+    }
+   ],
+   "reward": {
+    "chips": 20
+   }
+  },
+  {
+   "id": "tut_casino_roulette",
+   "type": "tutorial",
+   "title": "Roulette",
+   "requires": {
+    "quests": [
+     "tut_casino"
+    ],
+    "casino": true
+   },
+   "steps": [
+    {
+     "text": "Play a spin of roulette. Click the table to place chips; the Rules button explains every bet.",
+     "goal": {
+      "stat": "casino_round:roulette",
+      "n": 1
+     }
+    }
+   ],
+   "reward": {
+    "chips": 30
+   }
+  },
+  {
+   "id": "tut_casino_blackjack",
+   "type": "tutorial",
+   "title": "Blackjack",
+   "requires": {
+    "quests": [
+     "tut_casino"
+    ],
+    "casino": true
+   },
+   "steps": [
+    {
+     "text": "Play a hand of blackjack. Tick \"Strategy hints\" if you want advice for every decision.",
+     "goal": {
+      "stat": "casino_round:blackjack",
+      "n": 1
+     }
+    }
+   ],
+   "reward": {
+    "chips": 30
+   }
+  },
+  {
+   "id": "tut_casino_slots",
+   "type": "tutorial",
+   "title": "Slot machines",
+   "requires": {
+    "quests": [
+     "tut_casino"
+    ],
+    "casino": true
+   },
+   "steps": [
+    {
+     "text": "Spin a slot machine. The Paytable shows what every symbol pays.",
+     "goal": {
+      "stat": "casino_round:slots",
+      "n": 1
+     }
+    }
+   ],
+   "reward": {
+    "chips": 30
+   }
+  },
+  {
+   "id": "tut_casino_poker",
+   "type": "tutorial",
+   "title": "Video poker",
+   "requires": {
+    "quests": [
+     "tut_casino"
+    ],
+    "casino": true
+   },
+   "steps": [
+    {
+     "text": "Play a hand of video poker: deal, click the cards you keep, then draw.",
+     "goal": {
+      "stat": "casino_round:poker",
+      "n": 1
+     }
+    }
+   ],
+   "reward": {
+    "chips": 30
+   }
+  },
+  {
+   "id": "tut_casino_race",
+   "type": "tutorial",
+   "title": "Wildling races",
+   "requires": {
+    "quests": [
+     "tut_casino"
+    ],
+    "casino": true
+   },
+   "steps": [
+    {
+     "text": "Back a runner at the Wildling Races. Faster Wildlings in good form win more often but pay less.",
+     "goal": {
+      "stat": "casino_round:race",
+      "n": 1
+     }
+    }
+   ],
+   "reward": {
+    "chips": 30
+   }
+  },
+  {
+   "id": "rosalind_intro",
+   "type": "side",
+   "title": "A taste for risk",
+   "giver": "rosalind",
+   "requires": {
+    "story": "friends",
+    "casino": true
+   },
+   "intro": [
+    "New blood! Let's see if you have the nerve. Play ten rounds, at any table you like, then come and tell me about it."
+   ],
+   "steps": [
+    {
+     "text": "Play 10 rounds at the casino.",
+     "goal": {
+      "stat": "casino_round",
+      "n": 10
+     }
+    },
+    {
+     "text": "Tell Rosalind how it went.",
+     "goal": {
+      "talk": "rosalind"
+     },
+     "done": [
+      "Ten rounds and still smiling. You'll do."
+     ]
+    }
+   ],
+   "reward": {
+    "chips": 200,
+    "friendship": {
+     "rosalind": 60
+    }
+   }
+  },
+  {
+   "id": "rosalind_blackjack",
+   "type": "side",
+   "title": "Twenty-one",
+   "giver": "rosalind",
+   "requires": {
+    "quests": [
+     "rosalind_intro"
+    ],
+    "casino": true
+   },
+   "intro": [
+    "Roulette is for dreamers. Blackjack is for thinkers. Win five hands and I'll take you seriously."
+   ],
+   "steps": [
+    {
+     "text": "Win 5 hands of blackjack.",
+     "goal": {
+      "stat": "blackjack_win",
+      "n": 5
+     }
+    },
+    {
+     "text": "Report to Rosalind.",
+     "goal": {
+      "talk": "rosalind"
+     },
+     "done": [
+      "Five! You stood on sixteen against a ten, didn't you? Brave. Wrong, but brave."
+     ]
+    }
+   ],
+   "reward": {
+    "chips": 500,
+    "velvet_beret": 1,
+    "friendship": {
+     "rosalind": 80
+    }
+   }
+  },
+  {
+   "id": "rosalind_straight",
+   "type": "side",
+   "title": "Straight up",
+   "giver": "rosalind",
+   "requires": {
+    "quests": [
+     "rosalind_blackjack"
+    ],
+    "casino": true
+   },
+   "intro": [
+    "Every gambler remembers their first number. Win a straight-up bet at roulette. One number, thirty-five to one."
+   ],
+   "steps": [
+    {
+     "text": "Win a straight-up bet at roulette.",
+     "goal": {
+      "stat": "roulette_lucky",
+      "n": 1
+     }
+    },
+    {
+     "text": "Tell Rosalind your number.",
+     "goal": {
+      "talk": "rosalind"
+     },
+     "done": [
+      "Remember that number. You'll bet it again on bad days. Everyone does."
+     ]
+    }
+   ],
+   "reward": {
+    "chips": 1000,
+    "friendship": {
+     "rosalind": 100
+    }
+   }
+  },
+  {
+   "id": "rosalind_races",
+   "type": "side",
+   "title": "Back the runner",
+   "giver": "rosalind",
+   "requires": {
+    "quests": [
+     "rosalind_straight"
+    ],
+    "casino": true
+   },
+   "intro": [
+    "I raised Wildlings before I raised the stakes. Win three races and I'll give you something to listen to on that farm of yours."
+   ],
+   "steps": [
+    {
+     "text": "Win 3 Wildling races.",
+     "goal": {
+      "stat": "race_win",
+      "n": 3
+     }
+    },
+    {
+     "text": "Visit Rosalind.",
+     "goal": {
+      "talk": "rosalind"
+     },
+     "done": [
+      "Three winners. You read form like a farmer reads clouds."
+     ]
+    }
+   ],
+   "reward": {
+    "record_vip": 1,
+    "jukebox": 1,
+    "friendship": {
+     "rosalind": 100
+    }
+   }
+  },
+  {
+   "id": "rosalind_vip",
+   "type": "side",
+   "title": "The velvet rope",
+   "giver": "rosalind",
+   "requires": {
+    "quests": [
+     "rosalind_races"
+    ],
+    "hearts": {
+     "rosalind": 4
+    },
+    "casino": true
+   },
+   "intro": [
+    "Bruno only lets members past the rope. Prove you can win, not just play: take 2,500 chips off my tables, all told, and I'll vouch for you."
+   ],
+   "steps": [
+    {
+     "text": "Win 2,500 chips in total across your winning rounds.",
+     "goal": {
+      "stat": "casino_won",
+      "n": 2500
+     }
+    },
+    {
+     "text": "Tell Rosalind.",
+     "goal": {
+      "talk": "rosalind"
+     },
+     "done": [
+      "Bruno! This one's with me. From now on, always."
+     ]
+    }
+   ],
+   "reward": {
+    "player_flag": "casino_vip",
+    "top_hat": 1,
+    "friendship": {
+     "rosalind": 200
+    }
+   }
+  },
+  {
+   "id": "marcel_tea",
+   "type": "side",
+   "title": "Tea for the house",
+   "giver": "marcel",
+   "requires": {
+    "story": "friends",
+    "casino": true
+   },
+   "intro": [
+    "My tea supplier missed the ferry. Could you bring me three Glow Teas? The regulars get grumpy without them."
+   ],
+   "steps": [
+    {
+     "text": "Bring Marcel 3 Glow Tea.",
+     "goal": {
+      "deliver": "glow_tea",
+      "n": 3,
+      "to": "marcel"
+     },
+     "done": [
+      "Saved! On the house, next time. And the time after."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 900,
+    "record_promenade": 1,
+    "friendship": {
+     "marcel": 100
+    }
+   }
+  },
+  {
+   "id": "celeste_roses",
+   "type": "side",
+   "title": "Flowers for the lobby",
+   "giver": "celeste",
+   "requires": {
+    "story": "friends"
+   },
+   "intro": [
+    "The H\u00f4tel lobby needs fresh flowers before the summer guests arrive. Five Fairy Roses would be perfect."
+   ],
+   "steps": [
+    {
+     "text": "Bring C\u00e9leste 5 Fairy Roses.",
+     "goal": {
+      "deliver": "fairy_rose",
+      "n": 5,
+      "to": "celeste"
+     },
+     "done": [
+      "Exquisite. The lobby will be the talk of the coast."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 2500,
+    "potted_palm": 2,
+    "friendship": {
+     "celeste": 120
+    }
+   }
+  },
+  {
+   "id": "dorian_spins",
+   "type": "side",
+   "title": "Twenty spins",
+   "giver": "dorian",
+   "requires": {
+    "story": "friends",
+    "casino": true
+   },
+   "intro": [
+    "Most guests play three spins and leave. Play twenty and you'll see what the wheel really does: nothing you can predict."
+   ],
+   "steps": [
+    {
+     "text": "Play 20 spins of roulette.",
+     "goal": {
+      "stat": "casino_round:roulette",
+      "n": 20
+     }
+    },
+    {
+     "text": "Tell Dorian what you noticed.",
+     "goal": {
+      "talk": "dorian"
+     },
+     "done": [
+      "Exactly. No pattern. Anyone who says otherwise is selling something."
+     ]
+    }
+   ],
+   "reward": {
+    "chips": 300,
+    "friendship": {
+     "dorian": 80
+    }
+   }
+  },
+  {
+   "id": "dorian_cake",
+   "type": "side",
+   "title": "A cake for the staff",
+   "giver": "dorian",
+   "requires": {
+    "quests": [
+     "dorian_spins"
+    ],
+    "casino": true
+   },
+   "intro": [
+    "The night shift hasn't eaten since noon. Two Honey Cakes would save us."
+   ],
+   "steps": [
+    {
+     "text": "Bring Dorian 2 Honey Cakes.",
+     "goal": {
+      "deliver": "honey_cake",
+      "n": 2,
+      "to": "dorian"
+     },
+     "done": [
+      "You're a hero to every croupier in this building."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 800,
+    "fedora": 1,
+    "friendship": {
+     "dorian": 100
+    }
+   }
+  },
+  {
+   "id": "margaux_tulips",
+   "type": "side",
+   "title": "Tulips for the window",
+   "giver": "margaux",
+   "requires": {
+    "story": "friends",
+    "casino": true
+   },
+   "intro": [
+    "My cashier window looks so grey. Four tulips would brighten the whole counter."
+   ],
+   "steps": [
+    {
+     "text": "Bring Margaux 4 Tulips.",
+     "goal": {
+      "deliver": "tulip",
+      "n": 4,
+      "to": "margaux"
+     },
+     "done": [
+      "Perfect! Customers smile before they even reach the window now."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 600,
+    "lucky_cap": 1,
+    "friendship": {
+     "margaux": 100
+    }
+   }
+  },
+  {
+   "id": "margaux_boutique",
+   "type": "side",
+   "title": "Window shopping",
+   "giver": "margaux",
+   "requires": {
+    "quests": [
+     "margaux_tulips"
+    ],
+    "casino": true
+   },
+   "intro": [
+    "The boutique's new stock arrived. Spend a thousand chips there and I'll throw in something from the back room."
+   ],
+   "steps": [
+    {
+     "text": "Spend 1,000 chips in the casino boutique.",
+     "goal": {
+      "stat": "chips_spent",
+      "n": 1000
+     }
+    },
+    {
+     "text": "Visit Margaux at the cashier.",
+     "goal": {
+      "talk": "margaux"
+     },
+     "done": [
+      "Good taste! Here, this rope never made it onto the shelves."
+     ]
+    }
+   ],
+   "reward": {
+    "velvet_rope": 1,
+    "chips": 200,
+    "friendship": {
+     "margaux": 80
+    }
+   }
+  },
+  {
+   "id": "marcel_pudding",
+   "type": "side",
+   "title": "The pudding test",
+   "giver": "marcel",
+   "requires": {
+    "quests": [
+     "marcel_tea"
+    ],
+    "casino": true
+   },
+   "intro": [
+    "I'm trying a new recipe, but I need a benchmark. Bring me two Cream Puddings, and be honest when I ask which is better."
+   ],
+   "steps": [
+    {
+     "text": "Bring Marcel 2 Cream Puddings.",
+     "goal": {
+      "deliver": "cream_pudding",
+      "n": 2,
+      "to": "marcel"
+     },
+     "done": [
+      "Hm. Yours is better. Don't tell anyone. Here, for your silence."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 1200,
+    "friendship": {
+     "marcel": 100
+    }
+   }
+  },
+  {
+   "id": "celeste_pearls",
+   "type": "side",
+   "title": "Pearls for the suite",
+   "giver": "celeste",
+   "requires": {
+    "quests": [
+     "celeste_roses"
+    ]
+   },
+   "intro": [
+    "A very important guest arrives next week and asked for pearls on the pillows. Don't ask. Three would do."
+   ],
+   "steps": [
+    {
+     "text": "Bring C\u00e9leste 3 Pearls.",
+     "goal": {
+      "deliver": "pearl",
+      "n": 3,
+      "to": "celeste"
+     },
+     "done": [
+      "The guest was speechless. So was I, honestly."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 3000,
+    "record_beach": 1,
+    "friendship": {
+     "celeste": 120
+    }
+   }
+  },
+  {
+   "id": "bruno_wheel",
+   "type": "side",
+   "title": "House rules",
+   "giver": "bruno",
+   "requires": {
+    "story": "friends",
+    "casino": true
+   },
+   "intro": [
+    "Rule one: everyone gets a free spin on the Wheel of Fortune each day. Use it. Five days, five spins, then we talk."
+   ],
+   "steps": [
+    {
+     "text": "Spin the free Wheel of Fortune 5 times (once a day).",
+     "goal": {
+      "stat": "casino_wheel",
+      "n": 5
+     }
+    },
+    {
+     "text": "Report to Bruno at the velvet rope.",
+     "goal": {
+      "talk": "bruno"
+     },
+     "done": [
+      "Five spins, no fuss. You follow rules. I respect that."
+     ]
+    }
+   ],
+   "reward": {
+    "chips": 500,
+    "friendship": {
+     "bruno": 100
+    }
+   }
+  },
+  {
+   "id": "bruno_snack",
+   "type": "side",
+   "title": "Double shift",
+   "giver": "bruno",
+   "requires": {
+    "quests": [
+     "bruno_wheel"
+    ],
+    "casino": true
+   },
+   "intro": [
+    "Double shift tonight. I can't leave the rope. Three Honey Cakes. Don't tell Marcel they're not his."
+   ],
+   "steps": [
+    {
+     "text": "Bring Bruno 3 Honey Cakes.",
+     "goal": {
+      "deliver": "honey_cake",
+      "n": 3,
+      "to": "bruno"
+     },
+     "done": [
+      "...Thanks. Really. Now go, before someone sees me smiling."
+     ]
+    }
+   ],
+   "reward": {
+    "money": 900,
+    "potted_palm": 1,
+    "friendship": {
+     "bruno": 120
+    }
+   }
   }
  ],
  "daily": [

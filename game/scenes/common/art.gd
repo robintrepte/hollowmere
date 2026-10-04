@@ -5,7 +5,7 @@ extends RefCounted
 const HAIR_STYLES := ["short", "long", "ponytail", "spiky", "bob", "buzz", "curly", "bun"]
 const FRAME := Vector2i(32, 48)
 const DOLL_COLS := 7
-const SEASON_ROW_COUNT := 20
+const SEASON_ROW_COUNT := 22
 
 static var _cache: Dictionary = {}
 static var _tilesets: Dictionary = {}
@@ -53,6 +53,9 @@ static func backdrop(biome: String) -> Texture2D:
 
 static func doll_layer(layer: String) -> Texture2D:
 	return tex("res://assets/characters/%s.png" % layer)
+
+static func hat_layer(style: String) -> Texture2D:
+	return doll_layer("hat_" + style)
 
 static func hair_layer(style: int) -> Texture2D:
 	return doll_layer("hair_" + HAIR_STYLES[clampi(style, 0, HAIR_STYLES.size() - 1)])

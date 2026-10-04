@@ -11,9 +11,12 @@ var _money: CoinLabel
 var _tab := "buy"
 var _tabs: HBoxContainer
 var _buying := false
+var _chips: CoinLabel
+var _chip_shop := false
 
 func _init(id: String = "") -> void:
 	shop_id = id
+	_chip_shop = Economy.chip_shop(id)
 
 func _ready() -> void:
 	add_theme_stylebox_override("panel", UITheme.parchment(8))
@@ -42,15 +45,17 @@ func _ready() -> void:
 	hv.add_child(mrow)
 	_money = CoinLabel.new(GameState.money(), 11, UITheme.WOOD_DK)
 	mrow.add_child(_money)
-	if Casino.chips(GameState.local_player()) > 0:
-		mrow.add_child(CoinLabel.new(Casino.chips(GameState.local_player()), 11, UITheme.WOOD_DK, "_chip"))
+	if _chip_shop or Casino.chips(GameState.local_player()) > 0:
+		_chips = CoinLabel.new(Casino.chips(GameState.local_player()), 11, UITheme.WOOD_DK, "_chip")
+		mrow.add_child(_chips)
 	var close := UITheme.button("Close", func(): closed.emit())
 	close.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	head.add_child(close)
 	_tabs = HBoxContainer.new()
 	v.add_child(_tabs)
 	_tabs.add_child(UITheme.button("Buy", func(): _tab = "buy"; _refresh()))
-	_tabs.add_child(UITheme.button("Sell", func(): _tab = "sell"; _refresh()))
+	if not _chip_shop:
+		_tabs.add_child(UITheme.button("Sell", func(): _tab = "sell"; _refresh()))
 	if shop_id == "carpenter":
 		_tabs.add_child(UITheme.button("Build", func(): _tab = "build"; _refresh()))
 	if shop.get("upgrades", false):
@@ -67,13 +72,16 @@ func _ready() -> void:
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_list.add_theme_constant_override("separation", 2)
 	sc.add_child(_list)
-	v.add_child(UITheme.label("Shift-click to buy 5 · Prices rise with quality when selling", 8, UITheme.MUTED))
+	v.add_child(UITheme.label("Shift-click to buy 5 · Prices in chips" if _chip_shop else "Shift-click to buy 5 · Prices rise with quality when selling", 8, UITheme.MUTED))
 	EventBus.money_changed.connect(func(_m, _d): _refresh_money())
+	EventBus.chips_changed.connect(_refresh_money)
 	_refresh()
 
 func _refresh_money() -> void:
 	if is_instance_valid(_money):
 		_money.set_amount(GameState.money())
+	if is_instance_valid(_chips):
+		_chips.set_amount(Casino.chips(GameState.local_player()))
 
 func _refresh() -> void:
 	if _list == null or not is_inside_tree() or is_queued_for_deletion():
@@ -90,7 +98,8 @@ func _refresh() -> void:
 		if stock.is_empty():
 			_list.add_child(UITheme.label("Sold out for today.", 10, UITheme.MUTED))
 		for s in stock:
-			_list.add_child(_row(s.id, GameState.buy_value(GameState.local_player(), int(s.price)), bool(s.locked), str(s.get("req", "")), true))
+			var price := int(s.price) if _chip_shop else GameState.buy_value(GameState.local_player(), int(s.price))
+			_list.add_child(_row(s.id, price, bool(s.locked), str(s.get("req", "")), true))
 	elif _tab == "build":
 		_build_list()
 	elif _tab == "upgrades":
@@ -126,8 +135,8 @@ func _row(id: String, price: int, locked: bool, req: String, buying: bool) -> Co
 	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	d.custom_minimum_size = Vector2(180, 0)
 	nv.add_child(d)
-	var b := CoinLabel.button(price)
-	b.disabled = locked or GameState.money() < price
+	var b := CoinLabel.button(price, Callable(), "", "_chip" if _chip_shop else "_coin")
+	b.disabled = locked or (Casino.chips(GameState.local_player()) if _chip_shop else GameState.money()) < price
 	b.pressed.connect(func():
 		if b.disabled or _buying:
 			return

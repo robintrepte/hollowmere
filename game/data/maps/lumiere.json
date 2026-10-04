@@ -1,0 +1,43 @@
+{
+  "id": "lumiere", "name": "Lumière", "w": 48, "h": 34, "base": "sand", "border": "palm", "music": "promenade", "biome": "beach", "water": "sea",
+  "guests": [[6, 13], [14, 12], [20, 15], [28, 12], [35, 14], [40, 12], [12, 19], [26, 20], [38, 20]], "guest_count": 5,
+  "guest_lines": ["What a view! I could watch the yachts all day.", "I'm saving up for one night at the Hôtel. Just one.", "Café Lumière does the best tarts on the whole coast.", "They say Rosalind once won a yacht at roulette. Then lost it the same night.", "The ferry from Gull Bay is half the fun of coming here."],
+  "ops": [
+    ["rect", "plaza", 1, 8, 46, 10],
+    ["rect", "carpet", 22, 8, 4, 3],
+    ["rect", "path", 31, 18, 2, 2],
+    ["rect", "water", 1, 22, 46, 11],
+    ["rect", "deepwater", 1, 28, 46, 5],
+    ["pier", 31, 20, 2, 9],
+    ["pier", 26, 27, 13, 2],
+    ["pier", 8, 22, 2, 5],
+    ["rect", "palm", 2, 17, 1, 1],
+    ["rect", "palm", 8, 17, 1, 1],
+    ["rect", "palm", 15, 17, 1, 1],
+    ["rect", "palm", 21, 17, 1, 1],
+    ["rect", "palm", 27, 17, 1, 1],
+    ["rect", "palm", 36, 17, 1, 1],
+    ["rect", "palm", 42, 17, 1, 1],
+    ["rect", "palm", 45, 17, 1, 1],
+    ["rect", "palm", 17, 9, 1, 1],
+    ["rect", "palm", 30, 9, 1, 1],
+    ["scatter", "palm", 1, 1, 46, 2, 0.25, 71],
+    ["scatter", "rock", 1, 19, 46, 2, 0.05, 73]
+  ],
+  "warps": [
+
+  ],
+  "objects": [
+    {"type": "building", "id": "villa_lumiere", "x": 2, "y": 4, "w": 4, "h": 4, "label": "Villa"},
+    {"type": "building", "id": "cafe_lumiere", "x": 9, "y": 5, "w": 4, "h": 3, "label": "Café Lumière", "action": "shop:lumiere_cafe"},
+    {"type": "building", "id": "grand_casino", "x": 19, "y": 4, "w": 10, "h": 4, "label": "Grand Casino", "action": "casino_enter"},
+    {"type": "building", "id": "hotel_lumiere", "x": 33, "y": 4, "w": 6, "h": 4, "label": "Hôtel Lumière", "action": "hotel"},
+    {"type": "building", "id": "villa_lumiere", "x": 42, "y": 4, "w": 4, "h": 4, "label": "Villa"},
+    {"type": "fountain", "x": 23, "y": 13},
+    {"type": "wayshrine", "x": 4, "y": 11},
+    {"type": "ferry", "x": 33, "y": 24, "to": "gull_bay", "tx": 37, "ty": 23, "dest": "Gull Bay"},
+    {"type": "sign", "x": 29, "y": 19, "text": "Lumière harbor. Ferry to Gull Bay at the end of the pier."},
+    {"type": "sign", "x": 18, "y": 10, "text": "Grand Casino Lumière. Chips are play money with no real-world value. Play for fun."}
+  ],
+  "spawn": [32, 21]
+}

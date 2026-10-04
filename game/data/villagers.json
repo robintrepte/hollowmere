@@ -474,5 +474,149 @@
       "8": ["Tobin hands you a tiny carved minecart.", "Tobin: Made it myself. It even rolls.", "Tobin: So you always find your way back."]
     },
     "event_rewards": {"2": {"cherry_bomb": 4}, "8": {"minecart": 1}}
+  },
+  "rosalind": {
+    "name": "Rosalind",
+    "role": "High Roller of Lumière",
+    "romance": false,
+    "birthday": ["fall", 14],
+    "look": {"skin": "#f0d0b8", "hair": "#e8e8f0", "shirt": "#7a3a9a"},
+    "loves": ["starfruit_parfait", "diamond", "fairy_rose"],
+    "likes": ["honey_cake", "cream_pudding", "pearl", "glow_tea"],
+    "dislikes": ["old_boot", "soggy_newspaper", "fried_egg"],
+    "schedule": [[600, "casino_vip", 8, 7], [1000, "lumiere", 13, 10], [1400, "casino", 9, 9], [2000, "casino", 13, 15], [2300, "casino_vip", 8, 7]],
+    "lines": {
+      "0": ["Rosalind. Remember it; the croupiers do.", "A farmer at the tables! How delightful. Do try not to bet the cow."],
+      "3": ["You play with your head, not your heart. That's rarer than you think.", "The house always wins in the end, darling. The trick is enjoying the middle."],
+      "6": ["I came to Lumière forty years ago with three chips and a hat. I still have the hat.", "Win or lose, I tip the croupier. Dorian has a family to feed."],
+      "9": ["You're the only one in this town who beats me and still asks how my day was.", "When I'm gone, the seat by the roulette wheel is yours. Don't let anyone argue."]
+    },
+    "season": {
+      "spring": "Spring in Lumière: the yachts come back and the gossip with them.",
+      "summer": "Too hot for the promenade. The casino has the best air in town.",
+      "fall": "Fall is my season. My birthday, and the high-limit tables reopen.",
+      "winter": "The sea is grey, the chandeliers are gold. I know where I want to be."
+    },
+    "events": {
+      "2": ["Rosalind waves you over to the roulette table.", "Rosalind: Watch the croupier's wrist, not the wheel. She can't control it either, but it's prettier.", "Rosalind: Here, a little something for your first big night."],
+      "5": ["Rosalind is looking at an old photo by the bar.", "Rosalind: My first win. Three chips on seventeen. I bought this hat with it.", "Rosalind: I've lost more than I've won since. I've never regretted the hat."],
+      "8": ["Rosalind presses a velvet case into your hands.", "Rosalind: My lucky visor. I don't need luck anymore. I have company.", "Rosalind: Wear it badly. It annoys Bruno."]
+    },
+    "event_rewards": {"2": {"record_casino": 1}, "8": {"dealer_visor": 1}}
+  },
+  "dorian": {
+    "name": "Dorian",
+    "role": "Croupier",
+    "romance": false,
+    "birthday": ["winter", 9],
+    "look": {"skin": "#f0c8a0", "hair": "#1e1a22", "shirt": "#2a2430"},
+    "loves": ["honey_cake", "amethyst"],
+    "likes": ["glow_tea", "berry_tart", "pearl"],
+    "dislikes": ["old_boot", "frost_sorbet"],
+    "schedule": [[700, "lumiere", 30, 12], [1100, "casino", 6, 10], [2300, "lumiere", 40, 10]],
+    "lines": {
+      "0": ["Place your bets, please. No more bets once the ball drops.", "Every spin is fresh. The wheel has no memory, whatever the regulars say."],
+      "3": ["Seventeen came up four times last night. Means nothing. People still cheered.", "If you're losing, take a walk on the promenade. The sea is free."],
+      "6": ["I've dealt for Rosalind for six years. She's never once been rude to staff.", "Between us: I've never placed a bet in my life. Watching is enough."],
+      "9": ["My little girl wants to be a farmer now. Your fault, I think.", "You're good company on a slow night. Thank you."]
+    },
+    "season": {
+      "spring": "Spring brings tourists. They always bet on red.",
+      "summer": "Summer nights the tables never empty.",
+      "fall": "Fall is quieter. Real players only.",
+      "winter": "My birthday is in winter. The staff bake me a cake shaped like a chip."
+    }
+  },
+  "margaux": {
+    "name": "Margaux",
+    "role": "Casino Cashier",
+    "romance": false,
+    "birthday": ["spring", 15],
+    "look": {"skin": "#f4d0b0", "hair": "#b0502a", "shirt": "#7a2a36"},
+    "loves": ["berry_tart", "emerald"],
+    "likes": ["honey_cake", "tulip", "glow_tea"],
+    "dislikes": ["soggy_newspaper"],
+    "schedule": [[900, "casino", 5, 16], [2200, "lumiere", 12, 11]],
+    "lines": {
+      "0": ["Ten gold buys one chip, one chip sells for ten gold. No fees, no tricks.", "Your free chips for the day are waiting at the counter, if you haven't collected them."],
+      "3": ["The boutique is mine too. The top hats sell out every fall.", "Set yourself a daily limit in the settings if you like. I'd do it."],
+      "6": ["I count about a million chips a week. I dream in stacks of ten.", "Rosalind tips me in flowers. Best customer in Lumière."],
+      "9": ["Want to know a secret? The vault door squeaks. Every time.", "You're my favorite regular. Don't tell Rosalind."]
+    },
+    "season": {
+      "spring": "Tulips on the promenade! My favorite week.",
+      "summer": "Summer means long queues at the window.",
+      "fall": "The boutique gets the new hats in fall.",
+      "winter": "Winter is quiet. I finally get to read."
+    }
+  },
+  "marcel": {
+    "name": "Marcel",
+    "role": "Barkeeper",
+    "romance": false,
+    "birthday": ["summer", 12],
+    "look": {"skin": "#e8b890", "hair": "#5a4030", "shirt": "#e8e8f0"},
+    "loves": ["crystal_fruit", "truffle"],
+    "likes": ["glow_tea", "honey_cake", "cream_pudding"],
+    "dislikes": ["fried_egg"],
+    "schedule": [[1000, "lumiere", 11, 9], [1100, "casino", 27, 14], [2400, "casino", 27, 14]],
+    "lines": {
+      "0": ["What'll it be? Tea, cake, pudding. I don't serve anything stronger than a good story.", "Sit, sit. The tables will still be there."],
+      "3": ["Lost a hand? Have a pudding. It's cheaper.", "Bruno pretends he doesn't like my cakes. He has two a night."],
+      "6": ["I was a ship's cook for twenty years. Then I saw that chandelier and stayed.", "Rosalind drinks glow tea with a slice of starfruit. Don't tell her I told you."],
+      "9": ["You're family now. Family eats for free. Mostly.", "If you ever open a bar on your farm, I'll come and judge it."]
+    },
+    "season": {
+      "spring": "New tea in spring. Smell that.",
+      "summer": "Summer! My birthday and the busiest bar in the bay.",
+      "fall": "Fall means pudding season.",
+      "winter": "Winter? Everyone wants something warm. I am ready."
+    }
+  },
+  "celeste": {
+    "name": "Céleste",
+    "role": "Hotel Concierge",
+    "romance": false,
+    "birthday": ["spring", 8],
+    "look": {"skin": "#f0d0b0", "hair": "#1e1a22", "shirt": "#2a3a6a"},
+    "loves": ["fairy_rose", "pearl"],
+    "likes": ["glow_tea", "berry_tart", "sunflower"],
+    "dislikes": ["old_boot", "soggy_newspaper"],
+    "schedule": [[700, "lumiere", 36, 9], [1300, "lumiere", 26, 14], [1600, "lumiere", 36, 9], [2200, "away", 0, 0]],
+    "lines": {
+      "0": ["Welcome to Lumière. The Grand Casino is open day and night; the Hôtel is open to you.", "A suite at the Hôtel restores you completely. Ask at the door."],
+      "3": ["The ferry leaves for Gull Bay whenever you like. The captain owes me a favor.", "Rosalind has had the same suite for forty years. Room 17, naturally."],
+      "6": ["I know every guest by name and every secret by heart. Discretion is the job.", "On quiet mornings I feed the gulls by the fountain. Don't tell the manager."],
+      "9": ["You've become a regular, and the town is better for it.", "If you ever need anything in Lumière, anything at all, ask me first."]
+    },
+    "season": {
+      "spring": "Spring: the season opens and the yachts return.",
+      "summer": "Summer guests want sea views. All of them.",
+      "fall": "In fall the town belongs to the locals again.",
+      "winter": "Winter in Lumière is a well-kept secret."
+    }
+  },
+  "bruno": {
+    "name": "Bruno",
+    "role": "Casino Security",
+    "romance": false,
+    "birthday": ["fall", 18],
+    "look": {"skin": "#a06a48", "hair": "#2a2024", "shirt": "#1e1a22"},
+    "loves": ["honey_cake", "cream_pudding"],
+    "likes": ["hearty_pancakes", "glow_tea"],
+    "dislikes": ["frost_sorbet"],
+    "schedule": [[600, "casino", 27, 4]],
+    "lines": {
+      "0": ["Members only behind this door. VIPs, that is.", "Stake twenty-five thousand chips at our tables, or win over the right people, and the salon is yours."],
+      "3": ["I don't smile on duty. I'm smiling on the inside.", "Nobody cheats in my casino. Mostly because nobody can."],
+      "6": ["Marcel's pudding is the only thing that gets me through a double shift.", "Rosalind calls me 'the wardrobe'. I take it as a compliment."],
+      "9": ["You're alright, farmer. I'd let you in even without the card.", "Off the record: I have a Sproutle at home. Her name is Princess."]
+    },
+    "season": {
+      "spring": "Spring tourists. Lots of tourists.",
+      "summer": "Hot in this suit. Don't mention it.",
+      "fall": "My birthday is in fall. I like cake.",
+      "winter": "Winter is calm. I like calm."
+    }
   }
 }

@@ -20,6 +20,8 @@ static func meets(req: String, ctx: Dictionary) -> bool:
 			return int(ctx.get("depth", 0)) >= int(parts[1])
 		"story":
 			return int(ctx.get("quest", 0)) >= Adventure.chapter_index(parts[1])
+		"vip":
+			return bool(ctx.get("vip", false))
 	return req in ctx.get("buildings", [])
 
 static func req_text(req: String) -> String:
@@ -39,9 +41,15 @@ static func req_text(req: String) -> String:
 			var ci := Adventure.chapter_index(parts[1])
 			var chs := Adventure.chapters()
 			return str(TranslationServer.translate("Story: reach \"%s\"")) % (TranslationServer.translate(str(chs[ci].title)) if ci < chs.size() else parts[1])
+		"vip":
+			return str(TranslationServer.translate("Casino VIP: stake %s chips in total")) % Num.group(int(Casino.cfg().get("vip_turnover", 25000)))
 	if Data.buildings.has(req):
 		return str(TranslationServer.translate("Requires %s")) % str(TranslationServer.translate(Data.buildings[req].name))
 	return req
+
+## Shops that take casino chips instead of gold.
+static func chip_shop(shop_id: String) -> bool:
+	return str(Data.shops.get(shop_id, {}).get("currency", "gold")) == "chips"
 
 ## Returns [{id, price, locked:bool, req}]
 static func shop_stock(shop_id: String, season: String, ctx: Dictionary, day_index: int = 0, world_seed: int = 0) -> Array:

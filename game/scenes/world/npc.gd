@@ -1,6 +1,7 @@
 class_name Npc
 extends Node2D
-## A villager walking between schedule spots (A* over the map grid).
+## A villager walking between schedule spots (A* over the map grid), or an unnamed guest
+## (vid "") who strolls between a map's guest spots and says one of its guest lines.
 
 const SPEED := 46.0
 
@@ -11,13 +12,16 @@ var _path: Array = []
 var _bubble: Label
 var _marker: Label
 var _idle_t := 0.0
+var guest_look: Dictionary = {}
+var wander: Array = []                 ## guest spots (Vector2i) to stroll between
+var _next_stroll := 0.0
 
 func _ready() -> void:
 	add_to_group("npcs")
 	doll = PaperDoll.new()
 	add_child(doll)
 	var v: Dictionary = Data.villagers.get(vid, {})
-	var look: Dictionary = v.get("look", {}).duplicate()
+	var look: Dictionary = (guest_look if vid == "" else v.get("look", {})).duplicate()
 	look["style"] = int(look.get("style", absi(hash(vid)) % Art.HAIR_STYLES.size()))
 	look["pants"] = look.get("pants", "#4a4a5a")
 	doll.set_look(look)
@@ -82,6 +86,10 @@ func _process(delta: float) -> void:
 	if _path.is_empty():
 		doll.moving = false
 		_idle_t += delta
+		if not wander.is_empty() and _idle_t >= _next_stroll:
+			_idle_t = 0.0
+			_next_stroll = randf_range(6.0, 16.0)
+			walk_to(wander[randi() % wander.size()])
 		return
 	var target := GameState.tile_center(_path[0]) + Vector2(0, 8)
 	var d := target - position

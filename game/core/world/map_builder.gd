@@ -115,7 +115,7 @@ static func build_authored(m: Dictionary) -> Dictionary:
 		"spawn": m.get("spawn", [2, 2]), "music": m.get("music", "town"), "farm": bool(m.get("farm", false)),
 		"seasonal": bool(m.get("seasonal", false)), "indoor": bool(m.get("indoor", false)), "biome": m.get("biome", "grass"), "region": "",
 	}
-	for k in ["spawns", "levels", "water", "water_zones"]:
+	for k in ["spawns", "levels", "water", "water_zones", "guests", "guest_count", "guest_lines"]:
 		if m.has(k):
 			out[k] = m[k]
 	return out

@@ -37,12 +37,13 @@ static func price(n: int, size: int = 10, col: Color = UITheme.INK) -> CoinLabel
 	c.set_affordable(GameState.money() >= n)
 	return c
 
-## A button showing a coin icon and an amount (shop prices, sell buttons).
-static func button(n: int, on_press: Callable = Callable(), prefix: String = "") -> Button:
+## A button showing a coin icon and an amount (shop prices, sell buttons). Chip prices pass icon "_chip".
+static func button(n: int, on_press: Callable = Callable(), prefix: String = "", icon_id: String = "_coin") -> Button:
 	var b := UITheme.button((prefix + " " if prefix != "" else "") + Num.group(n), on_press)
-	b.icon = Art.item("_coin")
+	b.icon = Art.item(icon_id)
 	b.add_theme_constant_override("icon_max_width", UITheme.fs(10) + 2)
-	if GameState.money() < n:
+	var have := Casino.chips(GameState.local_player()) if icon_id == "_chip" else GameState.money()
+	if have < n:
 		b.add_theme_color_override("font_color", UITheme.HEART)
 		b.add_theme_color_override("font_disabled_color", UITheme.HEART.darkened(0.2))
 	return b

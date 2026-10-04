@@ -30,6 +30,8 @@ jobs:
         run: python3 tools/content/extract_strings.py --check
       - name: Balance simulation
         run: godot --headless --path game res://tests/sim/balance_sim.tscn -- --days=112
+      - name: Casino return-to-player simulation (1M rounds)
+        run: godot --headless --path game res://tests/sim/casino_rtp.tscn -- --rounds=1000000
       - name: Start Nakama
         run: |
           docker compose -f server/docker-compose.yml up -d --build

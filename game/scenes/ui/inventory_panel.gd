@@ -402,6 +402,8 @@ func _open_menu(inv: Inventory, e: Dictionary) -> void:
 		_menu.add_item(tr("Open"), 1)
 	if Data.is_edible(e.id) and it.get("cat", "") != "seed":
 		_menu.add_item(tr("Eat"), 2)
+	if it.has("hat") and inv == player.inventory:
+		_menu.add_item(tr("Wear"), 10)
 	if int(e.n) > 1:
 		_menu.add_item(tr("Split half"), 3)
 		_menu.add_item(tr("Split one"), 4)
@@ -434,6 +436,8 @@ func _on_menu(id: int) -> void:
 		9:
 			_menu_inv.take(e.uid, int(e.n))
 			Audio.sfx("trash")
+		10:
+			Coop.act("wear_hat_act", [e.uid])
 	_changed()
 
 ## Bags open in their own small window; several can be open at once, nested ones too.

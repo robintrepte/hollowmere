@@ -34,3 +34,7 @@ signal shrine_restored(region: String)
 signal story_advanced(chapter: Dictionary)
 signal net_status(text: String)
 signal shake(strength: float)
+signal chips_changed()
+signal jukebox_changed()
+## A finished round at a casino table, for everyone in the casino: game id and a line for the table feed.
+signal casino_news(game: String, text: String)

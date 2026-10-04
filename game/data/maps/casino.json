@@ -1,0 +1,41 @@
+{
+  "id": "casino", "name": "Grand Casino", "w": 32, "h": 22, "base": "marble", "border": "wallpaper", "music": "casino", "indoor": true,
+  "guests": [[3, 10], [8, 10], [12, 13], [20, 12], [22, 12], [24, 12], [20, 5], [22, 5], [24, 5], [5, 6], [13, 15], [22, 16], [5, 14]], "guest_count": 6,
+  "guest_lines": ["Red came up five times in a row. Black is due! ...That's not how it works, is it?", "I'm only here for the free spin. And Marcel's pudding.", "I set myself a daily limit. Best decision I ever made.", "Have you seen Rosalind play blackjack? Terrifying.", "The chandeliers alone are worth the ferry ride.", "I won twelve chips last week. I'm framing one."],
+  "ops": [
+    ["rect", "wallpaper", 0, 0, 32, 2],
+    ["rect", "carpet", 14, 2, 4, 20],
+    ["rect", "carpet", 2, 8, 12, 1],
+    ["rect", "carpet", 18, 8, 12, 1],
+    ["open", "s", 15, 2]
+  ],
+  "warps": [
+    {"x": 15, "y": 21, "w": 2, "h": 1, "to": "lumiere", "tx": 23, "ty": 9}
+  ],
+  "objects": [
+    {"type": "building", "id": "casino_race", "x": 3, "y": 2, "w": 4, "h": 3, "label": "Wildling Races", "action": "casino:race"},
+    {"type": "building", "id": "casino_wheel", "x": 9, "y": 2, "w": 2, "h": 3, "label": "Wheel of Fortune", "action": "casino:wheel"},
+    {"type": "building", "id": "casino_roulette", "x": 4, "y": 11, "w": 4, "h": 2, "label": "Roulette", "action": "casino:roulette"},
+    {"type": "building", "id": "casino_blackjack", "x": 9, "y": 11, "w": 3, "h": 2, "label": "Blackjack", "action": "casino:blackjack"},
+    {"type": "building", "id": "casino_blackjack", "x": 9, "y": 6, "w": 3, "h": 2, "label": "Blackjack", "action": "casino:blackjack"},
+    {"type": "building", "id": "slot_red", "x": 19, "y": 3, "w": 1, "h": 2, "label": "Orchard Classic", "action": "casino:slots:orchard"},
+    {"type": "building", "id": "slot_green", "x": 21, "y": 3, "w": 1, "h": 2, "label": "Wildling Wilds", "action": "casino:slots:wildlings"},
+    {"type": "building", "id": "slot_blue", "x": 23, "y": 3, "w": 1, "h": 2, "label": "Four Seasons", "action": "casino:slots:seasons"},
+    {"type": "building", "id": "poker_machine", "x": 25, "y": 3, "w": 1, "h": 2, "label": "Video Poker", "action": "casino:poker"},
+    {"type": "building", "id": "slot_red", "x": 19, "y": 10, "w": 1, "h": 2, "label": "Orchard Classic", "action": "casino:slots:orchard"},
+    {"type": "building", "id": "slot_green", "x": 21, "y": 10, "w": 1, "h": 2, "label": "Wildling Wilds", "action": "casino:slots:wildlings"},
+    {"type": "building", "id": "slot_blue", "x": 23, "y": 10, "w": 1, "h": 2, "label": "Four Seasons", "action": "casino:slots:seasons"},
+    {"type": "building", "id": "poker_machine", "x": 25, "y": 10, "w": 1, "h": 2, "label": "Video Poker", "action": "casino:poker"},
+    {"type": "building", "id": "vip_door", "x": 28, "y": 1, "w": 2, "h": 3, "label": "VIP Salon", "action": "vip"},
+    {"type": "building", "id": "velvet_rope", "x": 26, "y": 3, "w": 2, "h": 1, "label": "Velvet Rope", "text": "A velvet rope. Bruno watches it like a hawk."},
+    {"type": "building", "id": "casino_cashier", "x": 3, "y": 17, "w": 4, "h": 2, "label": "Cashier", "action": "casino:cashier"},
+    {"type": "building", "id": "casino_shop", "x": 8, "y": 17, "w": 3, "h": 2, "label": "Boutique", "action": "shop:casino"},
+    {"type": "building", "id": "casino_bar", "x": 25, "y": 15, "w": 5, "h": 2, "label": "Bar", "action": "shop:casino_bar"},
+    {"type": "building", "id": "potted_palm", "x": 1, "y": 19, "w": 1, "h": 1, "label": "Palm", "text": "A potted palm. Someone has hidden a chip in the soil. It is glued down."},
+    {"type": "building", "id": "potted_palm", "x": 30, "y": 19, "w": 1, "h": 1, "label": "Palm", "text": "A potted palm in a golden pot."},
+    {"type": "building", "id": "potted_palm", "x": 12, "y": 19, "w": 1, "h": 1, "label": "Palm", "text": "A potted palm in a golden pot."},
+    {"type": "building", "id": "potted_palm", "x": 19, "y": 19, "w": 1, "h": 1, "label": "Palm", "text": "A potted palm in a golden pot."},
+    {"type": "sign", "x": 13, "y": 19, "text": "Chips are play money: they cannot be bought with real money and have no real-world value. Set a daily limit in the settings if you like."}
+  ],
+  "spawn": [15, 20]
+}

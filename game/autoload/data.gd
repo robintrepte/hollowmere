@@ -46,6 +46,7 @@ var fish_meta: Dictionary = {}
 var skill_branches: Dictionary = {}
 ## Deep mine layers (data/mine_layers.json), top to bottom.
 var enchants: Dictionary = {}
+var casino: Dictionary = {}
 var mine_layers: Array = []
 var skill_nodes: Array = []
 var _maps: Dictionary = {}
@@ -89,6 +90,7 @@ func load_all() -> void:
 	villagers = _load_json("res://data/villagers.json")
 	mine_layers = _load_json("res://data/mine_layers.json").get("layers", [])
 	enchants = _load_json("res://data/enchantments.json")
+	casino = _load_json("res://data/casino.json")
 	var reg: Dictionary = _load_json("res://data/regions.json")
 	legends = reg.get("legends", {})
 	reg.erase("legends")
@@ -354,6 +356,9 @@ func get_item(id: String) -> Dictionary:
 		items[id] = d
 		return d
 	return {}
+
+func species_name(id: String) -> String:
+	return TranslationServer.translate(str(species.get(id, {}).get("name", id)))
 
 func item_name(id: String, quality: int = 0) -> String:
 	var it := get_item(id)

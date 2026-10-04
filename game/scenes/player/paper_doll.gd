@@ -3,7 +3,7 @@ extends Node2D
 ## Layered, tinted character sprite. Origin is at the feet.
 ## Sheet: 7 columns (idle, walk0..3, tool0..1) x 3 rows (down, up, side).
 
-const LAYERS := ["shoes", "pants", "shirt", "pack", "body", "face", "hair"]
+const LAYERS := ["shoes", "pants", "shirt", "pack", "body", "face", "hair", "hat"]
 const WALK_FPS := 8.0
 const RUN_FPS := 14.0
 
@@ -22,12 +22,14 @@ func _ready() -> void:
 		s.offset = Vector2(-16, -46)
 		s.hframes = Art.DOLL_COLS
 		s.vframes = 3
-		s.texture = Art.doll_layer(l) if l != "hair" else Art.hair_layer(0)
+		s.texture = Art.hair_layer(0) if l == "hair" else (null if l == "hat" else Art.doll_layer(l))
 		add_child(s)
 		_sprites[l] = s
 	_sprites.pack.visible = false
 	if not _look.is_empty():
 		set_look(_look)
+	if _hat != "":
+		set_hat(_hat)
 
 func set_look(look: Dictionary) -> void:
 	_look = look
@@ -39,6 +41,18 @@ func set_look(look: Dictionary) -> void:
 	_sprites.shirt.modulate = Art.color(look.get("shirt", "#4a8ac0"))
 	_sprites.pants.modulate = Art.color(look.get("pants", "#3a3a5a"))
 	_sprites.shoes.modulate = Art.color(look.get("shoes", "#5a3a2a"))
+
+var _hat := ""
+
+## Puts on a hat item (its "hat" style, tinted with the item color); "" takes it off.
+func set_hat(item_id: String) -> void:
+	_hat = item_id
+	if _sprites.is_empty():
+		return
+	var it: Dictionary = Data.get_item(item_id) if item_id != "" else {}
+	var style := str(it.get("hat", ""))
+	_sprites.hat.texture = Art.hat_layer(style) if style != "" else null
+	_sprites.hat.modulate = Art.color(str(it.get("hat_tint", it.get("color", "#ffffff"))))
 
 ## Shows a worn pack in the given color; a transparent color hides it.
 func set_pack(tint: Color) -> void:

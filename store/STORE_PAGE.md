@@ -78,7 +78,9 @@ English and German (interface, text). The game ships a translation template (`ga
 
 ## Content descriptors
 
-No mature content. Creatures faint in battle, nobody is harmed. Optional online play with friends.
+Creatures faint in battle, nobody is harmed. Optional online play with friends.
+
+**Contains simulated gambling:** the seaside town of Lumière has a casino (roulette, blackjack, slot machines, video poker, creature races) played with chips. Chips are play money: they are traded only for in-game gold, can't be bought with real money and can't be paid out. The casino can be hidden in the settings. The game has no real-money purchases at all. Rating answers and expectations: `store/RATING.md`. Terms: `store/TERMS.md`.
 
 ## itch.io page
 

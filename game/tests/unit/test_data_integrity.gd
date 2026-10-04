@@ -49,7 +49,7 @@ func test_shops_reference_items() -> void:
 			assert_true(Data.has_item(s.id), "shop %s sells unknown %s" % [sid, s.id])
 
 func test_villagers_reference_items_and_maps() -> void:
-	assert_eq(Data.villagers.size(), 26)
+	assert_eq(Data.villagers.size(), 32)
 	for vid in Data.villagers:
 		var v: Dictionary = Data.villagers[vid]
 		for k in ["loves", "likes", "dislikes"]:
@@ -126,7 +126,7 @@ func test_progression_rewards() -> void:
 			assert_true(k == "money" or Data.has_item(k), "festival reward %s" % k)
 
 func test_maps_build() -> void:
-	for m in ["farm", "town", "greenhouse", "terrace"]:
+	for m in ["farm", "town", "greenhouse", "terrace", "gull_bay", "eisenkamm", "lumiere", "casino", "casino_vip"]:
 		var info := MapBuilder.build_authored(Data.get_map(m))
 		assert_not_null(info.grid)
 		for wp in info.warps:

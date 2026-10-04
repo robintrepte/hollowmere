@@ -78,16 +78,18 @@ var analytics: bool = false            ## opt-in: session length and progress
 var analytics_asked: bool = false
 var touch_controls: String = "auto"     ## auto (touchscreens) | on | off
 var hemisphere: String = "auto"         ## auto (from the locale) | north | south
+var casino_daily_limit: int = 0        ## chips a day the player may stake; 0 = no limit
+var hide_casino: bool = false          ## keeps the Grand Casino closed and its quests hidden
 var profile: Dictionary = {}           ## free-form per-account data: tutorials seen, emote wheel, window spots
 var stamps: Dictionary = {}            ## key -> unix time of the last change, for merging with the account copy
 
 const SAVED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind", "easy_fishing", "screen_shake",
 	"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves",
-	"custom_keys", "locale", "error_reports", "analytics", "analytics_asked", "touch_controls", "hemisphere", "profile", "stamps"]
+	"custom_keys", "locale", "error_reports", "analytics", "analytics_asked", "touch_controls", "hemisphere", "casino_daily_limit", "hide_casino", "profile", "stamps"]
 ## Follows the account to every device. The rest belongs to this device (screen, server, input hardware).
 const SYNCED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind", "easy_fishing",
 	"screen_shake", "twelve_hour", "auto_pause_menus", "custom_keys", "locale", "error_reports", "analytics",
-	"analytics_asked", "hemisphere", "profile"]
+	"analytics_asked", "hemisphere", "casino_daily_limit", "hide_casino", "profile"]
 const PROFILE_UPLOAD_DELAY := 3.0
 
 var _saved_snapshot: Dictionary = {}

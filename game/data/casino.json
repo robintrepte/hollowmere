@@ -1,0 +1,53 @@
+{
+ "rate": 10,
+ "daily_bonus": 100,
+ "vip_turnover": 25000,
+ "vip_mult": 5,
+ "big_win": 5000,
+ "tables": {
+  "roulette": {"min": 5, "max": 1000},
+  "blackjack": {"min": 10, "max": 500},
+  "slots": {"min": 1, "max": 10},
+  "poker": {"min": 1, "max": 5},
+  "race": {"min": 10, "max": 1000}
+ },
+ "wheel": [
+  {"chips": 25, "w": 26},
+  {"chips": 250, "w": 8},
+  {"chips": 50, "w": 22},
+  {"item": "glimmer_dust", "n": 5, "w": 8},
+  {"chips": 100, "w": 16},
+  {"chips": 500, "w": 4},
+  {"chips": 50, "w": 22},
+  {"item": "book", "w": 3},
+  {"chips": 25, "w": 26},
+  {"chips": 1000, "w": 1},
+  {"chips": 100, "w": 16},
+  {"item": "arcane_essence", "n": 2, "w": 6}
+ ],
+ "slots": {
+  "strip": "CBEAFJSCDACBDEAFEBBACACDAJWADBB",
+  "lines": [[1,1,1,1,1],[0,0,0,0,0],[2,2,2,2,2],[0,1,2,1,0],[2,1,0,1,2],[0,0,1,2,2],[2,2,1,0,0],[1,0,0,0,1],[1,2,2,2,1],[0,1,1,1,0]],
+  "pays": {"A": [6, 22, 70], "B": [9, 27, 95], "C": [13, 40, 145], "D": [20, 68, 255], "E": [32, 112, 455], "F": [60, 250, 1200], "W": [100, 500, 3000], "J": [80, 400, 0]},
+  "scatter": [2, 10, 50],
+  "jackpot_seed": 2000,
+  "jackpot_share": 0.01,
+  "themes": {
+   "orchard": {"name": "Orchard Classic", "symbols": {"A": "cherry", "B": "plum", "C": "orange", "D": "grape", "E": "melon", "F": "starfruit", "W": "_star", "S": "_coin", "J": "diamond"}},
+   "wildlings": {"name": "Wildling Wilds", "symbols": {"A": "creature:sproutle", "B": "creature:puddlop", "C": "creature:embercub", "D": "creature:pebblit", "E": "creature:lumibub", "F": "creature:glintbat", "W": "_heart", "S": "festival_egg", "J": "creature:cinderwyrm"}},
+   "seasons": {"name": "Four Seasons", "symbols": {"A": "tulip", "B": "strawberry", "C": "sunflower", "D": "pumpkin", "E": "frostberry", "F": "crystal_fruit", "W": "fairy_rose", "S": "_sapling", "J": "glimmer_crystal"}}
+  }
+ },
+ "poker": {
+  "coin": 5,
+  "pays": {"royal_flush": 250, "straight_flush": 50, "four_kind": 25, "full_house": 9, "flush": 6, "straight": 4, "three_kind": 3, "two_pair": 2, "jacks_better": 1},
+  "royal_max": 800
+ },
+ "race": {
+  "runners": 6,
+  "edge": 0.1,
+  "sharpness": 2.5,
+  "speed_offset": 60,
+  "pool": ["sproutle", "puddlop", "embercub", "pebblit", "lumibub", "glintbat", "burrowpup", "cluckle", "splashpup", "shelldo", "ripplefin", "moleup", "bramblet", "brooklet", "snailmail", "flarewing"]
+ }
+}

@@ -23,10 +23,10 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 GAME = os.path.join(ROOT, "game")
 OUT = os.path.join(GAME, "i18n", "hollowmere.pot")
 
-TEXT_KEYS = {"name", "desc", "hint", "lines", "text", "title", "goal_text", "job_name", "job_desc", "role", "intro", "done"}
+TEXT_KEYS = {"name", "desc", "hint", "lines", "text", "title", "goal_text", "job_name", "job_desc", "role", "intro", "done", "guest_lines"}
 TABLE_COLUMNS = {"name", "desc"}
 DIALOGUE_FILES = {"villagers.json"}
-SKIP_KEYS = {"id", "icon", "color", "schedule", "music", "biome", "type", "types", "season", "kind"}
+SKIP_KEYS = {"id", "icon", "color", "schedule", "music", "biome", "type", "types", "kind"}
 
 STR = r'"((?:[^"\\\n]|\\.)*)"'
 TR_CALL = re.compile(r'(?:(?<![\w.])tr|TranslationServer\.translate)\(' + STR + r'\)')

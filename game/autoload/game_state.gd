@@ -5,7 +5,7 @@ extends Node
 const SAVE_VERSION := 5
 const PERSISTENT_MAPS := ["farm", "greenhouse", "terrace"]
 const STARTERS := ["sproutle", "puddlop", "embercub"]
-const PLACE_REQUIRES := {"gull_bay": "story:coast", "eisenkamm": "story:mountain"}
+const PLACE_REQUIRES := {"gull_bay": "story:coast", "eisenkamm": "story:mountain", "lumiere": "story:friends"}
 
 var world: Dictionary = {}
 var grids: Dictionary = {}            # persistent FarmGrids
@@ -139,6 +139,7 @@ func ctx() -> Dictionary:
 		"shrines": world.shrines.size(), "farm_level": int(world.farm.level),
 		"hearts": p.hearts_dict() if p else {}, "recipes": p.recipes if p else [], "buildings": world.buildings,
 		"fish": Fishing.species_caught(p), "depth": deep_max(), "quest": int(world.get("quest", 0)),
+		"vip": Casino.vip(p) if p else false,
 	}
 
 func has_building(id: String) -> bool:
@@ -1174,18 +1175,26 @@ func buy(pid: String, shop_id: String, item_id: String, n: int = 1) -> Dictionar
 	if p == null or n <= 0:
 		return r
 	var price := -1
+	var chips := Economy.chip_shop(shop_id)
 	for s in Economy.shop_stock(shop_id, season(), ctx(), day(), int(world.seed)):
 		if s.id == item_id and not s.locked:
-			price = buy_value(p, int(s.price))
+			price = int(s.price) if chips else buy_value(p, int(s.price))
 	if price < 0:
 		r.reason = tr("That's not for sale right now.")
 		return r
+	var pool: Array = Data.get_item(item_id).get("egg_pool", [])
+	if not pool.is_empty():
+		return _buy_egg(p, pool, price, chips)
 	# Prefer the backpack grid. Matching bags (seed pouch, treat tin, gem case)
 	# only catch what doesn't fit, so a purchase doesn't vanish inside one.
 	if not p.inventory.can_add(item_id, n, 0, false):
 		r.reason = tr("Your pack is full.")
 		return r
-	if not spend(price * n, "Shop"):
+	if chips:
+		if not Casino.spend_chips(p, price * n):
+			r.reason = tr("Not enough chips.")
+			return r
+	elif not spend(price * n, "Shop"):
 		r.reason = tr("Not enough gold.")
 		return r
 	var before := p.inventory.homes_of(item_id)
@@ -1195,17 +1204,50 @@ func buy(pid: String, shop_id: String, item_id: String, n: int = 1) -> Dictionar
 		var still := farm_chest.add(item_id, left)
 		chest_gain = left - still
 		if still > 0:
-			add_money(price * still, Vector2.INF, "Shop")
+			if chips:
+				Casino.add_chips(p, price * still)
+			else:
+				add_money(price * still, Vector2.INF, "Shop")
 			n -= still
 	if n <= 0:
 		r.reason = tr("Your pack is full.")
 		EventBus.inventory_changed.emit()
 		return r
 	EventBus.inventory_changed.emit()
-	bump_stat("spent", price * n)
+	if chips:
+		EventBus.chips_changed.emit()
+		bump_stat("chips_spent", price * n, pid)
+	else:
+		bump_stat("spent", price * n)
 	r.ok = true
 	r.sfx = "coin"
 	r.note = _purchase_note(item_id, n, before, p.inventory.homes_of(item_id), chest_gain)
+	return r
+
+## Shop eggs hatch a random rare Wildling from the item's pool, with doubled Starry odds.
+func _buy_egg(p: PlayerData, pool: Array, price: int, chips: bool) -> Dictionary:
+	var r := _res(false)
+	if not p.inventory.can_add("wildling_egg", 1, 0, false):
+		r.reason = tr("Your pack is full.")
+		return r
+	if chips:
+		if not Casino.spend_chips(p, price):
+			r.reason = tr("Not enough chips.")
+			return r
+	elif not spend(price, "Shop"):
+		r.reason = tr("Not enough gold.")
+		return r
+	var egg := Breeding.wild_egg(str(pool[rng.randi() % pool.size()]), rng, 2.0)
+	p.inventory.add("wildling_egg", 1, 0, {"egg": egg}, false)
+	EventBus.inventory_changed.emit()
+	if chips:
+		EventBus.chips_changed.emit()
+		bump_stat("chips_spent", price, p.id)
+	else:
+		bump_stat("spent", price)
+	r.ok = true
+	r.sfx = "coin"
+	r.note = tr("A Wildling Egg! Place it in the Hatchery.")
 	return r
 
 func _purchase_note(item_id: String, n: int, before: Dictionary, after: Dictionary, chest_gain: int) -> String:
@@ -1624,6 +1666,346 @@ func battle_spoils_act(pid: String, kind: String, level: int) -> Dictionary:
 		var n := 1 + (1 if kind != "wild" and rng.randf() < 0.3 else 0)
 		give_item(p, "arcane_essence", n)
 		r["essence"] = n
+	return r
+
+# --- Casino -------------------------------------------------------------------------
+
+func _casino_root() -> Dictionary:
+	if not world.has("casino") or not world.casino is Dictionary:
+		world["casino"] = {}
+	var c: Dictionary = world.casino
+	if not c.has("players"):
+		c["players"] = {}
+	if not c.has("tables"):
+		c["tables"] = {}
+	if not c.has("jackpot"):
+		c["jackpot"] = int(Casino.cfg().get("slots", {}).get("jackpot_seed", 2000))
+	return c
+
+## A player's own game (blackjack, slots, poker, race) or the shared roulette table.
+func casino_game(pid: String, game: String) -> CasinoGame:
+	var c := _casino_root()
+	if game == "roulette":
+		if not c.tables.has("roulette"):
+			c.tables["roulette"] = {}
+		return Roulette.new(c.tables.roulette, int(world.get("seed", 0)))
+	if not c.players.has(pid):
+		c.players[pid] = {}
+	if not c.players[pid].has(game):
+		c.players[pid][game] = {}
+	var st: Dictionary = c.players[pid][game]
+	var base := hash([int(world.get("seed", 0)), pid])
+	match game:
+		"blackjack":
+			return Blackjack.new(st, base)
+		"slots":
+			return Slots.new(st, base)
+		"poker":
+			return VideoPoker.new(st, base)
+		"race":
+			return WildlingRace.new(st, base)
+	return null
+
+func jackpot() -> int:
+	return int(_casino_root().jackpot)
+
+## Books a finished round: stats for quests, the big-win counter, the table feed and a save.
+func _casino_round(pid: String, game: String, staked: int, back: int, news: String = "") -> void:
+	bump_stat("casino_round", 1, pid)
+	bump_stat("casino_round:" + game, 1, pid)
+	if back > staked:
+		bump_stat("casino_won", back - staked, pid)
+	if back - staked >= int(Casino.cfg().get("big_win", 5000)):
+		bump_stat("casino_big_win", 1, pid)
+	if news != "":
+		Coop.table_news(game, news)
+	EventBus.chips_changed.emit()
+	SaveManager.checkpoint()
+
+func _casino_res(ok: bool, reason: String = "") -> Dictionary:
+	var r := _res(ok, reason)
+	r["chips"] = 0
+	return r
+
+func casino_exchange_act(pid: String, dir: String, n: int) -> Dictionary:
+	var p := player(pid)
+	if p == null or n <= 0:
+		return _casino_res(false)
+	if dir == "buy":
+		if not spend(n * Casino.rate(), "Casino"):
+			return _casino_res(false, tr("Not enough gold."))
+		Casino.add_chips(p, n)
+		bump_stat("casino_buy", 1, pid)
+	elif dir == "sell":
+		if not Casino.spend_chips(p, n):
+			return _casino_res(false, tr("Not enough chips."))
+		add_money(n * Casino.rate(), Vector2.INF, "Casino")
+	else:
+		return _casino_res(false)
+	EventBus.chips_changed.emit()
+	SaveManager.checkpoint()
+	var r := _casino_res(true)
+	r.sfx = "chips"
+	return r
+
+## The player's own daily cap from their settings (0 = none). Stored on the player so the host enforces it.
+func casino_prefs_act(pid: String, daily_limit: int) -> Dictionary:
+	var p := player(pid)
+	if p == null:
+		return _casino_res(false)
+	p.flags["casino_limit"] = maxi(0, daily_limit)
+	return _casino_res(true)
+
+func casino_bonus_act(pid: String) -> Dictionary:
+	var p := player(pid)
+	if p == null or not Casino.bonus_ready(p):
+		return _casino_res(false, tr("You already collected today's chips. Come back tomorrow."))
+	var n := Casino.daily_bonus(p)
+	p.flags["casino_bonus_day"] = Casino.today()
+	Casino.add_chips(p, n)
+	EventBus.chips_changed.emit()
+	SaveManager.checkpoint()
+	var r := _casino_res(true)
+	r.chips = n
+	r.sfx = "chips"
+	return r
+
+func casino_wheel_act(pid: String) -> Dictionary:
+	var p := player(pid)
+	if p == null or not Casino.wheel_ready(p):
+		return _casino_res(false, tr("The wheel is yours once a day. Come back tomorrow."))
+	var g := RandomNumberGenerator.new()
+	g.seed = hash([int(world.get("seed", 0)), pid, "wheel", Casino.today()])
+	var i := Casino.spin_wheel(g)
+	var seg: Dictionary = Casino.cfg().wheel[i]
+	p.flags["casino_wheel_day"] = Casino.today()
+	var r := _casino_res(true)
+	r["segment"] = i
+	if seg.has("chips"):
+		Casino.add_chips(p, int(seg.chips))
+		r.chips = int(seg.chips)
+	elif str(seg.item) == "book":
+		var book := Enchanting.random_book(g, 2)
+		give_item(p, book, 1)
+		r["item"] = book
+	else:
+		give_item(p, str(seg.item), int(seg.get("n", 1)))
+		r["item"] = str(seg.item)
+	bump_stat("casino_wheel", 1, pid)
+	EventBus.chips_changed.emit()
+	SaveManager.checkpoint()
+	return r
+
+func roulette_act(pid: String, bets: Array) -> Dictionary:
+	var p := player(pid)
+	if p == null or bets.is_empty():
+		return _casino_res(false, tr("Place a bet first."))
+	var vip := Casino.vip(p)
+	var clean: Array = []
+	for b in bets:
+		if not b is Dictionary or not Roulette.valid(b):
+			return _casino_res(false)
+		clean.append(b)
+	var stake := Roulette.total_stake(clean)
+	if not CasinoGame.valid_bet("roulette", stake, vip):
+		var l := CasinoGame.limits("roulette", vip)
+		return _casino_res(false, tr("Table limits: %d to %d chips.") % [l.x, l.y])
+	var block := Casino.stake_block(p, stake)
+	if block != "":
+		return _casino_res(false, block)
+	Casino.stake(p, stake)
+	var game: Roulette = casino_game(pid, "roulette")
+	var n := game.spin()
+	var back := 0
+	for b in clean:
+		back += Roulette.payout(b, n)
+	Casino.add_chips(p, back)
+	if n in [7, 17, 27] and back > 0:
+		bump_stat("roulette_lucky", 1, pid)
+	var r := _casino_res(true)
+	r["number"] = n
+	r["color"] = Roulette.color(n)
+	r["staked"] = stake
+	r.chips = back
+	r["history"] = game.state.get("history", [])
+	r.sfx = "wheel"
+	_casino_round(pid, "roulette", stake, back, tr("%s spun %d at roulette%s.") % [p.name, n, tr(" and won %d chips") % back if back > 0 else ""])
+	return r
+
+## What the player may see of a blackjack hand: the dealer's hole card stays hidden until the end.
+func _bj_view(h: Dictionary) -> Dictionary:
+	var v := h.duplicate(true)
+	if v.has("dealer") and str(v.get("phase", "")) != "done" and v.dealer.size() > 1:
+		v.dealer[1] = -1
+	return v
+
+func blackjack_act(pid: String, op: String, bet: int = 0) -> Dictionary:
+	var p := player(pid)
+	if p == null:
+		return _casino_res(false)
+	var game: Blackjack = casino_game(pid, "blackjack")
+	var r := _casino_res(true)
+	if op == "state":
+		r["hand"] = _bj_view(game.hand())
+		return r
+	if op == "deal":
+		if game.active():
+			return _casino_res(false, tr("Finish this hand first."))
+		var vip := Casino.vip(p)
+		if not CasinoGame.valid_bet("blackjack", bet, vip):
+			var l := CasinoGame.limits("blackjack", vip)
+			return _casino_res(false, tr("Table limits: %d to %d chips.") % [l.x, l.y])
+		var block := Casino.stake_block(p, bet)
+		if block != "":
+			return _casino_res(false, block)
+		Casino.stake(p, bet)
+		game.deal(bet)
+		r.sfx = "deal"
+	else:
+		if not game.can(op):
+			return _casino_res(false)
+		var extra := game.cost(op)
+		if op == "no_insurance":
+			extra = 0
+		if extra > 0:
+			var block := Casino.stake_block(p, extra)
+			if block != "":
+				return _casino_res(false, block)
+			Casino.stake(p, extra)
+		game.act(op)
+		r.sfx = "deal" if op != "stand" else "chips"
+	var h := game.hand()
+	r["hand"] = _bj_view(h)
+	if h.phase == "done":
+		var staked := int(h.insurance)
+		for x in h.hands:
+			staked += int(x.bet)
+		var back := int(h.credit)
+		Casino.add_chips(p, back)
+		r.chips = back
+		if "blackjack" in h.results:
+			bump_stat("blackjack", 1, pid)
+		if h.results.any(func(x): return x in ["win", "blackjack"]):
+			bump_stat("blackjack_win", 1, pid)
+		_casino_round(pid, "blackjack", staked, back, tr("%s won %d chips at blackjack.") % [p.name, back - staked] if back > staked else "")
+	else:
+		EventBus.chips_changed.emit()
+		SaveManager.checkpoint()
+	if bool(game.state.get("shuffled", false)):
+		r["shuffled"] = true
+	return r
+
+func slots_act(pid: String, line_bet: int) -> Dictionary:
+	var p := player(pid)
+	if p == null:
+		return _casino_res(false)
+	if not CasinoGame.valid_bet("slots", line_bet, false):
+		return _casino_res(false)
+	var stake := line_bet * Slots.LINES
+	var block := Casino.stake_block(p, stake)
+	if block != "":
+		return _casino_res(false, block)
+	Casino.stake(p, stake)
+	var c := _casino_root()
+	c.jackpot = int(c.jackpot) + maxi(1, int(round(stake * float(Casino.cfg().slots.get("jackpot_share", 0.01)))))
+	var game: Slots = casino_game(pid, "slots")
+	var res := game.spin(line_bet, int(c.jackpot))
+	if int(res.jackpot) > 0:
+		c.jackpot = int(c.jackpot) - int(res.jackpot)
+		if int(c.jackpot) < int(Casino.cfg().slots.jackpot_seed):
+			c.jackpot = int(Casino.cfg().slots.jackpot_seed)
+		bump_stat("jackpot", 1, pid)
+	Casino.add_chips(p, int(res.won))
+	var r := _casino_res(true)
+	r["spin"] = res
+	r.chips = int(res.won)
+	r["jackpot_pot"] = int(c.jackpot)
+	r.sfx = "jackpot" if int(res.jackpot) > 0 else ("reels_win" if int(res.won) > 0 else "reels")
+	var news := tr("%s hit the jackpot: %d chips!") % [p.name, int(res.jackpot)] if int(res.jackpot) > 0 else ""
+	_casino_round(pid, "slots", stake, int(res.won), news)
+	return r
+
+func poker_act(pid: String, op: String, arg: Variant = null) -> Dictionary:
+	var p := player(pid)
+	if p == null:
+		return _casino_res(false)
+	var game: VideoPoker = casino_game(pid, "poker")
+	var coin := int(Casino.cfg().poker.get("coin", 5))
+	var r := _casino_res(true)
+	if op == "state":
+		r["hand"] = _poker_view(game.hand())
+		return r
+	if op == "deal":
+		var coins := int(arg)
+		if game.active():
+			return _casino_res(false, tr("Finish this hand first."))
+		if not CasinoGame.valid_bet("poker", coins, false):
+			return _casino_res(false)
+		var block := Casino.stake_block(p, coins * coin)
+		if block != "":
+			return _casino_res(false, block)
+		Casino.stake(p, coins * coin)
+		game.deal(coins)
+		r.sfx = "deal"
+		EventBus.chips_changed.emit()
+		SaveManager.checkpoint()
+	elif op == "draw":
+		if not game.active() or not arg is Array:
+			return _casino_res(false)
+		var h := game.draw(arg)
+		var back := int(h.won) * coin
+		Casino.add_chips(p, back)
+		r.chips = back
+		r.sfx = "reels_win" if back > 0 else "deal"
+		if str(h.result) == "royal_flush":
+			bump_stat("royal_flush", 1, pid)
+		_casino_round(pid, "poker", int(h.coins) * coin, back, tr("%s drew a %s at video poker.") % [p.name, tr(VideoPoker.HAND_NAMES[h.result])] if str(h.result) in ["royal_flush", "straight_flush", "four_kind"] else "")
+	else:
+		return _casino_res(false)
+	r["hand"] = _poker_view(game.hand())
+	return r
+
+func _poker_view(h: Dictionary) -> Dictionary:
+	var v := h.duplicate(true)
+	v.erase("spare")
+	return v
+
+func race_card(pid: String) -> Array:
+	var game: WildlingRace = casino_game(pid, "race")
+	return game.card()
+
+func race_card_act(pid: String) -> Dictionary:
+	var r := _casino_res(player(pid) != null)
+	r["card"] = race_card(pid)
+	return r
+
+func race_act(pid: String, runner: int, bet: int) -> Dictionary:
+	var p := player(pid)
+	if p == null:
+		return _casino_res(false)
+	var vip := Casino.vip(p)
+	if not CasinoGame.valid_bet("race", bet, vip):
+		var l := CasinoGame.limits("race", vip)
+		return _casino_res(false, tr("Table limits: %d to %d chips.") % [l.x, l.y])
+	var game: WildlingRace = casino_game(pid, "race")
+	var card := game.card()
+	if runner < 0 or runner >= card.size():
+		return _casino_res(false)
+	var block := Casino.stake_block(p, bet)
+	if block != "":
+		return _casino_res(false, block)
+	Casino.stake(p, bet)
+	var res := game.run()
+	var back := int(floor(bet * float(card[runner].odds))) if int(res.winner) == runner else 0
+	Casino.add_chips(p, back)
+	if back > 0:
+		bump_stat("race_win", 1, pid)
+	var r := _casino_res(true)
+	r["race"] = res
+	r["runner"] = runner
+	r.chips = back
+	r.sfx = "race"
+	_casino_round(pid, "race", bet, back, tr("%s won %d chips on %s.") % [p.name, back, Data.species_name(str(card[runner].species))] if back > 0 else "")
 	return r
 
 # --- Mining -------------------------------------------------------------------------
@@ -2335,7 +2717,7 @@ func _collect_crab_pot(p: PlayerData, map_id: String, t: Vector2i, o: Dictionary
 	r.sfx = "harvest"
 	EventBus.objects_changed.emit(map_id)
 
-## Quest rewards: money, items, recipe, friendship {villager: points}, skill points, emotes, chips, flags.
+## Quest rewards: money, items, recipe, friendship {villager: points}, skill points, emotes, chips, world flags, player flags.
 func grant_quest_reward(p: PlayerData, reward: Dictionary) -> void:
 	var rest := {}
 	for k in reward:
@@ -2352,6 +2734,8 @@ func grant_quest_reward(p: PlayerData, reward: Dictionary) -> void:
 				Casino.add_chips(p, int(reward[k]))
 			"flag":
 				world.flags[str(reward[k])] = true
+			"player_flag":
+				p.flags[str(reward[k])] = true
 			_:
 				rest[k] = reward[k]
 	grant(rest, p)
@@ -2469,6 +2853,69 @@ func eat(pid: String, uid: String) -> Dictionary:
 	EventBus.inventory_changed.emit()
 	r.ok = true
 	r.sfx = "eat"
+	return r
+
+## Puts a hat from the pack on (the old one goes back into the pack); uid "" takes the hat off.
+func wear_hat_act(pid: String, uid: String) -> Dictionary:
+	var p := player(pid)
+	if p == null:
+		return _res(false)
+	var new_id := ""
+	if uid != "":
+		var f := p.inventory.find(uid)
+		if f.is_empty() or str(Data.get_item(f.entry.id).get("hat", "")) == "":
+			return _res(false)
+		new_id = str(f.entry.id)
+		f.inv.take(uid, 1)
+	if p.hat != "":
+		if p.inventory.add(p.hat, 1, 0, {}, false) > 0:
+			if new_id != "":
+				p.inventory.add(new_id, 1, 0, {}, false)
+			return _res(false, tr("Your pack is full."))
+	p.hat = new_id
+	EventBus.inventory_changed.emit()
+	var r := _res(true)
+	r.sfx = "equip"
+	return r
+
+const HOTEL_PRICE := 500
+
+## A night at the Hôtel Lumière: full energy and a healed party, without ending the day.
+func hotel_act(pid: String) -> Dictionary:
+	var p := player(pid)
+	if p == null:
+		return _res(false)
+	if not spend(HOTEL_PRICE, "Hotel"):
+		return _res(false, tr("Not enough gold."))
+	p.energy = p.energy_cap()
+	p.heal_party()
+	EventBus.party_changed.emit()
+	var r := _res(true)
+	r.sfx = "heal"
+	return r
+
+## Tracks the farm jukebox can play: one per record in the player's pack or the farm chest.
+func record_tracks(p: PlayerData) -> Array:
+	var out: Array = []
+	for inv: Inventory in [p.inventory, farm_chest]:
+		for e in inv.all_entries():
+			var track := str(Data.get_item(e.id).get("track", ""))
+			if track != "" and not track in out:
+				out.append(track)
+	return out
+
+## Sets the farm music to a record's track ("" goes back to the farm tune).
+func jukebox_act(pid: String, track: String) -> Dictionary:
+	var p := player(pid)
+	if p == null or (track != "" and not track in record_tracks(p)):
+		return _res(false)
+	if track == "":
+		world.flags.erase("jukebox")
+	else:
+		world.flags["jukebox"] = track
+	EventBus.jukebox_changed.emit()
+	var r := _res(true)
+	r.sfx = "tick"
 	return r
 
 # --- Regional forage -------------------------------------------------------------------------
