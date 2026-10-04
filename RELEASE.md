@@ -7,7 +7,7 @@ Everything after `git tag` is automated by `.github/workflows/build.yml`:
 |---|---|---|
 | `test` | every push / PR | script compile, GUT unit tests, translation template check, 112-day balance sim, Nakama integration test, co-op test, host + 3 client desync test |
 | `export` | every push / PR | Windows, macOS and Web exports; the web build is fingerprinted, precompressed and must stay under 50 MB of Brotli |
-| `deploy-web` | `v*` tags | rsyncs the web build to `/srv/hollowmere/site` and rebuilds Nakama (nginx on the host owns TLS; see HOSTING.md) |
+| `deploy-web` | `v*` tags | rsyncs the web build to `/srv/hollowmere/site` and rebuilds Nakama + the MCP relay (nginx on the host owns TLS; see HOSTING.md) |
 | `sign-macos` | `v*` tags | codesign (hardened runtime), notarize, staple; warns and ships unsigned if the Apple secrets are missing |
 | `itch` | `v*` tags | `butler push` to the `windows` and `mac` channels |
 
@@ -85,7 +85,7 @@ Jobs whose secrets are missing skip with a warning instead of failing.
    Hollowmere.app/Contents/MacOS/Hollowmere --write-movie /tmp/f.png --fixed-fps 30 --quit-after 150
    ```
    Then look at `/tmp/f00000149.png`: it should be the title screen.
-3. Commit, then `git tag v0.2.0 && git push --tags`.
+3. Commit, then `git tag v1.0.0 && git push --tags`.
 4. Watch the workflow. When it's green:
    - Open `https://<domain>` in a private window: title screen, guest login, new farm, save, reload, continue.
    - Download the macOS build from itch and check that it opens without a Gatekeeper warning (`spctl -a -vv Hollowmere.app` should say "Notarized Developer ID").

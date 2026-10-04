@@ -1,3 +1,9 @@
+mcp.{$HOLLOWMERE_DOMAIN} {
+	reverse_proxy mcp:8787 {
+		flush_interval -1
+	}
+}
+
 {$HOLLOWMERE_DOMAIN} {
 	# Nakama API + realtime socket share the game's origin, so the browser build needs no CORS setup.
 	# Not gzipped: the browser already inflates fetches, and Godot's HTTPRequest would inflate twice.

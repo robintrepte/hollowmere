@@ -23,7 +23,7 @@ Ten types, 79 moves, natures, traits, status effects and switching. Battle wild 
 Every Wildling carries genes for each stat, a nature and up to two traits. Pair them at the den, hatch the eggs in your hatchery and chase the rare Starry colorings.
 
 **A life in the valley.**
-40 crops across four seasons, a greenhouse, sprinklers and machines. Cook 16 dishes, craft 24 items, upgrade your tools at the blacksmith and build up your farm with the carpenter. Get to know 20 villagers, and court and marry one of 8 if you like.
+40 crops across four seasons, a greenhouse, sprinklers and machines. Crops grow in real time, including while you are away (up to 14 days). Cook, craft, enchant your tools, upgrade them at the blacksmith and build up your farm with the carpenter. Get to know 32 villagers, and court and marry one of 11 if you like.
 
 **A backpack that's a puzzle.**
 Your inventory is a grid. Items take up real space, rotate and nest inside containers: seed pouches, gem cases, forage baskets, treat tins. Packing for a trip to the mines is half the fun.
@@ -42,15 +42,20 @@ Windows, macOS, or right in your browser with the same account and cloud saves. 
 
 ## Key features (bullets for capsules, itch.io and press)
 
-- 97 Wildlings to befriend, raise, breed and battle with
-- 10 farm jobs for your Wildlings
+- 106 Wildlings to befriend, raise, breed and battle with
+- 10 farm jobs for your Wildlings, with hourly rates and a farm overview
 - Turn-based 1v1 battles: 10 types, 79 moves, natures, traits and genes
-- 40 crops, four seasons, festivals, cooking and crafting
-- 20 villagers, 8 of whom you can court and marry
+- Real-time farming: 40 crops, seed tiers, seasons from the calendar, offline catch-up for 14 days
+- Fishing, crab pots and Möwenbucht; persistent Deep Mines under Eisenkamm
+- Enchanting table, anvil and grindstone; skill tree with 110 nodes
+- Lumière's Grand Casino with play-money chips (hideable)
+- Quests, dailies, skippable tutorials, emotes and chat bubbles
+- 32 villagers, 11 of whom you can court and marry
 - 9 regions; 8 frontier regions each have a Warden, a shrine and a mine
 - Tetris-style grid inventory with nesting containers
-- Online co-op, trading and friendly PvP
+- Online co-op, trading, friendly PvP, and optional AI helpers via MCP
 - Windows, macOS and browser with cloud saves
+- English and German
 - Free to play
 
 ## Tags (Steam, in order of relevance)
@@ -87,12 +92,12 @@ Creatures faint in battle, nobody is harmed. Optional online play with friends.
 
 ## itch.io page
 
-**Tagline:** Farm, befriend 97 Wildlings and play together. Free, in your browser or on desktop.
+**Tagline:** Farm in real time, befriend 106 Wildlings and play together — or with an AI helper. Free, in your browser or on desktop.
 
 **Body:** use "About this game" above. Set the cover to `store/itch/cover_630x500.png` and the banner to `store/itch/banner_960x300.png`. Upload the HTML5 build as "playable in browser" (viewport 1280x720, fullscreen button on, mobile friendly off), plus the Windows and macOS channels pushed by CI.
 
-**itch.io tags:** farming, creature-collector, cozy, pixel-art, co-op, turn-based, life-simulation, monsters, relaxing, free
+**itch.io tags:** farming, creature-collector, cozy, pixel-art, co-op, turn-based, life-simulation, monsters, relaxing, free, fishing, mining
 
 ## Press blurb (one paragraph)
 
-Hollowmere is a free cozy farming game where the creatures you befriend live on your farm and work it with you. Raise and breed 97 Wildlings with real genetics, give them farm jobs, battle in turn-based duels, explore nine regions and court the locals, alone or with friends in online co-op. It runs on Windows, macOS and in the browser with cloud saves.
+Hollowmere is a free cozy farming game where the creatures you befriend live on your farm and work it with you. Raise and breed 106 Wildlings with real genetics, give them farm jobs, fish the coast, mine Eisenkamm, enchant your tools and spend play-money chips in Lumière. Explore nine regions, follow quests and court the locals, alone, with friends in online co-op, or with an AI helper. It runs on Windows, macOS and in the browser with cloud saves.

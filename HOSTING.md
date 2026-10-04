@@ -47,6 +47,7 @@ In the domain's DNS (Hetzner DNS, Cloudflare, whatever points the zone):
 | Type | Name | Value | TTL |
 |---|---|---|---|
 | A | `play` (or the host part of `$DOMAIN`) | `$SERVER_IP` | 300 |
+| A | `mcp` | `$SERVER_IP` | 300 |
 | AAAA | same | the VPS IPv6, if it has one | 300 |
 
 Wait until it resolves from your laptop:
@@ -127,11 +128,13 @@ ssh "$DEPLOY_USER@$SERVER_IP" "cd $APP_DIR && docker compose up -d --build"
 ssh "$DEPLOY_USER@$SERVER_IP" "docker compose -f $APP_DIR/docker-compose.yml ps"
 ```
 
-Healthy looks like `postgres` and `nakama` **Up**, no `caddy` container.
+Healthy looks like `postgres`, `nakama` and `mcp` **Up**, no `caddy` container.
 
 ```bash
 ssh "$DEPLOY_USER@$SERVER_IP" "curl -sf http://127.0.0.1:7350/healthcheck && echo"
 # prints: {"health":"ok"} or similar
+ssh "$DEPLOY_USER@$SERVER_IP" "curl -sf http://127.0.0.1:8787/health && echo"
+# prints: {"ok":true,"service":"hollowmere-mcp"} or similar
 ```
 
 Nightly database backup (crontab of `$DEPLOY_USER`):
@@ -327,24 +330,14 @@ If you would rather not run nginx, skip steps 5–6 and:
 ssh "$DEPLOY_USER@$SERVER_IP" "cd $APP_DIR && docker compose --profile prod up -d --build"
 ```
 
-Caddy then binds 80/443, issues TLS, and serves `$APP_DIR/site`. Do not also enable the nginx site.
+Caddy then binds 80/443, issues TLS, serves `$APP_DIR/site`, and proxies `mcp.$DOMAIN` to the MCP relay. Do not also enable the nginx site. Point a DNS A record `mcp` at `$SERVER_IP` first.
 
 ## 15. Agent MCP relay
 
-`docker compose` starts `hollowmere-mcp` on `127.0.0.1:8787`. Add a DNS A record `mcp` → `$SERVER_IP` and an nginx site that proxies `mcp.$DOMAIN` to that port (HTTP/1.1, long timeouts for SSE).
+`docker compose` starts `hollowmere-mcp` on `127.0.0.1:8787`. The nginx template already proxies `mcp.$DOMAIN` there. After the DNS A record from step 1 resolves:
 
-```nginx
-server {
-    server_name mcp.$DOMAIN;
-    location / {
-        proxy_pass http://127.0.0.1:8787;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header Authorization $http_authorization;
-        proxy_read_timeout 120s;
-        proxy_buffering off;
-    }
-}
+```bash
+ssh root@$SERVER_IP "certbot --nginx -d mcp.$DOMAIN --redirect --agree-tos -m admin@$DOMAIN --non-interactive"
 ```
 
-Then `certbot --nginx -d mcp.$DOMAIN`. Players create tokens in the game; see `docs/agents.md`.
+Players create tokens in the game; see `docs/agents.md`.

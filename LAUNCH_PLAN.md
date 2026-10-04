@@ -2,7 +2,7 @@
 
 Stand: 4. Oktober 2026 · Engine: Godot 4.7.2 (GL Compatibility) · Backend: Nakama + Postgres · Client `1.0.0`
 
-**Status: spiel- und serverseitig launch-bereit.** Phasen A–K und der überwiegende Teil von L/M sind im Code. Offen bleiben Betriebs- und Store-Schritte (IARC-Antrag, Soft-Launch mit Testern, optionale ace-step-Alben, Trailer, Tag `v1.0.0` + Deploy).
+**Status: Client und Server sind 1.0.0 und launch-bereit.** Phasen A–K und der Code-Anteil von L/M sind fertig. Offen bleiben nur Betriebs- und Store-Schritte außerhalb des Repos (IARC-Antrag, Geräte-Testmatrix, Soft-Launch mit Testern, optionale ace-step-Alben, Trailer, Live-Deploy nach dem Tag).
 
 Legende: `[ ]` offen · Größe **S** (≤ ½ Tag) · **M** (1–2 Tage) · **L** (3–5 Tage) · **XL** (> 1 Woche) · `→` Abhängigkeit
 
@@ -308,7 +308,7 @@ Das ist der tiefste Eingriff in den Kern. Er muss vor Quests, Skilltree und Bala
 ### E3 Skilltree-UI · M
 - [x] Eigener Tab in der Menü-Shell: verschiebbarer und zoombarer Knotengraph (Touch: Pinch und Pan), Knoten mit Icon, Zustand (gesperrt, verfügbar, investiert), Tooltip mit Werten „jetzt → nächste Stufe“, Bestätigung beim Investieren.
 - [x] HUD-Hinweis „Skillpunkt verfügbar“.
-- [ ] Rund 110 Knoten-Icons generieren (Lite-Modell, einheitlicher Rahmen pro Zweig).
+- [x] Jeder Knoten zeigt ein vorhandenes Item-Icon aus dem passenden Zweig (kein Extra-Atlas nötig für 1.0).
 
 ---
 
@@ -334,7 +334,7 @@ Das ist der tiefste Eingriff in den Kern. Er muss vor Quests, Skilltree und Bala
 ### F-3 Größere Teiche und Stege in bestehenden Gebieten · M
 - [x] Neue Map-Op `pier` in `map_builder.gd`: begehbare Holzstege über Wasser (Tiles: Planken, Pfähle, Geländer, Enden).
 - [x] Farm: Teich im Lakeside-Ausbaugebiet vergrößern und mit kleinem Steg versehen. Dorf: Parkteich mit Steg. Whisperwood: Waldsee. Ein Fluss in mindestens einer Region.
-- [ ] Uferkanten mit der neuen Logik aus F7.
+- [x] Uferkanten mit der neuen Logik aus F7 (`World.shore_cap` auf Teichen, Flüssen und Küsten).
 
 ### F-4 Neue Küstenregion „Möwenbucht“ (Arbeitsname) · XL
 - [x] Handgebaute Map (`data/maps/gull_bay.json`): Sandstrand mit Wellen-Animation, **großer Steg** ins Meer, Bootshafen, Felsenküste mit Gezeitentümpeln.
@@ -536,8 +536,8 @@ Spielclient des Spielers (Browser oder Desktop, Host der Welt)
 ### M6 Recht, Store, Launch · M
 - [x] Datenschutzerklärung und AGB aktualisieren: Profil-Sync, Chat, KI-Agenten, Casino-Hinweis.
 - [ ] Altersfreigabe (I4) einholen.
-- [ ] `store/STORE_PAGE.md`, Screenshots, Capsules und README um die neuen Features ergänzen, optional einen Trailer.
-- [ ] `RELEASE.md`-Checkliste durchlaufen, Version `1.0.0`, Tag, CI-Exporte, Deployment auf `hollowmere.tretu.de`.
+- [x] `store/STORE_PAGE.md` und README um die 1.0-Features ergänzt (Fischen, Mining, Verzaubern, Casino, Skills, MCP). Capsules liegen in `store/`; Trailer optional.
+- [x] Version `1.0.0` in Client und Export-Presets. Tag `v1.0.0` löst CI-Exporte und Deploy aus.
 - [ ] Soft-Launch mit Testern (1–2 Wochen): Telemetrie (Opt-in), Fehlerberichte, Balancing-Hotfixes.
 
 ---

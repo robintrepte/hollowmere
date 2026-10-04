@@ -77,7 +77,7 @@ services:
     image: caddy:2-alpine
     profiles: ["prod"]
     restart: unless-stopped
-    depends_on: [nakama]
+    depends_on: [nakama, mcp]
     environment:
       HOLLOWMERE_DOMAIN: ${HOLLOWMERE_DOMAIN:-localhost}
     ports:
