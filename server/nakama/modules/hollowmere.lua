@@ -203,12 +203,176 @@ local function before_auth_custom(_ctx, payload)
   return payload
 end
 
+local function sha(s)
+  return nk.md5_hash(tostring(s or ""))
+end
+
+local function rand_hex(n)
+  local bytes = nk.uuid_v4():gsub("-", "")
+  return bytes:sub(1, n)
+end
+
+-- Player mints a personal access token for MCP clients.
+-- payload: {name, scopes, days} -> {token, id, scopes, expires}
+local function agent_issue_token(ctx, payload)
+  local req = nk.json_decode(payload or "{}")
+  local scopes = {}
+  local allowed = {observe = true, act = true, chat = true, economy = true}
+  for _, s in ipairs(req.scopes or {"observe", "act"}) do
+    if allowed[s] then scopes[#scopes + 1] = s end
+  end
+  if #scopes == 0 then scopes = {"observe"} end
+  local days = math.max(1, math.min(tonumber(req.days) or 30, 365))
+  local id = rand_hex(16)
+  local secret = rand_hex(24)
+  local expires = nk.time() / 1000 + days * 86400
+  local rec = {
+    user = ctx.user_id, hash = sha(secret), scopes = scopes,
+    expires = expires, name = clip(req.name, 40), created = nk.time() / 1000,
+  }
+  nk.storage_write({{
+    collection = "agent_tokens", key = id, user_id = SYSTEM,
+    value = rec, permission_read = 0, permission_write = 0,
+  }})
+  local idx_rows = nk.storage_read({{collection = "agent_index", key = "list", user_id = ctx.user_id}})
+  local idx = (idx_rows[1] and idx_rows[1].value.ids) or {}
+  idx[#idx + 1] = id
+  nk.storage_write({{
+    collection = "agent_index", key = "list", user_id = ctx.user_id,
+    value = {ids = idx}, permission_read = 1, permission_write = 0,
+  }})
+  return nk.json_encode({
+    token = "hm_" .. id .. "_" .. secret, id = id, scopes = scopes, expires = expires,
+  })
+end
+
+local function agent_list_tokens(ctx, _payload)
+  local idx_rows = nk.storage_read({{collection = "agent_index", key = "list", user_id = ctx.user_id}})
+  local ids = (idx_rows[1] and idx_rows[1].value.ids) or {}
+  local reads = {}
+  for _, id in ipairs(ids) do
+    reads[#reads + 1] = {collection = "agent_tokens", key = id, user_id = SYSTEM}
+  end
+  local rows = #reads > 0 and nk.storage_read(reads) or {}
+  local out = {}
+  for _, row in ipairs(rows) do
+    local v = row.value or {}
+    if v.user == ctx.user_id then
+      out[#out + 1] = {id = row.key, name = v.name, scopes = v.scopes, expires = v.expires}
+    end
+  end
+  return nk.json_encode({tokens = out})
+end
+
+local function agent_revoke_token(ctx, payload)
+  local req = nk.json_decode(payload or "{}")
+  local id = tostring(req.id or "")
+  local rows = nk.storage_read({{collection = "agent_tokens", key = id, user_id = SYSTEM}})
+  if rows[1] and rows[1].value.user == ctx.user_id then
+    nk.storage_delete({{collection = "agent_tokens", key = id, user_id = SYSTEM}})
+    local idx_rows = nk.storage_read({{collection = "agent_index", key = "list", user_id = ctx.user_id}})
+    local idx = (idx_rows[1] and idx_rows[1].value.ids) or {}
+    local keep = {}
+    for _, x in ipairs(idx) do
+      if x ~= id then keep[#keep + 1] = x end
+    end
+    nk.storage_write({{
+      collection = "agent_index", key = "list", user_id = ctx.user_id,
+      value = {ids = keep}, permission_read = 1, permission_write = 0,
+    }})
+  end
+  return "{}"
+end
+
+local function lookup_token(raw)
+  local id, secret = string.match(tostring(raw or ""), "^hm_([a-f0-9]+)_([a-f0-9]+)$")
+  if not id then return nil, "bad token" end
+  local rows = nk.storage_read({{collection = "agent_tokens", key = id, user_id = SYSTEM}})
+  local v = rows[1] and rows[1].value
+  if not v then return nil, "unknown token" end
+  if (v.expires or 0) < nk.time() / 1000 then return nil, "token expired" end
+  if v.hash ~= sha(secret) then return nil, "bad token" end
+  return v, nil
+end
+
+-- Called by the MCP service with the HTTP key. payload: {token, tool, args, actor}
+local function agent_relay(ctx, payload)
+  if ctx.user_id ~= nil and ctx.user_id ~= "" then
+    -- players use agent_take; this RPC is for the relay service
+  end
+  local req = nk.json_decode(payload or "{}")
+  local tok, err = lookup_token(req.token)
+  if not tok then
+    error({err or "bad token", 16})
+  end
+  local cmd_id = rand_hex(12)
+  local inbox_rows = nk.storage_read({{collection = "agent_inbox", key = tok.user, user_id = SYSTEM}})
+  local cmds = (inbox_rows[1] and inbox_rows[1].value.cmds) or {}
+  if #cmds > 20 then
+    error({"agent is busy", 13})
+  end
+  cmds[#cmds + 1] = {
+    id = cmd_id, tool = clip(req.tool, 40), args = req.args or {},
+    actor = clip(req.actor, 40), scopes = tok.scopes, t = nk.time() / 1000,
+  }
+  nk.storage_write({{
+    collection = "agent_inbox", key = tok.user, user_id = SYSTEM,
+    value = {cmds = cmds}, permission_read = 0, permission_write = 0,
+  }})
+  return nk.json_encode({id = cmd_id, pending = true})
+end
+
+local function agent_poll(ctx, payload)
+  local req = nk.json_decode(payload or "{}")
+  local tok, err = lookup_token(req.token)
+  if not tok then
+    error({err or "bad token", 16})
+  end
+  local id = tostring(req.id or "")
+  local rows = nk.storage_read({{collection = "agent_outbox", key = id, user_id = SYSTEM}})
+  if rows[1] then
+    return nk.json_encode(rows[1].value)
+  end
+  return nk.json_encode({pending = true})
+end
+
+-- The open game client pulls work for this account.
+local function agent_take(ctx, _payload)
+  local rows = nk.storage_read({{collection = "agent_inbox", key = ctx.user_id, user_id = SYSTEM}})
+  local cmds = (rows[1] and rows[1].value.cmds) or {}
+  if rows[1] then
+    nk.storage_delete({{collection = "agent_inbox", key = ctx.user_id, user_id = SYSTEM}})
+  end
+  return nk.json_encode({cmds = cmds})
+end
+
+local function agent_done(ctx, payload)
+  local req = nk.json_decode(payload or "{}")
+  local id = clip(req.id, 24)
+  if id == "" then
+    error({"id required", 3})
+  end
+  nk.storage_write({{
+    collection = "agent_outbox", key = id, user_id = SYSTEM,
+    value = {ok = req.result and req.result.ok or false, result = req.result or {}, t = nk.time() / 1000},
+    permission_read = 0, permission_write = 0,
+  }})
+  return "{}"
+end
+
 nk.register_rpc(create_coop_code, "create_coop_code")
 nk.register_rpc(resolve_coop_code, "resolve_coop_code")
 nk.register_rpc(close_coop_code, "close_coop_code")
 nk.register_rpc(health, "health")
 nk.register_rpc(report_errors, "report_errors")
 nk.register_rpc(track_session, "track_session")
+nk.register_rpc(agent_issue_token, "agent_issue_token")
+nk.register_rpc(agent_list_tokens, "agent_list_tokens")
+nk.register_rpc(agent_revoke_token, "agent_revoke_token")
+nk.register_rpc(agent_relay, "agent_relay")
+nk.register_rpc(agent_poll, "agent_poll")
+nk.register_rpc(agent_take, "agent_take")
+nk.register_rpc(agent_done, "agent_done")
 nk.register_req_before(before_write, "WriteStorageObjects")
 nk.register_req_before(before_auth_custom, "AuthenticateCustom")
 

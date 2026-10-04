@@ -108,6 +108,14 @@ func _join_view() -> void:
 	r2.add_child(UITheme.button("Join LAN", func(): _join_lan(addr.text)))
 	_hint("To host, load your farm, then press O (or Esc > Play together). Friends' progress is saved on the host's farm.")
 
+func _agents_section() -> void:
+	_heading("AI agents")
+	_hint("Let a helper (Claude, Cursor, ...) watch or play. Up to 3 partners. Free for everyone.")
+	_body.add_child(UITheme.button("Open agent panel", func():
+		if ui:
+			ui.open(AgentPanel.new())
+		closed.emit()))
+
 func _join_online(code: String) -> void:
 	code = code.strip_edges().to_upper()
 	if code.length() < 6:
@@ -167,6 +175,7 @@ func _host_view() -> void:
 				_rebuild()
 			else:
 				_say(tr("Couldn't open port %d. Is another farm already open?") % Net.ENET_PORT)))
+	_agents_section()
 
 func _host_online() -> void:
 	if _busy:
@@ -216,6 +225,10 @@ func _session_view() -> void:
 				return
 			Coop.challenge(pid)
 			_say(tr("Challenge sent to %s.") % pl.name, true)))
+		var mute := UITheme.button("Unmute" if Chat.muted(pid) else "Mute", func():
+			Chat.set_muted(pid, not Chat.muted(pid))
+			_rebuild())
+		r2.add_child(mute)
 	var rc := _row()
 	var chat := _edit(rc, "", "Say something...")
 	chat.max_length = 200
@@ -233,6 +246,7 @@ func _session_view() -> void:
 			closed.emit())
 	leave.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	_body.add_child(leave)
+	_agents_section()
 
 func _host_name() -> String:
 	var hp := GameState.player("local")

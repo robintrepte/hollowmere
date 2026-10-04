@@ -1,0 +1,11 @@
+{
+  "name": "hollowmere-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Hosted MCP relay so AI clients can play Hollowmere.",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node test.mjs"
+  }
+}

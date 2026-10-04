@@ -53,6 +53,26 @@ services:
       timeout: 3s
       retries: 20
 
+  mcp:
+    build: ./mcp
+    image: hollowmere-mcp
+    restart: unless-stopped
+    depends_on:
+      nakama:
+        condition: service_healthy
+    environment:
+      NAKAMA_URL: http://nakama:7350
+      NAKAMA_HTTP_KEY: ${NAKAMA_HTTP_KEY:-dev_http_key_change_me}
+      MCP_PUBLIC_URL: https://mcp.${HOLLOWMERE_DOMAIN:-localhost}
+      MCP_PORT: 8787
+    ports:
+      - "127.0.0.1:8787:8787"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8787/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 8
+
   caddy:
     image: caddy:2-alpine
     profiles: ["prod"]

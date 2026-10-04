@@ -328,3 +328,23 @@ ssh "$DEPLOY_USER@$SERVER_IP" "cd $APP_DIR && docker compose --profile prod up -
 ```
 
 Caddy then binds 80/443, issues TLS, and serves `$APP_DIR/site`. Do not also enable the nginx site.
+
+## 15. Agent MCP relay
+
+`docker compose` starts `hollowmere-mcp` on `127.0.0.1:8787`. Add a DNS A record `mcp` → `$SERVER_IP` and an nginx site that proxies `mcp.$DOMAIN` to that port (HTTP/1.1, long timeouts for SSE).
+
+```nginx
+server {
+    server_name mcp.$DOMAIN;
+    location / {
+        proxy_pass http://127.0.0.1:8787;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header Authorization $http_authorization;
+        proxy_read_timeout 120s;
+        proxy_buffering off;
+    }
+}
+```
+
+Then `certbot --nginx -d mcp.$DOMAIN`. Players create tokens in the game; see `docs/agents.md`.

@@ -6,7 +6,7 @@ Rebuild them with `.venv/bin/python tools/release/store_assets.py` and
 
 ## Short description (Steam, max 300 characters)
 
-Inherit your grandmother's overgrown farm in a hidden valley and befriend 97 Wildlings: creatures that water your crops, guard your fields and fight beside you in turn-based battles. Farm, breed, explore nine wild regions, find love in town and play it all together in online co-op.
+Inherit your grandmother's overgrown farm in a hidden valley and befriend Wildlings that water your crops, fish the coast, mine Eisenkamm and play in Lumière. Farm in real time, follow quests, and invite friends — or an AI helper — in online co-op.
 
 ## About this game
 
@@ -32,7 +32,10 @@ Your inventory is a grid. Items take up real space, rotate and nest inside conta
 Weekly Creature Shows with a ranking ladder, weekly bounties, Warden rematches, Starry chains, legendary Wildlings and the bottomless Deep Hollow mine.
 
 **Better together.**
-Invite friends to your farm in online co-op (best with 2 to 4 players). Everyone farms the same fields, trades Wildlings and items, and battles each other in friendly duels.
+Invite friends to your farm in online co-op (best with 2 to 4 players). Everyone farms the same fields, trades Wildlings and items, and battles each other in friendly duels. Emotes and chat bubbles sit over your farmers. You can also hand the controls to an AI helper (or invite up to three virtual farmhands) through MCP.
+
+**The valley grew.**
+Fish from piers and Möwenbucht, dig lasting tunnels under Eisenkamm, enchant your tools, and spend play-money chips at the Grand Casino in Lumière. A skill tree, daily quests and skippable tutorials sit in a tabbed menu. Crops keep growing while you are away (up to 14 days).
 
 **Play anywhere.**
 Windows, macOS, or right in your browser with the same account and cloud saves. Full controller support, adjustable text size, a colorblind-friendly mode and remappable keys.
