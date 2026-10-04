@@ -4,6 +4,9 @@ extends PanelContainer
 
 signal closed
 
+## Shown as a tab inside the MenuShell: no frame and no close button of its own.
+var embedded := false
+
 const REBINDABLE := ["move_up", "move_down", "move_left", "move_right", "use_tool", "interact", "inventory", "party", "journal", "craft", "map", "menu", "coop", "chat", "hotbar_next", "hotbar_prev", "run", "rotate_item"]
 
 var _waiting_action := ""
@@ -27,7 +30,8 @@ func _ready() -> void:
 	var t := UITheme.label("Settings", 14, UITheme.WOOD_DK)
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(t)
-	head.add_child(UITheme.button("Done", func(): Settings.save_settings(); closed.emit()))
+	if not embedded:
+		head.add_child(UITheme.button("Done", func(): Settings.save_settings(); closed.emit()))
 	var sc := ScrollContainer.new()
 	sc.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -142,3 +146,6 @@ func _input(event: InputEvent) -> void:
 		_bind_buttons[_waiting_action].text = Settings.key_name(_waiting_action)
 		_waiting_action = ""
 		get_viewport().set_input_as_handled()
+
+func on_tab_hidden() -> void:
+	Settings.save_settings()

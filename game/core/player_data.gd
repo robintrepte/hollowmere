@@ -17,9 +17,12 @@ var party: Array = []           # Array[Creature]; party[0] is the lead
 var tool_levels: Dictionary = {"hoe": 0, "watering_can": 0, "pickaxe": 0, "axe": 0, "scythe": 0}
 var water_left: int = 40
 var bucket_full: bool = false
+var chips: int = 0
 var energy: float = 270.0
 var max_energy: float = 270.0
-var backpack_level: int = 0
+## The equipped pack and every pack the player owns (switchable any time the contents fit).
+var backpack: String = "pack_rucksack"
+var packs: Array = ["pack_rucksack"]
 var relationships: Dictionary = {}
 var recipes: Array = []
 var cosmetics: Array = []
@@ -29,8 +32,8 @@ var skills: Dictionary = {"farming": 0, "foraging": 0, "mining": 0, "taming": 0}
 var stats: Dictionary = {}
 
 func _init() -> void:
-	var bp: Dictionary = Economy.backpack_spec(0)
-	inventory = Inventory.new(int(bp.get("w", 7)), int(bp.get("h", 4)))
+	var bp: Dictionary = Economy.backpack_spec("pack_rucksack")
+	inventory = Inventory.new(int(bp.get("w", 9)), int(bp.get("h", 5)))
 	hotbar.resize(HOTBAR_SIZE)
 	for i in HOTBAR_SIZE:
 		hotbar[i] = {}
@@ -107,20 +110,28 @@ func heal_party() -> void:
 	for c in party:
 		c.heal_full()
 
-func set_backpack(level: int) -> bool:
-	var bp := Economy.backpack_spec(level)
+## Switches to an owned pack. Fails (and changes nothing) if the current contents don't fit.
+func set_backpack(id: String) -> bool:
+	var bp := Economy.backpack_spec(id)
 	if bp.is_empty():
 		return false
-	var bigger := Inventory.new(int(bp.w), int(bp.h))
-	for e in inventory.entries.duplicate():
-		var placed := bigger.move_from(inventory, e.uid, int(e.x), int(e.y), bool(e.r))
+	var next := Inventory.new(int(bp.w), int(bp.h))
+	var probe := Inventory.new(inventory.w, inventory.h)
+	probe.from_dict(inventory.to_dict())
+	for e in probe.entries.duplicate():
+		var placed := next.move_from(probe, e.uid, int(e.x), int(e.y), bool(e.r))
 		if not placed:
-			var spot := bigger.find_space(e.id)
-			if spot.is_empty() or not bigger.move_from(inventory, e.uid, int(spot.x), int(spot.y), bool(spot.r)):
+			var spot := next.find_space(e.id)
+			if spot.is_empty() or not next.move_from(probe, e.uid, int(spot.x), int(spot.y), bool(spot.r)):
 				return false
-	inventory = bigger
-	backpack_level = level
+	inventory = next
+	backpack = id
+	if not id in packs:
+		packs.append(id)
 	return true
+
+func pack_mods() -> Dictionary:
+	return Economy.backpack_spec(backpack).get("mods", {})
 
 func relationship(vid: String) -> Dictionary:
 	if not relationships.has(vid):
@@ -142,8 +153,8 @@ func to_dict() -> Dictionary:
 		p.append(c.to_dict())
 	return {
 		"id": id, "name": name, "look": look, "hat": hat, "inventory": inventory.to_dict(), "hotbar": hotbar,
-		"selected": selected, "party": p, "tool_levels": tool_levels, "water_left": water_left, "bucket_full": bucket_full,
-		"energy": energy, "max_energy": max_energy, "backpack_level": backpack_level,
+		"selected": selected, "party": p, "tool_levels": tool_levels, "water_left": water_left, "bucket_full": bucket_full, "chips": chips,
+		"energy": energy, "max_energy": max_energy, "backpack": backpack, "packs": packs,
 		"relationships": relationships, "recipes": recipes, "cosmetics": cosmetics, "map_id": map_id,
 		"pos": [pos.x, pos.y], "skills": skills, "stats": stats,
 	}
@@ -167,9 +178,21 @@ static func from_dict(d: Dictionary) -> PlayerData:
 		p.tool_levels[k] = int(d.tool_levels[k])
 	p.water_left = int(d.get("water_left", 40))
 	p.bucket_full = bool(d.get("bucket_full", false))
+	p.chips = int(d.get("chips", 0))
 	p.energy = float(d.get("energy", 270))
 	p.max_energy = float(d.get("max_energy", 270))
-	p.backpack_level = int(d.get("backpack_level", 0))
+	if d.has("backpack"):
+		p.backpack = str(d.backpack)
+		p.packs = d.get("packs", [p.backpack])
+	else:
+		var lvl := int(d.get("backpack_level", 0))
+		p.backpack = Economy.backpack_for_level(lvl)
+		p.packs = []
+		for i in lvl + 1:
+			p.packs.append(Economy.backpack_for_level(i))
+	var spec := Economy.backpack_spec(p.backpack)
+	if not spec.is_empty() and (p.inventory.w < int(spec.w) or p.inventory.h < int(spec.h)):
+		p.set_backpack(p.backpack)
 	p.relationships = d.get("relationships", {})
 	p.recipes = d.get("recipes", [])
 	p.cosmetics = d.get("cosmetics", [])

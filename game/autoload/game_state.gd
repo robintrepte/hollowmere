@@ -25,6 +25,7 @@ func _ready() -> void:
 	EventBus.farm_level_up.connect(_queue_story.unbind(2))
 	EventBus.shrine_restored.connect(_queue_story.unbind(1))
 	TimeService.tick.connect(_on_time_tick)
+	Modifiers.register("backpack", func(p): return p.pack_mods() if p else {})
 
 func _queue_story() -> void:
 	check_story.call_deferred()
@@ -1175,24 +1176,41 @@ func upgrade_tool(pid: String, tool: String) -> Dictionary:
 	r.sfx = "levelup"
 	return r
 
-func buy_backpack(pid: String, level: int) -> Dictionary:
+func buy_backpack(pid: String, id: String) -> Dictionary:
 	var p := player(pid)
 	var r := _res(false)
-	if p == null or level != p.backpack_level + 1:
-		return r
-	var spec := Economy.backpack_spec(level)
-	if spec.is_empty():
+	var spec := Economy.backpack_spec(id)
+	if p == null or spec.is_empty() or id in p.packs:
 		return r
 	if not is_open_requirement(spec.get("requires", "")):
 		r.reason = Economy.req_text(spec.requires)
 		return r
-	if not spend(int(spec.price)):
+	if int(spec.get("chips", 0)) > 0:
+		if not Casino.spend_chips(p, int(spec.chips)):
+			r.reason = tr("Not enough chips.")
+			return r
+	elif not spend(int(spec.price)):
 		r.reason = tr("Not enough gold.")
 		return r
-	p.set_backpack(level)
+	p.packs.append(id)
+	p.set_backpack(id)
 	EventBus.inventory_changed.emit()
 	r.ok = true
 	r.sfx = "levelup"
+	return r
+
+## Switches to another owned pack if everything fits.
+func equip_backpack(pid: String, id: String) -> Dictionary:
+	var p := player(pid)
+	var r := _res(false)
+	if p == null or not id in p.packs:
+		return r
+	if not p.set_backpack(id):
+		r.reason = tr("Your things don't fit in the %s. Make some room first.") % Data.item_name(id)
+		return r
+	EventBus.inventory_changed.emit()
+	r.ok = true
+	r.sfx = "pickup"
 	return r
 
 ## Hands in a Village Board request from the player's pack.

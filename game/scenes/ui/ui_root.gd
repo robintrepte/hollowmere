@@ -122,6 +122,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		if not t.has_method("blocks_escape") or not t.blocks_escape():
 			close()
 		get_viewport().set_input_as_handled()
+	elif not stack.is_empty() and stack[-1] is MenuShell:
+		for action in ["inventory", "party", "journal", "craft", "map", "skills"]:
+			if InputMap.has_action(action) and event.is_action_pressed(action) and stack[-1].handle_hotkey(action):
+				get_viewport().set_input_as_handled()
+				return
 	elif event.is_action_pressed("inventory") and not stack.is_empty() and stack[-1] is InventoryPanel:
 		close()
 		get_viewport().set_input_as_handled()

@@ -50,6 +50,7 @@ func load_all() -> void:
 	moves = _load_json("res://data/moves.json")
 	_load_species()
 	_load_crops()
+	progression = _load_json("res://data/progression.json")
 	items = _load_json("res://data/items.json")
 	trees = _load_json("res://data/trees.json")
 	_derive_items()
@@ -65,7 +66,6 @@ func load_all() -> void:
 	regions = reg
 	region_order = regions.keys()
 	region_order.sort_custom(func(a, b): return int(regions[a].order) < int(regions[b].order))
-	progression = _load_json("res://data/progression.json")
 
 func _load_json(path: String) -> Variant:
 	var f := FileAccess.open(path, FileAccess.READ)
@@ -228,6 +228,8 @@ func _load_crops() -> void:
 		crop_order.append(d.id)
 
 func _derive_items() -> void:
+	for b in progression.get("backpacks", []):
+		items[b.id] = {"name": b.name, "cat": "backpack", "sell": 0, "base": "_backpack", "icon": b.id, "desc": b.get("desc", "")}
 	for cid in crop_order:
 		var c: Dictionary = crops[cid]
 		var flower: bool = cid in ["tulip", "blue_jazz", "sunflower", "fairy_rose", "ice_lily", "moonbloom"]

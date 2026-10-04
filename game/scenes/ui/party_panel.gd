@@ -4,6 +4,9 @@ extends PanelContainer
 
 signal closed
 
+## Shown as a tab inside the MenuShell: no frame and no close button of its own.
+var embedded := false
+
 var player: PlayerData
 var tab := "party"
 var _sel: Creature
@@ -35,7 +38,8 @@ func _ready() -> void:
 	_tabs = HBoxContainer.new()
 	_tabs.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(_tabs)
-	head.add_child(UITheme.button("Close", func(): closed.emit()))
+	if not embedded:
+		head.add_child(UITheme.button("Close", func(): closed.emit()))
 	var cols := HBoxContainer.new()
 	cols.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	cols.add_theme_constant_override("separation", 10)

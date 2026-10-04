@@ -5,6 +5,8 @@ extends PanelContainer
 
 signal closed
 
+var embedded := false
+
 var player: PlayerData
 var other: Inventory          # chest / farm chest
 var other_title := ""
@@ -19,10 +21,9 @@ var held_id := ""
 
 var _pack_view: GridView
 var _other_view: GridView
-var _container_view: GridView
-var _container_uid := ""
-var _right: VBoxContainer
-var _container_box: VBoxContainer
+var _other_win: FloatingWindow
+## Open bags and cases: uid -> {win: FloatingWindow, view: GridView}
+var _open: Dictionary = {}
 var _info_name: Label
 var _info_desc: Label
 var _hotbar: Array = []
@@ -68,7 +69,10 @@ func _ready() -> void:
 	cols.add_child(left)
 	var title_row := HBoxContainer.new()
 	left.add_child(title_row)
-	title_row.add_child(UITheme.label("Backpack", 12, UITheme.WOOD_DK))
+	if player.packs.size() > 1:
+		title_row.add_child(_pack_picker())
+	else:
+		title_row.add_child(UITheme.label(Data.item_name(player.backpack), 12, UITheme.WOOD_DK))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title_row.add_child(sp)
@@ -90,27 +94,29 @@ func _ready() -> void:
 		hb.add_child(s)
 		_hotbar.append(s)
 
-	_right = VBoxContainer.new()
-	_right.add_theme_constant_override("separation", 4)
-	cols.add_child(_right)
 	if other != null:
-		_right.add_child(UITheme.label(other_title, 12, UITheme.WOOD_DK))
+		_other_win = FloatingWindow.new(other_title, "inv:" + _window_kind(other))
+		_other_win.top_level = true
 		_other_view = _make_view(other)
-		_right.add_child(_other_view)
+		_other_win.body.add_child(_other_view)
 		if other == GameState.shipping_bin:
-			var hint := UITheme.label("Sells overnight. Take items back out any time before then.", 8, UITheme.MUTED)
+			var hint := UITheme.label("Sells when the game day turns over. Take items back out any time before then.", 8, UITheme.MUTED)
 			hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			hint.custom_minimum_size = Vector2(180, 0)
-			_right.add_child(hint)
+			_other_win.body.add_child(hint)
 			_ship_total = UITheme.label("", 10, UITheme.WOOD_DK)
-			_right.add_child(_ship_total)
+			_other_win.body.add_child(_ship_total)
 			_refresh_ship()
-	_container_box = VBoxContainer.new()
-	_right.add_child(_container_box)
+		_other_win.closed.connect(func(): closed.emit())
 
 	var info := PanelContainer.new()
 	info.add_theme_stylebox_override("panel", UITheme.box(UITheme.PARCHMENT_DK, Color("#b09060"), 1, 3, 5, false))
-	main.add_child(info)
+	if embedded:
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		info.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		cols.add_child(info)
+	else:
+		main.add_child(info)
 	var iv := VBoxContainer.new()
 	iv.add_theme_constant_override("separation", 1)
 	info.add_child(iv)
@@ -118,7 +124,7 @@ func _ready() -> void:
 	iv.add_child(_info_name)
 	_info_desc = UITheme.label(_help(), 9, UITheme.INK)
 	_info_desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_info_desc.custom_minimum_size = Vector2(420, 0)
+	_info_desc.custom_minimum_size = Vector2(160 if embedded else 420, 0)
 	iv.add_child(_info_desc)
 
 	_ghost = Control.new()
@@ -132,9 +138,34 @@ func _ready() -> void:
 	add_child(_menu)
 	_refresh_hotbar()
 	await get_tree().process_frame
-	_center()
+	if not embedded:
+		_center()
+	if _other_win:
+		_add_window(_other_win)
 	if Settings.using_pad:
 		_pack_view.grab_focus()
+
+static func _window_kind(inv: Inventory) -> String:
+	if inv == GameState.shipping_bin:
+		return "shipping_bin"
+	if inv == GameState.farm_chest:
+		return "farm_chest"
+	return "chest"
+
+## Floating windows start beside the backpack (or where the player last left that kind of window).
+func _add_window(w: FloatingWindow) -> void:
+	var r := _pack_view.get_global_rect() if embedded else get_global_rect()
+	var n := _open.size() + (1 if _other_win and w != _other_win else 0)
+	w.position = Vector2(r.end.x + 6 + n * 12, r.position.y + n * 16)
+	add_child(w)
+
+func _views() -> Array:
+	var out: Array = [_pack_view]
+	if _other_view:
+		out.append(_other_view)
+	for uid in _open:
+		out.append(_open[uid].view)
+	return out
 
 func _help() -> String:
 	if Settings.using_pad:
@@ -155,6 +186,30 @@ func _center() -> void:
 	offset_right = s.x / 2.0
 	offset_top = -s.y / 2.0 - 10
 	offset_bottom = s.y / 2.0 - 10
+
+func _pack_picker() -> OptionButton:
+	var ob := OptionButton.new()
+	ob.tooltip_text = tr("Switch packs")
+	for i in player.packs.size():
+		ob.add_item(Data.item_name(player.packs[i]))
+		if player.packs[i] == player.backpack:
+			ob.select(i)
+	ob.item_selected.connect(func(i: int):
+		if held_uid != "":
+			_cancel_held()
+		var r: Dictionary = await Coop.act_async("equip_backpack", [player.packs[i]])
+		if not is_inside_tree():
+			return
+		if r.ok:
+			_pack_view.setup(player.inventory, self)
+			_changed()
+			Audio.sfx("pickup")
+		else:
+			ob.select(player.packs.find(player.backpack))
+			if r.reason != "":
+				Audio.sfx("error")
+				EventBus.toast.emit(r.reason, ""))
+	return ob
 
 func _make_view(i: Inventory) -> GridView:
 	var v := GridView.new()
@@ -223,8 +278,8 @@ func _drop(view: GridView, cell: Vector2i) -> void:
 		ok = view.inv.move_from(held_from, held_uid, origin.x, origin.y, held_rot)
 	if ok:
 		Audio.sfx("place", 0.1)
-		if held_uid == _container_uid and view.inv != player.inventory:
-			_close_container()
+		if _open.has(held_uid) and view.inv != held_from:
+			_close_container(held_uid)
 		_clear_held()
 		_changed()
 	else:
@@ -238,16 +293,17 @@ func _clear_held() -> void:
 	held_from = null
 	held_id = ""
 	_ghost.queue_redraw()
-	for v in [_pack_view, _other_view, _container_view]:
-		if v:
-			v.queue_redraw()
+	for v in _views():
+		v.queue_redraw()
 
+## Shift-click: from the backpack into the open chest (or the last opened bag), anything else back to the backpack.
 func _quick_move(inv: Inventory, e: Dictionary) -> void:
 	var target: Inventory = null
-	if inv == player.inventory or (inv != other and _container_view and inv == _container_view.inv):
-		target = other if other else (_container_view.inv if _container_view and inv == player.inventory else null)
-		if inv != player.inventory:
-			target = player.inventory
+	if inv == player.inventory:
+		if other:
+			target = other
+		elif not _open.is_empty():
+			target = _open[_open.keys()[-1]].view.inv
 	else:
 		target = player.inventory
 	if target == null or not target.accepts(e.id):
@@ -311,9 +367,8 @@ func rotate_held_or_hovered() -> void:
 		held_rot = not held_rot
 		held_grab = Vector2i(clampi(held_grab.y, 0, sz.y - 1), clampi(held_grab.x, 0, sz.x - 1))
 		Audio.sfx("tick", 0.0)
-		for v in [_pack_view, _other_view, _container_view]:
-			if v:
-				v.queue_redraw()
+		for v in _views():
+			v.queue_redraw()
 	elif not _hover.is_empty() and _hover_inv:
 		if _hover_inv.rotate(_hover.uid):
 			Audio.sfx("tick", 0.0)
@@ -381,25 +436,27 @@ func _on_menu(id: int) -> void:
 			Audio.sfx("trash")
 	_changed()
 
+## Bags open in their own small window; several can be open at once, nested ones too.
 func _open_container(e: Dictionary) -> void:
-	_close_container()
-	_container_uid = e.uid
-	_container_box.add_child(UITheme.label(Data.item_name(e.id), 11, UITheme.WOOD_DK))
-	_container_view = _make_view(e.inv)
-	_container_box.add_child(_container_view)
-	_container_box.add_child(UITheme.button(tr("Close %s") % Data.item_name(e.id), _close_container))
-	await get_tree().process_frame
-	_center()
+	if _open.has(e.uid):
+		_open[e.uid].win.raise()
+		return
+	var w := FloatingWindow.new(Data.item_name(e.id), "bag:" + str(e.id))
+	w.top_level = true
+	var view := _make_view(e.inv)
+	w.body.add_child(view)
+	var uid: String = e.uid
+	w.closed.connect(func(): _open.erase(uid))
+	_open[uid] = {"win": w, "view": view}
+	_add_window(w)
+	Audio.sfx("open", 0.1)
 
-func _close_container() -> void:
-	for c in _container_box.get_children():
-		c.queue_free()
-	_container_view = null
-	_container_uid = ""
-	await get_tree().process_frame
-	if is_inside_tree():
-		reset_size()
-		_center()
+func _close_container(uid: String) -> void:
+	if _open.has(uid):
+		var w: FloatingWindow = _open[uid].win
+		_open.erase(uid)
+		if is_instance_valid(w):
+			w.close()
 
 # --- Misc ------------------------------------------------------------------------------------
 
@@ -407,9 +464,12 @@ func _changed() -> void:
 	EventBus.inventory_changed.emit()
 	_refresh_ship()
 	_refresh_hotbar()
-	for v in [_pack_view, _other_view, _container_view]:
-		if v:
-			v.queue_redraw()
+	for uid in _open.keys():
+		var f := player.inventory.find(uid)
+		if f.is_empty() and (other == null or other.find(uid).is_empty()):
+			_close_container(uid)
+	for v in _views():
+		v.queue_redraw()
 
 func _refresh_hotbar() -> void:
 	for i in _hotbar.size():

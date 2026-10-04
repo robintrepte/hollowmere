@@ -136,11 +136,15 @@ static func upgrade_spec(next_level: int) -> Dictionary:
 			return u
 	return {}
 
-static func backpack_spec(level: int) -> Dictionary:
+static func backpack_spec(id: String) -> Dictionary:
 	for b in Data.progression.backpacks:
-		if int(b.level) == level:
+		if b.id == id:
 			return b
 	return {}
+
+## Old saves stored a pack level; packs are items now.
+static func backpack_for_level(level: int) -> String:
+	return ["pack_rucksack", "pack_farmer", "pack_explorer", "pack_warden"][clampi(level, 0, 3)]
 
 static func farm_rank(score: int) -> String:
 	var name := "Sprout"

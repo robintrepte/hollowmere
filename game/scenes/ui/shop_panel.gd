@@ -235,18 +235,27 @@ func _upgrade_list() -> void:
 func _backpack_list() -> void:
 	var p := GameState.local_player()
 	for bp in Data.progression.backpacks:
-		var lvl := int(bp.level)
-		if lvl == 0:
+		var id: String = bp.id
+		if str(bp.get("shop", shop_id)) != shop_id and not id in p.packs:
 			continue
-		var owned := p.backpack_level >= lvl
+		var owned: bool = id in p.packs
 		var req: String = bp.get("requires", "")
-		var costs: Array = [[tr("%dg") % int(bp.price), GameState.money() >= int(bp.price)]]
-		if req != "" and not GameState.is_open_requirement(req):
+		var chips := int(bp.get("chips", 0))
+		var affordable := Casino.chips(p) >= chips if chips > 0 else GameState.money() >= int(bp.price)
+		var costs: Array = []
+		if not owned:
+			costs.append([tr("%d chips") % chips if chips > 0 else CoinLabel.text(int(bp.price)), affordable])
+		if req != "" and not GameState.is_open_requirement(req) and not owned:
 			costs.append([Economy.req_text(req), false])
-		var next := lvl == p.backpack_level + 1
-		_list.add_child(_offer(Art.item("_backpack"), tr(str(bp.name)), tr("A %d x %d grid pack.") % [int(bp.w), int(bp.h)], costs, tr("Buy"),
-			next and GameState.money() >= int(bp.price) and (req == "" or GameState.is_open_requirement(req)),
-			func(): _act("buy_backpack", [lvl]), tr("Owned ✓") if owned else ""))
+		var desc := tr("A %d x %d grid pack.") % [int(bp.w), int(bp.h)] + " " + tr(str(bp.get("desc", "")))
+		if owned:
+			var equipped: bool = p.backpack == id
+			_list.add_child(_offer(Art.item(id), tr(str(bp.name)), desc, costs, tr("Equip"), not equipped,
+				func(): _act("equip_backpack", [id]), tr("Equipped ✓") if equipped else ""))
+		else:
+			_list.add_child(_offer(Art.item(id), tr(str(bp.name)), desc, costs, tr("Buy"),
+				affordable and (req == "" or GameState.is_open_requirement(req)),
+				func(): _act("buy_backpack", [id])))
 
 func _buy(id: String, n: int) -> void:
 	if _buying:

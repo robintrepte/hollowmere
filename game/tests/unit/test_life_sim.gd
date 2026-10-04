@@ -78,13 +78,49 @@ func test_upgrade_tool() -> void:
 	assert_eq(p.tool_level("hoe"), 1)
 	assert_eq(p.inventory.count("copper_bar"), 0)
 
+func test_default_pack_is_nine_by_five() -> void:
+	assert_eq([p.inventory.w, p.inventory.h], [9, 5])
+	assert_eq(p.backpack, "pack_rucksack")
+
 func test_buy_backpack() -> void:
 	GameState.add_money(5000)
 	var w0 := p.inventory.w
-	assert_false(GameState.buy_backpack(pid, 2).ok, "must go in order")
-	assert_true(GameState.buy_backpack(pid, 1).ok)
+	assert_false(GameState.buy_backpack(pid, "pack_explorer").ok, "needs restored shrines")
+	assert_true(GameState.buy_backpack(pid, "pack_farmer").ok)
 	assert_gt(p.inventory.w, w0)
-	assert_eq(p.backpack_level, 1)
+	assert_eq(p.backpack, "pack_farmer")
+	assert_false(GameState.buy_backpack(pid, "pack_farmer").ok, "already owned")
+
+func test_switching_packs_keeps_items_and_bonuses() -> void:
+	GameState.add_money(20000)
+	GameState.world.farm.level = 4
+	assert_true(GameState.buy_backpack(pid, "pack_gardener").ok)
+	assert_almost_eq(Modifiers.value(p, "crop_growth"), 0.05, 0.001)
+	p.inventory.add("kale_seeds", 3)
+	assert_true(GameState.equip_backpack(pid, "pack_rucksack").ok)
+	assert_eq(p.inventory.count("kale_seeds"), 3)
+	assert_almost_eq(Modifiers.value(p, "crop_growth"), 0.0, 0.001)
+
+func test_switching_to_a_smaller_pack_fails_when_full() -> void:
+	GameState.add_money(5000)
+	assert_true(GameState.buy_backpack(pid, "pack_farmer").ok)
+	var i := 0
+	while p.inventory.find_space("stone").size() > 0 and i < 200:
+		p.inventory.add("stone", 999)
+		i += 1
+	var w := p.inventory.w
+	assert_false(GameState.equip_backpack(pid, "pack_rucksack").ok)
+	assert_eq(p.inventory.w, w, "nothing changed")
+
+func test_old_backpack_level_becomes_owned_packs() -> void:
+	var d := p.to_dict()
+	d.erase("backpack")
+	d.erase("packs")
+	d["backpack_level"] = 2
+	var q := PlayerData.from_dict(d)
+	assert_eq(q.backpack, "pack_explorer")
+	assert_eq(q.packs, ["pack_rucksack", "pack_farmer", "pack_explorer"])
+	assert_eq([q.inventory.w, q.inventory.h], [12, 7])
 
 func _top_count(inv: Inventory, id: String) -> int:
 	var n := 0

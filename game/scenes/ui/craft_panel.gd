@@ -4,6 +4,9 @@ extends PanelContainer
 
 signal closed
 
+## Shown as a tab inside the MenuShell: no frame and no close button of its own.
+var embedded := false
+
 var kind := "crafting"
 var player: PlayerData
 var _sel := ""
@@ -34,7 +37,8 @@ func _ready() -> void:
 	head.add_child(t)
 	if GameState.craft_sources(player).size() > 1:
 		head.add_child(UITheme.label("Using your pack + farm chest   ", 8, UITheme.MUTED))
-	head.add_child(UITheme.button("Close", func(): closed.emit()))
+	if not embedded:
+		head.add_child(UITheme.button("Close", func(): closed.emit()))
 	var cols := HBoxContainer.new()
 	cols.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	cols.add_theme_constant_override("separation", 10)

@@ -5,7 +5,7 @@ Every layer is grayscale (light 240 / mid 196 / shade 150 / outline 70) so Godot
 with `modulate` (multiply) - one sheet serves every skin, hair and outfit color.
 Sheet layout: 7 columns (idle, walk0..3, tool0..1) x 3 rows (down, up, side-facing-right). Frames are 32x48.
 
-Outputs game/assets/characters/{body,face,shirt,pants,shoes,hair_<style>}.png
+Outputs game/assets/characters/{body,face,shirt,pants,shoes,pack,hair_<style>}.png
 """
 import argparse
 import os
@@ -76,7 +76,7 @@ class Layer:
 
 
 def frame(direction, fr):
-    L = {k: Layer() for k in ["body", "face", "shirt", "pants", "shoes"] + [f"hair_{h}" for h in HAIR]}
+    L = {k: Layer() for k in ["body", "face", "shirt", "pants", "shoes", "pack"] + [f"hair_{h}" for h in HAIR]}
     walk = fr.startswith("walk")
     step = int(fr[-1]) if walk else -1
     tool = fr.startswith("tool")
@@ -119,6 +119,16 @@ def frame(direction, fr):
         for ax, off in ((7, arm_l), (22, arm_r)):
             L["shirt"].rect(ax, ty + 1 + off, ax + 2, ty + 5 + off)
             L["body"].rect(ax, ty + 6 + off, ax + 2, ty + 8 + off)
+
+    # backpack: full pack from behind, a side profile, straps from the front
+    if direction == "up":
+        L["pack"].rect(10, ty - 1, 21, ty + 9)
+        L["pack"].rect(12, ty + 4, 19, ty + 7)
+    elif side:
+        L["pack"].rect(7, ty, 11, ty + 9)
+    else:
+        L["pack"].rect(11, ty, 12, ty + 6, shade=False)
+        L["pack"].rect(19, ty, 20, ty + 6, shade=False)
 
     # head
     L["body"].ellipse(16, hy, 8.5, 8.2, rim=True)

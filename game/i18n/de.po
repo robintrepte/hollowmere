@@ -8184,3 +8184,86 @@ msgstr "Während du weg warst"
 msgid "All quiet on the farm."
 msgstr "Auf dem Hof war es ruhig."
 
+#, c-format
+msgid "%d chips"
+msgstr "%d Chips"
+
+msgid "A bait box and a lucky lure: fish bite sooner and rarer ones show up."
+msgstr "Köderbox und Glücksköder: Fische beißen schneller an und seltenere tauchen auf."
+
+msgid "A headlamp clip and ore straps: you see further underground and find more ore."
+msgstr "Stirnlampen-Clip und Erzgurte: Du siehst unter Tage weiter und findest mehr Erz."
+
+msgid "A sturdy everyday pack."
+msgstr "Ein robuster Rucksack für jeden Tag."
+
+msgid "Angler's Pack"
+msgstr "Angler-Rucksack"
+
+msgid "Collection"
+msgstr "Sammlung"
+
+msgid "Emotes"
+msgstr "Emotes"
+
+msgid "Equip"
+msgstr "Anlegen"
+
+msgid "Equipped ✓"
+msgstr "Angelegt ✓"
+
+msgid "Gardener's Pack"
+msgstr "Gärtner-Rucksack"
+
+msgid "Gold-stitched velvet. A touch of luck rides along."
+msgstr "Goldbestickter Samt. Ein Hauch Glück reist mit."
+
+msgid "High Roller's Pack"
+msgstr "High-Roller-Rucksack"
+
+msgid "Inventory"
+msgstr "Inventar"
+
+msgid "Light on the shoulders: you walk a little faster."
+msgstr "Leicht auf den Schultern: Du läufst etwas schneller."
+
+msgid "Map"
+msgstr "Map"
+
+msgid "Miner's Pack"
+msgstr "Bergbau-Rucksack"
+
+msgid "Not enough chips."
+msgstr "Nicht genug Chips."
+
+msgid "Roomy, with a seed pocket that keeps planting quick."
+msgstr "Geräumig, mit Saatguttasche für schnelles Pflanzen."
+
+msgid "Seed slots and a trowel loop: crops grow a bit faster for you."
+msgstr "Saatfächer und Schaufelschlaufe: Deine Pflanzen wachsen etwas schneller."
+
+msgid "Sells when the game day turns over. Take items back out any time before then."
+msgstr "Wird beim Tageswechsel im Spiel verkauft. Bis dahin kannst du Items jederzeit wieder herausnehmen."
+
+msgid "Skills"
+msgstr "Skills"
+
+msgid "Switch packs"
+msgstr "Rucksack wechseln"
+
+msgid "The biggest pack in the valley."
+msgstr "Der größte Rucksack im Tal."
+
+#, c-format
+msgid "Your things don't fit in the %s. Make some room first."
+msgstr "Deine Sachen passen nicht in den %s. Mach erst etwas Platz."
+
+msgid "D-pad move · A pick up / drop · X actions · B rotate · Start close"
+msgstr "Steuerkreuz bewegen · A aufnehmen / ablegen · X Aktionen · B drehen · Start schließen"
+
+msgid "Drag to move · Double-click a bag to open · R rotate · Right-click for actions · Shift-click quick move · Esc close"
+msgstr "Ziehen zum Verschieben · Doppelklick öffnet Taschen · R drehen · Rechtsklick für Aktionen · Shift-Klick verschiebt schnell · Esc schließen"
+
+msgid "Tap to pick up, tap again to place · Double-tap a bag to open · Hold an item for actions · Rotate turns it · X closes"
+msgstr "Tippen zum Aufnehmen, erneut tippen zum Ablegen · Doppeltippen öffnet Taschen · Gedrückt halten für Aktionen · Drehen dreht das Item · X schließt"
+

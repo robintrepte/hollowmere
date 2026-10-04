@@ -1,6 +1,6 @@
 class_name PauseMenu
 extends PanelContainer
-## Esc menu: resume, shortcuts to the party / journal / crafting / map panels (the only way in on a phone),
+## Esc menu: resume, the game menu (the only way in on a phone),
 ## save, settings, quit to title / desktop.
 
 signal closed
@@ -26,26 +26,14 @@ func _ready() -> void:
 	var t := UITheme.label("Paused" if not Net.is_online() else "Menu", 14, UITheme.WOOD_DK)
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(t)
+	var pd := GameState.local_player()
 	var resume := UITheme.button("Resume", func(): closed.emit())
 	v.add_child(resume)
-	var panels := HBoxContainer.new()
-	panels.add_theme_constant_override("separation", 4)
-	v.add_child(panels)
-	var pd := GameState.local_player()
-	for spec in [["Party", func(): return PartyPanel.new(pd)], ["Journal", func(): return JournalPanel.new(pd)],
-			["Crafting", func(): return CraftPanel.new(pd, "crafting")]]:
-		var make: Callable = spec[1]
-		var b := UITheme.button(spec[0], func():
-			closed.emit()
-			ui.open(make.call()))
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.disabled = pd == null
-		panels.add_child(b)
-	var map_btn := UITheme.button("Valley map", func():
+	var menu_btn := UITheme.button("Menu", func():
 		closed.emit()
-		ui.open(MapPanel.new()))
-	map_btn.disabled = pd == null
-	v.add_child(map_btn)
+		ui.open(MenuShell.new(ui, "inventory")))
+	menu_btn.disabled = pd == null
+	v.add_child(menu_btn)
 	var save := UITheme.button("Save game", func():
 		if SaveManager.save_game():
 			EventBus.toast.emit("Game saved.", "")

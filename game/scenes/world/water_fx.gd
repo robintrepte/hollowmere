@@ -226,6 +226,7 @@ func _sync(src: Node, mirror: Node2D) -> void:
 			b.frame = a.frame
 			b.flip_h = a.flip_h
 			b.modulate = a.modulate
+			b.visible = a.visible
 			b.offset = a.offset
 			b.hframes = a.hframes
 			b.vframes = a.vframes

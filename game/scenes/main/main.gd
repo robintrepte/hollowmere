@@ -306,33 +306,24 @@ func _unhandled_input(event: InputEvent) -> void:
 			await _fade_to(0.0))
 		ui.open(pm)
 		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("inventory"):
-		Audio.sfx("open")
-		ui.open(InventoryPanel.new(GameState.local_player()))
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("party"):
-		Audio.sfx("open")
-		ui.open(PartyPanel.new(GameState.local_player()))
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("journal"):
-		Audio.sfx("open")
-		ui.open(JournalPanel.new(GameState.local_player()))
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("craft"):
-		Audio.sfx("open")
-		ui.open(CraftPanel.new(GameState.local_player(), "crafting"))
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("map"):
-		Audio.sfx("open")
-		ui.open(MapPanel.new())
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("coop"):
+		return
+	for action in ["inventory", "party", "journal", "craft", "map", "skills"]:
+		if InputMap.has_action(action) and event.is_action_pressed(action):
+			Audio.sfx("open")
+			open_menu(action)
+			get_viewport().set_input_as_handled()
+			return
+	if event.is_action_pressed("coop"):
 		Audio.sfx("open")
 		ui.open(CoopPanel.new(ui, true))
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("chat") and Net.is_online():
 		_open_chat()
 		get_viewport().set_input_as_handled()
+
+## Opens the menu shell on the tab for a hotkey action (or a tab id).
+func open_menu(tab: String) -> void:
+	ui.open(MenuShell.new(ui, tab))
 
 func _open_chat() -> void:
 	var bar := PanelContainer.new()

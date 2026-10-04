@@ -4,6 +4,9 @@ extends PanelContainer
 
 signal closed
 
+## Shown as a tab inside the MenuShell: no frame and no close button of its own.
+var embedded := false
+
 const CROSS := [
 	["", "whisperwood", ""],
 	["farm", "town", "tidecove"],
@@ -28,7 +31,8 @@ func _ready() -> void:
 	var title := UITheme.label("Valley map", 14, UITheme.WOOD_DK)
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(title)
-	head.add_child(UITheme.button("Close", func(): closed.emit()))
+	if not embedded:
+		head.add_child(UITheme.button("Close", func(): closed.emit()))
 	var here := _here_id()
 	var where := UITheme.label(tr("You are in %s") % _place_name(here), 10, UITheme.INK)
 	where.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

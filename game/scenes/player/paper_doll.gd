@@ -3,7 +3,7 @@ extends Node2D
 ## Layered, tinted character sprite. Origin is at the feet.
 ## Sheet: 7 columns (idle, walk0..3, tool0..1) x 3 rows (down, up, side).
 
-const LAYERS := ["shoes", "pants", "shirt", "body", "face", "hair"]
+const LAYERS := ["shoes", "pants", "shirt", "pack", "body", "face", "hair"]
 const WALK_FPS := 8.0
 const RUN_FPS := 14.0
 
@@ -25,6 +25,7 @@ func _ready() -> void:
 		s.texture = Art.doll_layer(l) if l != "hair" else Art.hair_layer(0)
 		add_child(s)
 		_sprites[l] = s
+	_sprites.pack.visible = false
 	if not _look.is_empty():
 		set_look(_look)
 
@@ -38,6 +39,13 @@ func set_look(look: Dictionary) -> void:
 	_sprites.shirt.modulate = Art.color(look.get("shirt", "#4a8ac0"))
 	_sprites.pants.modulate = Art.color(look.get("pants", "#3a3a5a"))
 	_sprites.shoes.modulate = Art.color(look.get("shoes", "#5a3a2a"))
+
+## Shows a worn pack in the given color; a transparent color hides it.
+func set_pack(tint: Color) -> void:
+	if _sprites.is_empty():
+		return
+	_sprites.pack.visible = tint.a > 0.0
+	_sprites.pack.modulate = tint
 
 func swing() -> void:
 	_tool_t = 0.0

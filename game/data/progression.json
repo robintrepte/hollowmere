@@ -75,10 +75,14 @@
     {"score": 5000000,"name": "Prestige III"}
   ],
   "backpacks": [
-    {"level": 0, "name": "Rucksack",      "w": 7,  "h": 4, "price": 0},
-    {"level": 1, "name": "Farmer's Pack", "w": 8,  "h": 5, "price": 2000},
-    {"level": 2, "name": "Explorer Pack", "w": 10, "h": 6, "price": 10000, "requires": "shrine:2"},
-    {"level": 3, "name": "Warden Pack",   "w": 12, "h": 7, "price": 30000, "requires": "shrine:6"}
+    {"id": "pack_rucksack", "tint": "#8a6a48", "name": "Rucksack", "w": 9, "h": 5, "price": 0, "desc": "A sturdy everyday pack."},
+    {"id": "pack_farmer", "tint": "#6f8a3e", "name": "Farmer's Pack", "w": 10, "h": 6, "price": 2000, "desc": "Roomy, with a seed pocket that keeps planting quick.", "mods": {"crop_growth": 0.02}},
+    {"id": "pack_explorer", "tint": "#3e6f8a", "name": "Explorer Pack", "w": 12, "h": 7, "price": 10000, "requires": "shrine:2", "desc": "Light on the shoulders: you walk a little faster.", "mods": {"move_speed": 0.05}},
+    {"id": "pack_warden", "tint": "#5a4a7a", "name": "Warden Pack", "w": 14, "h": 8, "price": 30000, "requires": "shrine:6", "desc": "The biggest pack in the valley.", "mods": {"move_speed": 0.03}},
+    {"id": "pack_gardener", "tint": "#4f9a5a", "name": "Gardener's Pack", "w": 10, "h": 6, "price": 6000, "requires": "level:4", "desc": "Seed slots and a trowel loop: crops grow a bit faster for you.", "mods": {"crop_growth": 0.05, "crop_quality": 0.02}},
+    {"id": "pack_angler", "tint": "#3a7aa0", "name": "Angler's Pack", "w": 10, "h": 6, "price": 6000, "shop": "angler", "desc": "A bait box and a lucky lure: fish bite sooner and rarer ones show up.", "mods": {"fish_bite": 0.1, "fish_luck": 0.05}},
+    {"id": "pack_miner", "tint": "#7a6a5a", "name": "Miner's Pack", "w": 10, "h": 6, "price": 6000, "shop": "mining_guild", "desc": "A headlamp clip and ore straps: you see further underground and find more ore.", "mods": {"light_radius": 1.0, "ore_luck": 0.05}},
+    {"id": "pack_casino", "tint": "#a03a4a", "name": "High Roller's Pack", "w": 11, "h": 6, "price": 0, "chips": 5000, "shop": "casino", "desc": "Gold-stitched velvet. A touch of luck rides along.", "mods": {"chest_luck": 0.02, "forage_luck": 0.02}}
   ],
   "farm_levels": [
     {"level": 2,  "text": "Flower Beds and Picket Fences are now sold at Bram's.", "reward": {"money": 250}},
