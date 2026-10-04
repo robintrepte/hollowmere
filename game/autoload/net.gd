@@ -205,6 +205,7 @@ func _finish_login(s: NakamaSession) -> String:
 	_save_refresh(s)
 	await _load_account()
 	session_changed.emit(true)
+	Settings.sync_profile()
 	return ""
 
 var is_guest: bool = false
@@ -264,6 +265,7 @@ func try_restore_session() -> bool:
 	_save_refresh(s)
 	await _load_account()
 	session_changed.emit(true)
+	Settings.sync_profile()
 	return true
 
 func logout() -> void:
@@ -330,6 +332,30 @@ func cloud_delete(slot: int) -> void:
 	if not has_session():
 		return
 	await client.delete_storage_objects_async(session, [NakamaStorageObjectId.new("saves", "slot_%d" % slot)])
+
+# --- Account profile (settings that follow the player) ------------------------------------------
+
+func profile_load() -> Dictionary:
+	if not has_session():
+		return {"error": "Sign in first."}
+	var res = await client.read_storage_objects_async(session, [NakamaStorageObjectId.new("profile", "settings", account_id)])
+	if res.is_exception():
+		return {"error": friendly_error(res.get_exception())}
+	for o in res.objects:
+		var j = JSON.parse_string(o.value)
+		if j is Dictionary:
+			return j
+	return {}
+
+func profile_save(data: Dictionary) -> bool:
+	if not has_session():
+		return false
+	var obj := NakamaWriteStorageObject.new("profile", "settings", 1, 1, JSON.stringify(data), "")
+	var res = await client.write_storage_objects_async(session, [obj])
+	if res.is_exception():
+		push_warning("Profile sync failed: %s" % friendly_error(res.get_exception()))
+		return false
+	return true
 
 # --- Co-op ---------------------------------------------------------------------------------------
 

@@ -13,6 +13,9 @@ func _ready() -> void:
 		get_tree().quit(1 if require else 0)
 		return
 	var tag := "%08x%04x" % [randi(), Time.get_ticks_msec() % 0xffff]
+	# Every sign-in pulls the test account's profile; the player's own settings come back at the end.
+	var keep := Settings.synced_values()
+	var keep_stamps: Dictionary = Settings.stamps.duplicate()
 
 	# Guest login, then upgrade the guest to an email account.
 	_ok(await Net.login_device("test-device-%s" % tag) == "", "guest login")
@@ -42,6 +45,22 @@ func _ready() -> void:
 
 	await Net.cloud_delete(2)
 	_ok((await Net.cloud_list()).is_empty(), "cloud delete")
+
+	# Account profile: a setting changed on another device wins when it is newer.
+	var later := Time.get_unix_time_from_system() + 60.0
+	_ok(await Net.profile_save({"values": {"music_volume": 0.33}, "stamps": {"music_volume": later}}), "profile saved")
+	var prof: Dictionary = await Net.profile_load()
+	_ok(is_equal_approx(float(prof.get("values", {}).get("music_volume", 0.0)), 0.33), "profile round trip")
+	await Settings.sync_profile()
+	_ok(is_equal_approx(Settings.music_volume, 0.33), "newer account setting is applied on sign-in")
+	prof = await Net.profile_load()
+	_ok(prof.get("values", {}).has("text_scale"), "settings the account lacked are uploaded")
+	var bad_key := NakamaWriteStorageObject.new("profile", "secrets", 1, 1, "{\"values\":{}}", "")
+	_ok((await Net.client.write_storage_objects_async(Net.session, [bad_key])).is_exception(), "unknown profile keys are rejected")
+	var bad_shape := NakamaWriteStorageObject.new("profile", "settings", 1, 1, "{\"x\":1}", "")
+	_ok((await Net.client.write_storage_objects_async(Net.session, [bad_shape])).is_exception(), "profiles without values are rejected")
+	var huge := NakamaWriteStorageObject.new("profile", "settings", 1, 1, JSON.stringify({"values": {"profile": {"x": "y".repeat(70000)}}, "stamps": {}}), "")
+	_ok((await Net.client.write_storage_objects_async(Net.session, [huge])).is_exception(), "oversized profiles are rejected")
 
 	# Invite codes.
 	var code: Dictionary = await Net.call_rpc("create_coop_code", {"match_id": "fake-match-id.%s" % tag})
@@ -88,6 +107,12 @@ func _ready() -> void:
 	var refreshed: NakamaSession = await Net.client.session_refresh_async(Net.session)
 	_ok(not refreshed.is_exception() and not refreshed.is_expired(), "restored session can refresh")
 	await Net.logout()
+	await get_tree().create_timer(1.0).timeout
+	for k in keep:
+		Settings.set(k, keep[k])
+	Settings.stamps = keep_stamps
+	Settings._write_cfg()
+	Settings.apply()
 
 	print("SERVER TEST DONE, %d failures" % _fails)
 	get_tree().quit(1 if _fails > 0 else 0)

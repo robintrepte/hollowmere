@@ -73,10 +73,21 @@ var error_reports: bool = true          ## send crash and error reports (no pers
 var analytics: bool = false            ## opt-in: session length and progress
 var analytics_asked: bool = false
 var touch_controls: String = "auto"     ## auto (touchscreens) | on | off
+var hemisphere: String = "auto"         ## auto (from the locale) | north | south
+var profile: Dictionary = {}           ## free-form per-account data: tutorials seen, emote wheel, window spots
+var stamps: Dictionary = {}            ## key -> unix time of the last change, for merging with the account copy
 
 const SAVED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind", "screen_shake",
 	"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves",
-	"custom_keys", "locale", "error_reports", "analytics", "analytics_asked", "touch_controls"]
+	"custom_keys", "locale", "error_reports", "analytics", "analytics_asked", "touch_controls", "hemisphere", "profile", "stamps"]
+## Follows the account to every device. The rest belongs to this device (screen, server, input hardware).
+const SYNCED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind",
+	"screen_shake", "twelve_hour", "auto_pause_menus", "custom_keys", "locale", "error_reports", "analytics",
+	"analytics_asked", "hemisphere", "profile"]
+const PROFILE_UPLOAD_DELAY := 3.0
+
+var _saved_snapshot: Dictionary = {}
+var _upload_timer: SceneTreeTimer
 
 const I18N_DIR := "res://i18n"
 
@@ -228,15 +239,120 @@ func seconds_per_ten_minutes() -> float:
 
 func load_settings() -> void:
 	var cfg := ConfigFile.new()
-	if cfg.load(PATH) != OK:
-		return
-	for k in SAVED:
-		if cfg.has_section_key("settings", k):
-			set(k, cfg.get_value("settings", k))
+	if cfg.load(PATH) == OK:
+		for k in SAVED:
+			if cfg.has_section_key("settings", k):
+				set(k, cfg.get_value("settings", k))
 	if ui_font not in FONTS:
 		ui_font = "pixel"
+	_saved_snapshot = synced_values()
 
+func synced_values() -> Dictionary:
+	var out := {}
+	for k in SYNCED:
+		out[k] = get(k)
+	return out
+
+## Every setting that changed since the last save gets a fresh stamp, then the account copy follows.
 func save_settings() -> void:
+	var now := Time.get_unix_time_from_system()
+	for k in SYNCED:
+		if not _saved_snapshot.has(k) or var_to_str(_saved_snapshot[k]) != var_to_str(get(k)):
+			stamps[k] = now
+	_saved_snapshot = synced_values()
+	_write_cfg()
+	_queue_profile_upload()
+
+func profile_get(key: String, default: Variant = null) -> Variant:
+	return profile.get(key, default)
+
+func profile_set(key: String, value: Variant) -> void:
+	profile[key] = value
+	save_settings()
+
+## Newer stamp wins per key. Keys only one side knows keep that side's value.
+static func merge(local_vals: Dictionary, local_stamps: Dictionary, remote_vals: Dictionary, remote_stamps: Dictionary) -> Dictionary:
+	var vals := local_vals.duplicate(true)
+	var st := local_stamps.duplicate()
+	var local_changed := false
+	var remote_stale := false
+	for k in SYNCED:
+		var lt := float(local_stamps.get(k, 0.0))
+		var rt := float(remote_stamps.get(k, 0.0))
+		if remote_vals.has(k) and rt > lt:
+			if var_to_str(vals.get(k)) != var_to_str(remote_vals[k]):
+				local_changed = true
+			vals[k] = remote_vals[k]
+			st[k] = rt
+		elif lt > rt or not remote_vals.has(k):
+			remote_stale = true
+	return {"values": vals, "stamps": st, "local_changed": local_changed, "remote_stale": remote_stale}
+
+## Called after sign-in: pull the account copy, keep whichever side changed each setting last.
+func sync_profile() -> void:
+	var net := get_node_or_null("/root/Net")
+	if net == null or not net.has_session():
+		return
+	var remote: Dictionary = await net.profile_load()
+	if remote.has("error"):
+		return
+	var m := merge(synced_values(), stamps, remote.get("values", {}), remote.get("stamps", {}))
+	if m.local_changed:
+		var prev_scale := text_scale
+		var prev_font := ui_font
+		for k in m.values:
+			if k in SYNCED:
+				set(k, _typed(k, m.values[k]))
+		stamps = m.stamps
+		_saved_snapshot = synced_values()
+		_write_cfg()
+		register_inputs()
+		apply()
+		if prev_scale != text_scale or prev_font != ui_font:
+			text_scale_changed.emit()
+	if m.remote_stale:
+		await upload_profile()
+
+## JSON turns ints into floats and loses dictionary key types.
+func _typed(k: String, v: Variant) -> Variant:
+	var cur: Variant = get(k)
+	match typeof(cur):
+		TYPE_BOOL:
+			return bool(v)
+		TYPE_INT:
+			return int(v)
+		TYPE_FLOAT:
+			return float(v)
+		TYPE_STRING:
+			return str(v)
+		TYPE_DICTIONARY:
+			if k == "custom_keys" and v is Dictionary:
+				var keys := {}
+				for a in v:
+					var codes: Array = []
+					for c in v[a]:
+						codes.append(int(c))
+					keys[str(a)] = codes
+				return keys
+			return v if v is Dictionary else {}
+	return v
+
+func upload_profile() -> void:
+	var net := get_node_or_null("/root/Net")
+	if net == null or not net.has_session():
+		return
+	await net.profile_save({"values": synced_values(), "stamps": stamps})
+
+func _queue_profile_upload() -> void:
+	var net := get_node_or_null("/root/Net")
+	if net == null or not net.has_session() or not is_inside_tree():
+		return
+	if _upload_timer and _upload_timer.time_left > 0.0:
+		return
+	_upload_timer = get_tree().create_timer(PROFILE_UPLOAD_DELAY, true, false, true)
+	_upload_timer.timeout.connect(upload_profile)
+
+func _write_cfg() -> void:
 	var cfg := ConfigFile.new()
 	for k in SAVED:
 		## Only a server the player changed is pinned, so builds can move to a new address.

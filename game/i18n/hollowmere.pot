@@ -472,7 +472,7 @@ msgstr ""
 msgid "%s left the battle."
 msgstr ""
 
-#: autoload/net.gd:426
+#: autoload/net.gd:452
 #, c-format
 msgid "%s left the farm."
 msgstr ""

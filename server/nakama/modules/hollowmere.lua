@@ -129,22 +129,46 @@ local function health(_ctx, _payload)
   return nk.json_encode({ok = true, time = nk.time()})
 end
 
--- Clients may only write their own save slots, with sane sizes and private permissions.
-local function before_write(ctx, payload)
+local PROFILE_KEYS = {settings = true, meta = true}
+
+local function check_save(ctx, obj)
   local max_bytes = tonumber(getenv(ctx, "max_save_bytes", "3145728"))
+  if not string.match(obj.key or "", "^slot_[0-5]$") then
+    error({"bad save slot", 3})
+  end
+  if #(obj.value or "") > max_bytes then
+    error({"save too large", 3})
+  end
+  local ok, decoded = pcall(nk.json_decode, obj.value)
+  if not ok or type(decoded) ~= "table" or decoded.version == nil then
+    error({"save must be a Hollowmere save", 3})
+  end
+end
+
+-- Settings that follow the account between devices: {"values": {...}, "stamps": {...}}.
+local function check_profile(ctx, obj)
+  local max_bytes = tonumber(getenv(ctx, "max_profile_bytes", "65536"))
+  if not PROFILE_KEYS[obj.key or ""] then
+    error({"bad profile key", 3})
+  end
+  if #(obj.value or "") > max_bytes then
+    error({"profile too large", 3})
+  end
+  local ok, decoded = pcall(nk.json_decode, obj.value)
+  if not ok or type(decoded) ~= "table" or type(decoded.values) ~= "table" or type(decoded.stamps or {}) ~= "table" then
+    error({"profile must have values and stamps", 3})
+  end
+end
+
+-- Clients may only write their own save slots and profile, with sane sizes and private permissions.
+local function before_write(ctx, payload)
   for _, obj in ipairs(payload.objects or {}) do
-    if obj.collection ~= "saves" then
-      error({"writes allowed only to saves", 7})
-    end
-    if not string.match(obj.key or "", "^slot_[0-5]$") then
-      error({"bad save slot", 3})
-    end
-    if #(obj.value or "") > max_bytes then
-      error({"save too large", 3})
-    end
-    local ok, decoded = pcall(nk.json_decode, obj.value)
-    if not ok or type(decoded) ~= "table" or decoded.version == nil then
-      error({"save must be a Hollowmere save", 3})
+    if obj.collection == "saves" then
+      check_save(ctx, obj)
+    elseif obj.collection == "profile" then
+      check_profile(ctx, obj)
+    else
+      error({"writes allowed only to saves and profile", 7})
     end
     obj.permission_read = 1
     obj.permission_write = 1

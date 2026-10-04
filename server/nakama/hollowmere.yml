@@ -13,6 +13,7 @@ runtime:
   path: "/nakama/data/modules"
   env:
     - "max_save_bytes=3145728"
+    - "max_profile_bytes=65536"
     - "code_ttl_sec=43200"
 match:
   max_empty_sec: 30
