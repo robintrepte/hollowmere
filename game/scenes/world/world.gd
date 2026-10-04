@@ -929,7 +929,7 @@ func _apply_weather() -> void:
 	else:
 		weather.set_kind(GameState.world.get("weather", "sun"))
 
-func _on_popup(at: Vector2, text: String, col: Color) -> void:
+func _on_popup(at: Vector2, text: String, col: Color, icon: String) -> void:
 	if not is_inside_tree():
 		return
 	var l := UITheme.label(text, 9, col, true)
@@ -937,6 +937,14 @@ func _on_popup(at: Vector2, text: String, col: Color) -> void:
 	l.size = Vector2(80, 12)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	l.z_index = 60
+	if icon != "":
+		var ic := TextureRect.new()
+		ic.texture = Art.item(icon)
+		ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		ic.size = Vector2(10, 10)
+		ic.position = Vector2(40 - l.get_minimum_size().x / 2.0 - 12, 1)
+		l.add_child(ic)
 	overlay.add_child(l)
 	var tw := l.create_tween()
 	tw.set_parallel(true)

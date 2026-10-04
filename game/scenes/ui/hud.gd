@@ -329,7 +329,7 @@ func _process(delta: float) -> void:
 		_money_shown = lerpf(_money_shown, target, minf(1.0, delta * 8.0))
 		if absf(_money_shown - target) < 1.0:
 			_money_shown = target
-	_money.text = str(int(round(_money_shown)))
+	_money.text = Num.group(int(round(_money_shown)))
 	if _name_t > 0:
 		_name_t -= delta
 		_hotbar_name.modulate.a = clampf(_name_t, 0, 1)

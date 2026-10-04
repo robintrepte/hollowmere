@@ -200,7 +200,7 @@ func add_money(n: int, at: Vector2 = Vector2.INF) -> void:
 		world.stats.earned = int(world.stats.get("earned", 0)) + n
 	EventBus.money_changed.emit(int(world.money), n)
 	if at != Vector2.INF and n != 0:
-		EventBus.popup.emit(at, ("+%dg" % n) if n > 0 else ("%dg" % n), Color("#ffd447") if n > 0 else Color("#ff7a7a"))
+		EventBus.popup.emit(at, ("+" if n > 0 else "-") + Num.short(absi(n)), Color("#ffd447") if n > 0 else Color("#ff7a7a"), "_coin")
 
 func spend(n: int) -> bool:
 	if int(world.money) < n:
@@ -213,7 +213,7 @@ func add_farm_xp(n: int, at: Vector2 = Vector2.INF) -> void:
 		return
 	var ups := Progression.add_farm_xp(world.farm, n)
 	if at != Vector2.INF:
-		EventBus.popup.emit(at + Vector2(0, -10), tr("+%d XP") % n, Color("#8fe36b"))
+		EventBus.popup.emit(at + Vector2(0, -10), tr("+%d XP") % n, Color("#8fe36b"), "")
 	for lv in ups:
 		var info := Progression.level_reward(lv)
 		grant(info.get("reward", {}), local_player())
@@ -223,7 +223,7 @@ func bump_stat(key: String, n: int = 1) -> void:
 	world.stats[key] = int(world.stats.get(key, 0)) + n
 	for c in Progression.bump(world.weekly, key, n):
 		add_money(int(c.reward_money))
-		EventBus.toast.emit("Weekly challenge complete: %s (+%dg)" % [c.text, int(c.reward_money)], "star")
+		EventBus.toast.emit(tr("Weekly challenge complete: %s (+%s)") % [tr(c.text), CoinLabel.text(int(c.reward_money))], "star")
 	EventBus.quest_updated.emit()
 
 ## Grants a reward dict {item: n, money: n, recipe: id}
@@ -807,7 +807,7 @@ func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Diction
 	if r.ok:
 		EventBus.tile_changed.emit(map_id, t)
 		for fx in r.fx:
-			EventBus.popup.emit(at, fx[0], fx[1])
+			EventBus.popup.emit(at, fx[0], fx[1], "")
 	return r
 
 ## Water can flow far along a trench; repaint every trench tile and the soil around them.
@@ -938,7 +938,7 @@ func harvest_at(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 		EventBus.tile_changed.emit(map_id, t)
 		EventBus.objects_changed.emit(map_id)
 		for fx in r.fx:
-			EventBus.popup.emit(at, fx[0], fx[1])
+			EventBus.popup.emit(at, fx[0], fx[1], "")
 	return r
 
 func load_machine(pid: String, map_id: String, t: Vector2i, uid: String) -> Dictionary:

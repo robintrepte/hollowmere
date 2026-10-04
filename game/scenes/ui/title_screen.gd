@@ -235,7 +235,7 @@ func _open_load() -> void:
 		var s := int(m.slot)
 		var h := HBoxContainer.new()
 		v.add_child(h)
-		var txt := tr("%s · %s Farm\n%s · %dg") % [m.get("player", "?"), m.get("farm", "?"), Calendar.date_string(int(m.get("day", 0))), int(m.get("money", 0))]
+		var txt := tr("%s · %s Farm\n%s · %s") % [m.get("player", "?"), m.get("farm", "?"), Calendar.date_string(int(m.get("day", 0))), CoinLabel.text(int(m.get("money", 0)))]
 		var b := UITheme.button(txt, func(): ui.close(p); load_requested.emit(int(s)))
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -267,7 +267,7 @@ func _fill_cloud(box: VBoxContainer, p: Control) -> void:
 		var m: Dictionary = c.meta
 		var s := int(c.slot)
 		var payload: Dictionary = c.payload
-		var txt := tr("● %s · %s Farm\n%s · %dg") % [m.get("player", "?"), m.get("farm", "?"), Calendar.date_string(int(m.get("day", 0))), int(m.get("money", 0))]
+		var txt := tr("● %s · %s Farm\n%s · %s") % [m.get("player", "?"), m.get("farm", "?"), Calendar.date_string(int(m.get("day", 0))), CoinLabel.text(int(m.get("money", 0)))]
 		var b := UITheme.button(txt, func():
 			if SaveManager.install_payload(s, payload):
 				ui.close(p)

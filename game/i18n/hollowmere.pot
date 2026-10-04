@@ -8,11 +8,6 @@ msgstr ""
 msgid "\n+%d energy"
 msgstr ""
 
-#: scenes/ui/item_slot.gd:32
-#, c-format
-msgid "\nSells for %dg"
-msgstr ""
-
 #: scenes/battle/battle_screen.gd:973
 #, c-format
 msgid "   (%d%%)"
@@ -107,7 +102,7 @@ msgstr ""
 msgid "#%03d %s%s"
 msgstr ""
 
-#: scenes/main/adventure_flow.gd:36 scenes/ui/day_report.gd:75
+#: scenes/main/adventure_flow.gd:36 scenes/ui/day_report.gd:77
 #, c-format
 msgid "%d %s"
 msgstr ""
@@ -119,20 +114,20 @@ msgstr ""
 
 #: scenes/ui/journal_panel.gd:258
 #, c-format
-msgid "%d / %d  ·  Reward %dg"
+msgid "%d / %d  ·  Reward %s"
 msgstr ""
 
-#: scenes/ui/day_report.gd:77
+#: scenes/ui/day_report.gd:79
 #, c-format
 msgid "%d Wildlings are tired and need rest"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:247
+#: scenes/ui/shop_panel.gd:251
 #, c-format
 msgid "%d chips"
 msgstr ""
 
-#: scenes/ui/day_report.gd:79
+#: scenes/ui/day_report.gd:81
 #, c-format
 msgid "%d crops ripened"
 msgstr ""
@@ -187,7 +182,7 @@ msgstr ""
 msgid "%d more known moves. Click a slot to swap."
 msgstr ""
 
-#: scenes/ui/day_report.gd:89
+#: scenes/ui/day_report.gd:91
 #, c-format
 msgid "%d new eggs in the farm chest!"
 msgstr ""
@@ -195,11 +190,6 @@ msgstr ""
 #: autoload/time_service.gd:67
 #, c-format
 msgid "%d s"
-msgstr ""
-
-#: scenes/main/adventure_flow.gd:34 scenes/ui/day_report.gd:55 scenes/ui/shop_panel.gd:124 scenes/ui/shop_panel.gd:203 ...
-#, c-format
-msgid "%dg"
 msgstr ""
 
 #: scenes/ui/inventory_panel.gd:335
@@ -237,7 +227,7 @@ msgstr ""
 msgid "%s  Lv%d   HP %d/%d%s"
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:971 scenes/ui/shop_panel.gd:140
+#: scenes/battle/battle_screen.gd:971 scenes/ui/shop_panel.gd:141
 #, c-format
 msgid "%s  x%d"
 msgstr ""
@@ -252,12 +242,12 @@ msgstr ""
 msgid "%s %d"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:205 scenes/ui/shop_panel.gd:228
+#: scenes/ui/shop_panel.gd:209 scenes/ui/shop_panel.gd:232
 #, c-format
 msgid "%s %d/%d"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:225 scenes/ui/shop_panel.gd:232
+#: scenes/ui/shop_panel.gd:229 scenes/ui/shop_panel.gd:236
 #, c-format
 msgid "%s %s"
 msgstr ""
@@ -377,7 +367,7 @@ msgstr ""
 msgid "%s dried off."
 msgstr ""
 
-#: scenes/battle/battle_screen.gd:526 scenes/ui/day_report.gd:87
+#: scenes/battle/battle_screen.gd:526 scenes/ui/day_report.gd:89
 #, c-format
 msgid "%s evolved into %s!"
 msgstr ""
@@ -397,7 +387,7 @@ msgstr ""
 msgid "%s gained %d XP!"
 msgstr ""
 
-#: scenes/common/coin_label.gd:42
+#: scenes/common/coin_label.gd:52
 #, c-format
 msgid "%s gold"
 msgstr ""
@@ -704,15 +694,15 @@ msgstr ""
 
 #: scenes/ui/title_screen.gd:238
 #, c-format
-msgid "%s · %s Farm\n%s · %dg"
+msgid "%s · %s Farm\n%s · %s"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:231
+#: scenes/ui/shop_panel.gd:235
 #, c-format
 msgid "%s → %s. Holds more water and soaks a wider area."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:229
+#: scenes/ui/shop_panel.gd:233
 #, c-format
 msgid "%s → %s. Works a wider area and breaks tougher debris."
 msgstr ""
@@ -837,7 +827,7 @@ msgstr ""
 msgid "%s: Wow, you're good! Rematch tomorrow?"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:111 scenes/ui/shop_panel.gd:103
+#: scenes/ui/account_panel.gd:111 scenes/ui/shop_panel.gd:104
 #, c-format
 msgid "%s:%d"
 msgstr ""
@@ -921,7 +911,7 @@ msgstr ""
 msgid "85 Wildlings befriended!"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:250
+#: scenes/ui/shop_panel.gd:254
 #, c-format
 msgid "A %d x %d grid pack."
 msgstr ""
@@ -1022,7 +1012,7 @@ msgstr ""
 msgid "A critical hit!"
 msgstr ""
 
-#: scenes/ui/day_report.gd:92
+#: scenes/ui/day_report.gd:94
 #, c-format
 msgid "A crow ate %d crop. A scarecrow would help!"
 msgstr ""
@@ -1174,7 +1164,7 @@ msgstr ""
 msgid "A purple gem."
 msgstr ""
 
-#: scenes/ui/day_report.gd:97
+#: scenes/ui/day_report.gd:99
 msgid "A quiet night. A fresh day awaits."
 msgstr ""
 
@@ -1376,7 +1366,7 @@ msgstr ""
 msgid "Ah, the new farmer. Your grandparent would be proud."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:146 scenes/ui/trade_panel.gd:201
+#: scenes/ui/shop_panel.gd:149 scenes/ui/trade_panel.gd:201
 msgid "All"
 msgstr ""
 
@@ -1384,7 +1374,7 @@ msgstr ""
 msgid "All eight shrines are restored! The valley is whole again. Seasonal legends now roam the land, and the Deep Hollow goes ever deeper."
 msgstr ""
 
-#: scenes/ui/day_report.gd:97
+#: scenes/ui/day_report.gd:99
 msgid "All quiet on the farm."
 msgstr ""
 
@@ -1416,7 +1406,7 @@ msgstr ""
 msgid "An ancient tree spirit. Birds nest in its branches."
 msgstr ""
 
-#: scenes/ui/day_report.gd:85
+#: scenes/ui/day_report.gd:87
 #, c-format
 msgid "An egg hatched: %s%s!"
 msgstr ""
@@ -1528,7 +1518,7 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:58
+#: scenes/ui/shop_panel.gd:59
 msgid "Backpacks"
 msgstr ""
 
@@ -1580,7 +1570,7 @@ msgstr ""
 msgid "Bashes with a glowing halo."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:222
+#: scenes/ui/shop_panel.gd:226
 msgid "Basic"
 msgstr ""
 
@@ -1768,7 +1758,7 @@ msgstr ""
 msgid "Both Wildlings must live in the Den."
 msgstr ""
 
-#: autoload/game_state.gd:1072 scenes/ui/shop_panel.gd:269
+#: autoload/game_state.gd:1072 scenes/ui/shop_panel.gd:273
 #, c-format
 msgid "Bought %d %s"
 msgstr ""
@@ -1921,7 +1911,7 @@ msgstr ""
 msgid "Bucket filled"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:213 scenes/ui/shop_panel.gd:54
+#: scenes/ui/shop_panel.gd:217 scenes/ui/shop_panel.gd:55
 msgid "Build"
 msgstr ""
 
@@ -1929,7 +1919,7 @@ msgstr ""
 msgid "Builds stairs to a big new terrace above your farm."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:214
+#: scenes/ui/shop_panel.gd:218
 msgid "Built ✓"
 msgstr ""
 
@@ -1949,7 +1939,7 @@ msgstr ""
 msgid "But it missed!"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:256 scenes/ui/shop_panel.gd:51
+#: scenes/ui/shop_panel.gd:260 scenes/ui/shop_panel.gd:52
 msgid "Buy"
 msgstr ""
 
@@ -2466,7 +2456,7 @@ msgstr ""
 
 #: scenes/ui/journal_panel.gd:202
 #, c-format
-msgid "Delivered! +%dg"
+msgid "Delivered! +%s"
 msgstr ""
 
 #: data/buildings.json
@@ -2698,11 +2688,11 @@ msgstr ""
 msgid "Enter"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:253
+#: scenes/ui/shop_panel.gd:257
 msgid "Equip"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:254
+#: scenes/ui/shop_panel.gd:258
 msgid "Equipped ✓"
 msgstr ""
 
@@ -3116,7 +3106,7 @@ msgstr ""
 msgid "Fully restores HP."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:225
+#: scenes/ui/shop_panel.gd:229
 msgid "Fully upgraded."
 msgstr ""
 
@@ -3897,7 +3887,7 @@ msgstr ""
 
 #: scenes/ui/inventory_panel.gd:362
 #, c-format
-msgid "In the bin: %dg"
+msgid "In the bin: %s"
 msgstr ""
 
 #: scenes/ui/hatchery_panel.gd:131
@@ -4495,7 +4485,7 @@ msgstr ""
 msgid "Let's battle!"
 msgstr ""
 
-#: scenes/ui/day_report.gd:98
+#: scenes/ui/day_report.gd:100
 msgid "Let's go!"
 msgstr ""
 
@@ -4686,7 +4676,7 @@ msgstr ""
 msgid "Max Salve"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:225
+#: scenes/ui/shop_panel.gd:229
 msgid "Max ✓"
 msgstr ""
 
@@ -5127,7 +5117,7 @@ msgstr ""
 msgid "On clear winter nights it paints the sky with light."
 msgstr ""
 
-#: scenes/ui/day_report.gd:81
+#: scenes/ui/day_report.gd:83
 msgid "On the farm"
 msgstr ""
 
@@ -5469,12 +5459,7 @@ msgstr ""
 msgid "Privacy policy"
 msgstr ""
 
-#: scenes/main/adventure_flow.gd:352
-#, c-format
-msgid "Prize: %dg."
-msgstr ""
-
-#: scenes/main/adventure_flow.gd:115 scenes/main/adventure_flow.gd:384 scenes/main/adventure_flow.gd:417
+#: scenes/main/adventure_flow.gd:115 scenes/main/adventure_flow.gd:352 scenes/main/adventure_flow.gd:384 scenes/main/adventure_flow.gd:417
 #, c-format
 msgid "Prize: %s."
 msgstr ""
@@ -5719,7 +5704,7 @@ msgstr ""
 
 #: scenes/ui/journal_panel.gd:193
 #, c-format
-msgid "Reward %dg + friendship  ·  You have %d"
+msgid "Reward %s + friendship  ·  You have %d"
 msgstr ""
 
 #: scenes/ui/journal_panel.gd:270
@@ -6001,18 +5986,17 @@ msgstr ""
 msgid "Selene: The glade likes you. That's rare."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:52
+#: scenes/ui/shop_panel.gd:53
 msgid "Sell"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:144
-#, c-format
-msgid "Sell 1 (%dg)"
+#: scenes/ui/shop_panel.gd:145
+msgid "Sell 1"
 msgstr ""
 
-#: scenes/ui/inventory_panel.gd:331
+#: scenes/ui/inventory_panel.gd:331 scenes/ui/item_slot.gd:32
 #, c-format
-msgid "Sells %dg"
+msgid "Sells for %s"
 msgstr ""
 
 #: scenes/ui/inventory_panel.gd:103
@@ -6107,7 +6091,7 @@ msgstr ""
 msgid "Shift-click moves items between grids in a flash."
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:67
+#: scenes/ui/shop_panel.gd:68
 msgid "Shift-click to buy 5 · Prices rise with quality when selling"
 msgstr ""
 
@@ -6329,7 +6313,7 @@ msgstr ""
 msgid "Solaria"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:88
+#: scenes/ui/shop_panel.gd:89
 msgid "Sold out for today."
 msgstr ""
 
@@ -6495,7 +6479,7 @@ msgstr ""
 msgid "Starfruit Parfait"
 msgstr ""
 
-#: core/battle/battle_engine.gd:159 scenes/ui/day_report.gd:85
+#: core/battle/battle_engine.gd:159 scenes/ui/day_report.gd:87
 msgid "Starry "
 msgstr ""
 
@@ -7356,7 +7340,7 @@ msgstr ""
 msgid "Today: %s at the Show Ring"
 msgstr ""
 
-#: scenes/ui/day_report.gd:95
+#: scenes/ui/day_report.gd:97
 #, c-format
 msgid "Today: %s in the village!"
 msgstr ""
@@ -7393,9 +7377,8 @@ msgstr ""
 msgid "Toss a coin, make a wish. Adds a little luck every day."
 msgstr ""
 
-#: scenes/ui/day_report.gd:59
-#, c-format
-msgid "Total: %dg"
+#: scenes/ui/day_report.gd:61
+msgid "Total:"
 msgstr ""
 
 #: scenes/ui/settings_panel.gd:57
@@ -7524,11 +7507,11 @@ msgstr ""
 msgid "Updraft"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:232
+#: scenes/ui/shop_panel.gd:236
 msgid "Upgrade"
 msgstr ""
 
-#: scenes/ui/shop_panel.gd:56
+#: scenes/ui/shop_panel.gd:57
 msgid "Upgrade tools"
 msgstr ""
 
@@ -7776,7 +7759,7 @@ msgstr ""
 
 #: autoload/game_state.gd:226
 #, c-format
-msgid "Weekly challenge complete: %s (+%dg)"
+msgid "Weekly challenge complete: %s (+%s)"
 msgstr ""
 
 #: data/title_tips.json
@@ -8078,7 +8061,7 @@ msgstr ""
 
 #: scenes/battle/battle_screen.gd:506
 #, c-format
-msgid "You got %dg for winning."
+msgid "You got %s for winning."
 msgstr ""
 
 #: core/battle/battle_engine.gd:275
@@ -8417,23 +8400,23 @@ msgstr ""
 msgid "[%s] "
 msgstr ""
 
-#: scenes/ui/day_report.gd:65
+#: scenes/ui/day_report.gd:67
 msgid "bars smelted"
 msgstr ""
 
-#: scenes/ui/day_report.gd:64
+#: scenes/ui/day_report.gd:66
 msgid "crops harvested"
 msgstr ""
 
-#: scenes/ui/day_report.gd:64
+#: scenes/ui/day_report.gd:66
 msgid "crops nudged to grow"
 msgstr ""
 
-#: scenes/ui/day_report.gd:65
+#: scenes/ui/day_report.gd:67
 msgid "crops pollinated"
 msgstr ""
 
-#: scenes/ui/day_report.gd:64
+#: scenes/ui/day_report.gd:66
 msgid "debris cleared"
 msgstr ""
 
@@ -8445,7 +8428,7 @@ msgstr ""
 msgid "fall"
 msgstr ""
 
-#: scenes/ui/day_report.gd:65
+#: scenes/ui/day_report.gd:67
 msgid "goods preserved"
 msgstr ""
 
@@ -8458,11 +8441,11 @@ msgstr ""
 msgid "hotbar_%d"
 msgstr ""
 
-#: scenes/ui/day_report.gd:66
+#: scenes/ui/day_report.gd:68
 msgid "machine goods collected"
 msgstr ""
 
-#: scenes/ui/day_report.gd:66
+#: scenes/ui/day_report.gd:68
 msgid "machines refilled"
 msgstr ""
 
@@ -8475,7 +8458,7 @@ msgstr ""
 msgid "off season"
 msgstr ""
 
-#: scenes/ui/day_report.gd:65
+#: scenes/ui/day_report.gd:67
 msgid "produce gathered"
 msgstr ""
 
@@ -8520,7 +8503,7 @@ msgstr ""
 msgid "the valley"
 msgstr ""
 
-#: scenes/ui/day_report.gd:64
+#: scenes/ui/day_report.gd:66
 msgid "tiles watered"
 msgstr ""
 
@@ -8562,7 +8545,7 @@ msgstr ""
 
 #: scenes/ui/title_screen.gd:270
 #, c-format
-msgid "● %s · %s Farm\n%s · %dg"
+msgid "● %s · %s Farm\n%s · %s"
 msgstr ""
 
 #: scenes/ui/party_panel.gd:181

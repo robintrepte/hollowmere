@@ -503,7 +503,7 @@ func _after_battle() -> void:
 				if reward > 0:
 					GameState.earn(reward)
 					Audio.sfx("coin")
-					await _say(tr("You got %dg for winning.") % reward)
+					await _say(tr("You got %s for winning.") % CoinLabel.text(reward))
 		"lose":
 			await _say("Your Wildlings are all worn out...")
 			await _say("You hurry back home to rest.")

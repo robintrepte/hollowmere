@@ -31,7 +31,7 @@ static func loot_text(loot: Dictionary) -> String:
 	var bits: Array = []
 	for k in loot:
 		if k == "money":
-			bits.append(TranslationServer.translate("%dg") % int(loot[k]))
+			bits.append(CoinLabel.text(int(loot[k])))
 		else:
 			bits.append(TranslationServer.translate("%d %s") % [int(loot[k]), Data.item_name(k)])
 	return ", ".join(bits)
@@ -349,7 +349,7 @@ func weekly_show() -> void:
 	else:
 		lines.append(TranslationServer.translate("You placed %s. Grooming and a happy Wildling go a long way. Try again next Saturday!") % TranslationServer.translate(PLACES[clampi(int(r.place), 1, 4)]))
 	if int(r.prize) > 0:
-		lines.append(TranslationServer.translate("Prize: %dg.") % int(r.prize))
+		lines.append(TranslationServer.translate("Prize: %s.") % CoinLabel.text(int(r.prize)))
 	Audio.sfx("levelup" if int(r.place) == 1 else "coin")
 	await _say(lines)
 

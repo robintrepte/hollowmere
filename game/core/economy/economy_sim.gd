@@ -73,10 +73,10 @@ static func run(days: int = 112, _seed_value: int = 1) -> Dictionary:
 			by_season.append(money)
 	var ok := true
 	if by_season.size() > 0 and by_season[0] < MIN_AFTER_SPRING:
-		flags.append("spring ends with only %dg (want >= %d)" % [by_season[0], MIN_AFTER_SPRING])
+		flags.append("spring ends with only %d gold (want >= %d)" % [by_season[0], MIN_AFTER_SPRING])
 		ok = false
 	if money > MAX_AFTER_YEAR:
-		flags.append("runaway money: %dg" % money)
+		flags.append("runaway money: %d gold" % money)
 		ok = false
 	for i in range(1, mini(3, by_season.size())):
 		if by_season[i] <= by_season[i - 1]:
@@ -87,7 +87,7 @@ static func run(days: int = 112, _seed_value: int = 1) -> Dictionary:
 static func format_report(rep: Dictionary) -> String:
 	var lines: Array = ["Economy sim (crops only):"]
 	for i in rep.money_by_season.size():
-		lines.append("  end of %-6s %dg" % [Calendar.SEASONS[i % 4], rep.money_by_season[i]])
+		lines.append("  end of %-6s %d gold" % [Calendar.SEASONS[i % 4], rep.money_by_season[i]])
 	lines.append("  first picks: " + ", ".join(rep.picks))
 	for f in rep.flags:
 		lines.append("  - " + f)

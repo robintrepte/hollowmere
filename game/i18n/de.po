@@ -8267,3 +8267,45 @@ msgstr "Ziehen zum Verschieben · Doppelklick öffnet Taschen · R drehen · Rec
 msgid "Tap to pick up, tap again to place · Double-tap a bag to open · Hold an item for actions · Rotate turns it · X closes"
 msgstr "Tippen zum Aufnehmen, erneut tippen zum Ablegen · Doppeltippen öffnet Taschen · Gedrückt halten für Aktionen · Drehen dreht das Item · X schließt"
 
+#, c-format
+msgid "%d / %d  ·  Reward %s"
+msgstr "%d / %d  ·  Belohnung %s"
+
+#, c-format
+msgid "%s · %s Farm\n%s · %s"
+msgstr "%s · %s-Hof\n%s · %s"
+
+#, c-format
+msgid "Delivered! +%s"
+msgstr "Geliefert! +%s"
+
+#, c-format
+msgid "In the bin: %s"
+msgstr "In der Kiste: %s"
+
+#, c-format
+msgid "Reward %s + friendship  ·  You have %d"
+msgstr "Belohnung %s + Freundschaft  ·  Du hast %d"
+
+msgid "Sell 1"
+msgstr "1 verkaufen"
+
+#, c-format
+msgid "Sells for %s"
+msgstr "Verkaufswert %s"
+
+msgid "Total:"
+msgstr "Gesamt:"
+
+#, c-format
+msgid "Weekly challenge complete: %s (+%s)"
+msgstr "Wochen-Challenge geschafft: %s (+%s)"
+
+#, c-format
+msgid "You got %s for winning."
+msgstr "Du bekommst %s für den Sieg."
+
+#, c-format
+msgid "● %s · %s Farm\n%s · %s"
+msgstr "● %s · %s-Hof\n%s · %s"
+

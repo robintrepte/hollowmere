@@ -7,7 +7,7 @@ signal closed
 var shop_id := ""
 var _list: VBoxContainer
 var _sell_list: VBoxContainer
-var _money: Label
+var _money: CoinLabel
 var _tab := "buy"
 var _tabs: HBoxContainer
 var _buying := false
@@ -40,9 +40,10 @@ func _ready() -> void:
 	hv.add_child(UITheme.label(shop.get("name", "Shop"), 13, UITheme.WOOD_DK))
 	var mrow := HBoxContainer.new()
 	hv.add_child(mrow)
-	mrow.add_child(UITheme.icon_rect(Art.item("_coin"), 16))
-	_money = UITheme.label("", 11, UITheme.WOOD_DK)
+	_money = CoinLabel.new(GameState.money(), 11, UITheme.WOOD_DK)
 	mrow.add_child(_money)
+	if Casino.chips(GameState.local_player()) > 0:
+		mrow.add_child(CoinLabel.new(Casino.chips(GameState.local_player()), 11, UITheme.WOOD_DK, "_chip"))
 	var close := UITheme.button("Close", func(): closed.emit())
 	close.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	head.add_child(close)
@@ -70,7 +71,7 @@ func _ready() -> void:
 
 func _refresh_money() -> void:
 	if is_instance_valid(_money):
-		_money.text = str(GameState.money())
+		_money.set_amount(GameState.money())
 
 func _refresh() -> void:
 	if _list == null or not is_inside_tree() or is_queued_for_deletion():
@@ -121,7 +122,7 @@ func _row(id: String, price: int, locked: bool, req: String, buying: bool) -> Co
 	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	d.custom_minimum_size = Vector2(180, 0)
 	nv.add_child(d)
-	var b := UITheme.button(tr("%dg") % price)
+	var b := CoinLabel.button(price)
 	b.disabled = locked or GameState.money() < price
 	b.pressed.connect(func():
 		if b.disabled or _buying:
@@ -141,7 +142,9 @@ func _sell_row(e: Dictionary) -> Control:
 	n.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	h.add_child(n)
 	var price := Data.sell_price(e.id, int(e.q))
-	h.add_child(UITheme.button(tr("Sell 1 (%dg)") % price, func(): _sell(e.uid, 1)))
+	var sell := CoinLabel.button(price, func(): _sell(e.uid, 1), tr("Sell 1"))
+	sell.remove_theme_color_override("font_color")
+	h.add_child(sell)
 	if int(e.n) > 1:
 		h.add_child(UITheme.button("All", func(): _sell(e.uid, -1)))
 	return pc
@@ -167,7 +170,8 @@ func _offer(icon: Texture2D, title: String, desc: String, costs: Array, label: S
 	cl.add_theme_constant_override("h_separation", 6)
 	nv.add_child(cl)
 	for c in costs:
-		cl.add_child(UITheme.label(c[0], 8, UITheme.LEAF.darkened(0.35) if c[1] else Color("#b04040")))
+		var col := UITheme.LEAF.darkened(0.35) if c[1] else Color("#b04040")
+		cl.add_child(CoinLabel.new(c[0], 8, col) if c[0] is int else UITheme.label(c[0], 8, col))
 	if done_text != "":
 		h.add_child(UITheme.label(done_text, 9, UITheme.LEAF.darkened(0.3)))
 	else:
@@ -200,7 +204,7 @@ func _build_list() -> void:
 		var req_ok := Economy.meets(b.requires, GameState.ctx())
 		if not req_ok and not built and b.requires != "" and Data.buildings.has(b.requires) and not GameState.has_building(b.requires):
 			continue
-		var costs: Array = [[tr("%dg") % int(b.price), GameState.money() >= int(b.price)]]
+		var costs: Array = [[int(b.price), GameState.money() >= int(b.price)]]
 		for k in b.materials:
 			costs.append([tr("%s %d/%d") % [Data.item_name(k), Economy.count_in(srcs, k), int(b.materials[k])], Economy.count_in(srcs, k) >= int(b.materials[k])])
 		if not req_ok:
@@ -225,7 +229,7 @@ func _upgrade_list() -> void:
 			_list.add_child(_offer(Art.item(tool), tr("%s %s") % [cur_name, Data.item_name(tool)], tr("Fully upgraded."), [], "", false, func(): pass, tr("Max ✓")))
 			continue
 		var have := Economy.count_in(srcs, spec.bar)
-		var costs: Array = [[tr("%dg") % int(spec.price), GameState.money() >= int(spec.price)], [tr("%s %d/%d") % [Data.item_name(spec.bar), have, int(spec.n)], have >= int(spec.n)]]
+		var costs: Array = [[int(spec.price), GameState.money() >= int(spec.price)], [tr("%s %d/%d") % [Data.item_name(spec.bar), have, int(spec.n)], have >= int(spec.n)]]
 		var desc := tr("%s → %s. Works a wider area and breaks tougher debris.") % [cur_name, next_name]
 		if tool == "watering_can":
 			desc = tr("%s → %s. Holds more water and soaks a wider area.") % [cur_name, next_name]
@@ -244,7 +248,7 @@ func _backpack_list() -> void:
 		var affordable := Casino.chips(p) >= chips if chips > 0 else GameState.money() >= int(bp.price)
 		var costs: Array = []
 		if not owned:
-			costs.append([tr("%d chips") % chips if chips > 0 else CoinLabel.text(int(bp.price)), affordable])
+			costs.append([tr("%d chips") % chips if chips > 0 else int(bp.price), affordable])
 		if req != "" and not GameState.is_open_requirement(req) and not owned:
 			costs.append([Economy.req_text(req), false])
 		var desc := tr("A %d x %d grid pack.") % [int(bp.w), int(bp.h)] + " " + tr(str(bp.get("desc", "")))

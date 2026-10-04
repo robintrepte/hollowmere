@@ -190,7 +190,7 @@ func _board() -> void:
 		h.add_child(col)
 		col.add_child(UITheme.label(tr("%s wants %d %s") % [Data.villager_name(b.get("from", "")), int(b.n), Data.item_name(b.item)], 10, UITheme.INK))
 		var have := player.inventory.count(b.item)
-		col.add_child(UITheme.label(tr("Reward %dg + friendship  ·  You have %d") % [int(b.money), have], 8, UITheme.MUTED))
+		col.add_child(UITheme.label(tr("Reward %s + friendship  ·  You have %d") % [CoinLabel.text(int(b.money)), have], 8, UITheme.MUTED))
 		if b.get("done", false):
 			h.add_child(UITheme.label("Done ✓", 9, UITheme.LEAF.darkened(0.3)))
 		else:
@@ -199,7 +199,7 @@ func _board() -> void:
 				var r: Dictionary = Coop.act("deliver_board", [idx])
 				if r.ok:
 					Audio.sfx("coin")
-					EventBus.toast.emit(tr("Delivered! +%dg") % int(b.money), "")
+					EventBus.toast.emit(tr("Delivered! +%s") % CoinLabel.text(int(b.money)), "")
 				elif r.reason != "":
 					EventBus.toast.emit(r.reason, "")
 				await get_tree().process_frame
@@ -255,7 +255,7 @@ func _weekly() -> void:
 		bar.max_value = maxi(1, int(c.n))
 		bar.value = int(c.progress)
 		col.add_child(bar)
-		col.add_child(UITheme.label(tr("%d / %d  ·  Reward %dg") % [int(c.progress), int(c.n), int(c.reward_money)], 8, UITheme.MUTED))
+		col.add_child(UITheme.label(tr("%d / %d  ·  Reward %s") % [int(c.progress), int(c.n), CoinLabel.text(int(c.reward_money))], 8, UITheme.MUTED))
 		if c.done:
 			h.add_child(UITheme.label("Done ✓", 9, UITheme.LEAF.darkened(0.3)))
 	var b := GameState.bounty()

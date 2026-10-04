@@ -11,7 +11,7 @@ signal energy_changed(energy: float, max_energy: float)
 signal party_changed()
 signal toast(text: String, icon: String)
 ## Farm Story style floating reward: world position, text, color.
-signal popup(world_pos: Vector2, text: String, color: Color)
+signal popup(world_pos: Vector2, text: String, color: Color, icon: String)
 signal farm_level_up(level: int, info: Dictionary)
 signal dialogue_requested(speaker: String, lines: Array, portrait: String)
 signal choice_requested(prompt: String, options: Array, callback: Callable)

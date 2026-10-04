@@ -52,12 +52,14 @@ func _ready() -> void:
 		for s in shipped:
 			grid.add_child(UITheme.icon_rect(Art.item(s.id), 16))
 			grid.add_child(UITheme.label(tr("%s x%d") % [Data.item_name(s.id, int(s.q)), int(s.n)], 9))
-			var val := UITheme.label(tr("%dg") % int(s.v), 9, UITheme.WOOD_DK)
-			val.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+			var val := CoinLabel.new(int(s.v), 9, UITheme.WOOD_DK)
+			val.alignment = BoxContainer.ALIGNMENT_END
 			val.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			grid.add_child(val)
-		var tot := UITheme.label(tr("Total: %dg") % int(report.get("ship_total", 0)), 13, UITheme.WOOD_DK)
-		tot.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		var tot := HBoxContainer.new()
+		tot.alignment = BoxContainer.ALIGNMENT_END
+		tot.add_child(UITheme.label("Total:", 13, UITheme.WOOD_DK))
+		tot.add_child(CoinLabel.new(int(report.get("ship_total", 0)), 13, UITheme.WOOD_DK))
 		body.add_child(tot)
 	var jobs: Dictionary = report.get("jobs", {})
 	var lines: Array = []
