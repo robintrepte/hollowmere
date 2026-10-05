@@ -876,50 +876,70 @@ func _use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictio
 			if tool == "pickaxe" and Mining.is_block(d):
 				r = _mine_block(p, map_id, g, info, t, lvl)
 			elif Tiles.DEBRIS.has(d) and (Tiles.DEBRIS[d].tool == tool or d == Tiles.DECO.weed):
-				var cost := float(Tiles.DEBRIS[d].energy) * maxf(0.4, 1.0 - 0.15 * lvl)
+				var spec: Dictionary = Tiles.DEBRIS[d]
+				var cost := float(spec.energy) * maxf(0.4, 1.0 - 0.15 * lvl)
 				if tool == "pickaxe":
 					cost /= Modifiers.mult(p, "mine_speed")
 				elif tool == "axe":
 					cost /= Modifiers.mult(p, "chop_speed")
-				var res := g.clear_debris(t, tool, lvl, rng)
-				if not res.ok:
-					r.reason = res.reason
-					return r
-				if not _spend_energy(p, cost):
-					g.set_deco(t, d)
-					return r
-				if d == Tiles.DECO.ore:
-					var ore: String = info.get("ore_types", {}).get(Tiles.key(t), "copper_ore")
-					var ol := Modifiers.value(p, "ore_luck")
-					res.drops = [[ore, rng.randi_range(1, 3) + (1 if rng.randf() < ol else 0)]]
-					if rng.randf() < 0.1 + luck():
-						res.drops.append(["coal", 1])
-					if rng.randf() < 0.05 + luck() + ol * 0.5:
-						var gems := ["quartz", "amethyst", "topaz"]
-						res.drops.append([gems[rng.randi() % 3], 1])
-				if d == Tiles.DECO.rock and info.get("mine", false):
-					if rng.randf() < 0.15:
-						res.drops.append(["coal", 1])
-					if rng.randf() < 0.05:
-						res.drops.append(["quartz", 1])
-					if rng.randf() < 0.04:
-						res.drops.append(["clay", 1])
-				var lj := Enchanting.level(p, "axe", "lumberjack") if tool == "axe" else 0
-				if lj > 0 and d in [24, 25, 27]:
+				var hp := float(spec.get("hp", 1.0))
+				var chipped := false
+				if hp > 1.0 and lvl >= int(spec.min):
+					var ck := Tiles.key(t)
+					var cracks: Dictionary = _cracks.get(map_id, {})
+					var speed := Modifiers.mult(p, "chop_speed") if tool == "axe" else 1.0
+					var hits := maxi(2, ceili(hp / (Mining.power(lvl) * speed)))
+					var dmg := float(cracks.get(ck, 0.0)) + 1.0 / float(hits)
+					if dmg < 0.999:
+						if not _spend_energy(p, cost):
+							return r
+						cracks[ck] = dmg
+						_cracks[map_id] = cracks
+						r.ok = true
+						r.sfx = "chop"
+						EventBus.shake.emit(0.4)
+						chipped = true
+				if not chipped:
+					var res := g.clear_debris(t, tool, lvl, rng)
+					if not res.ok:
+						r.reason = res.reason
+						return r
+					if not _spend_energy(p, cost):
+						g.set_deco(t, d)
+						return r
+					_crack_clear(map_id, t)
+					if d == Tiles.DECO.ore:
+						var ore: String = info.get("ore_types", {}).get(Tiles.key(t), "copper_ore")
+						var ol := Modifiers.value(p, "ore_luck")
+						res.drops = [[ore, rng.randi_range(1, 3) + (1 if rng.randf() < ol else 0)]]
+						if rng.randf() < 0.1 + luck():
+							res.drops.append(["coal", 1])
+						if rng.randf() < 0.05 + luck() + ol * 0.5:
+							var gems := ["quartz", "amethyst", "topaz"]
+							res.drops.append([gems[rng.randi() % 3], 1])
+					if d == Tiles.DECO.rock and info.get("mine", false):
+						if rng.randf() < 0.15:
+							res.drops.append(["coal", 1])
+						if rng.randf() < 0.05:
+							res.drops.append(["quartz", 1])
+						if rng.randf() < 0.04:
+							res.drops.append(["clay", 1])
+					var lj := Enchanting.level(p, "axe", "lumberjack") if tool == "axe" else 0
+					if lj > 0 and d in [24, 25, 27]:
+						for dr in res.drops:
+							dr[1] = int(ceil(int(dr[1]) * (1.0 + 0.25 * lj)))
+						if rng.randf() < 0.15 * lj:
+							res.drops.append(["hardwood", 1])
+					if tool == "pickaxe":
+						_gentle(p, res.drops)
 					for dr in res.drops:
-						dr[1] = int(ceil(int(dr[1]) * (1.0 + 0.25 * lj)))
-					if rng.randf() < 0.15 * lj:
-						res.drops.append(["hardwood", 1])
-				if tool == "pickaxe":
-					_gentle(p, res.drops)
-				for dr in res.drops:
-					give_item(p, dr[0], int(dr[1]))
-					r.fx.append(["+%d %s" % [int(dr[1]), Data.item_name(dr[0])], Color.WHITE])
-				r.ok = true
-				r.sfx = {"pickaxe": "rock", "axe": "chop", "scythe": "scythe"}[tool]
-				add_farm_xp(Progression.XP.clear)
-				p.stat_add("cleared")
-				EventBus.shake.emit(1.5 if d in [24, 25, 30, 33] else 0.5)
+						give_item(p, dr[0], int(dr[1]))
+						r.fx.append(["+%d %s" % [int(dr[1]), Data.item_name(dr[0])], Color.WHITE])
+					r.ok = true
+					r.sfx = {"pickaxe": "rock", "axe": "chop", "scythe": "scythe"}[tool]
+					add_farm_xp(Progression.XP.clear)
+					p.stat_add("cleared")
+					EventBus.shake.emit(1.5 if d in [24, 25, 30, 33] else 0.5)
 			elif tool == "pickaxe" and g.until(t):
 				r.ok = true
 				r.sfx = "hoe"
@@ -2014,7 +2034,7 @@ func race_act(pid: String, runner: int, bet: int) -> Dictionary:
 
 # --- Mining -------------------------------------------------------------------------
 
-## Crack damage per map {map_id: {"x,y": 0..1}}; not saved, a half-cracked rock heals overnight.
+## Chip damage per map {map_id: {"x,y": 0..1}}; not saved. A half-cut tree or rock is whole again after a load.
 var _cracks: Dictionary = {}
 
 func _deep() -> Dictionary:
@@ -2030,6 +2050,11 @@ func deep_max() -> int:
 
 func crack(map_id: String, t: Vector2i) -> float:
 	return float(_cracks.get(map_id, {}).get(Tiles.key(t), 0.0))
+
+func _crack_clear(map_id: String, t: Vector2i) -> void:
+	var cracks: Dictionary = _cracks.get(map_id, {})
+	if cracks.erase(Tiles.key(t)) and cracks.is_empty():
+		_cracks.erase(map_id)
 
 func _deep_touch(map_id: String) -> void:
 	if not map_id.begins_with("deep:"):

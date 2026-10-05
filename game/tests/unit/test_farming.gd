@@ -205,6 +205,35 @@ func test_debris_needs_tool_level() -> void:
 	assert_false(g.clear_debris(Vector2i(1, 1), "pickaxe", 0, rng).ok)
 	assert_true(g.clear_debris(Vector2i(1, 1), "pickaxe", 2, rng).ok)
 
+func test_trees_take_three_swings_and_ground_wood_takes_one() -> void:
+	GameState.new_game({"seed": 5, "starter": "puddlop"})
+	var pid := Net.local_id()
+	var p := GameState.local_player()
+	p.energy = p.max_energy
+	var g := GameState.grid("farm")
+	var stick := Vector2i(2, 2)
+	var tree := Vector2i(4, 2)
+	g.set_deco(stick, Tiles.DECO.branch)
+	g.set_deco(tree, Tiles.DECO.tree)
+	assert_true(GameState.use_tool(pid, "farm", stick, "axe").ok)
+	assert_eq(g.get_deco(stick), 0, "wood on the ground falls in one swing")
+	assert_true(GameState.use_tool(pid, "farm", tree, "axe").ok)
+	assert_eq(g.get_deco(tree), Tiles.DECO.tree, "a tree stays standing after one swing")
+	assert_gt(GameState.crack("farm", tree), 0.0)
+	assert_true(GameState.use_tool(pid, "farm", tree, "axe").ok)
+	assert_eq(g.get_deco(tree), Tiles.DECO.tree)
+	var wood := p.inventory.count("wood")
+	assert_true(GameState.use_tool(pid, "farm", tree, "axe").ok)
+	assert_eq(g.get_deco(tree), 0, "the third swing fells it")
+	assert_gt(p.inventory.count("wood"), wood)
+	assert_eq(GameState.crack("farm", tree), 0.0)
+	g.set_deco(tree, Tiles.DECO.pine)
+	p.tool_levels["axe"] = 5
+	assert_true(GameState.use_tool(pid, "farm", tree, "axe").ok)
+	assert_eq(g.get_deco(tree), Tiles.DECO.pine, "even a top axe needs a second swing")
+	assert_true(GameState.use_tool(pid, "farm", tree, "axe").ok)
+	assert_eq(g.get_deco(tree), 0)
+
 func test_jobs_water_per_tick_and_cost_energy() -> void:
 	var g := _grid()
 	for x in 12:
