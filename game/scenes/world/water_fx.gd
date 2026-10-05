@@ -3,6 +3,9 @@ extends Node2D
 ## Slow shimmer on water, the occasional leaping fish, and a short reflection of
 ## whatever stands on the north bank. Reflections only fall southward, into the water.
 
+## COLOR in a canvas_item fragment() is already texture * modulate. Sampling TEXTURE
+## and multiplying again squares every pixel on that layer, so ground (and the foam
+## ribbon) read as a darker filter than the unshaded shore caps beside them.
 const SHIMMER := "shader_type canvas_item;
 uniform float u_time;
 varying vec2 wp;
@@ -10,7 +13,7 @@ void vertex() {
 	wp = (MODEL_MATRIX * vec4(VERTEX, 0.0, 1.0)).xy;
 }
 void fragment() {
-	vec4 c = texture(TEXTURE, UV) * COLOR;
+	vec4 c = COLOR;
 	float rows = vec2(textureSize(TEXTURE, 0)).y / 32.0;
 	float row = floor(UV.y * rows + 0.001);
 	if ((row == 4.0 || row == 19.0) && c.a > 0.5) {
@@ -34,7 +37,7 @@ void vertex() {
 	wp = (MODEL_MATRIX * vec4(VERTEX, 0.0, 1.0)).xy;
 }
 void fragment() {
-	vec4 c = texture(TEXTURE, UV) * COLOR;
+	vec4 c = COLOR;
 	if (c.a > 0.15 && c.r > 0.72 && c.b > 0.82) {
 		float pulse = 0.5 + 0.5 * sin(u_time * 1.8 + wp.x * 0.22 + wp.y * 0.08);
 		c.a *= 0.78 + 0.22 * pulse;
