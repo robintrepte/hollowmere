@@ -78,6 +78,24 @@ func test_recommends_the_super_effective_move() -> void:
 	assert_true(first.text.contains("%"), "shows how much HP it takes: %s" % first.text)
 	assert_false(_live_buttons(s)[1].has_meta("recommended"))
 
+func test_bars_name_hp_and_experience() -> void:
+	var s := _screen_with_moves(1)
+	var me: Creature = GameState.local_player().party[0]
+	me.hp = 11
+	me.level = 4
+	me.xp = Creature.xp_for_level(4) + 25
+	s._refresh_box(0)
+	s._refresh_box(1)
+	assert_eq(s._me_box.hp_hit.tooltip_text, tr("HP %d / %d") % [11, me.max_hp()])
+	assert_eq(s._me_box.nums.tooltip_text, s._me_box.hp_hit.tooltip_text)
+	assert_eq(s._me_box.nums.text, tr("%d / %d") % [11, me.max_hp()])
+	var span := Creature.xp_for_level(5) - Creature.xp_for_level(4)
+	assert_eq(s._me_box.xp_hit.tooltip_text, tr("%s / %s XP") % [Num.group(25), Num.group(span)])
+	var foe: Creature = s.engine.active(1)
+	assert_eq(s._foe_box.hp_hit.tooltip_text, tr("HP %d / %d") % [foe.hp, foe.max_hp()])
+	s._set_hp_tip(1, 4, foe.max_hp())
+	assert_eq(s._foe_box.hp_hit.tooltip_text, tr("HP %d / %d") % [4, foe.max_hp()])
+
 func test_highlighting_a_move_previews_it_on_the_foe_bar() -> void:
 	var s := _screen_with_moves(2, ["splash_jab", "vine_lash"])
 	_foe(s, "embercub")

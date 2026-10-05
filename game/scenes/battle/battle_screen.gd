@@ -195,32 +195,51 @@ func _info_box(pos: Vector2, mine: bool) -> Dictionary:
 	top.add_child(pips)
 	var lvl := UITheme.label("", 10, UITheme.INK)
 	top.add_child(lvl)
-	var hp := ProgressBar.new()
-	hp.show_percentage = false
-	hp.custom_minimum_size = Vector2(0, 7)
-	hp.max_value = 1.0
-	hp.step = 0.0
-	v.add_child(hp)
+	var hp_hit := _bar_target(11.0)
+	v.add_child(hp_hit)
+	var hp := _thin_bar(7.0)
+	hp_hit.add_child(hp)
 	var ghost := Control.new()
 	ghost.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ghost.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ghost.draw.connect(func(): _draw_ghost(ghost, hp))
 	hp.add_child(ghost)
-	var d := {"panel": p, "name": name, "lvl": lvl, "hp": hp, "ghost": ghost, "status": status, "pips": pips}
+	var d := {"panel": p, "name": name, "lvl": lvl, "hp": hp, "hp_hit": hp_hit, "ghost": ghost, "status": status, "pips": pips}
 	if mine:
 		var nums := UITheme.label("", 9, UITheme.INK)
 		nums.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		nums.mouse_filter = Control.MOUSE_FILTER_STOP
 		v.add_child(nums)
-		var xp := ProgressBar.new()
-		xp.show_percentage = false
-		xp.custom_minimum_size = Vector2(0, 3)
-		xp.max_value = 1.0
-		xp.step = 0.0
+		var xp_hit := _bar_target(11.0)
+		v.add_child(xp_hit)
+		var xp := _thin_bar(3.0)
 		xp.add_theme_stylebox_override("fill", UITheme.box(Color("#5aa8e8"), Color(0, 0, 0, 0), 0, 1, 0, false))
-		v.add_child(xp)
+		xp_hit.add_child(xp)
 		d.nums = nums
 		d.xp = xp
+		d.xp_hit = xp_hit
 	return d
+
+## Hover target for a thin bar. The bar itself is only a few pixels tall.
+func _bar_target(height: float) -> Control:
+	var hit := Control.new()
+	hit.custom_minimum_size = Vector2(0, height)
+	hit.mouse_filter = Control.MOUSE_FILTER_STOP
+	return hit
+
+func _thin_bar(visual: float) -> ProgressBar:
+	var bar := ProgressBar.new()
+	bar.show_percentage = false
+	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bar.max_value = 1.0
+	bar.step = 0.0
+	bar.anchor_left = 0.0
+	bar.anchor_right = 1.0
+	bar.anchor_top = 0.5
+	bar.anchor_bottom = 0.5
+	bar.offset_top = -visual * 0.5
+	bar.offset_bottom = visual * 0.5
+	return bar
 
 # --- Box + sprite refresh ------------------------------------------------------------------
 
@@ -243,11 +262,25 @@ func _refresh_box(side: int, animate_hp: bool = false) -> void:
 	if not animate_hp:
 		_hp_shown[side] = frac
 		_set_hp_bar(side, frac)
+	_set_hp_tip(side, c.hp, c.max_hp())
 	if side == 0:
-		b.nums.text = tr("%d / %d") % [c.hp, c.max_hp()]
 		var lo := Creature.xp_for_level(c.level)
 		var hi := Creature.xp_for_level(c.level + 1)
 		b.xp.value = clampf(float(c.xp - lo) / float(maxi(1, hi - lo)), 0.0, 1.0)
+		_set_xp_tip(c)
+
+func _set_hp_tip(side: int, hp: int, max_hp: int) -> void:
+	var b: Dictionary = _me_box if side == 0 else _foe_box
+	var tip := tr("HP %d / %d") % [hp, max_hp]
+	b.hp_hit.tooltip_text = tip
+	if side == 0:
+		b.nums.text = tr("%d / %d") % [hp, max_hp]
+		b.nums.tooltip_text = tip
+
+func _set_xp_tip(c: Creature) -> void:
+	var lo := Creature.xp_for_level(c.level)
+	var hi := Creature.xp_for_level(c.level + 1)
+	_me_box.xp_hit.tooltip_text = tr("%s / %s XP") % [Num.group(maxi(0, c.xp - lo)), Num.group(maxi(1, hi - lo))]
 
 func _set_hp_bar(side: int, frac: float) -> void:
 	var b: Dictionary = _me_box if side == 0 else _foe_box
@@ -556,8 +589,7 @@ func _play(events: Array) -> void:
 				Audio.sfx("open")
 			"heal":
 				Audio.sfx("heal")
-				if int(e.side) == 0:
-					_me_box.nums.text = tr("%d / %d") % [int(e.hp), int(e.max)]
+				_set_hp_tip(int(e.side), int(e.hp), int(e.max))
 				await _tween_hp(int(e.side), float(e.hp) / float(maxi(1, int(e.max))))
 			"stat":
 				Audio.sfx("sparkle" if int(e.n) > 0 else "miss")
@@ -586,6 +618,7 @@ func _play(events: Array) -> void:
 					var c := engine.active(0)
 					var lo := Creature.xp_for_level(c.level)
 					var hi := Creature.xp_for_level(c.level + 1)
+					_set_xp_tip(c)
 					var tw3 := create_tween()
 					tw3.tween_property(_me_box.xp, "value", clampf(float(c.xp - lo) / float(maxi(1, hi - lo)), 0.0, 1.0), 0.5)
 					await tw3.finished
@@ -665,8 +698,7 @@ func _hit(side: int, e: Dictionary) -> void:
 		s.modulate.a = 1.0
 		await get_tree().create_timer(0.05).timeout
 	s.position = home
-	if side == 0:
-		_me_box.nums.text = tr("%d / %d") % [int(e.hp), int(e.max)]
+	_set_hp_tip(side, int(e.hp), int(e.max))
 	await _tween_hp(side, float(e.hp) / float(maxi(1, int(e.max))))
 
 func _pop_damage(side: int, e: Dictionary) -> void:

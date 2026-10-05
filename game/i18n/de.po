@@ -13436,3 +13436,8 @@ msgstr "Wartet hier, weil Party und Bau voll waren."
 
 msgid "Your party is empty."
 msgstr "Deine Party ist leer."
+
+#, c-format
+msgid "HP %d / %d"
+msgstr "KP %d / %d"
+
