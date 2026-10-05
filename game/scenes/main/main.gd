@@ -493,7 +493,7 @@ func _on_battle_requested(s: Dictionary) -> void:
 				GameState.bump_stat("befriend")
 			else:
 				Coop.act("befriend_act", [JSON.stringify(c2.to_dict())])
-			after.append(tr("%s joined %s!") % [c2.display_name(), {"party": tr("your party"), "den": tr("the farm Den"), "sanctuary": tr("the Sanctuary")}[where]])
+			after.append(tr("%s joined %s!") % [c2.display_name(), {"party": tr("your party"), "den": tr("the farm Den"), "sanctuary": tr("the Shelter")}[where]])
 			if node:
 				world.remove_creature(node)
 			for rid in Data.regions:

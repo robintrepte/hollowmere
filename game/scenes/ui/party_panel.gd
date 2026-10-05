@@ -1,6 +1,6 @@
 class_name PartyPanel
 extends PanelContainer
-## Party + farm Wildlings: details, lead order, moving between party and the Den, farm jobs.
+## Party, farm and Shelter Wildlings: details, lead order, moving between party and the Den, farm jobs.
 
 signal closed
 
@@ -62,14 +62,26 @@ func _ready() -> void:
 	dsc.add_child(_detail)
 	_refresh()
 
+func _open_tab(id: String) -> void:
+	tab = id
+	_sel = null
+	_refresh()
+
 func _creatures() -> Array:
-	return player.party if tab == "party" else GameState.ranch
+	match tab:
+		"party": return player.party
+		"farm": return GameState.ranch
+		_: return GameState.sanctuary
 
 func _refresh() -> void:
 	for c in _tabs.get_children():
 		c.queue_free()
-	for t in [["party", tr("Party %d/%d") % [player.party.size(), PlayerData.PARTY_MAX]], ["farm", tr("Farm %d/%d") % [GameState.ranch.size(), GameState.den_capacity()]]]:
-		var b := UITheme.button(t[1], func(): tab = t[0]; _sel = null; _refresh())
+	for t in [
+		["party", tr("Party %d/%d") % [player.party.size(), PlayerData.PARTY_MAX]],
+		["farm", tr("Farm %d/%d") % [GameState.ranch.size(), GameState.den_capacity()]],
+		["sanctuary", tr("Shelter %d") % GameState.sanctuary.size()],
+	]:
+		var b := UITheme.button(t[1], _open_tab.bind(t[0]))
 		b.disabled = tab == t[0]
 		_tabs.add_child(b)
 	for c in _list.get_children():
@@ -79,8 +91,22 @@ func _refresh() -> void:
 		_sel = arr[0] if arr.size() > 0 else null
 	if tab == "farm" and not arr.is_empty():
 		_list.add_child(_farm_overview(arr))
+	elif tab == "sanctuary" and not arr.is_empty():
+		var note := UITheme.label(tr("Safe here until your party or the Den has room."), 8, UITheme.WOOD)
+		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		note.custom_minimum_size = Vector2(190, 0)
+		_list.add_child(note)
 	if arr.is_empty():
-		_list.add_child(UITheme.label("No Wildlings live on the farm yet.\nMove some here from your party.", 9, UITheme.MUTED))
+		var empty_l: Label
+		if tab == "sanctuary":
+			empty_l = UITheme.label("No Wildlings are waiting in the Shelter.\nThey land here when your party and the Den are full.", 9, UITheme.MUTED)
+		elif tab == "party":
+			empty_l = UITheme.label("Your party is empty.", 9, UITheme.MUTED)
+		else:
+			empty_l = UITheme.label("No Wildlings live on the farm yet.\nMove some here from your party.", 9, UITheme.MUTED)
+		empty_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		empty_l.custom_minimum_size = Vector2(190, 0)
+		_list.add_child(empty_l)
 	for c in arr:
 		_list.add_child(_row(c))
 	_show_detail()
@@ -117,6 +143,8 @@ func _row(c: Creature) -> Control:
 	if tab == "farm":
 		var job := (tr("Job: %s") % tr(str(Data.job_info(c.job).get("job_name", tr("Worker"))))) if c.job != "" else tr("Resting")
 		sub = job + (tr("  ·  energy %d") % c.energy)
+	elif tab == "sanctuary":
+		sub = tr("Waiting  ·  HP %d/%d") % [c.hp, c.max_hp()]
 	else:
 		sub = tr("HP %d/%d%s") % [c.hp, c.max_hp(), tr("  ·  fainted") if c.is_fainted() else ""]
 	var sl := UITheme.label(sub, 8, UITheme.MUTED)
@@ -255,11 +283,16 @@ func _show_detail() -> void:
 						EventBus.party_changed.emit()
 					_swap_slot = -1
 					_show_detail()))
-	# Farm job
-	var job_t: Dictionary = Data.job_info(c.job_type())
-	_detail.add_child(UITheme.label(tr("Farm job: %s. %s") % [job_t.job_name, job_t.job_desc], 9, UITheme.LEAF.darkened(0.35)))
-	if tab == "farm" and c.job != "":
-		_detail.add_child(UITheme.label(FarmJobs.hourly_text(c.job, c.job_power(c.job)), 8, UITheme.MUTED))
+	# Farm job. Shelter Wildlings are stored, not working.
+	if tab == "sanctuary":
+		var wait := UITheme.label(tr("Waiting here because your party and the Den were full."), 9, UITheme.LEAF.darkened(0.35))
+		wait.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_detail.add_child(wait)
+	else:
+		var job_t: Dictionary = Data.job_info(c.job_type())
+		_detail.add_child(UITheme.label(tr("Farm job: %s. %s") % [job_t.job_name, job_t.job_desc], 9, UITheme.LEAF.darkened(0.35)))
+		if tab == "farm" and c.job != "":
+			_detail.add_child(UITheme.label(FarmJobs.hourly_text(c.job, c.job_power(c.job)), 8, UITheme.MUTED))
 	# Actions
 	var acts := HFlowContainer.new()
 	acts.add_theme_constant_override("h_separation", 4)
@@ -282,7 +315,7 @@ func _show_detail() -> void:
 				EventBus.toast.emit(tr("The Den is full, or this is your last party member."), ""))
 		send.disabled = player.party.size() <= 1
 		acts.add_child(send)
-	else:
+	elif tab == "farm":
 		var join := UITheme.button("Join party", func():
 			if Coop.act("move_creature_act", [c.uid, "party"]).ok:
 				_sel = null
@@ -291,6 +324,24 @@ func _show_detail() -> void:
 		acts.add_child(join)
 		_job_cards(c)
 		_breeding_section(c)
+	else:
+		var take := UITheme.button("Join party", func():
+			if Coop.act("move_creature_act", [c.uid, "party"]).ok:
+				_sel = null
+				_refresh()
+			else:
+				EventBus.toast.emit(tr("There's no room there."), ""))
+		take.disabled = player.party.size() >= PlayerData.PARTY_MAX
+		acts.add_child(take)
+		var to_farm := UITheme.button("Send to farm", func():
+			if Coop.act("move_creature_act", [c.uid, "den"]).ok:
+				EventBus.toast.emit(tr("%s moved to the farm and started working: %s.") % [c.display_name(), tr(str(Data.job_info(c.job_type()).get("job_name", "")))], "")
+				_sel = null
+				_refresh()
+			else:
+				EventBus.toast.emit(tr("There's no room there."), ""))
+		to_farm.disabled = GameState.ranch.size() >= GameState.den_capacity()
+		acts.add_child(to_farm)
 
 func _farm_overview(arr: Array) -> Control:
 	var box := VBoxContainer.new()

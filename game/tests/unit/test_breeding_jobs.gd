@@ -195,6 +195,28 @@ func test_befriended_overflow_goes_to_work_in_the_den() -> void:
 	assert_eq(GameState.add_creature(p, c), "den")
 	assert_eq(c.job, "water")
 
+func test_sanctuary_wildlings_can_rejoin_the_party_or_the_den() -> void:
+	GameState.new_game({"seed": 12})
+	var p := GameState.local_player()
+	while p.party.size() < PlayerData.PARTY_MAX:
+		p.party.append(Creature.create("mossbun", 5, rng))
+	while GameState.ranch.size() < GameState.den_capacity():
+		GameState.ranch.append(Creature.create("sproutle", 5, rng))
+	var waiting := Creature.create("puddlop", 5, rng)
+	assert_eq(GameState.add_creature(p, waiting), "sanctuary")
+	assert_false(GameState.move_creature(waiting.uid, "party", p))
+	assert_false(GameState.move_creature(waiting.uid, "den", p))
+	p.party.pop_back()
+	assert_true(GameState.move_creature(waiting.uid, "party", p))
+	assert_true(waiting in p.party)
+	assert_false(waiting in GameState.sanctuary)
+	var also := Creature.create("embercub", 5, rng)
+	assert_eq(GameState.add_creature(p, also), "sanctuary")
+	GameState.ranch.pop_back()
+	assert_true(GameState.move_creature(also.uid, "den", p))
+	assert_true(also in GameState.ranch)
+	assert_eq(also.job, also.job_type())
+
 func after_each() -> void:
 	TimeService.fixed_now = -1.0
 

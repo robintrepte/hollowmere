@@ -6885,8 +6885,8 @@ msgid "resting"
 msgstr "ruht"
 
 #: scenes/main/main.gd:417
-msgid "the Sanctuary"
-msgstr "das Heiligtum"
+msgid "the Shelter"
+msgstr "der Unterschlupf"
 
 #: scenes/main/main.gd:417
 msgid "the farm Den"
@@ -13416,3 +13416,23 @@ msgstr "Gießt bis zu %d Felder pro Stunde."
 
 msgid "Wheel"
 msgstr "Rad"
+
+msgid "No Wildlings are waiting in the Shelter.\nThey land here when your party and the Den are full."
+msgstr "Im Unterschlupf wartet kein Wildling.\nNeue landen hier, wenn Party und Bau voll sind."
+
+msgid "Safe here until your party or the Den has room."
+msgstr "Hier in Sicherheit, bis in der Party oder im Bau Platz ist."
+
+#, c-format
+msgid "Shelter %d"
+msgstr "Unterschlupf %d"
+
+#, c-format
+msgid "Waiting  ·  HP %d/%d"
+msgstr "Wartet  ·  KP %d/%d"
+
+msgid "Waiting here because your party and the Den were full."
+msgstr "Wartet hier, weil Party und Bau voll waren."
+
+msgid "Your party is empty."
+msgstr "Deine Party ist leer."
