@@ -161,6 +161,7 @@ static func _do_job(job: String, c: Creature, power: int, grids: Array, chest: I
 					if n <= 0:
 						break
 					if g.water(p, now):
+						g.mark_look(p)
 						n -= 1
 						rep.watered += 1
 		"grow":
@@ -172,7 +173,10 @@ static func _do_job(job: String, c: Creature, power: int, grids: Array, chest: I
 						break
 					if not g.crop_ready(p):
 						var crop: Dictionary = g.crop_at(p)
+						var before := FarmGrid.stage_of(float(crop.progress))
 						crop.progress = minf(1.0, float(crop.progress) + boost)
+						if FarmGrid.stage_of(float(crop.progress)) != before:
+							g.mark_look(p)
 						n2 -= 1
 						rep.grown += 1
 		"clear":
@@ -183,8 +187,10 @@ static func _do_job(job: String, c: Creature, power: int, grids: Array, chest: I
 						break
 					var d: int = g.deco[i]
 					if d in [Tiles.DECO.weed, Tiles.DECO.rock, Tiles.DECO.branch] or (d == Tiles.DECO.stump and power >= 3) or (d == Tiles.DECO.boulder and power >= 5):
-						var res: Dictionary = g.clear_debris(Vector2i(i % g.w, int(i / g.w)), Tiles.DEBRIS[d].tool, 9, rng)
+						var spot := Vector2i(i % g.w, int(i / g.w))
+						var res: Dictionary = g.clear_debris(spot, Tiles.DEBRIS[d].tool, 9, rng)
 						if res.ok:
+							g.mark_look(spot)
 							for dr in res.drops:
 								_give(chest, dr[0], int(dr[1]), 0, rep)
 							n3 -= 1
@@ -198,13 +204,16 @@ static func _do_job(job: String, c: Creature, power: int, grids: Array, chest: I
 					if g.crop_ready(p):
 						var h: Dictionary = g.harvest(p, rng, 0.0, 0, str(ctx.get("season", "")))
 						if not h.is_empty():
+							g.mark_look(p)
 							_give(chest, h.id, int(h.n), int(h.q), rep)
 							n4 -= 1
 							rep.harvested += int(h.n)
 				for k in g.objects:
 					var o: Dictionary = g.objects[k]
 					if n4 > 0 and o.kind == "tree" and int(o.get("fruit", 0)) > 0:
-						var fr: Dictionary = g.shake_tree(Tiles.parse_key(k))
+						var spot := Tiles.parse_key(k)
+						var fr: Dictionary = g.shake_tree(spot)
+						g.mark_look(spot)
 						_give(chest, fr.id, int(fr.n), 0, rep)
 						n4 -= 1
 						rep.harvested += int(fr.n)

@@ -24,6 +24,8 @@ const TRENCH_REACH := 8
 const BUCKET_SECONDS := 24 * 3600
 var _wet: Dictionary = {}
 var _wet_dirty := true
+## Tiles whose look changed outside of advance() (Wildling jobs). Flushed by GameState.
+var _look_dirty: Dictionary = {}
 
 func setup(width: int, height: int) -> void:
 	w = width
@@ -32,6 +34,14 @@ func setup(width: int, height: int) -> void:
 	deco.resize(w * h)
 	ground.fill(0)
 	deco.fill(0)
+
+func mark_look(p: Vector2i) -> void:
+	_look_dirty[Tiles.key(p)] = true
+
+func take_look_dirty() -> Array:
+	var out: Array = _look_dirty.keys()
+	_look_dirty.clear()
+	return out
 
 func in_bounds(p: Vector2i) -> bool:
 	return p.x >= 0 and p.y >= 0 and p.x < w and p.y < h

@@ -58,6 +58,7 @@ func new_game(opts: Dictionary) -> void:
 	world.time = {"last": TimeService.now()}
 	grids.clear()
 	_map_cache.clear()
+	_cracks.clear()
 	for m in PERSISTENT_MAPS:
 		grids[m] = MapBuilder.build_authored(Data.get_map(m)).grid
 		_mark_patches(m)
@@ -524,6 +525,9 @@ func _job_tick(now: float, scale: float, eff: float, rep: Dictionary) -> void:
 		for m in grids:
 			for t in grids[m].creep_weeds(trng, 1):
 				EventBus.tile_changed.emit(m, t)
+	for m in grids:
+		for k in grids[m].take_look_dirty():
+			EventBus.tile_changed.emit(m, Tiles.parse_key(k))
 
 func _hatch_due(now: float, rep: Dictionary) -> void:
 	var still: Array = []
@@ -2974,6 +2978,7 @@ func from_dict(d: Dictionary) -> void:
 			world[k] = defaults[k]
 	rng.seed = hash([int(world.seed), int(world.day)])
 	grids.clear()
+	_cracks.clear()
 	for m in PERSISTENT_MAPS:
 		if d.grids.has(m):
 			grids[m] = FarmGrid.from_dict(d.grids[m])

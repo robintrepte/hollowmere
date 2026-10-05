@@ -50,6 +50,38 @@ func test_all_ten_jobs_do_something() -> void:
 		assert_true(v is bool and v or (not v is bool and float(v) > 0.0), "%s job produced %s" % [job, expect[job]])
 		assert_eq(int(rep.workers), 1)
 
+func test_harvester_flags_the_plant_so_it_stops_looking_ripe() -> void:
+	var g := _farm()
+	var p := Vector2i(1, 2)
+	g.crop_at(p).progress = 1.0
+	var w := _worker_for("harvest")
+	FarmJobs.run([w], {"grids": [g], "chest": Inventory.new(8, 6), "rng": rng, "season": "spring", "scale": 18.0})
+	assert_false(g.crop_ready(p), "the plant was picked and is growing again")
+	assert_lt(g.crop_stage(p), 4)
+	assert_true(Tiles.key(p) in g.take_look_dirty(), "the tile is queued for a redraw")
+
+func test_harvester_refreshes_the_tile_on_the_farm() -> void:
+	GameState.new_game({"seed": 12, "starter": "puddlop"})
+	var g: FarmGrid = GameState.grids.farm
+	var p := Vector2i(4, 12)
+	assert_true(g.till(p))
+	assert_true(g.plant(p, "parsnip_seeds"))
+	var s: Dictionary = g.soil[Tiles.key(p)]
+	s.watered = true
+	s.watered_until = TimeService.now() + 999999.0
+	g.crop_at(p).progress = 1.0
+	var w := _worker_for("harvest")
+	GameState.ranch.append(w)
+	var seen := [false]
+	var cb := func(m: String, t: Vector2i) -> void:
+		if m == "farm" and t == p and not g.crop_ready(p):
+			seen[0] = true
+	EventBus.tile_changed.connect(cb)
+	_advance(FarmJobs.TICK_SECONDS)
+	EventBus.tile_changed.disconnect(cb)
+	assert_false(g.crop_ready(p))
+	assert_true(seen[0], "picking redraws the tile, so the ripe fruit sprite goes away")
+
 func test_tired_workers_skip() -> void:
 	var w := _worker_for("water")
 	w.energy = 0.5
