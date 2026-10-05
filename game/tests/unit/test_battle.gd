@@ -73,6 +73,47 @@ func test_befriend_success_ends_battle() -> void:
 	assert_eq(eng.result, "befriend")
 	assert_not_null(eng.befriended)
 
+func test_befriend_grants_the_same_xp_as_a_knockout() -> void:
+	var caught := _mk("puddlop", 10)
+	var knocked := _mk("puddlop", 10)
+	var catch_eng := BattleEngine.new([caught], [_mk("sproutle", 8)], BattleEngine.Kind.WILD, 3)
+	catch_eng.start()
+	catch_eng.submit({"k": "befriend", "id": "star_charm"}, {"k": "move", "i": 0})
+	var ko_eng := BattleEngine.new([knocked], [_mk("sproutle", 8)], BattleEngine.Kind.WILD, 3)
+	ko_eng.start()
+	ko_eng.active(1).hp = 0
+	ko_eng._check_faints([])
+	assert_gt(caught.xp, 0)
+	assert_eq(caught.xp, knocked.xp)
+
+func test_a_lead_switched_out_before_acting_earns_no_xp() -> void:
+	var lead := _mk("puddlop", 12)
+	var nxt := _mk("embercub", 12)
+	var eng := BattleEngine.new([lead, nxt], [_mk("sproutle", 6)], BattleEngine.Kind.WILD, 5)
+	eng.start()
+	var lead_xp := lead.xp
+	var next_xp := nxt.xp
+	eng.submit({"k": "switch", "i": 1}, {"k": "none"})
+	eng.active(1).hp = 0
+	eng._check_faints([])
+	assert_eq(lead.xp, lead_xp)
+	assert_gt(nxt.xp, next_xp)
+
+func test_a_wildling_that_attacked_still_shares_xp_after_switching() -> void:
+	var lead := _mk("puddlop", 20)
+	var nxt := _mk("embercub", 12)
+	var eng := BattleEngine.new([lead, nxt], [_mk("sproutle", 40)], BattleEngine.Kind.WILD, 5)
+	eng.start()
+	var lead_xp := lead.xp
+	var next_xp := nxt.xp
+	eng.submit({"k": "move", "i": 0}, {"k": "none"})
+	assert_false(eng.is_over(), "the foe survives the first hit")
+	eng.submit({"k": "switch", "i": 1}, {"k": "none"})
+	eng.active(1).hp = 0
+	eng._check_faints([])
+	assert_gt(lead.xp, lead_xp)
+	assert_eq(lead.xp - lead_xp, nxt.xp - next_xp)
+
 func test_run_from_wild() -> void:
 	var eng := BattleEngine.new([_mk("puddlop", 10)], [_mk("sproutle", 5)], BattleEngine.Kind.WILD, 3)
 	eng.start()

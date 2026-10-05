@@ -53,6 +53,8 @@ var rng := RandomNumberGenerator.new()
 var turn: int = 0
 var result: String = ""
 var befriended: Creature = null
+## Player Wildlings that used a move. Merely being sent out does not count; the one
+## still on the field when the foe faints or is befriended is added in _award_xp.
 var participants: Dictionary = {}
 var xp_mult: float = 1.0
 ## Per-side bonuses from the trainer's skill tree: battle_damage, battle_guard, battle_heal,
@@ -156,7 +158,6 @@ func is_over() -> bool:
 
 func start() -> Array:
 	var ev: Array = []
-	participants[active(0).uid] = true
 	if kind == Kind.WILD:
 		var foe := active(1)
 		ev.append({"t": "text", "msg": tr("A wild %s%s appeared!") % [tr("Starry ") if foe.starry else "", foe.display_name()]})
@@ -211,8 +212,6 @@ func _do_switch(side: int, index: int, ev: Array) -> void:
 		old.status = ""
 	s.active = index
 	s.reset_stages()
-	if side == 0:
-		participants[s.current().uid] = true
 	ev.append({"t": "switch", "side": side, "index": index, "species": s.current().species_id})
 	ev.append({"t": "text", "msg": (tr("Go, %s!") % s.current().display_name()) if mine else (tr("%s sent out %s!") % [s.name, s.current().display_name()])})
 	_on_entry(side, ev)
@@ -374,6 +373,8 @@ func _execute_move(side: int, move_id: String, ev: Array) -> void:
 		elif rng.randf() < 0.33:
 			ev.append({"t": "text", "msg": tr("%s is too dazed to move!") % user.display_name()})
 			return
+	if side == 0:
+		participants[user.uid] = true
 	var m: Dictionary = Data.get_move(move_id)
 	ev.append({"t": "move", "side": side, "move": move_id, "name": m.name, "type": m.type, "cat": m.cat})
 	ev.append({"t": "text", "msg": tr("%s used %s!") % [user.display_name(), tr(str(m.name))]})
@@ -692,6 +693,7 @@ func _try_befriend(item_id: String, ev: Array) -> void:
 		ev.append({"t": "text", "msg": tr("%s wants to be your friend!") % foe.display_name()})
 		befriended = foe
 		foe.status = ""
+		_award_xp(foe, ev)
 		_end("befriend", ev)
 	else:
 		var lines := [tr("%s isn't convinced yet."), tr("%s sniffed it, then looked away."), tr("So close! %s almost came over!")]
@@ -762,6 +764,9 @@ var _announced_faint: Dictionary = {}
 func _award_xp(foe: Creature, ev: Array) -> void:
 	if kind == Kind.PVP:
 		return
+	var finisher := active(0)
+	if not finisher.is_fainted():
+		participants[finisher.uid] = true
 	var sp: Dictionary = foe.species()
 	var bst := 0
 	for s in Data.STATS:
