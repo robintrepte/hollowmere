@@ -83,7 +83,7 @@ var hemisphere: String = "auto"         ## auto (from the locale) | north | sout
 var casino_daily_limit: int = 0        ## chips a day the player may stake; 0 = no limit
 var chat_filter: bool = true           ## masks rude words in chat and bubbles
 var hide_casino: bool = false          ## keeps the Grand Casino closed and its quests hidden
-var profile: Dictionary = {}           ## free-form per-account data: tutorials seen, emote wheel, window spots
+var profile: Dictionary = {}           ## free-form per-account data: tutorials seen, window spots
 var stamps: Dictionary = {}            ## key -> unix time of the last change, for merging with the account copy
 
 const SAVED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind", "easy_fishing", "screen_shake",

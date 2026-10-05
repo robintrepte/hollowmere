@@ -15,7 +15,6 @@ const TABS := [
 	["skills", "Skills", "_tab_skills", "skills"],
 	["collection", "Collection", "_tab_collection", "collection"],
 	["map", "Map", "_tab_map", "map"],
-	["emotes", "Emotes", "_tab_emotes", "emotes"],
 	["settings", "Settings", "_tab_settings", ""],
 ]
 
@@ -64,8 +63,6 @@ static func available(id: String) -> bool:
 			return ResourceLoader.exists("res://scenes/ui/skill_panel.gd")
 		"collection":
 			return ResourceLoader.exists("res://scenes/ui/collection_panel.gd")
-		"emotes":
-			return ResourceLoader.exists("res://scenes/ui/emote_panel.gd")
 	return true
 
 ## Most of the viewport, inside the safe area (notches, home indicator).
@@ -99,7 +96,6 @@ func _make(id: String) -> Control:
 		"settings": return SettingsPanel.new()
 		"skills": return load("res://scenes/ui/skill_panel.gd").new(p)
 		"collection": return load("res://scenes/ui/collection_panel.gd").new(p)
-		"emotes": return load("res://scenes/ui/emote_panel.gd").new(p)
 	return Control.new()
 
 func _show(id: String) -> void:

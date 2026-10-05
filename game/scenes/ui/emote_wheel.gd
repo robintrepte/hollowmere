@@ -1,12 +1,11 @@
 class_name EmoteWheel
 extends Control
-## Eight-slot radial picker. G / right stick / the HUD button opens it; a click or a second
-## press on a slot plays that emote. Dragging a known emote onto a slot from the Emotes tab
-## is how the wheel is rearranged.
+## Radial picker for the fixed emotes. The emote key opens it; a click or a second
+## press on a slot plays that emote.
 
 signal closed
 
-const R := 78.0
+const R := 96.0
 const SLOT_R := 22.0
 
 var _slots: Array = []
@@ -24,7 +23,7 @@ func _ready() -> void:
 func _draw_wheel() -> void:
 	var c := size * 0.5
 	draw_circle(c, R + 28.0, Color(0.08, 0.06, 0.07, 0.55))
-	for i in Emotes.WHEEL_SLOTS:
+	for i in _slots.size():
 		var p: Vector2 = c + _dir(i) * R
 		var id := str(_slots[i]) if i < _slots.size() else ""
 		var on := i == _hover
@@ -43,12 +42,12 @@ func _draw_wheel() -> void:
 	draw_string(UITheme.font(), c + Vector2(-hint.length() * 3.0, 4), hint, HORIZONTAL_ALIGNMENT_CENTER, -1, UITheme.fs(8), UITheme.INK)
 
 func _dir(i: int) -> Vector2:
-	var a := -PI * 0.5 + i * TAU / float(Emotes.WHEEL_SLOTS)
+	var a := -PI * 0.5 + i * TAU / float(_slots.size())
 	return Vector2(cos(a), sin(a))
 
 func _slot_at(pos: Vector2) -> int:
 	var c := size * 0.5
-	for i in Emotes.WHEEL_SLOTS:
+	for i in _slots.size():
 		if pos.distance_to(c + _dir(i) * R) <= SLOT_R + 4.0:
 			return i
 	return -1
@@ -83,7 +82,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			var a := Vector2(x, y).angle() + PI * 0.5
 			if a < 0.0:
 				a += TAU
-			_hover = int(round(a / (TAU / float(Emotes.WHEEL_SLOTS)))) % Emotes.WHEEL_SLOTS
+			_hover = int(round(a / (TAU / float(_slots.size())))) % _slots.size()
 			queue_redraw()
 
 func _play(i: int) -> void:

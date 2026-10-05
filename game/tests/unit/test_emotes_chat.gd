@@ -3,7 +3,6 @@ extends GutTest
 
 func after_each() -> void:
 	Chat.reset_rate()
-	Settings.profile_set("emote_wheel", Emotes.DEFAULT_WHEEL)
 	Settings.profile_set("muted", [])
 
 func test_starter_emotes_are_known() -> void:
@@ -12,16 +11,9 @@ func test_starter_emotes_are_known() -> void:
 	assert_true(Emotes.knows(GameState.local_player(), "dance_jig"))
 	assert_false(Emotes.knows(GameState.local_player(), "lucky"))
 
-func test_unlock_and_wheel_slots() -> void:
+func test_wheel_is_the_fixed_set() -> void:
 	GameState.new_game({"seed": 2, "starter": "puddlop"})
-	var p := GameState.local_player()
-	p.emotes.append("lucky")
-	assert_true(Emotes.knows(p, "lucky"))
-	Emotes.set_slot(0, "lucky")
-	assert_eq(Emotes.wheel(p)[0], "lucky")
-	Emotes.set_slot(1, "lucky")
-	assert_eq(Emotes.wheel(p)[0], "", "the same emote only sits in one slot")
-	assert_eq(Emotes.wheel(p)[1], "lucky")
+	assert_eq(Emotes.wheel(GameState.local_player()), Emotes.STARTER)
 
 func test_chat_filters_rude_words_and_unknown_glyphs() -> void:
 	assert_eq(Chat.clean("hello fuck there"), "hello **** there")

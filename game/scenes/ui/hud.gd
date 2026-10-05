@@ -175,23 +175,6 @@ func _ready() -> void:
 	_hotbar_name.offset_top = -SLOT - 28
 	_hotbar_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	root.add_child(_hotbar_name)
-	var emote_btn := UITheme.button("", func():
-		var main := get_tree().get_first_node_in_group("main")
-		if main and main.has_method("_toggle_emote_wheel"):
-			main._toggle_emote_wheel())
-	emote_btn.icon = Art.item("emote_wave")
-	emote_btn.expand_icon = true
-	emote_btn.tooltip_text = tr("Emotes")
-	emote_btn.custom_minimum_size = Vector2(28, 28)
-	emote_btn.anchor_left = 0.5
-	emote_btn.anchor_right = 0.5
-	emote_btn.anchor_top = 1
-	emote_btn.anchor_bottom = 1
-	emote_btn.offset_left = w / 2.0 + 8
-	emote_btn.offset_right = w / 2.0 + 36
-	emote_btn.offset_top = -SLOT - 10
-	emote_btn.offset_bottom = -SLOT + 18
-	root.add_child(emote_btn)
 
 	# Tutorial hint (above the hotbar)
 	_hint = PanelContainer.new()
