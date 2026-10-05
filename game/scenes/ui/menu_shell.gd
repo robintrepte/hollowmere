@@ -103,6 +103,10 @@ func _show(id: String) -> void:
 	if is_instance_valid(current):
 		if current.has_method("on_tab_hidden"):
 			current.on_tab_hidden()
+		# Inventory emits closed from _exit_tree. Unhook that before freeing the tab,
+		# or a tab switch closes the whole menu.
+		if current.has_signal("closed") and current.closed.is_connected(_forward_tab_closed):
+			current.closed.disconnect(_forward_tab_closed)
 		current.queue_free()
 	current = _make(id)
 	current.set("embedded", true)
@@ -110,12 +114,17 @@ func _show(id: String) -> void:
 	current.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	current.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	if current.has_signal("closed"):
-		current.closed.connect(func(): if is_instance_valid(self): closed.emit(), CONNECT_ONE_SHOT)
+		current.closed.connect(_forward_tab_closed, CONNECT_ONE_SHOT)
 	if current.has_method("on_tab_shown"):
 		current.on_tab_shown()
 	Audio.sfx("tick", 0.0)
 	if Settings.using_pad:
 		UIRoot.focus_first.call_deferred(current)
+
+## A tab's own close button closes the menu. Ignored once the shell is already leaving the tree.
+func _forward_tab_closed() -> void:
+	if is_inside_tree():
+		closed.emit()
 
 func blocks_escape() -> bool:
 	return is_instance_valid(current) and current.has_method("blocks_escape") and current.blocks_escape()

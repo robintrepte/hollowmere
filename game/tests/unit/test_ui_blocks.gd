@@ -85,3 +85,16 @@ func test_tab_bar_compact_keeps_the_open_tab_named() -> void:
 	assert_ne(bar.button("craft").text, "")
 	bar.set_compact(false)
 	assert_ne(bar.button("inventory").text, "")
+
+func test_switching_tabs_from_inventory_keeps_the_menu_open() -> void:
+	GameState.new_game({"seed": 1})
+	var shell := MenuShell.new(null, "inventory")
+	add_child_autofree(shell)
+	await wait_process_frames(2)
+	assert_eq(shell.tab, "inventory")
+	watch_signals(shell)
+	shell.bar.select("party")
+	await wait_process_frames(2)
+	assert_eq(shell.tab, "party")
+	assert_signal_not_emitted(shell, "closed")
+	assert_true(is_instance_valid(shell) and shell.is_inside_tree())

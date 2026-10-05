@@ -508,4 +508,6 @@ func _draw_ghost() -> void:
 func _exit_tree() -> void:
 	if on_close.is_valid():
 		on_close.call()
-	closed.emit()
+	# The menu shell frees this panel to change tabs. That is not the player closing it.
+	if not embedded:
+		closed.emit()
