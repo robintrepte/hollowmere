@@ -13,8 +13,11 @@ Outputs (in game/assets/tiles/):
                         16 columns x 384 rows (6 shore terrains x 64). Same bit layout as water_edge.
   shore_fringe.png      dirt bank spilling onto the land tile. 16 columns (sides facing water)
                         x 16 rows (diagonal water). Same bank color as water_edge where the tiles meet.
-  grass_edge_<season>.png  grass spilling onto bare ground: 16 columns (sides that touch grass,
-                        N=1 E=2 S=4 W=8) x 16 rows (diagonal-only grass, NE=1 SE=2 SW=4 NW=8)
+  grass_edge_<season>.png  ragged spill of a higher ground onto a lower one. 16 columns
+                        (sides, N=1 E=2 S=4 W=8) x 176 rows (11 terrains x 16 diagonal masks).
+                        Block order matches World.SPILL_BLOCK: grass, darkgrass, sand, dirt,
+                        snow, ash, marsh, twilight, canyon, path, carpet. Tallgrass and flowers
+                        use the grass block, since their edges are grass.
   cliff.png, cavewall.png  32x48 blocking deco
 """
 import argparse
@@ -142,9 +145,16 @@ PETALS = {
 }
 
 
+def _field(name, season):
+    """Shared noise for a ground. Tallgrass and flowers keep grass's field so a patch
+    meets the lawn the way two grass tiles meet, instead of cutting on a square."""
+    key = "grass" if name in ("tallgrass", "flowers") else name
+    return fbm(np.random.default_rng(zlib.crc32(f"{key}:{season}".encode())))
+
+
 def make_tile(name, season, variant, shared_only=False):
     rng = np.random.default_rng(zlib.crc32(f"{name}:{season}:{variant}".encode()))
-    shared = fbm(np.random.default_rng(zlib.crc32(f"{name}:{season}".encode())))
+    shared = _field(name, season)
     # Shores use the shared field alone so they meet the neighboring ground tile.
     n = shared if shared_only else shared + (fbm(rng) - shared) * EDGE_W
     if name in ("grass", "flowers", "tallgrass"):
@@ -671,15 +681,40 @@ def _check_tile_seams():
         raise SystemExit("soil mask ate the middle or missed the open edge")
 
 
-def grass_edges(season):
-    """Grass creeping a few ragged pixels onto bare ground (path, dirt, sand, plaza...).
+# Block order in grass_edge_<season>.png. Keep in sync with World.SPILL_BLOCK.
+SPILL_FILLS = ["grass", "darkgrass", "sand", "dirt", "snow", "ash", "marsh", "twilight", "canyon", "path", "carpet"]
 
-    The fill reuses the grass tiles' shared noise, so it continues the neighboring grass without a seam,
-    and the ragged depth profile is periodic per tile, so fringes on adjacent tiles join up.
-    """
-    g = GRASS[season]
-    shared = fbm(np.random.default_rng(zlib.crc32(f"grass:{season}".encode())))
-    fill = ramp(shared * 0.55 + 0.25, g)
+
+def _spill_fill(name, season):
+    """Seamless border color of a ground, without pebbles or flowers, so a fringe continues the tile."""
+    n = _field(name, season)
+    if name in ("grass", "flowers", "tallgrass"):
+        return ramp(n * 0.55 + 0.25, GRASS[season])
+    if name == "darkgrass":
+        return ramp(n * 0.55 + 0.25, DARK[season])
+    if name == "path":
+        return ramp(n * 0.5 + 0.25, ["#8a6a48", "#a07c55", "#b38d62", "#c29d70"])
+    if name == "dirt":
+        return ramp(n * 0.5 + 0.25, ["#6a4a30", "#7c5838", "#8d6640", "#9c7349"])
+    if name == "sand":
+        return ramp(n * 0.45 + 0.3, ["#d0b078", "#dcc088", "#e8d098", "#f2dca8"])
+    if name == "snow":
+        return ramp(n * 0.5 + 0.35, ["#b8c8dc", "#cfdbe8", "#e2eaf3", "#f4f8fc"])
+    if name == "ash":
+        return ramp(n * 0.5 + 0.25, ["#3c3434", "#4a4040", "#584c4a", "#665856"])
+    if name == "marsh":
+        return ramp(n * 0.55 + 0.2, ["#3c5032", "#4a5e38", "#566a40", "#64784a"])
+    if name == "twilight":
+        return ramp(n * 0.55 + 0.25, ["#3a3a6a", "#46467c", "#54548e", "#6464a0"])
+    if name == "canyon":
+        return ramp(n * 0.5 + 0.25, ["#a05a38", "#b46a42", "#c47a4c", "#d28a58"])
+    if name == "carpet":
+        return ramp(n * 0.3 + 0.35, ["#7a1a24", "#8a2028", "#96262e", "#a02c34"])
+    return np.zeros((T, T, 3)) + 128
+
+
+def _fringe_masks():
+    """The same ragged lip the grass-onto-path transition uses. Periodic, so neighboring tiles join."""
     k = np.arange(T) * 2 * np.pi / T
     depth = 2.8 + 0.9 * np.sin(k + 0.6) + 0.8 * np.sin(3 * k + 2.1) + 0.6 * np.sin(5 * k + 4.0) + 0.5 * np.sin(8 * k + 1.3)
     ys, xs = np.mgrid[0:T, 0:T]
@@ -687,31 +722,55 @@ def grass_edges(season):
     r = depth[0] + 0.6
     corners = [np.hypot(T - 0.5 - xs, ys + 0.5) < r, np.hypot(T - 0.5 - xs, T - 0.5 - ys) < r,
                np.hypot(xs + 0.5, T - 0.5 - ys) < r, np.hypot(xs + 0.5, ys + 0.5) < r]
-    rim, shade = hexc(g[0]) * 0.92, np.array([24, 30, 18])
-    out = np.zeros((T * 16, T * 16, 4), dtype=np.uint8)
-    for cm in range(16):
-        for em in range(16):
-            on = np.zeros((T, T), dtype=bool)
-            for i in range(4):
-                if em & (1 << i):
-                    on |= sides[i]
-                if cm & (1 << i):
-                    on |= corners[i]
-            if not on.any():
-                continue
-            # Neighbors outside the tile count as grass so the rim only traces the ragged inner edge.
-            pad = np.pad(on, 1, constant_values=True)
-            interior = pad[:-2, 1:-1] & pad[2:, 1:-1] & pad[1:-1, :-2] & pad[1:-1, 2:]
-            edge = on & ~interior
-            below = np.zeros_like(on)
-            below[1:, :] = on[:-1, :] & ~on[1:, :]
-            tile = np.zeros((T, T, 4))
-            tile[on, :3] = fill[on]
-            tile[on, 3] = 255
-            tile[edge, :3] = rim
-            tile[below, :3] = shade
-            tile[below, 3] = 70
-            out[cm * T:(cm + 1) * T, em * T:(em + 1) * T] = np.clip(tile, 0, 255).astype(np.uint8)
+    return sides, corners
+
+
+def _paint_spill(on, fill, rim, shade):
+    pad = np.pad(on, 1, constant_values=True)
+    interior = pad[:-2, 1:-1] & pad[2:, 1:-1] & pad[1:-1, :-2] & pad[1:-1, 2:]
+    edge = on & ~interior
+    below = np.zeros_like(on)
+    below[1:, :] = on[:-1, :] & ~on[1:, :]
+    tile = np.zeros((T, T, 4))
+    tile[on, :3] = fill[on]
+    tile[on, 3] = 255
+    tile[edge, :3] = rim if rim.ndim == 1 else rim[edge]
+    tile[below, :3] = shade if shade.ndim == 1 else shade[below]
+    tile[below, 3] = 70
+    return np.clip(tile, 0, 255).astype(np.uint8)
+
+
+def grass_edges(season):
+    """One 16-row block per terrain that creeps onto a lower neighbor.
+
+    The grass block is the old path transition. The others use that same lip, in their own color,
+    so a path through snow or a plaza against a path frays the way grass does.
+    """
+    sides, corners = _fringe_masks()
+    blocks = len(SPILL_FILLS)
+    out = np.zeros((T * 16 * blocks, T * 16, 4), dtype=np.uint8)
+    g = GRASS[season]
+    grass_rim, grass_shade = hexc(g[0]) * 0.92, np.array([24, 30, 18])
+    for b, name in enumerate(SPILL_FILLS):
+        fill = _spill_fill(name, season)
+        if name == "grass":
+            rim, shade = grass_rim, grass_shade
+        else:
+            rim = np.clip(fill * 0.88, 0, 255)
+            shade = np.clip(fill * 0.55, 0, 255)
+        for cm in range(16):
+            for em in range(16):
+                on = np.zeros((T, T), dtype=bool)
+                for i in range(4):
+                    if em & (1 << i):
+                        on |= sides[i]
+                    if cm & (1 << i):
+                        on |= corners[i]
+                if not on.any():
+                    continue
+                tile = _paint_spill(on, fill, rim, shade)
+                row = b * 16 + cm
+                out[row * T:(row + 1) * T, em * T:(em + 1) * T] = tile
     return Image.fromarray(out, "RGBA")
 
 

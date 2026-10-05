@@ -63,7 +63,8 @@ static func hair_layer(style: int) -> Texture2D:
 ## Runtime TileSet: source 0 = ground (4 variants x 20 rows),
 ## 1 = soil (16 connected-side masks x 32 rows: inner corners, plus 16 when watered),
 ## 2 = water edges (16 land-side masks x 64 rows: diagonal corners + variant * 16),
-## 3 = grass spilling onto bare ground (16 side masks x 16 corner masks),
+## 3 = ground spilling onto a lower neighbor (16 side masks x 176 rows:
+##     11 terrains x 16 corner masks; block order is World.SPILL_BLOCK),
 ## 4 = dirt bank spilling off water onto the neighboring land,
 ## 5 = shore caps (land color outside a rounded water corner; 6 terrains x 64 rows).
 static func tileset(season: String) -> TileSet:
@@ -74,7 +75,7 @@ static func tileset(season: String) -> TileSet:
 	_add_atlas(ts, "res://assets/tiles/ground_%s.png" % season, 4, SEASON_ROW_COUNT, 0)
 	_add_atlas(ts, "res://assets/tiles/soil.png", 16, 32, 1)
 	_add_atlas(ts, "res://assets/tiles/water_edge.png", 16, 64, 2)
-	_add_atlas(ts, "res://assets/tiles/grass_edge_%s.png" % season, 16, 16, 3)
+	_add_atlas(ts, "res://assets/tiles/grass_edge_%s.png" % season, 16, 176, 3)
 	_add_atlas(ts, "res://assets/tiles/shore_fringe.png", 16, 16, 4)
 	_add_atlas(ts, "res://assets/tiles/shore_cap_%s.png" % season, 16, 448, 5)
 	_tilesets[season] = ts

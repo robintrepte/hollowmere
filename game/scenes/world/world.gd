@@ -19,8 +19,31 @@ const TRELLIS := ["green_bean", "tomato", "grape", "hot_pepper", "snowpea", "cra
 const STALK := ["corn", "wheat", "sunflower", "amaranth"]
 const FLOWERS := ["tulip", "blue_jazz", "fairy_rose", "ice_lily", "moonbloom"]
 const BIG := ["melon", "pumpkin", "winter_squash", "glacier_melon"]
-const GRASSY := [0, 1, 11]
-const GRASS_SPILLS_ONTO := [2, 3, 5, 9, 15]
+## Row block in grass_edge_<season>.png. Tallgrass and flowers spill as grass.
+## A higher rank creeps onto a lower one; the lip is the same ragged edge as path-to-grass.
+const SPILL_BLOCK := {
+	0: 0, 1: 0, 11: 0,
+	18: 1,
+	3: 2,
+	9: 3,
+	7: 4,
+	12: 5,
+	13: 6,
+	14: 7,
+	15: 8,
+	2: 9,
+	21: 10,
+}
+const SPILL_RANK := {
+	1: 60, 11: 60, 0: 50, 18: 48,
+	7: 40,
+	3: 36, 9: 36, 12: 36, 13: 36, 14: 36, 15: 36,
+	2: 30,
+	21: 24,
+	5: 20, 17: 18, 20: 16, 10: 14,
+	8: 10, 16: 6,
+}
+const SPILL_BLOCKS := 11
 ## Row block in shore_cap_<season>.png for the land a pond corner should continue.
 const CAP_OF := {
 	0: 0, 1: 0, 11: 0, 7: 0,
@@ -44,6 +67,7 @@ var ground: TileMapLayer
 var shore_cap: TileMapLayer
 var soil_layer: TileMapLayer
 var edge_layer: TileMapLayer
+var spill_layers: Array[TileMapLayer] = []
 var decals: Node2D
 var ysort: Node2D
 var overlay: Node2D
@@ -75,6 +99,11 @@ func _ready() -> void:
 	edge_layer = TileMapLayer.new()
 	edge_layer.z_index = -9
 	add_child(edge_layer)
+	for _i in SPILL_BLOCKS:
+		var layer := TileMapLayer.new()
+		layer.z_index = -9
+		add_child(layer)
+		spill_layers.append(layer)
 	soil_layer = TileMapLayer.new()
 	soil_layer.z_index = -8
 	add_child(soil_layer)
@@ -141,6 +170,9 @@ func load_map(id: String) -> void:
 	soil_layer.tile_set = ts
 	edge_layer.tile_set = ts
 	shore_cap.tile_set = ts
+	for layer in spill_layers:
+		layer.tile_set = ts
+		layer.clear()
 	ground.clear()
 	edge_layer.clear()
 	shore_cap.clear()
@@ -220,6 +252,7 @@ func _draw_ground(p: Vector2i) -> void:
 		gid = 0
 	ground.set_cell(p, 0, Vector2i(_variant(p), gid))
 	shore_cap.erase_cell(p)
+	_clear_spill(p)
 	if gid in Tiles.WATER_TILES:
 		var sides := _shore_sides(p, true)
 		var corners := _shore_corners(p, true)
@@ -231,25 +264,51 @@ func _draw_ground(p: Vector2i) -> void:
 		else:
 			edge_layer.erase_cell(p)
 		return
-	if gid == Tiles.GROUND.bridge:
-		edge_layer.erase_cell(p)
-		return
-	if gid in GRASS_SPILLS_ONTO:
-		var gsides := 0
-		var gcorners := 0
-		for i in 4:
-			if _grassy(p + NEIGHBORS[i]):
-				gsides |= 1 << i
-		for i in 4:
-			var d: Vector2i = DIAGONALS[i]
-			if _grassy(p + d) and not _grassy(p + Vector2i(d.x, 0)) and not _grassy(p + Vector2i(0, d.y)):
-				gcorners |= 1 << i
-		if gsides or gcorners:
-			edge_layer.set_cell(p, 3, Vector2i(gsides, gcorners))
-			return
 	# No dirt fringe. The shore on the water tile is already the neighbor's ground color,
 	# and a brown strip here was the dark ring that didn't match the grass.
 	edge_layer.erase_cell(p)
+	if SPILL_RANK.has(gid):
+		_paint_spill(p, gid)
+
+
+func _clear_spill(p: Vector2i) -> void:
+	for layer in spill_layers:
+		layer.erase_cell(p)
+
+
+## Higher ground creeps onto this tile: grass onto a path, snow onto a path, a path onto plaza.
+func _paint_spill(p: Vector2i, gid: int) -> void:
+	var here := int(SPILL_RANK[gid])
+	var sides := {}
+	var corners := {}
+	for i in 4:
+		var b := _spill_block(p + NEIGHBORS[i], here)
+		if b >= 0:
+			sides[b] = int(sides.get(b, 0)) | (1 << i)
+	for i in 4:
+		var d: Vector2i = DIAGONALS[i]
+		var b := _spill_block(p + d, here)
+		if b < 0:
+			continue
+		if _spill_block(p + Vector2i(d.x, 0), here) == b or _spill_block(p + Vector2i(0, d.y), here) == b:
+			continue
+		corners[b] = int(corners.get(b, 0)) | (1 << i)
+	var blocks := {}
+	for b in sides:
+		blocks[b] = true
+	for b in corners:
+		blocks[b] = true
+	for b in blocks:
+		spill_layers[int(b)].set_cell(p, 3, Vector2i(int(sides.get(b, 0)), int(corners.get(b, 0)) + int(b) * 16))
+
+
+func _spill_block(p: Vector2i, here_rank: int) -> int:
+	if not grid.in_bounds(p):
+		return -1
+	var ng := grid.get_ground(p)
+	if int(SPILL_RANK.get(ng, -1)) <= here_rank:
+		return -1
+	return int(SPILL_BLOCK.get(ng, -1))
 
 func _shore_cap_row(p: Vector2i, sides: int, corners: int) -> int:
 	var gid := -1
@@ -265,9 +324,6 @@ func _shore_cap_row(p: Vector2i, sides: int, corners: int) -> int:
 	if gid < 0:
 		gid = 0
 	return corners + _variant(p) * 16 + int(CAP_OF[gid]) * 64
-
-func _grassy(p: Vector2i) -> bool:
-	return grid.in_bounds(p) and grid.get_ground(p) in GRASSY
 
 func _draw_soil(p: Vector2i) -> void:
 	if not grid.is_tilled(p):
