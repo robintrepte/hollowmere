@@ -159,9 +159,13 @@ func _hooked() -> void:
 	_game = ReelGame.new()
 	_game.setup(_hook, Settings.easy_fishing)
 	_ui.add_child(_game)
+	var sc := Settings.current_ui_scale()
+	_game.scale = Vector2(sc, sc)
 	var sp: Vector2 = ctl.player.get_global_transform_with_canvas().origin
 	var vp := ctl.get_viewport().get_visible_rect().size
-	_game.position = Vector2(clampf(sp.x + 26.0, 4.0, vp.x - ReelGame.W - 30.0), clampf(sp.y - ReelGame.H - 10.0, 4.0, vp.y - ReelGame.H - 4.0))
+	var gw := (ReelGame.W + 14.0) * sc
+	var gh := ReelGame.H * sc
+	_game.position = Vector2(clampf(sp.x + 26.0, 4.0, vp.x - gw - 8.0), clampf(sp.y - gh - 10.0, 4.0, vp.y - gh - 4.0))
 	if bool(_hook.get("legendary", false)):
 		EventBus.toast.emit(tr("Something huge is on the line!"), "star")
 
@@ -442,6 +446,8 @@ class CatchCard extends PanelContainer:
 			v.add_child(UITheme.label(" · ".join(sub), 9, UITheme.LEAF.darkened(0.35) if r.get("new", false) or r.get("record", false) else UITheme.INK))
 		if r.has("treasure"):
 			v.add_child(UITheme.label("Treasure!", 9, UITheme.COIN.darkened(0.3)))
+		scale = Vector2.ONE * Settings.current_ui_scale()
+		resized.connect(func() -> void: pivot_offset = size * 0.5, CONNECT_ONE_SHOT)
 		modulate.a = 0.0
 		var tw := create_tween()
 		tw.tween_property(self, "modulate:a", 1.0, 0.15)

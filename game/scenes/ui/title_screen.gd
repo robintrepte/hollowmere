@@ -104,6 +104,7 @@ func _ready() -> void:
 	_on_session(Net.has_session())
 	if not Net.has_session():
 		Net.try_restore_session()
+	UITheme.follow_scale(self, Settings.current_ui_scale)
 	Audio.music("title")
 
 func _fill_menu() -> void:

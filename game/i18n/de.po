@@ -13483,3 +13483,12 @@ msgstr "Arbeitet nicht."
 msgid "%s · taking a break · energy %d"
 msgstr "%s · macht Pause · Energie %d"
 
+msgid "UI size"
+msgstr "UI-Größe"
+
+msgid "HUD size"
+msgstr "HUD-Größe"
+
+msgid "100% keeps the HUD the same size as the rest of the UI."
+msgstr "100 % lässt das HUD so groß wie den Rest der UI."
+

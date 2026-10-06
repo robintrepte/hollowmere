@@ -36,6 +36,7 @@ func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	_fit()
 	get_viewport().size_changed.connect(_fit)
+	Settings.ui_scale_changed.connect(_fit)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 4)
 	add_child(v)
@@ -65,24 +66,29 @@ static func available(id: String) -> bool:
 			return ResourceLoader.exists("res://scenes/ui/collection_panel.gd")
 	return true
 
-## Most of the viewport, inside the safe area (notches, home indicator).
+## Most of the parent, inside the safe area (notches, home indicator).
+## The parent is the scaled UI root, so its size is already in layout pixels.
 func _fit() -> void:
 	var view := get_viewport_rect().size
+	var host := get_parent() as Control
+	var box := view
+	if host != null and host.size.x > 1.0 and host.size.y > 1.0:
+		box = host.size
 	var safe := DisplayServer.get_display_safe_area()
 	var win := DisplayServer.window_get_size()
 	var inset := Vector4(0, 0, 0, 0)
-	if win.x > 0 and win.y > 0 and safe.size.x > 0:
-		var sx := view.x / float(win.x)
-		var sy := view.y / float(win.y)
+	if win.x > 0 and win.y > 0 and safe.size.x > 0 and box.x > 0.0:
+		var sx := box.x / float(win.x)
+		var sy := box.y / float(win.y)
 		inset = Vector4(safe.position.x * sx, safe.position.y * sy, (win.x - safe.end.x) * sx, (win.y - safe.end.y) * sy)
-	var m := Vector2(view.x * 0.03, view.y * 0.03)
+	var m := Vector2(box.x * 0.03, box.y * 0.03)
 	offset_left = maxf(m.x, inset.x)
 	offset_top = maxf(m.y, inset.y)
 	offset_right = -maxf(m.x, inset.z)
 	offset_bottom = -maxf(m.y, inset.w)
 	if bar:
-		var room := view.x - offset_left + offset_right - 40.0
-		bar.set_compact(view.x < 560.0 or Settings.text_scale > 1.2 or bar.full_width() > room)
+		var room := box.x - offset_left + offset_right - 40.0
+		bar.set_compact(box.x < 560.0 or Settings.text_scale > 1.2 or bar.full_width() > room)
 
 func _make(id: String) -> Control:
 	var p := GameState.local_player()

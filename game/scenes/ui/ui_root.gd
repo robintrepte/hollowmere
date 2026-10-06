@@ -27,6 +27,7 @@ func _ready() -> void:
 	dialogue = DialogueBox.new()
 	dialogue.visible = false
 	root.add_child(dialogue)
+	UITheme.follow_scale(root, Settings.current_ui_scale)
 	Settings.text_scale_changed.connect(func():
 		UITheme.reset()
 		root.theme = UITheme.theme())

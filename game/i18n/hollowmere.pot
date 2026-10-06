@@ -252,7 +252,7 @@ msgstr ""
 msgid "%d skill points free"
 msgstr ""
 
-#: scenes/ui/hud.gd:308
+#: scenes/ui/hud.gd:312
 #, c-format
 msgid "%d skill points to spend ({skills})"
 msgstr ""
@@ -272,7 +272,7 @@ msgstr ""
 msgid "%s\n%s"
 msgstr ""
 
-#: scenes/ui/party_panel.gd:454
+#: scenes/ui/party_panel.gd:470
 #, c-format
 msgid "%s  %d%%"
 msgstr ""
@@ -392,7 +392,7 @@ msgstr ""
 msgid "%s Leaf damage"
 msgstr ""
 
-#: scenes/ui/hud.gd:432
+#: scenes/ui/hud.gd:436
 #, c-format
 msgid "%s Lv%d"
 msgstr ""
@@ -447,7 +447,7 @@ msgstr ""
 msgid "%s Wildling produce"
 msgstr ""
 
-#: scenes/ui/party_panel.gd:459
+#: scenes/ui/party_panel.gd:475
 #, c-format
 msgid "%s and %s are now a pair. Eggs will appear in the farm chest."
 msgstr ""
@@ -532,7 +532,7 @@ msgstr ""
 msgid "%s closed the trade."
 msgstr ""
 
-#: scenes/main/fishing_flow.gd:436
+#: scenes/main/fishing_flow.gd:440
 #, c-format
 msgid "%s cm"
 msgstr ""
@@ -1082,7 +1082,7 @@ msgstr ""
 msgid "%s · %s %s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:238
+#: scenes/ui/title_screen.gd:239
 #, c-format
 msgid "%s · %s Farm\n%s · %s"
 msgstr ""
@@ -1355,12 +1355,17 @@ msgstr ""
 msgid "1 skill point free"
 msgstr ""
 
-#: scenes/ui/hud.gd:308
+#: scenes/ui/hud.gd:312
 msgid "1 skill point to spend ({skills})"
 msgstr ""
 
 #: data/progression.json
 msgid "10 Wildlings befriended!"
+msgstr ""
+
+#: scenes/ui/settings_panel.gd:78
+#, c-format
+msgid "100% keeps the HUD the same size as the rest of the UI."
 msgstr ""
 
 #: scenes/ui/settings_panel.gd:49
@@ -2204,7 +2209,7 @@ msgstr ""
 msgid "Ammonite"
 msgstr ""
 
-#: scenes/ui/hud.gd:254
+#: scenes/ui/hud.gd:257
 msgid "An agent is playing. You are watching."
 msgstr ""
 
@@ -2970,7 +2975,7 @@ msgstr ""
 msgid "Bream"
 msgstr ""
 
-#: scenes/ui/party_panel.gd:424
+#: scenes/ui/party_panel.gd:440
 msgid "Breeding"
 msgstr ""
 
@@ -3372,7 +3377,7 @@ msgstr ""
 msgid "Can't place that here."
 msgstr ""
 
-#: scenes/main/controller.gd:538 scenes/ui/party_panel.gd:466
+#: scenes/main/controller.gd:538 scenes/ui/party_panel.gd:482
 msgid "Cancel"
 msgstr ""
 
@@ -3525,11 +3530,11 @@ msgstr ""
 msgid "Charmer"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:112
+#: scenes/ui/settings_panel.gd:117
 msgid "Chat"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:256
+#: scenes/ui/title_screen.gd:257
 msgid "Checking the cloud..."
 msgstr ""
 
@@ -3690,7 +3695,7 @@ msgstr ""
 msgid "Cloud Fluff"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:263
+#: scenes/ui/title_screen.gd:264
 msgid "Cloud backups are up to date."
 msgstr ""
 
@@ -3710,7 +3715,7 @@ msgstr ""
 msgid "Cluckle Egg"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:111 scenes/ui/title_screen.gd:125
+#: scenes/ui/settings_panel.gd:116 scenes/ui/title_screen.gd:126
 msgid "Co-op"
 msgstr ""
 
@@ -3747,7 +3752,7 @@ msgstr ""
 msgid "Collection"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:80
+#: scenes/ui/settings_panel.gd:85
 msgid "Colorblind mode (type names on moves, quality pips)"
 msgstr ""
 
@@ -3804,11 +3809,11 @@ msgstr ""
 msgid "Containers inside your backpack hold even more stuff."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:115
+#: scenes/ui/title_screen.gd:116
 msgid "Continue"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:87
+#: scenes/ui/settings_panel.gd:92
 msgid "Controls (click, then press a key)"
 msgstr ""
 
@@ -4026,7 +4031,7 @@ msgstr ""
 msgid "Craft a Fish Smoker."
 msgstr ""
 
-#: data/quests.json scenes/ui/menu_shell.gd:12 scenes/ui/settings_panel.gd:106
+#: data/quests.json scenes/ui/menu_shell.gd:12 scenes/ui/settings_panel.gd:111
 msgid "Crafting"
 msgstr ""
 
@@ -4270,11 +4275,11 @@ msgstr ""
 msgid "Defeat the beast of the Magma Depths."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:244
+#: scenes/ui/title_screen.gd:245
 msgid "Delete"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:244
+#: scenes/ui/title_screen.gd:245
 msgid "Delete this farm forever?"
 msgstr ""
 
@@ -4475,7 +4480,7 @@ msgstr ""
 msgid "East: Tidecove."
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:81
+#: scenes/ui/settings_panel.gd:86
 msgid "Easy fishing (the rod reels by itself, slightly lower quality)"
 msgstr ""
 
@@ -4624,7 +4629,7 @@ msgstr ""
 msgid "Emote"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:113
+#: scenes/ui/settings_panel.gd:118
 msgid "Emote wheel"
 msgstr ""
 
@@ -4872,12 +4877,12 @@ msgstr ""
 msgid "Farm Level %d!"
 msgstr ""
 
-#: scenes/ui/hud.gd:383
+#: scenes/ui/hud.gd:387
 #, c-format
 msgid "Farm Lv %d"
 msgstr ""
 
-#: scenes/ui/hud.gd:95
+#: scenes/ui/hud.gd:97
 msgid "Farm Lv 1"
 msgstr ""
 
@@ -4902,7 +4907,7 @@ msgstr ""
 msgid "Farm job: %s. %s"
 msgstr ""
 
-#: scenes/ui/hud.gd:225
+#: scenes/ui/hud.gd:227
 #, c-format
 msgid "Farm level %d!"
 msgstr ""
@@ -5258,7 +5263,7 @@ msgstr ""
 msgid "Fog"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:78
+#: scenes/ui/settings_panel.gd:83
 msgid "Font"
 msgstr ""
 
@@ -6105,6 +6110,10 @@ msgstr ""
 msgid "HP %d/%d%s"
 msgstr ""
 
+#: scenes/ui/settings_panel.gd:77
+msgid "HUD size"
+msgstr ""
+
 #: data/quests.json
 msgid "Ha! That'll keep the Embers warm all season."
 msgstr ""
@@ -6337,7 +6346,7 @@ msgstr ""
 msgid "Hide the casino (closes it and hides its quests)"
 msgstr ""
 
-#: scenes/ui/hud.gd:202
+#: scenes/ui/hud.gd:204
 msgid "Hide this hint"
 msgstr ""
 
@@ -7433,7 +7442,7 @@ msgstr ""
 msgid "Kale"
 msgstr ""
 
-#: scenes/ui/skill_panel.gd:166 scenes/ui/title_screen.gd:244
+#: scenes/ui/skill_panel.gd:166 scenes/ui/title_screen.gd:245
 msgid "Keep"
 msgstr ""
 
@@ -7547,7 +7556,7 @@ msgstr ""
 msgid "Lanterns on the Water"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:76
+#: scenes/ui/settings_panel.gd:81
 msgid "Large"
 msgstr ""
 
@@ -7555,7 +7564,7 @@ msgstr ""
 msgid "Largemouth Bass"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:76
+#: scenes/ui/settings_panel.gd:81
 msgid "Larger"
 msgstr ""
 
@@ -7657,17 +7666,17 @@ msgstr ""
 msgid "Let's trade"
 msgstr ""
 
-#: scenes/ui/hud.gd:389 scenes/ui/skill_panel.gd:75
+#: scenes/ui/hud.gd:393 scenes/ui/skill_panel.gd:75
 #, c-format
 msgid "Level %d"
 msgstr ""
 
-#: scenes/ui/hud.gd:235
+#: scenes/ui/hud.gd:238
 #, c-format
 msgid "Level %d! You earned a skill point."
 msgstr ""
 
-#: scenes/ui/hud.gd:86
+#: scenes/ui/hud.gd:88
 msgid "Level 1"
 msgstr ""
 
@@ -7788,11 +7797,11 @@ msgstr ""
 msgid "Lively"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:122
+#: scenes/ui/title_screen.gd:123
 msgid "Load"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:231
+#: scenes/ui/title_screen.gd:232
 msgid "Load a farm"
 msgstr ""
 
@@ -8115,7 +8124,7 @@ msgstr ""
 msgid "Mentor"
 msgstr ""
 
-#: scenes/ui/pause_menu.gd:32 scenes/ui/settings_panel.gd:110
+#: scenes/ui/pause_menu.gd:32 scenes/ui/settings_panel.gd:115
 msgid "Menu"
 msgstr ""
 
@@ -8422,7 +8431,7 @@ msgstr ""
 msgid "Never misses"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:118
+#: scenes/ui/title_screen.gd:119
 msgid "New Farm"
 msgstr ""
 
@@ -8460,7 +8469,7 @@ msgstr ""
 msgid "New quest: %s"
 msgstr ""
 
-#: scenes/main/fishing_flow.gd:440
+#: scenes/main/fishing_flow.gd:444
 msgid "New size record!"
 msgstr ""
 
@@ -8472,7 +8481,7 @@ msgstr ""
 msgid "New tea in spring. Smell that."
 msgstr ""
 
-#: scenes/main/fishing_flow.gd:438
+#: scenes/main/fishing_flow.gd:442
 msgid "New to your Fishdex!"
 msgstr ""
 
@@ -8484,7 +8493,7 @@ msgstr ""
 msgid "New token with economy"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:265
+#: scenes/ui/title_screen.gd:266
 msgid "Newer in the cloud"
 msgstr ""
 
@@ -8503,7 +8512,7 @@ msgstr ""
 msgid "Next gift from the curator at %d pieces"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:114
+#: scenes/ui/settings_panel.gd:119
 msgid "Next item slot"
 msgstr ""
 
@@ -8577,7 +8586,7 @@ msgstr ""
 msgid "No Wildlings live on the farm yet.\nMove some here from your party."
 msgstr ""
 
-#: scenes/ui/party_panel.gd:441
+#: scenes/ui/party_panel.gd:457
 #, c-format
 msgid "No compatible partner in the Den. Egg groups: %s."
 msgstr ""
@@ -8603,7 +8612,7 @@ msgstr ""
 msgid "No eggs to add. Pair Wildlings in the Den and eggs appear in the farm chest."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:233
+#: scenes/ui/title_screen.gd:234
 msgid "No farms yet."
 msgstr ""
 
@@ -8671,7 +8680,7 @@ msgstr ""
 msgid "Nocturnyx"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:76
+#: scenes/ui/settings_panel.gd:81
 msgid "Normal"
 msgstr ""
 
@@ -9081,11 +9090,11 @@ msgstr ""
 msgid "Painter and Florist"
 msgstr ""
 
-#: scenes/ui/party_panel.gd:444
+#: scenes/ui/party_panel.gd:460
 msgid "Pair for eggs..."
 msgstr ""
 
-#: scenes/ui/party_panel.gd:429
+#: scenes/ui/party_panel.gd:445
 #, c-format
 msgid "Paired with %s · %d%% egg chance each night"
 msgstr ""
@@ -9304,7 +9313,7 @@ msgstr ""
 msgid "Pip: That's you and me as Wardens! I'm the tall one."
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:78
+#: scenes/ui/settings_panel.gd:83
 msgid "Pixel"
 msgstr ""
 
@@ -9493,7 +9502,7 @@ msgstr ""
 msgid "Prestige III"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:115
+#: scenes/ui/settings_panel.gd:120
 msgid "Previous item slot"
 msgstr ""
 
@@ -9513,11 +9522,11 @@ msgstr ""
 msgid "Prismite"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:82
+#: scenes/ui/settings_panel.gd:87
 msgid "Privacy"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:153
+#: scenes/ui/title_screen.gd:154
 msgid "Privacy policy"
 msgstr ""
 
@@ -9648,7 +9657,7 @@ msgstr ""
 msgid "Quest complete: %s"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:107
+#: scenes/ui/settings_panel.gd:112
 msgid "Quest log"
 msgstr ""
 
@@ -9668,7 +9677,7 @@ msgstr ""
 msgid "Quiet mornings here are my favorite."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:132
+#: scenes/ui/title_screen.gd:133
 msgid "Quit"
 msgstr ""
 
@@ -9786,7 +9795,7 @@ msgstr ""
 msgid "Reach {n} new mine floors"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:78
+#: scenes/ui/settings_panel.gd:83
 msgid "Readable"
 msgstr ""
 
@@ -9932,7 +9941,7 @@ msgstr ""
 msgid "Reset"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:99
+#: scenes/ui/settings_panel.gd:104
 msgid "Reset controls"
 msgstr ""
 
@@ -10512,7 +10521,7 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:83
+#: scenes/ui/settings_panel.gd:88
 msgid "Send crash and error reports (no personal data)"
 msgstr ""
 
@@ -10548,7 +10557,7 @@ msgstr ""
 msgid "Set yourself a daily limit in the settings if you like. I'd do it."
 msgstr ""
 
-#: scenes/ui/menu_shell.gd:18 scenes/ui/pause_menu.gd:47 scenes/ui/settings_panel.gd:30 scenes/ui/title_screen.gd:130
+#: scenes/ui/menu_shell.gd:18 scenes/ui/pause_menu.gd:47 scenes/ui/settings_panel.gd:30 scenes/ui/title_screen.gd:131
 msgid "Settings"
 msgstr ""
 
@@ -10592,7 +10601,7 @@ msgstr ""
 msgid "Shakes the ground violently."
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:84
+#: scenes/ui/settings_panel.gd:89
 msgid "Share anonymous play stats (session length, progress)"
 msgstr ""
 
@@ -10725,7 +10734,7 @@ msgstr ""
 msgid "Side"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:94 scenes/ui/coop_panel.gd:104 scenes/ui/coop_panel.gd:170 scenes/ui/title_screen.gd:198
+#: scenes/ui/account_panel.gd:94 scenes/ui/coop_panel.gd:104 scenes/ui/coop_panel.gd:170 scenes/ui/title_screen.gd:199
 msgid "Sign in"
 msgstr ""
 
@@ -10802,7 +10811,7 @@ msgstr ""
 msgid "Skill reset"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:108
+#: scenes/ui/settings_panel.gd:113
 msgid "Skill tree"
 msgstr ""
 
@@ -11094,7 +11103,7 @@ msgstr ""
 msgid "Something ancient is near. The air smells of %s."
 msgstr ""
 
-#: scenes/main/fishing_flow.gd:166
+#: scenes/main/fishing_flow.gd:170
 msgid "Something huge is on the line!"
 msgstr ""
 
@@ -11983,7 +11992,7 @@ msgstr ""
 msgid "Take a break! Your farm will wait for you."
 msgstr ""
 
-#: scenes/ui/hud.gd:255
+#: scenes/ui/hud.gd:258
 msgid "Take control back"
 msgstr ""
 
@@ -12113,7 +12122,7 @@ msgstr ""
 msgid "Tend your Leaf Wildlings well."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:157
+#: scenes/ui/title_screen.gd:158
 msgid "Terms"
 msgstr ""
 
@@ -12121,7 +12130,7 @@ msgstr ""
 msgid "Terragorn"
 msgstr ""
 
-#: scenes/ui/settings_panel.gd:76
+#: scenes/ui/settings_panel.gd:81
 msgid "Text size"
 msgstr ""
 
@@ -12448,7 +12457,7 @@ msgstr ""
 msgid "The final shrine awaits those who've earned it."
 msgstr ""
 
-#: autoload/game_state.gd:2620 scenes/main/fishing_flow.gd:211
+#: autoload/game_state.gd:2620 scenes/main/fishing_flow.gd:215
 msgid "The fish got away."
 msgstr ""
 
@@ -13010,7 +13019,7 @@ msgstr ""
 msgid "This %s matures in %s."
 msgstr ""
 
-#: scenes/ui/party_panel.gd:438
+#: scenes/ui/party_panel.gd:454
 msgid "This Wildling can't have eggs."
 msgstr ""
 
@@ -13216,7 +13225,7 @@ msgstr ""
 msgid "Today's free chips are collected. Come back tomorrow."
 msgstr ""
 
-#: scenes/ui/hud.gd:302
+#: scenes/ui/hud.gd:306
 #, c-format
 msgid "Today: %s at the Show Ring"
 msgstr ""
@@ -13226,7 +13235,7 @@ msgstr ""
 msgid "Today: %s in the village!"
 msgstr ""
 
-#: scenes/ui/hud.gd:304
+#: scenes/ui/hud.gd:308
 msgid "Today: Creature Show at the Show Ring"
 msgstr ""
 
@@ -13366,7 +13375,7 @@ msgstr ""
 msgid "Treasure turns up more often."
 msgstr ""
 
-#: scenes/main/fishing_flow.gd:444
+#: scenes/main/fishing_flow.gd:448
 msgid "Treasure!"
 msgstr ""
 
@@ -13484,6 +13493,10 @@ msgstr ""
 msgid "Tycoon"
 msgstr ""
 
+#: scenes/ui/settings_panel.gd:76
+msgid "UI size"
+msgstr ""
+
 #: data/items.json
 msgid "Ultra Charm"
 msgstr ""
@@ -13533,7 +13546,7 @@ msgstr ""
 msgid "Unmute"
 msgstr ""
 
-#: scenes/ui/party_panel.gd:431
+#: scenes/ui/party_panel.gd:447
 msgid "Unpair"
 msgstr ""
 
@@ -13597,7 +13610,7 @@ msgstr ""
 msgid "Valley Grower"
 msgstr ""
 
-#: scenes/ui/map_panel.gd:31 scenes/ui/settings_panel.gd:109
+#: scenes/ui/map_panel.gd:31 scenes/ui/settings_panel.gd:114
 msgid "Valley map"
 msgstr ""
 
@@ -14498,7 +14511,7 @@ msgstr ""
 msgid "Wren: That's why I want to fix it. To see where she went."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:243
+#: scenes/ui/title_screen.gd:244
 msgid "X"
 msgstr ""
 
@@ -15139,7 +15152,7 @@ msgstr ""
 msgid "harvests forever"
 msgstr ""
 
-#: scenes/ui/hud.gd:462 scenes/ui/inventory_panel.gd:385
+#: scenes/ui/hud.gd:466 scenes/ui/inventory_panel.gd:385
 #, c-format
 msgid "hotbar_%d"
 msgstr ""
@@ -15279,12 +15292,12 @@ msgstr ""
 msgid "· status"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:198
+#: scenes/ui/title_screen.gd:199
 #, c-format
 msgid "● %s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:270
+#: scenes/ui/title_screen.gd:271
 #, c-format
 msgid "● %s · %s Farm\n%s · %s"
 msgstr ""

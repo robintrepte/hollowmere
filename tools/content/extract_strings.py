@@ -33,7 +33,7 @@ TR_CALL = re.compile(r'(?:(?<![\w.])tr|TranslationServer\.translate)\(' + STR + 
 UI_CALLS = re.compile(r'(?:UITheme\.(?:label|button)|_cmd_button|_text_link|_say|_ask|ui\.say|ui\.ask|toast\.emit|toast|add_item)\(\[?\s*' + STR)
 LIST_LINE = re.compile(r'^\s*' + STR + r',?\s*\]?\)?\s*$')
 REASON = re.compile(r'(?:\.reason|\.line)\s*=\s*' + STR)
-HELPER = re.compile(r'\b(?:_slider|_check|_choice|_column|_edit|_field)\([^,\n]*,\s*' + STR)
+HELPER = re.compile(r'\b(?:_slider|_scale_slider|_check|_choice|_column|_edit|_field)\([^,\n]*,\s*' + STR)
 HINT = re.compile(r'\b(?:_hint|_field)\(\s*' + STR)
 CONST_TEXT = re.compile(r'^const\s+\w*(?:HELP|TEXT|HINT|LABEL|TITLE)\w*\s*:?=\s*' + STR)
 # const EFFECT_TEXT := { "key": "Text %s", ... } — every value is UI text.

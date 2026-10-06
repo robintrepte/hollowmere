@@ -32,10 +32,12 @@ var _hint: PanelContainer
 var _hint_text: Label
 var _hint_qid := ""
 var _hotbar_panel: PanelContainer
+var _root: Control
 
 func _ready() -> void:
 	layer = 10
 	var root := Control.new()
+	_root = root
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.theme = UITheme.theme()
@@ -224,7 +226,8 @@ func _ready() -> void:
 	EventBus.farm_level_up.connect(func(lv2, _i):
 		toast(tr("Farm level %d!") % lv2, "star")
 		_refresh_level()
-		Juice.burst(self, _lv_panel.position + Vector2(_lv_panel.size.x / 2.0, _lv_panel.size.y), "levelup"))
+		var r := _lv_panel.get_global_rect()
+		Juice.burst(self, r.position + Vector2(r.size.x * 0.5, r.size.y), "levelup"))
 	EventBus.weather_changed.connect(func(_w): _refresh_clock())
 	EventBus.quest_updated.connect(_refresh_quest)
 	EventBus.skills_changed.connect(func(_pid): _refresh_quest())
@@ -254,6 +257,7 @@ func _ready() -> void:
 	spec_v.add_child(UITheme.label("An agent is playing. You are watching.", 9, UITheme.CREAM))
 	spec_v.add_child(UITheme.button("Take control back", func(): AgentBridge.take_back()))
 	AgentBridge.mode_changed.connect(func(): spec.visible = AgentBridge.spectator)
+	UITheme.follow_scale(root, Settings.current_hud_scale)
 	_refresh_all()
 
 func _pill(pad: int) -> StyleBoxFlat:

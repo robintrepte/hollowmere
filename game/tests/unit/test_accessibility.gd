@@ -3,6 +3,8 @@ extends GutTest
 
 func after_each() -> void:
 	Settings.set_text_scale(1.0)
+	Settings.set_ui_scale(1.0)
+	Settings.set_hud_scale(1.0)
 	Settings.set_ui_font("pixel")
 	UITheme.reset()
 	TranslationServer.set_locale("en")
@@ -19,6 +21,50 @@ func test_text_scale_scales_fonts_and_rebuilds_the_theme() -> void:
 	Settings.set_text_scale(1.0)
 	UITheme.reset()
 	assert_eq(UITheme.theme().default_font_size, 10)
+
+func test_ui_and_hud_scale_clamp_and_stack() -> void:
+	assert_true("ui_scale" in Settings.SYNCED)
+	assert_true("hud_scale" in Settings.SYNCED)
+	var hits := [0]
+	var on_scale := func() -> void: hits[0] += 1
+	Settings.ui_scale_changed.connect(on_scale)
+	Settings.set_ui_scale(1.2)
+	assert_almost_eq(Settings.ui_scale, 1.2, 0.001)
+	assert_eq(hits[0], 1)
+	Settings.set_ui_scale(1.2)
+	assert_eq(hits[0], 1, "the same size does not signal again")
+	Settings.set_ui_scale(4.0)
+	assert_almost_eq(Settings.ui_scale, Settings.UI_SCALE_MAX, 0.001)
+	Settings.set_hud_scale(0.1)
+	assert_almost_eq(Settings.hud_scale, Settings.UI_SCALE_MIN, 0.001)
+	assert_almost_eq(Settings.current_hud_scale(), Settings.UI_SCALE_MAX * Settings.UI_SCALE_MIN, 0.001)
+	assert_almost_eq(Settings.current_ui_scale(), Settings.UI_SCALE_MAX, 0.001)
+	Settings.ui_scale_changed.disconnect(on_scale)
+	Settings.set_ui_scale(1.0)
+	Settings.set_hud_scale(1.0)
+
+func test_fit_scale_covers_the_screen_from_the_center() -> void:
+	var root := Control.new()
+	add_child_autofree(root)
+	var child := ColorRect.new()
+	child.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	child.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(child)
+	UITheme.fit_scale(root, 1.5)
+	await wait_process_frames(2)
+	var view := root.get_viewport().get_visible_rect().size
+	var r := child.get_global_rect()
+	assert_almost_eq(r.position.x, 0.0, 2.0, "scaled UI still starts at the left edge")
+	assert_almost_eq(r.position.y, 0.0, 2.0, "scaled UI still starts at the top edge")
+	assert_almost_eq(r.end.x, view.x, 2.0, "scaled UI still reaches the right edge")
+	assert_almost_eq(r.end.y, view.y, 2.0, "scaled UI still reaches the bottom edge")
+	assert_almost_eq(r.get_center().x, view.x * 0.5, 2.0)
+	UITheme.fit_scale(root, 0.75)
+	await wait_process_frames(2)
+	r = child.get_global_rect()
+	assert_almost_eq(r.position.x, 0.0, 2.0)
+	assert_almost_eq(r.end.x, view.x, 2.0)
+	assert_almost_eq(r.end.y, view.y, 2.0)
 
 func test_readable_font_swaps_the_face() -> void:
 	assert_eq(Settings.ui_font, "pixel")

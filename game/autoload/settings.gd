@@ -2,12 +2,16 @@ extends Node
 ## User settings and the input map (registered at runtime so it can be rebound).
 
 signal text_scale_changed
+signal ui_scale_changed
 signal input_device_changed(pad: bool)
 signal locale_changed
 
 const PATH := "user://settings.cfg"
 const TEXT_SCALES := [1.0, 1.2, 1.4]
 const FONTS := ["pixel", "readable"]
+const UI_SCALE_MIN := 0.75
+const UI_SCALE_MAX := 1.5
+const UI_SCALE_STEP := 0.05
 
 const DEFAULT_KEYS := {
 	"move_up": [KEY_W, KEY_UP],
@@ -59,6 +63,8 @@ var master_volume: float = 0.8
 var music_volume: float = 0.6
 var sfx_volume: float = 0.8
 var text_scale: float = 1.0
+var ui_scale: float = 1.0              ## menus, dialogue, the title screen and the HUD
+var hud_scale: float = 1.0             ## extra multiplier on top of ui_scale, HUD only
 var ui_font: String = "pixel"          ## pixel (Tiny5) | readable (Nunito)
 var colorblind: bool = false
 ## Auto-reels fish (slightly lower quality) for players who find the minigame hard.
@@ -86,11 +92,11 @@ var hide_casino: bool = false          ## keeps the Grand Casino closed and its 
 var profile: Dictionary = {}           ## free-form per-account data: tutorials seen, window spots
 var stamps: Dictionary = {}            ## key -> unix time of the last change, for merging with the account copy
 
-const SAVED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind", "easy_fishing", "screen_shake",
+const SAVED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_scale", "hud_scale", "ui_font", "colorblind", "easy_fishing", "screen_shake",
 	"fullscreen", "twelve_hour", "auto_pause_menus", "server_host", "server_port", "server_key", "server_ssl", "cloud_saves",
 	"custom_keys", "locale", "error_reports", "analytics", "analytics_asked", "touch_controls", "hemisphere", "casino_daily_limit", "hide_casino", "chat_filter", "profile", "stamps"]
 ## Follows the account to every device. The rest belongs to this device (screen, server, input hardware).
-const SYNCED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_font", "colorblind", "easy_fishing",
+const SYNCED := ["clock_speed", "master_volume", "music_volume", "sfx_volume", "text_scale", "ui_scale", "hud_scale", "ui_font", "colorblind", "easy_fishing",
 	"screen_shake", "twelve_hour", "auto_pause_menus", "custom_keys", "locale", "error_reports", "analytics",
 	"analytics_asked", "hemisphere", "casino_daily_limit", "hide_casino", "chat_filter", "profile"]
 const PROFILE_UPLOAD_DELAY := 3.0
@@ -185,6 +191,31 @@ func set_text_scale(v: float) -> void:
 	text_scale = v
 	text_scale_changed.emit()
 
+func set_ui_scale(v: float) -> void:
+	v = _clamp_scale(v)
+	if is_equal_approx(v, ui_scale):
+		return
+	ui_scale = v
+	ui_scale_changed.emit()
+
+func set_hud_scale(v: float) -> void:
+	v = _clamp_scale(v)
+	if is_equal_approx(v, hud_scale):
+		return
+	hud_scale = v
+	ui_scale_changed.emit()
+
+## Menus, dialogue and the title screen.
+func current_ui_scale() -> float:
+	return ui_scale
+
+## HUD bars, hotbar, clock and tracker. UI size applies here too; this slider adds on top.
+func current_hud_scale() -> float:
+	return ui_scale * hud_scale
+
+func _clamp_scale(v: float) -> float:
+	return clampf(snappedf(v, UI_SCALE_STEP), UI_SCALE_MIN, UI_SCALE_MAX)
+
 func set_ui_font(id: String) -> void:
 	if id not in FONTS:
 		id = "pixel"
@@ -254,6 +285,8 @@ func load_settings() -> void:
 				set(k, cfg.get_value("settings", k))
 	if ui_font not in FONTS:
 		ui_font = "pixel"
+	ui_scale = _clamp_scale(ui_scale)
+	hud_scale = _clamp_scale(hud_scale)
 	_saved_snapshot = synced_values()
 
 func synced_values() -> Dictionary:
@@ -310,9 +343,13 @@ func sync_profile() -> void:
 	if m.local_changed:
 		var prev_scale := text_scale
 		var prev_font := ui_font
+		var prev_ui := ui_scale
+		var prev_hud := hud_scale
 		for k in m.values:
 			if k in SYNCED:
 				set(k, _typed(k, m.values[k]))
+		ui_scale = _clamp_scale(ui_scale)
+		hud_scale = _clamp_scale(hud_scale)
 		stamps = m.stamps
 		_saved_snapshot = synced_values()
 		_write_cfg()
@@ -320,6 +357,8 @@ func sync_profile() -> void:
 		apply()
 		if prev_scale != text_scale or prev_font != ui_font:
 			text_scale_changed.emit()
+		if not is_equal_approx(prev_ui, ui_scale) or not is_equal_approx(prev_hud, hud_scale):
+			ui_scale_changed.emit()
 	if m.remote_stale:
 		await upload_profile()
 

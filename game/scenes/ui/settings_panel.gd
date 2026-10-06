@@ -73,6 +73,11 @@ func _ready() -> void:
 		_choice(body, "Language", names, 0 if Settings.locale == "" else locs.find(Settings.locale) + 1, func(i: int):
 			Settings.locale = "" if i == 0 else locs[i - 1]
 			Settings.apply())
+	_scale_slider(body, "UI size", Settings.ui_scale, Settings.set_ui_scale, true)
+	_scale_slider(body, "HUD size", Settings.hud_scale, Settings.set_hud_scale, true)
+	var note := UITheme.label("100% keeps the HUD the same size as the rest of the UI.", 8, UITheme.MUTED)
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.add_child(note)
 	_choice(body, "Text size", ["Normal", "Large", "Larger"], Settings.TEXT_SCALES.find(Settings.text_scale), func(i: int):
 		Settings.set_text_scale(Settings.TEXT_SCALES[i]))
 	_choice(body, tr("Font"), [tr("Pixel"), tr("Readable")], Settings.FONTS.find(Settings.ui_font), func(i: int):
@@ -114,6 +119,35 @@ func _control_label(a: String) -> String:
 		"hotbar_next": return tr("Next item slot")
 		"hotbar_prev": return tr("Previous item slot")
 		_: return a.replace("_", " ").capitalize()
+
+## `live` applies while the slider is dragged. Pass false to wait until release.
+func _scale_slider(parent: Control, text: String, value: float, cb: Callable, live: bool) -> void:
+	var h := HBoxContainer.new()
+	parent.add_child(h)
+	var l := UITheme.label(text, 9)
+	l.custom_minimum_size = Vector2(130, 0)
+	h.add_child(l)
+	var s := HSlider.new()
+	s.min_value = Settings.UI_SCALE_MIN
+	s.max_value = Settings.UI_SCALE_MAX
+	s.step = Settings.UI_SCALE_STEP
+	s.value = clampf(value, s.min_value, s.max_value)
+	s.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.add_child(s)
+	var pct := UITheme.label("", 9)
+	pct.text = "%d%%" % int(round(s.value * 100.0))
+	pct.custom_minimum_size = Vector2(40, 0)
+	pct.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	h.add_child(pct)
+	var dragging := false
+	s.drag_started.connect(func() -> void: dragging = true)
+	s.drag_ended.connect(func(_changed: bool) -> void:
+		dragging = false
+		cb.call(s.value))
+	s.value_changed.connect(func(x: float) -> void:
+		pct.text = "%d%%" % int(round(x * 100.0))
+		if live or not dragging:
+			cb.call(x))
 
 func _slider(parent: Control, text: String, value: float, cb: Callable) -> void:
 	var h := HBoxContainer.new()

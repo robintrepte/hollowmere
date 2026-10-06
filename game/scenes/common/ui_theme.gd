@@ -23,6 +23,41 @@ static var _font: FontVariation
 static func fs(size: int) -> int:
 	return int(round(size * Settings.text_scale))
 
+## Lays `root` out in a smaller box and scales it so the result still fills the screen.
+## The center stays put, so a slider in the middle of a menu doesn't run away from the cursor.
+static func fit_scale(root: Control, scale: float) -> void:
+	if root == null or not is_instance_valid(root) or not root.is_inside_tree():
+		return
+	var view := root.get_viewport().get_visible_rect().size
+	if view.x < 2.0 or view.y < 2.0:
+		return
+	scale = maxf(scale, 0.25)
+	var logical := view / scale
+	root.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	root.grow_horizontal = Control.GROW_DIRECTION_END
+	root.grow_vertical = Control.GROW_DIRECTION_END
+	root.scale = Vector2(scale, scale)
+	root.size = logical
+	root.pivot_offset = logical * 0.5
+	root.position = root.pivot_offset * (scale - 1.0)
+
+## Keeps `root` matched to `factor` (a Settings scale) across resizes and setting changes.
+static func follow_scale(root: Control, factor: Callable) -> void:
+	var apply := func() -> void:
+		if is_instance_valid(root):
+			fit_scale(root, float(factor.call()))
+	apply.call()
+	var vp := root.get_viewport()
+	if not Settings.ui_scale_changed.is_connected(apply):
+		Settings.ui_scale_changed.connect(apply)
+	if not vp.size_changed.is_connected(apply):
+		vp.size_changed.connect(apply)
+	root.tree_exiting.connect(func() -> void:
+		if Settings.ui_scale_changed.is_connected(apply):
+			Settings.ui_scale_changed.disconnect(apply)
+		if is_instance_valid(vp) and vp.size_changed.is_connected(apply):
+			vp.size_changed.disconnect(apply))
+
 ## Drops the cached theme so the next theme() call picks up text size / font.
 static func reset() -> void:
 	_theme = null
