@@ -453,6 +453,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	var p := GameState.local_player()
 	if p == null:
 		return
+	# The wheel cycles slots; an open panel or dialogue already owns that scroll.
+	if UIRoot.blocking and event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_WHEEL_UP or mb.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			return
 	for i in PlayerData.HOTBAR_SIZE:
 		if event.is_action_pressed(tr("hotbar_%d") % i):
 			select_slot(i)

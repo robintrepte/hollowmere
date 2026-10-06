@@ -286,6 +286,25 @@ func test_shop_purchase_does_not_stack_rows_or_repeat() -> void:
 	assert_eq(GameState.money(), before - Data.buy_price("parsnip_seeds"), "a second click during the purchase is ignored")
 	sp.free()
 
+func test_wheel_does_not_cycle_hotbar_while_a_panel_is_open() -> void:
+	GameState.new_game({"seed": 3, "player_name": "Wheel", "farm_name": "T", "starter": "sproutle"})
+	var hud := Hud.new()
+	add_child(hud)
+	var p := GameState.local_player()
+	p.selected = 0
+	var down := InputEventMouseButton.new()
+	down.button_index = MOUSE_BUTTON_WHEEL_DOWN
+	down.pressed = true
+	UIRoot.blocking = true
+	hud._unhandled_input(down)
+	var while_open := p.selected
+	UIRoot.blocking = false
+	hud._unhandled_input(down)
+	var while_playing := p.selected
+	hud.free()
+	assert_eq(while_open, 0, "scrolling an open panel leaves the hotbar alone")
+	assert_eq(while_playing, 1, "the wheel still cycles the bar while playing")
+
 func test_sixth_toast_does_not_stall() -> void:
 	GameState.new_game({"seed": 3, "player_name": "Shop", "farm_name": "T", "starter": "sproutle"})
 	var hud := Hud.new()
