@@ -303,7 +303,7 @@ static func casino(args: Dictionary, ctx: Dictionary) -> Dictionary:
 static func handbook() -> String:
 	var bits: Array = [
 		"# Hollowmere handbook for agents",
-		"You play a cozy farm life sim. Crops grow in real time. Wildlings work farm jobs.",
+		"You play a cozy farm life sim. Crops grow in real time. Wildlings work farm jobs and rest on their own. There is no rest job.",
 		"Gold is the currency. Casino chips only work in Lumière and have no real value.",
 		"Never delete a save. Ask before selling items worth 200g or more.",
 		"Types: " + ", ".join(Data.types.keys()),

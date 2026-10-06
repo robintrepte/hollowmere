@@ -141,8 +141,11 @@ func _row(c: Creature) -> Control:
 	v.add_child(nl)
 	var sub := ""
 	if tab == "farm":
-		var job := (tr("Job: %s") % tr(str(Data.job_info(c.job).get("job_name", tr("Worker"))))) if c.job != "" else tr("Resting")
-		sub = job + (tr("  ·  energy %d") % c.energy)
+		var name := tr(str(Data.job_info(c.job).get("job_name", tr("Worker"))))
+		if c.napping:
+			sub = tr("%s · taking a break · energy %d") % [name, int(c.energy)]
+		else:
+			sub = (tr("Job: %s") % name) + (tr("  ·  energy %d") % int(c.energy))
 	elif tab == "sanctuary":
 		sub = tr("Waiting  ·  HP %d/%d") % [c.hp, c.max_hp()]
 	else:
@@ -356,59 +359,82 @@ func _farm_overview(arr: Array) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 1)
 	var working := 0
+	var napping := 0
 	for c in arr:
-		if c.job != "":
+		if c.napping:
+			napping += 1
+		elif c.job != "":
 			working += 1
-	box.add_child(UITheme.label(tr("On the farm: %d working, %d resting") % [working, arr.size() - working], 8, UITheme.WOOD))
+	var line := tr("On the farm: %d working") % working
+	if napping > 0:
+		line = tr("On the farm: %d working, %d taking a break") % [working, napping]
+	box.add_child(UITheme.label(line, 8, UITheme.WOOD))
 	return box
 
 func _job_cards(c: Creature) -> void:
 	_detail.add_child(UITheme.label("Assign a job", 10, UITheme.WOOD))
-	var flow := HFlowContainer.new()
-	flow.add_theme_constant_override("h_separation", 4)
-	flow.add_theme_constant_override("v_separation", 4)
-	_detail.add_child(flow)
-	flow.add_child(_job_card(c, "", tr("Rest"), FarmJobs.hourly_text("", 1), false))
+	var note := UITheme.label("They keep this job and rest on their own when they need to.", 8, UITheme.MUTED)
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	note.custom_minimum_size = Vector2(200, 0)
+	note.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_detail.add_child(note)
+	var stack := VBoxContainer.new()
+	stack.add_theme_constant_override("separation", 4)
+	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_detail.add_child(stack)
 	for t in c.types():
 		var jid: String = Data.types[t].job
 		if c.can_do_job(jid):
 			var native := jid == c.job_type()
-			flow.add_child(_job_card(c, jid, Data.types[t].job_name, FarmJobs.hourly_text(jid, c.job_power(jid)), native))
+			stack.add_child(_job_card(c, jid, Data.types[t].job_name, FarmJobs.hourly_text(jid, c.job_power(jid)), native))
 
 func _job_card(c: Creature, jid: String, title: String, desc: String, native: bool) -> Control:
 	var on := c.job == jid
-	var b := Button.new()
-	b.toggle_mode = true
-	b.button_pressed = on
-	b.custom_minimum_size = Vector2(150, 56)
-	b.add_theme_stylebox_override("normal", UITheme.box(UITheme.CREAM if on else UITheme.PARCHMENT_DK, Color("#ffd23f") if on else Color("#b09060"), 2 if on else 1, 3, 4, false))
+	var bg := UITheme.CREAM if on else UITheme.PARCHMENT_DK
+	var edge := Color("#ffd23f") if on else Color("#b09060")
+	var card := PanelContainer.new()
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	var paint := func(hot: bool) -> void:
+		var fill := bg.lightened(0.08) if hot and not on else bg
+		card.add_theme_stylebox_override("panel", UITheme.box(fill, Color("#ffd23f") if hot or on else edge, 2 if hot or on else 1, 3, 6, false))
+	paint.call(false)
 	var v := VBoxContainer.new()
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_theme_constant_override("separation", 1)
-	b.add_child(v)
+	v.add_theme_constant_override("separation", 2)
+	card.add_child(v)
 	var row := HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("separation", 4)
 	v.add_child(row)
-	row.add_child(UITheme.label(title, 9, UITheme.WOOD_DK))
+	var title_l := UITheme.label(title, 10, UITheme.WOOD_DK)
+	title_l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(title_l)
 	if native:
 		row.add_child(Badge.new("Fits the type", Color("#c8e6a0")))
 	if on:
 		row.add_child(Badge.new("On duty", UITheme.COIN))
-	if jid != "":
-		var stars := ""
-		for i in mini(5, maxi(1, c.job_power(jid))):
-			stars += "★"
-		v.add_child(UITheme.label(stars, 8, UITheme.COIN))
-	var d := UITheme.label(desc, 7, UITheme.MUTED)
+	var stars := ""
+	for i in mini(5, maxi(1, c.job_power(jid))):
+		stars += "★"
+	var star := UITheme.label(stars, 8, UITheme.COIN)
+	star.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(star)
+	var d := UITheme.label(desc, 8, UITheme.MUTED)
 	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	d.custom_minimum_size = Vector2(140, 0)
+	d.custom_minimum_size = Vector2(200, 0)
+	d.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	d.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(d)
-	v.add_child(UITheme.label(tr("About %d energy / hour") % int(FarmJobs.energy_per_hour()) if jid != "" else tr("Energy recovers faster"), 7, UITheme.MUTED))
-	b.pressed.connect(func():
-		Coop.act("set_job_act", [c.uid, jid])
-		Audio.sfx("tick", 0.0)
-		_refresh())
-	return b
+	card.mouse_entered.connect(func(): paint.call(true))
+	card.mouse_exited.connect(func(): paint.call(false))
+	card.gui_input.connect(func(ev: InputEvent) -> void:
+		if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
+			Coop.act("set_job_act", [c.uid, jid])
+			Audio.sfx("tick", 0.0)
+			card.accept_event()
+			_refresh())
+	return card
 
 func _breeding_section(c: Creature) -> void:
 	_detail.add_child(UITheme.label("Breeding", 10, UITheme.WOOD))

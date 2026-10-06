@@ -76,7 +76,7 @@ func _ready() -> void:
 		if n > 0:
 			lines.append(tr("%d %s") % [n, tr(k[1])])
 	if int(jobs.get("tired", 0)) > 0:
-		lines.append(tr("%d Wildlings are tired and need rest") % int(jobs.tired))
+		lines.append(tr("%d Wildlings took a short rest") % int(jobs.tired))
 	if int(report.get("ripe", 0)) > 0:
 		lines.push_front(tr("%d crops ripened") % int(report.ripe))
 	if not lines.is_empty():

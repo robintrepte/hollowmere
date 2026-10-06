@@ -36,6 +36,7 @@
       {"id": "wood", "price": 10}, {"id": "stone", "price": 20}, {"id": "hardwood", "price": 120, "requires": "shrine:3"}, {"id": "clay", "price": 60},
       {"id": "tool_belt"}, {"id": "storage_crate", "requires": "level:4"},
       {"id": "picket_fence", "requires": "level:2"}, {"id": "flower_bed", "requires": "level:2"}, {"id": "garden_gnome", "requires": "level:3"},
+      {"id": "den_cushion", "requires": "level:2"}, {"id": "treat_bowl", "requires": "level:3"}, {"id": "cozy_nook", "requires": "level:4"},
       {"id": "birdbath", "requires": "level:4"}, {"id": "string_lights", "requires": "level:5"}, {"id": "wildling_statue", "requires": "level:6"},
       {"id": "wishing_well", "requires": "level:8"}, {"id": "windmill", "requires": "level:10"}
     ],

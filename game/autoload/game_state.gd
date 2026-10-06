@@ -357,6 +357,7 @@ func move_creature(uid: String, dest: String, p: PlayerData) -> bool:
 	if dest != "den":
 		c.job = ""
 		c.job_manual = false
+		c.napping = false
 	match dest:
 		"party": p.party.append(c)
 		"den":
@@ -370,9 +371,10 @@ func set_job(uid: String, job_id: String) -> bool:
 	var c := find_creature(uid)
 	if c == null or not c in ranch:
 		return false
-	if job_id != "" and not c.can_do_job(job_id):
+	if job_id == "" or not c.can_do_job(job_id):
 		return false
 	c.job = job_id
+	c.napping = false
 	c.job_manual = true
 	return true
 
@@ -502,9 +504,11 @@ func _job_tick(now: float, scale: float, eff: float, rep: Dictionary) -> void:
 	trng.seed = hash([int(world.seed), int(now), "jobs"])
 	var season_now := season_at(now)
 	var mods := Modifiers.collect(local_player()) if local_player() else {}
-	var jr: Dictionary = FarmJobs.run(ranch, {"grids": farm_grids(), "chest": farm_chest, "rng": trng, "season": season_now, "scale": scale, "efficiency": eff, "now": now, "mods": mods})
+	var comfort := FarmJobs.comfort(farm_grids())
+	var spa := has_building("wildling_spa")
+	var jr: Dictionary = FarmJobs.run(ranch, {"grids": farm_grids(), "chest": farm_chest, "rng": trng, "season": season_now, "scale": scale, "efficiency": eff, "now": now, "mods": mods, "happy": comfort.happy, "spa": spa})
 	FarmJobs.collect_produce(ranch, farm_chest, trng, jr, scale * eff * (1.0 + float(mods.get("produce", 0.0))))
-	FarmJobs.rest(ranch, has_building("wildling_spa"), scale, 1.0 + float(mods.get("wildling_regen", 0.0)))
+	FarmJobs.rest(ranch, spa, scale, 1.0 + float(mods.get("wildling_regen", 0.0)), comfort.rest)
 	Machines.apply_power(farm_grids(), int(jr.powered))
 	Machines.automate(farm_grids(), farm_chest, now, int(jr.machine_slots), jr, 1.0 + float(mods.get("machine_speed", 0.0)))
 	FarmJobs.merge_report(rep.jobs, jr)

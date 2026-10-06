@@ -28,7 +28,9 @@ var energy: float = 100.0
 var xp_progress: float = 0.0
 var grooming: int = 0
 var job: String = ""
-var job_manual: bool = false     ## the player picked this job (or rest) by hand
+var job_manual: bool = false     ## the player picked this job by hand
+## Low energy: skip work and recover, then resume the same job.
+var napping: bool = false
 var owner: String = ""
 var met: String = ""
 var starry_lineage: int = 0
@@ -271,11 +273,12 @@ func can_do_job(job_id: String) -> bool:
 			return true
 	return false
 
-## Puts an idle farm Wildling to work at its own type's job, unless the player chose rest for it.
+## Puts an idle farm Wildling on its own type's job. A saved "rest" assignment is just idle.
 func start_default_job() -> bool:
-	if job != "" or job_manual:
+	if job != "":
 		return false
 	job = job_type()
+	job_manual = false
 	return true
 
 func to_dict() -> Dictionary:
@@ -284,7 +287,7 @@ func to_dict() -> Dictionary:
 		"genes": genes.duplicate(), "nature": nature, "trait": trait_id, "moves": moves.duplicate(),
 		"learned": learned.duplicate(), "hp": hp, "status": status, "status_turns": status_turns,
 		"starry": starry, "morph": morph, "happiness": happiness, "energy": energy, "grooming": grooming,
-		"job": job, "job_manual": job_manual, "owner": owner, "met": met, "starry_lineage": starry_lineage,
+		"job": job, "job_manual": job_manual, "napping": napping, "owner": owner, "met": met, "starry_lineage": starry_lineage,
 		"show_rank": show_rank, "ribbons": ribbons,
 	}
 
@@ -316,6 +319,7 @@ static func from_dict(d: Dictionary) -> Creature:
 	c.grooming = int(d.get("grooming", 0))
 	c.job = d.get("job", "")
 	c.job_manual = bool(d.get("job_manual", false))
+	c.napping = bool(d.get("napping", false))
 	c.owner = d.get("owner", "")
 	c.met = d.get("met", "")
 	c.starry_lineage = int(d.get("starry_lineage", 0))

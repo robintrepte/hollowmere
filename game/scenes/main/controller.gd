@@ -409,7 +409,7 @@ func _building(io: Dictionary) -> void:
 			Audio.sfx("door")
 			ui.open(HatcheryPanel.new(_pdata()))
 		"spa":
-			await ui.say(["The Wildling Spa. Tired workers rest twice as fast here."])
+			await ui.say(["The Wildling Spa. Wildlings recover their energy here, even while they work."])
 		"ruined":
 			await ui.say([tr("The %s is in ruins. Maybe the village could help restore it...") % io.get("label", "building").to_lower()])
 		"casino_enter":

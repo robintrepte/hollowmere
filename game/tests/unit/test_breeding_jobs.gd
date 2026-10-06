@@ -166,14 +166,54 @@ func test_farm_wildlings_start_their_own_job() -> void:
 	assert_true(GameState.move_creature(c.uid, "party", p))
 	assert_eq(c.job, "", "it stops working when it leaves")
 
-func test_resting_by_choice_survives_a_reload() -> void:
+func test_a_saved_rest_becomes_their_own_job() -> void:
 	GameState.new_game({"seed": 9})
 	var c := Creature.create("embercub", 10, rng)
 	GameState.ranch.append(c)
-	assert_true(GameState.set_job(c.uid, ""))
+	assert_false(GameState.set_job(c.uid, ""), "there is no rest assignment")
+	c.job = ""
+	c.job_manual = true
 	var d: Dictionary = JSON.parse_string(JSON.stringify(GameState.to_dict()))
 	GameState.from_dict(d)
-	assert_eq(GameState.find_creature(c.uid).job, "", "a chosen rest is not overridden")
+	assert_eq(GameState.find_creature(c.uid).job, "smelt", "an old rest becomes the Ember job")
+
+func test_low_energy_wildlings_nap_then_return_to_the_same_job() -> void:
+	var w := _worker_for("water")
+	w.energy = 5.0
+	var g := _farm()
+	var chest := Inventory.new(4, 4)
+	var ctx := {"grids": [g], "chest": chest, "rng": rng, "season": "spring"}
+	var rep := FarmJobs.run([w], ctx)
+	assert_eq(int(rep.tired), 1)
+	assert_eq(int(rep.watered), 0)
+	assert_true(w.napping)
+	assert_eq(w.job, "water")
+	FarmJobs.rest([w], false, 36.0)
+	assert_false(w.napping)
+	assert_gte(w.energy, FarmJobs.NAP_END)
+	var rep2 := FarmJobs.run([w], ctx)
+	assert_eq(int(rep2.workers), 1)
+	assert_eq(w.job, "water")
+
+func test_placed_comfort_items_help_rest_and_happiness() -> void:
+	var g := _farm()
+	assert_true(g.place_object(Vector2i(5, 8), "den_cushion"))
+	assert_true(g.place_object(Vector2i(6, 8), "treat_bowl"))
+	assert_true(g.place_object(Vector2i(7, 8), "cozy_nook"))
+	var bonus := FarmJobs.comfort([g])
+	assert_almost_eq(float(bonus.rest), 0.85, 0.001)
+	assert_almost_eq(float(bonus.happy), 0.85, 0.001)
+	var w := _worker_for("water")
+	w.energy = 40.0
+	FarmJobs.rest([w], false, 36.0)
+	var plain := w.energy
+	w.energy = 40.0
+	FarmJobs.rest([w], false, 36.0, 1.0, float(bonus.rest))
+	assert_gt(w.energy, plain)
+	var stack := _farm()
+	for i in 4:
+		assert_true(stack.place_object(Vector2i(i + 1, 8), "den_cushion"))
+	assert_almost_eq(float(FarmJobs.comfort([stack]).rest), 1.0, 0.001)
 
 func test_older_saves_put_idle_farm_wildlings_to_work() -> void:
 	GameState.new_game({"seed": 10})

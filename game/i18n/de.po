@@ -101,8 +101,8 @@ msgstr "%d / %d  ·  Belohnung %dg"
 
 #: scenes/ui/day_report.gd:70
 #, c-format
-msgid "%d Wildlings are tired and need rest"
-msgstr "%d Wildlinge sind müde und brauchen Ruhe"
+msgid "%d Wildlings took a short rest"
+msgstr "%d Wildlinge haben kurz geruht"
 
 #: scenes/ui/day_report.gd:85
 #, c-format
@@ -5674,8 +5674,8 @@ msgid "The Whisperwood Shrine glows! Tidecove's path is open, and you learned ne
 msgstr "Der Whisperwood-Schrein erstrahlt! Der Weg nach Tidecove ist offen, und du hast neue Rezepte gelernt."
 
 #: scenes/main/controller.gd:256
-msgid "The Wildling Spa. Tired workers rest twice as fast here."
-msgstr "Das Wildling-Spa. Müde Arbeiter erholen sich hier doppelt so schnell."
+msgid "The Wildling Spa. Wildlings recover their energy here, even while they work."
+msgstr "Das Wildling-Spa. Wildlinge erholen hier ihre Energie, auch während sie arbeiten."
 
 #: data/villagers.json
 msgid "The Wildlings around your farm seem happier lately."
@@ -13340,8 +13340,12 @@ msgid "Nudges up to %d growing crops each hour."
 msgstr "Schiebt bis zu %d wachsende Pflanzen pro Stunde an."
 
 #, c-format
-msgid "On the farm: %d working, %d resting"
-msgstr "Auf dem Hof: %d bei der Arbeit, %d ruhen"
+msgid "On the farm: %d working"
+msgstr "Auf dem Hof: %d bei der Arbeit"
+
+#, c-format
+msgid "On the farm: %d working, %d taking a break"
+msgstr "Auf dem Hof: %d bei der Arbeit, %d machen Pause"
 
 msgid "Open agent panel"
 msgstr "Agenten-Panel öffnen"
@@ -13450,4 +13454,32 @@ msgstr "Deine Party ist leer."
 #, c-format
 msgid "HP %d / %d"
 msgstr "KP %d / %d"
+
+msgid "Cozy Nook"
+msgstr "Kuschelecke"
+
+msgid "A little nest of blankets. Wildlings rest easier and stay happier."
+msgstr "Ein kleines Nest aus Decken. Wildlinge ruhen besser und bleiben fröhlicher."
+
+msgid "Den Cushion"
+msgstr "Hofkissen"
+
+msgid "A soft cushion for the Den. Wildlings recover energy faster."
+msgstr "Ein weiches Kissen für den Bau. Wildlinge erholen sich schneller."
+
+msgid "Treat Bowl"
+msgstr "Leckerli-Schale"
+
+msgid "A bowl of treats left out on the farm. Wildlings gain happiness faster."
+msgstr "Eine Schale Leckerlis auf dem Hof. Wildlinge werden schneller glücklich."
+
+msgid "They keep this job and rest on their own when they need to."
+msgstr "Sie behalten diese Arbeit und ruhen von selbst, wenn sie es brauchen."
+
+msgid "Not working."
+msgstr "Arbeitet nicht."
+
+#, c-format
+msgid "%s · taking a break · energy %d"
+msgstr "%s · macht Pause · Energie %d"
 

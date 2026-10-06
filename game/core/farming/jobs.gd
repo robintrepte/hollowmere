@@ -4,8 +4,15 @@ extends RefCounted
 ## One tick is TICK_SECONDS of real time. Long gaps run as fewer, bigger steps (`scale` ticks each).
 
 const TICK_SECONDS := 600
-## Energy a job costs per WORK_PERIOD of real time.
-const JOB_COST := 25
+## Energy a job costs per WORK_PERIOD of real time. Working recovers a little less than that,
+## so a full Wildling only nods off every few days, then catches up without changing jobs.
+const JOB_COST := 6
+const WORK_REGEN := 6.0
+const NAP_REGEN := 80.0
+const SPA_REGEN := 100.0
+## Below this they stop work and recover. They start again once they reach NAP_END.
+const NAP_START := 15.0
+const NAP_END := 55.0
 const WORK_PERIOD := 3 * 3600
 const REST_PERIOD := 6 * 3600
 const PRODUCE_PERIOD := 6 * 3600
@@ -51,7 +58,7 @@ static func hourly_text(job_id: String, power: int) -> String:
 		"luck":
 			return TranslationServer.translate("Raises farm luck and sometimes finds gems.")
 		"":
-			return TranslationServer.translate("Rests. Energy comes back faster, no work gets done.")
+			return TranslationServer.translate("Not working.")
 	return ""
 
 static func energy_per_hour() -> float:
@@ -96,7 +103,9 @@ static func run(workers: Array, ctx: Dictionary) -> Dictionary:
 	var mods: Dictionary = ctx.get("mods", {})
 	var power_mult := maxf(0.1, 1.0 + float(mods.get("job_power", 0.0)))
 	var cost_mult := maxf(0.3, 1.0 + float(mods.get("job_energy", 0.0)))
-	var happy_mult := maxf(0.0, 1.0 + float(mods.get("happiness", 0.0)))
+	var happy_mult := maxf(0.0, 1.0 + float(mods.get("happiness", 0.0)) + float(ctx.get("happy", 0.0)))
+	if bool(ctx.get("spa", false)):
+		happy_mult += 0.25
 	ctx["scale"] = scale
 	var rep := new_report()
 	# Order matters: harvest first (frees ripe crops), then water/grow.
@@ -111,8 +120,10 @@ static func run(workers: Array, ctx: Dictionary) -> Dictionary:
 	for job in order:
 		for c in by_job.get(job, []):
 			var cost := tick_cost(c, scale) * cost_mult
-			if c.energy < cost:
-				rep.tired += 1
+			if c.napping or c.energy < NAP_START or c.energy < cost:
+				if not c.napping:
+					rep.tired += 1
+				c.napping = true
 				continue
 			c.energy -= cost
 			rep.workers += 1
@@ -285,13 +296,27 @@ static func collect_produce(residents: Array, chest: Inventory, rng: RandomNumbe
 			if left == 0:
 				rep.produce[pid] = int(rep.produce.get(pid, 0)) + 1
 
-## Energy recovery for everyone at the farm over `k` ticks (a REST_PERIOD gives the old night's worth).
-static func rest(residents: Array, spa: bool, k: float = REST_PERIOD / float(TICK_SECONDS), regen_mult: float = 1.0) -> void:
-	var f := k * TICK_SECONDS / float(REST_PERIOD) * regen_mult
+## Comfort from placeables on the farm. `rest` and `happy` each cap at 1.
+static func comfort(grids: Array) -> Dictionary:
+	var rest := 0.0
+	var happy := 0.0
+	for g in grids:
+		for k in g.objects:
+			var it: Dictionary = Data.get_item(str(g.objects[k].get("id", "")))
+			rest += float(it.get("rest", 0.0))
+			happy += float(it.get("happy", 0.0))
+	return {"rest": minf(rest, 1.0), "happy": minf(happy, 1.0)}
+
+## Energy recovery for everyone at the farm over `k` ticks (a REST_PERIOD is six hours).
+## Napping Wildlings recover much faster, then go back to the job they already have.
+## `rest_bonus` comes from cushions and nooks placed on the farm.
+static func rest(residents: Array, spa: bool, k: float = REST_PERIOD / float(TICK_SECONDS), regen_mult: float = 1.0, rest_bonus: float = 0.0) -> void:
+	var f := k * TICK_SECONDS / float(REST_PERIOD) * regen_mult * (1.0 + maxf(0.0, rest_bonus))
 	for c in residents:
-		var regen := 40.0 + float(Data.traits.get(c.trait_id, {}).get("energy_regen_bonus", 0))
+		var regen := NAP_REGEN if c.napping else WORK_REGEN
+		regen += float(Data.traits.get(c.trait_id, {}).get("energy_regen_bonus", 0))
 		if spa:
-			regen = 100.0
-		if c.job == "" and not spa:
-			regen += 30.0
+			regen = maxf(regen, SPA_REGEN)
 		c.energy = minf(100.0, c.energy + regen * f)
+		if c.napping and c.energy >= NAP_END:
+			c.napping = false
