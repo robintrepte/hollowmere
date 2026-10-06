@@ -150,6 +150,8 @@ func _on_interact(t: Vector2i) -> void:
 ## "Parsnip: ripe in 12 min · 2 harvests left · watered"
 static func crop_info(g: FarmGrid, t: Vector2i) -> String:
 	var c := g.crop_at(t)
+	if g.crop_ruined(t):
+		return "%s: %s" % [Data.item_name(c.id), TranslationServer.translate("A crow ate this. Clear it with the hoe.")]
 	var season := GameState.season()
 	var mult := Modifiers.mult(GameState.local_player(), "crop_growth")
 	var bits: Array = []

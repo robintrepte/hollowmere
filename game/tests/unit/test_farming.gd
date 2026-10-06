@@ -260,6 +260,67 @@ func test_machines_furnace() -> void:
 	assert_true(keg.ok)
 	assert_true(Data.sell_price(keg.output.id, 0) > Data.sell_price("parsnip", 0))
 
+func _plant_field(g: FarmGrid, n: int) -> void:
+	for i in n:
+		var p := Vector2i(i % 8, 2 + int(i / 8))
+		if not g.is_tilled(p):
+			g.till(p, T0)
+		if g.crop_at(p).is_empty():
+			g.plant(p, "parsnip_seeds")
+		else:
+			g.crop_at(p).erase("ruined")
+
+func test_crows_leave_a_ruined_plant() -> void:
+	var g := _grid()
+	_plant_field(g, 16)
+	var local := RandomNumberGenerator.new()
+	var found := false
+	for s in 40:
+		_plant_field(g, 16)
+		local.seed = s
+		var rep := g.night(local, false)
+		if int(rep.crow) == 0:
+			assert_eq(g.planted_tiles().size(), 16)
+			continue
+		found = true
+		assert_eq(int(rep.crow), 1)
+		var ruined: Array = []
+		for k in g.soil:
+			if bool(g.soil[k].get("crop", {}).get("ruined", false)):
+				ruined.append(Tiles.parse_key(k))
+		assert_eq(ruined.size(), 1, "the plant stays, snapped")
+		var p: Vector2i = ruined[0]
+		assert_false(g.crop_ready(p))
+		assert_eq(g.planted_tiles().size(), 15)
+		var prog := float(g.crop_at(p).progress)
+		g.advance(T0, T0 + 100000.0, _ctx())
+		assert_almost_eq(float(g.crop_at(p).progress), prog, 0.0001, "a ruined plant does not keep growing")
+		assert_true(g.clear_ruined(p))
+		assert_true(g.crop_at(p).is_empty())
+		assert_true(g.is_tilled(p), "the soil stays ready to replant")
+		assert_false(g.clear_ruined(p))
+		break
+	assert_true(found, "a crow raid happened")
+
+func test_crows_skip_small_fields_scarecrows_and_guards() -> void:
+	var g := _grid()
+	_plant_field(g, 15)
+	var local := RandomNumberGenerator.new()
+	for s in 10:
+		local.seed = s
+		assert_eq(int(g.night(local, false).crow), 0, "fifteen plants is not a feast")
+	_plant_field(g, 16)
+	assert_true(g.place_object(Vector2i(4, 4), "scarecrow"))
+	for s in 20:
+		local.seed = s
+		assert_eq(int(g.night(local, false).crow), 0, "a scarecrow covers this patch")
+	g.greenhouse = true
+	g.remove_object(Vector2i(4, 4))
+	local.seed = 1
+	assert_eq(int(g.night(local, false).crow), 0, "the greenhouse is safe")
+	g.greenhouse = false
+	assert_eq(int(g.night(local, true).crow), 0, "a guardian on duty")
+
 func test_seed_refiner_raises_the_tier() -> void:
 	var inv := Inventory.new(6, 6)
 	inv.add("parsnip_seeds", 5)

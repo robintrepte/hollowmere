@@ -617,6 +617,9 @@ msgstr "Ein gemütlicher Platz zum Ausruhen."
 msgid "A crow ate %d crop. A scarecrow would help!"
 msgstr "Eine Krähe hat %d Pflanzen gefressen. Eine Vogelscheuche würde helfen!"
 
+msgid "A crow ate this. Clear it with the hoe."
+msgstr "Eine Krähe hat das gefressen. Mit der Hacke entfernen."
+
 #: data/items.json
 msgid "A crown of spring flowers."
 msgstr "Eine Krone aus Frühlingsblumen."

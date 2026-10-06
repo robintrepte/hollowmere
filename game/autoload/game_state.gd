@@ -675,6 +675,8 @@ func end_day(slept: bool = true) -> Dictionary:
 		var r := g.night(nrng, guarded)
 		for k in r:
 			farm_rep[k] = int(farm_rep.get(k, 0)) + int(r[k])
+		for k in g.take_look_dirty():
+			EventBus.tile_changed.emit(m, Tiles.parse_key(k))
 	report.farm = farm_rep
 	for c in ranch:
 		c.grooming = maxi(0, c.grooming - 10)
@@ -773,6 +775,12 @@ func _use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictio
 							g.till(side)
 							p.stat_add("till")
 							EventBus.tile_changed.emit(map_id, side)
+			elif g.crop_ruined(t):
+				if not _spend_energy(p, base_cost, true):
+					return r
+				g.clear_ruined(t)
+				r.ok = true
+				r.sfx = "hoe"
 			elif g.is_tilled(t) and g.crop_at(t).is_empty():
 				if not _spend_energy(p, base_cost, true):
 					return r
@@ -858,7 +866,13 @@ func _use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictio
 			r = _drill(p, map_id, g, info, t)
 		"pickaxe", "axe", "scythe":
 			if tool == "scythe":
-				if g.crop_ready(t):
+				if g.crop_ruined(t):
+					if not _spend_energy(p, base_cost * 0.5, true):
+						return r
+					g.clear_ruined(t)
+					r.ok = true
+					r.sfx = "scythe"
+				elif g.crop_ready(t):
 					if not Skills.has_unlock(p, "harvest_sweep") and Enchanting.level(p, "scythe", "sweep") == 0:
 						return harvest_at(pid, map_id, t)
 					var sweep := harvest_at(pid, map_id, t)

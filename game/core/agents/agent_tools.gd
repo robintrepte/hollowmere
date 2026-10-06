@@ -195,7 +195,10 @@ static func look_around(pid: String, radius: int) -> Dictionary:
 				if g.crop_at(q):
 					var crop: Dictionary = g.crop_at(q)
 					if not crop.is_empty():
-						objs.append({"x": q.x, "y": q.y, "kind": "crop", "id": crop.get("id", ""), "progress": crop.get("progress", 0.0)})
+						var row := {"x": q.x, "y": q.y, "kind": "crop", "id": crop.get("id", ""), "progress": crop.get("progress", 0.0)}
+						if bool(crop.get("ruined", false)):
+							row["ruined"] = true
+						objs.append(row)
 	for v in info.get("villagers", []):
 		npcs.append({"id": v, "name": str(Data.villagers.get(v, {}).get("name", v))})
 	for other in GameState.players.values():
@@ -215,6 +218,8 @@ static func ascii_map(g: FarmGrid, center: Vector2i, radius: int) -> String:
 				row += "@"
 			elif not g.in_bounds(q) or Tiles.blocks(g.get_ground(q), g.get_deco(q)):
 				row += "#"
+			elif g.crop_ruined(q):
+				row += "x"
 			elif g.crop_at(q) and not g.crop_at(q).is_empty():
 				row += "*" if g.crop_ready(q) else ","
 			elif g.get_ground(q) in Tiles.WATER_TILES:

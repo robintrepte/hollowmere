@@ -8,7 +8,7 @@ var w: int = 0
 var h: int = 0
 var ground: PackedInt32Array = PackedInt32Array()
 var deco: PackedInt32Array = PackedInt32Array()
-var soil: Dictionary = {}      # key -> {watered, watered_until, tilled_at, fert, crop:{id, progress, tier, harvests, quality_boost, pollinated}}
+var soil: Dictionary = {}      # key -> {watered, watered_until, tilled_at, fert, crop:{id, progress, tier, harvests, quality_boost, pollinated, ruined}}
 var objects: Dictionary = {}   # key -> {id, kind, ...}
 var fences: Dictionary = {}    # expansion id -> Array of keys
 var tillable: Array = []
@@ -146,16 +146,27 @@ func fertilize(p: Vector2i, fert: String) -> bool:
 	if not is_tilled(p):
 		return false
 	var s: Dictionary = soil[Tiles.key(p)]
-	if s.fert != "" or (not crop_at(p).is_empty() and float(crop_at(p).progress) > 0.05):
+	if s.fert != "" or crop_ruined(p) or (not crop_at(p).is_empty() and float(crop_at(p).progress) > 0.05):
 		return false
 	s.fert = fert
 	return true
 
 func crop_ready(p: Vector2i) -> bool:
 	var c := crop_at(p)
-	if c.is_empty():
+	if c.is_empty() or crop_ruined(p):
 		return false
 	return float(c.progress) >= 1.0
+
+## A crow pecked this plant apart. It stays on the tile until the player clears it.
+func crop_ruined(p: Vector2i) -> bool:
+	return bool(crop_at(p).get("ruined", false))
+
+## Removes a crow-ruined plant and leaves the soil tilled.
+func clear_ruined(p: Vector2i) -> bool:
+	if not crop_ruined(p):
+		return false
+	soil[Tiles.key(p)].erase("crop")
+	return true
 
 ## 0..4 growth stage (4 = ready) for rendering.
 func crop_stage(p: Vector2i) -> int:
@@ -304,7 +315,7 @@ func open_expansion(exp_id: String) -> void:
 func planted_tiles() -> Array:
 	var out: Array = []
 	for k in soil:
-		if soil[k].has("crop"):
+		if soil[k].has("crop") and not bool(soil[k].crop.get("ruined", false)):
 			out.append(Tiles.parse_key(k))
 	return out
 
@@ -323,7 +334,7 @@ func advance(from_t: float, to_t: float, ctx: Dictionary) -> Array:
 		var s: Dictionary = soil[k]
 		var always := wet.has(k)
 		var until := float(s.get("watered_until", 0.0))
-		if s.has("crop"):
+		if s.has("crop") and not bool(s.crop.get("ruined", false)):
 			var c: Dictionary = s.crop
 			var before := stage_of(float(c.progress))
 			var prog := float(c.progress)
@@ -338,7 +349,7 @@ func advance(from_t: float, to_t: float, ctx: Dictionary) -> Array:
 			c.progress = minf(1.0, prog)
 			if stage_of(float(c.progress)) != before:
 				changed.append(k)
-		elif not always and not greenhouse and s.fert == "" and to_t - maxf(float(s.get("tilled_at", 0.0)), until) > CropGrowth.BARE_SOIL_SECONDS:
+		elif not s.has("crop") and not always and not greenhouse and s.fert == "" and to_t - maxf(float(s.get("tilled_at", 0.0)), until) > CropGrowth.BARE_SOIL_SECONDS:
 			soil.erase(k)
 			changed.append(k)
 			continue
@@ -397,7 +408,8 @@ func night(rng: RandomNumberGenerator, guarded: bool) -> Dictionary:
 				var sp := Tiles.parse_key(k)
 				if sp.distance_to(target) <= float(Data.get_item(objects[k].id).get("radius", 8)):
 					return report
-		soil[Tiles.key(target)].erase("crop")
+		soil[Tiles.key(target)].crop.ruined = true
+		mark_look(target)
 		report.crow += 1
 	return report
 

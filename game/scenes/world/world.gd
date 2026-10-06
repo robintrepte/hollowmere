@@ -58,6 +58,29 @@ const CAP_OF := {
 const NEIGHBORS := [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
 const DIAGONALS := [Vector2i(1, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(-1, -1)]
 const OBJECT_FOOTPRINT := {"ferry": Vector2i(2, 1), "fountain": Vector2i(2, 2), "wayshrine": Vector2i(1, 1), "board": Vector2i(1, 1), "show_ring": Vector2i(0, 0)}
+## Snapped stalk and a wilted top, bottom-anchored on a 32×32 canvas. A crow leaves this behind.
+const RUINED_ROWS := [
+	"......................",
+	"........oooooo........",
+	".......odffffo........",
+	"......odffeefffo......",
+	".......odffffo.oo.....",
+	"........oooo..odo.....",
+	".............osmo.....",
+	"............oslmo.....",
+	"..........ooosmo......",
+	".........osmslmo......",
+	"..........osmmoo......",
+	"...........osso.......",
+	"............oo........",
+	"......................",
+	"...........oo.........",
+	"..........osmo........",
+	".........osllso.......",
+	"..........osmso.......",
+	"...........sso........",
+	"............o.........",
+]
 
 var map_id := ""
 var info: Dictionary = {}
@@ -77,6 +100,7 @@ var day_tint: CanvasModulate
 var weather: WeatherFx
 var water_fx: WaterFx
 
+var _ruined_tex: Texture2D
 var _deco_nodes: Dictionary = {}     # key -> Sprite2D
 var _object_nodes: Dictionary = {}   # key -> Node2D (grid objects + crops)
 var _static_nodes: Array = []
@@ -532,6 +556,25 @@ func _crop_sprite(cid: String, stage: int) -> String:
 		return "flower_stage2"
 	return ["crop_stage1", "crop_stage2", "crop_stage3"][mini(stage, 3) - 1]
 
+func _ruined_crop_tex() -> Texture2D:
+	if _ruined_tex:
+		return _ruined_tex
+	var colors := {
+		"o": Color("#22181e"), "s": Color("#5a3828"), "m": Color("#8a5a3a"), "l": Color("#c08858"),
+		"d": Color("#4a3c22"), "f": Color("#7a6838"), "e": Color("#a08848"),
+	}
+	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
+	var ox := (32 - RUINED_ROWS[0].length()) >> 1
+	var oy := 32 - RUINED_ROWS.size()
+	for y in RUINED_ROWS.size():
+		var line: String = RUINED_ROWS[y]
+		for x in line.length():
+			var ch := line[x]
+			if colors.has(ch):
+				img.set_pixel(ox + x, oy + y, colors[ch])
+	_ruined_tex = ImageTexture.create_from_image(img)
+	return _ruined_tex
+
 func _draw_crop(p: Vector2i) -> void:
 	var k := "c" + Tiles.key(p)
 	if _object_nodes.has(k):
@@ -543,6 +586,16 @@ func _draw_crop(p: Vector2i) -> void:
 	var stage := grid.crop_stage(p)
 	var node := Node2D.new()
 	node.position = Vector2(p.x * T + T / 2.0, p.y * T + T - 4)
+	if grid.crop_ruined(p):
+		var dead := _ruined_crop_tex()
+		var ruined := Sprite2D.new()
+		ruined.texture = dead
+		ruined.centered = false
+		ruined.offset = Vector2(-dead.get_width() / 2.0, -dead.get_height())
+		node.add_child(ruined)
+		ysort.add_child(node)
+		_object_nodes[k] = node
+		return
 	var tex := Art.world(_crop_sprite(c.id, stage))
 	if tex:
 		var s := Sprite2D.new()
