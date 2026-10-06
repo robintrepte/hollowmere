@@ -48,13 +48,6 @@ static func mods(p: PlayerData) -> Dictionary:
 				out[k] = float(out.get(k, 0.0)) + float(m[k]) * int(ench[id])
 	return out
 
-## Energy factor while using a tool (Thrift, and Deep Dig on the shovel).
-static func energy_scale(p: PlayerData, tool: String) -> float:
-	var s := 1.0 - 0.1 * level(p, tool, "thrift")
-	if tool == "shovel":
-		s *= 1.0 - 0.2 * level(p, tool, "deep_dig")
-	return maxf(0.3, s)
-
 static func title(id: String, lvl: int) -> String:
 	var nm := TranslationServer.translate(str(spec(id).get("name", id)))
 	if int(spec(id).get("max", 1)) <= 1:

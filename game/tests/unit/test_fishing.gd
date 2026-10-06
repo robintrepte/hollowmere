@@ -8,7 +8,6 @@ func before_each() -> void:
 	GameState.new_game({"seed": 41, "starter": "puddlop"})
 	pid = Net.local_id()
 	p = GameState.local_player()
-	p.energy = p.max_energy
 
 func _water_tile(map_id: String) -> Vector2i:
 	var g: FarmGrid = GameState.map_info(map_id).grid
@@ -100,9 +99,7 @@ func test_cast_needs_a_rod_and_water() -> void:
 	assert_false(GameState.fish_cast_act(pid, "farm", t).ok, "no rod yet")
 	GameState.give_item(p, "fishing_rod", 1)
 	assert_false(GameState.fish_cast_act(pid, "farm", Vector2i(2, 2)).ok, "dry land")
-	var e := p.energy
 	assert_true(GameState.fish_cast_act(pid, "farm", t).ok)
-	assert_lt(p.energy, e)
 
 func test_reeling_in_too_fast_is_rejected() -> void:
 	GameState.give_item(p, "fishing_rod", 1)
@@ -124,7 +121,6 @@ func test_a_catch_lands_in_the_pack_and_the_dex() -> void:
 			caught += 1
 			assert_gt(p.inventory.count(str(r.id)), 0)
 			assert_true(p.fishing.dex.has(str(r.id)))
-		p.energy = p.max_energy
 	assert_gt(caught, 10)
 	assert_eq(int(GameState.world.stats.get("fish", 0)), caught)
 	assert_eq(Fishing.species_caught(p), p.fishing.dex.size())

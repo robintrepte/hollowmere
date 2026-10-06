@@ -251,7 +251,7 @@ func _upgrade_list() -> void:
 		elif tool == "pickaxe":
 			desc = tr("%s → %s. Breaks rock faster and cracks harder ores and crystals.") % [cur_name, next_name]
 		elif tool == "shovel":
-			desc = tr("%s → %s. Digs trenches for less energy.") % [cur_name, next_name]
+			desc = tr("%s → %s. Water runs farther along the trenches you dig.") % [cur_name, next_name]
 		elif tool == "bucket":
 			desc = tr("%s → %s. A full bucket soaks a wider patch of soil.") % [cur_name, next_name]
 		_list.add_child(_offer(Art.item(tool), tr("%s %s") % [next_name, Data.item_name(tool)], desc, costs, tr("Upgrade"),

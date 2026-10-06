@@ -13,7 +13,6 @@ const WOOD_DK := Color("#5e3a24")
 const LEAF := Color("#5fa64b")
 const COIN := Color("#f0c040")
 const HEART := Color("#e05060")
-const ENERGY := Color("#70d050")
 const MUTED := Color("#8a7a6a")
 
 static var _theme: Theme

@@ -210,8 +210,6 @@ func _show_detail() -> void:
 	var desc := UITheme.label(Economy.req_text(r.unlock) if locked else str(it.get("desc", "")), 8, UITheme.MUTED)
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	info.add_child(desc)
-	if int(it.get("energy", 0)) > 0 and not locked:
-		info.add_child(UITheme.label(tr("+%d energy") % int(it.energy), 9, UITheme.LEAF.darkened(0.3)))
 	if locked:
 		return
 	var sell := Data.sell_price(_sel, 0)

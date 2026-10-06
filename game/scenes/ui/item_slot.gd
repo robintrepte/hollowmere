@@ -42,8 +42,6 @@ func _tooltip() -> String:
 	var price := Data.sell_price(item_id, quality)
 	if price > 0:
 		s += "\n" + tr("Sells for %s") % CoinLabel.text(price)
-	if float(it.get("energy", 0)) > 0:
-		s += tr("\n+%d energy") % int(it.energy)
 	return s
 
 static func quality_pips(q: int) -> int:

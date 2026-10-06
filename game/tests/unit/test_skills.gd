@@ -145,11 +145,8 @@ func test_battle_bonuses_raise_damage_and_befriending() -> void:
 	eng.side_mods[1] = {"battle_guard": 0.2}
 	assert_almost_eq(float(eng._damage_core(0, move).raw), plain * 1.1 * 0.8, 0.01)
 
-func test_energy_and_den_bonuses() -> void:
+func test_den_slots_raise_capacity() -> void:
 	_give_points(10)
-	_learn("light_feet")
-	_learn("stamina", 2)
-	assert_almost_eq(p.energy_cap(), p.max_energy * 1.12, 0.01)
 	var cap := GameState.den_capacity()
 	_learn_path("roomy_den")
 	assert_eq(GameState.den_capacity(), cap + 1)

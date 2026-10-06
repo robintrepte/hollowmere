@@ -329,8 +329,6 @@ func _on_hover(view: GridView, e: Dictionary) -> void:
 	var price := GameState.sell_value(player, e.id, int(e.get("q", 0)))
 	if price > 0:
 		bits.append(tr("Sells for %s") % CoinLabel.text(price))
-	if float(it.get("energy", 0)) > 0:
-		bits.append(tr("+%d energy") % int(it.energy))
 	var sz: Vector2i = Data.item_size(e.id)
 	bits.append(tr("%dx%d") % [sz.x, sz.y])
 	if e.has("inv"):
@@ -400,8 +398,6 @@ func _open_menu(inv: Inventory, e: Dictionary) -> void:
 	var it: Dictionary = Data.get_item(e.id)
 	if e.has("inv"):
 		_menu.add_item(tr("Open"), 1)
-	if Data.is_edible(e.id) and it.get("cat", "") != "seed":
-		_menu.add_item(tr("Eat"), 2)
 	if it.has("hat") and inv == player.inventory:
 		_menu.add_item(tr("Wear"), 10)
 	if int(e.n) > 1:
@@ -421,10 +417,6 @@ func _on_menu(id: int) -> void:
 	var e := _menu_entry
 	match id:
 		1: _open_container(e)
-		2:
-			var r: Dictionary = Coop.act("eat", [e.uid])
-			if r.ok:
-				Audio.sfx("eat")
 		3: _menu_inv.split(e.uid, int(e.n) / 2)
 		4: _menu_inv.split(e.uid, 1)
 		6: _quick_move(_menu_inv, e)

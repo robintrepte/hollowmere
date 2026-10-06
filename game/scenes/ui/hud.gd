@@ -1,7 +1,7 @@
 class_name Hud
 extends CanvasLayer
-## Day ribbon (sun arc, date, weather, time) top right; energy, hotbar and coins docked along the bottom;
-## farm level, party lead and quest tracker top left; toasts below them.
+## Day ribbon (sun arc, date, weather, time) top right; the lead Wildling, hotbar and coins
+## docked along the bottom; farm level and quest tracker top left; toasts below them.
 
 const SLOT := 34
 
@@ -14,13 +14,13 @@ var _chip_row: HBoxContainer
 var _chip_label: Label
 var _money_shown := 0.0
 var _coin_icon: TextureRect
-var _energy: EnergyPips
 var _level: Label
 var _plevel: Label
 var _pxp: ProgressBar
 var _xp: ProgressBar
 var _slots: Array = []
 var _toasts: VBoxContainer
+var _lead_panel: PanelContainer
 var _lead_icon: TextureRect
 var _lead_hp: ProgressBar
 var _lead_name: Label
@@ -72,7 +72,7 @@ func _ready() -> void:
 	_time.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	drow.add_child(_time)
 
-	# Farm level, party lead, quest (top left)
+	# Farm level and quest (top left)
 	var lv := PanelContainer.new()
 	lv.add_theme_stylebox_override("panel", _pill(5))
 	lv.position = Vector2(6, 6)
@@ -100,35 +100,42 @@ func _ready() -> void:
 	_xp.custom_minimum_size = Vector2(60, 4)
 	_xp.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	lrow.add_child(_xp)
-	var lead := HBoxContainer.new()
-	lvv.add_child(lead)
-	_lead_icon = UITheme.icon_rect(null, 32)
-	lead.add_child(_lead_icon)
-	var lcol := VBoxContainer.new()
-	lcol.add_theme_constant_override("separation", 2)
-	lcol.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	lead.add_child(lcol)
-	_lead_name = UITheme.label("", 8)
-	lcol.add_child(_lead_name)
-	_lead_hp = _bar(UITheme.LEAF)
-	_lead_hp.custom_minimum_size = Vector2(56, 4)
-	lcol.add_child(_lead_hp)
 	_quest = UITheme.label("", 8, UITheme.WOOD)
 	_quest.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_quest.custom_minimum_size = Vector2(150, 0)
 	lvv.add_child(_quest)
 
-	# Bottom dock: energy | hotbar | coins
+	# Bottom dock: lead Wildling | hotbar | coins
 	var w := PlayerData.HOTBAR_SIZE * (SLOT + 2) + 6
-	var en := _dock_pill(root, -w / 2.0 - 4, Control.GROW_DIRECTION_BEGIN)
-	var erow := HBoxContainer.new()
-	erow.add_theme_constant_override("separation", 4)
-	en.add_child(erow)
-	erow.add_child(UITheme.icon_rect(Art.item("_energy"), 16))
-	_energy = EnergyPips.new()
-	_energy.custom_minimum_size = Vector2(EnergyPips.PIPS * 9 - 2, 7)
-	_energy.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	erow.add_child(_energy)
+	_lead_panel = PanelContainer.new()
+	_lead_panel.add_theme_stylebox_override("panel", _pill(3))
+	_lead_panel.anchor_left = 0.5
+	_lead_panel.anchor_right = 0.5
+	_lead_panel.anchor_top = 1
+	_lead_panel.anchor_bottom = 1
+	_lead_panel.offset_left = -w / 2.0 - 4
+	_lead_panel.offset_right = -w / 2.0 - 4
+	_lead_panel.offset_top = -SLOT - 12
+	_lead_panel.offset_bottom = -4
+	_lead_panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	_lead_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(_lead_panel)
+	var lead := HBoxContainer.new()
+	lead.add_theme_constant_override("separation", 6)
+	_lead_panel.add_child(lead)
+	_lead_icon = UITheme.icon_rect(null, 28)
+	_lead_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	lead.add_child(_lead_icon)
+	var lcol := VBoxContainer.new()
+	lcol.add_theme_constant_override("separation", 2)
+	lcol.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	lead.add_child(lcol)
+	_lead_name = UITheme.label("", 9)
+	lcol.add_child(_lead_name)
+	_lead_hp = _bar(UITheme.LEAF)
+	_lead_hp.custom_minimum_size = Vector2(72, 5)
+	_lead_hp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lcol.add_child(_lead_hp)
 	var co := _dock_pill(root, w / 2.0 + 4, Control.GROW_DIRECTION_END)
 	var mrow := HBoxContainer.new()
 	mrow.add_theme_constant_override("separation", 3)
@@ -218,7 +225,6 @@ func _ready() -> void:
 		if d > 0:
 			Juice.pop(_money)
 			_fly_coins(d))
-	EventBus.energy_changed.connect(func(_e, _mx): _refresh_energy())
 	EventBus.inventory_changed.connect(_refresh_hotbar)
 	EventBus.hotbar_changed.connect(_refresh_hotbar)
 	EventBus.party_changed.connect(_refresh_lead)
@@ -290,7 +296,6 @@ func _dock_pill(root: Control, x: float, grow: Control.GrowDirection) -> PanelCo
 
 func _refresh_all() -> void:
 	_refresh_clock()
-	_refresh_energy()
 	_refresh_hotbar()
 	_refresh_lead()
 	_refresh_level()
@@ -394,14 +399,6 @@ func _refresh_level() -> void:
 		_pxp.max_value = Skills.xp_to_next(me.level)
 		_pxp.value = me.xp if me.level < Skills.MAX_LEVEL else _pxp.max_value
 
-func _refresh_energy() -> void:
-	var p := GameState.local_player()
-	if p == null:
-		return
-	_energy.frac = clampf(p.energy / maxf(1.0, p.energy_cap()), 0.0, 1.0)
-	_energy.low = p.energy < p.energy_cap() * 0.2
-	_energy.queue_redraw()
-
 func _refresh_hotbar() -> void:
 	var p := GameState.local_player()
 	if p == null:
@@ -427,14 +424,13 @@ func _refresh_hotbar() -> void:
 func _refresh_lead() -> void:
 	var p := GameState.local_player()
 	if p == null or p.party.is_empty():
-		_lead_icon.texture = null
-		_lead_name.text = ""
-		_lead_hp.visible = false
+		_lead_panel.visible = false
 		return
+	_lead_panel.visible = true
 	var c: Creature = p.party[0]
 	_lead_icon.texture = Art.creature(c.species_id, true)
+	_lead_icon.modulate = Color(0.45, 0.45, 0.5) if c.is_fainted() else Color.WHITE
 	_lead_name.text = tr("%s Lv%d") % [c.display_name(), c.level]
-	_lead_hp.visible = true
 	_lead_hp.max_value = c.max_hp()
 	_lead_hp.value = c.hp
 
@@ -493,7 +489,6 @@ func _process(delta: float) -> void:
 	if _name_t > 0:
 		_name_t -= delta
 		_hotbar_name.modulate.a = clampf(_name_t, 0, 1)
-	_energy.modulate.a = 0.55 + 0.45 * absf(sin(Time.get_ticks_msec() / 250.0)) if _energy.low else 1.0
 	if Engine.get_process_frames() % 30 == 0:
 		_refresh_lead()
 	if Engine.get_process_frames() % 60 == 15:
@@ -560,22 +555,3 @@ class DayDial extends Control:
 			draw_circle(p + Vector2(1.5, -1), 2.2, UITheme.PARCHMENT)
 		else:
 			draw_circle(p, 3.0, UITheme.COIN)
-
-
-## Energy as a row of pips; the last one fills partially.
-class EnergyPips extends Control:
-	const PIPS := 10
-	var frac := 1.0
-	var low := false
-
-	func _draw() -> void:
-		var w := 7.0
-		var fill := Color("#e07050") if low else UITheme.ENERGY
-		for i in PIPS:
-			var r := Rect2(i * (w + 2.0), 0, w, size.y)
-			draw_rect(r, Color("#c8b088"))
-			var f := clampf(frac * PIPS - i, 0.0, 1.0)
-			if f > 0.0:
-				var fw := maxf(1.0, roundf(w * f))
-				draw_rect(Rect2(r.position, Vector2(fw, size.y)), fill)
-				draw_rect(Rect2(r.position, Vector2(fw, 1)), fill.lightened(0.4))

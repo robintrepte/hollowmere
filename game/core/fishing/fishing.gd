@@ -176,9 +176,6 @@ static func treasure_loot(rng: RandomNumberGenerator, luck: float) -> Array:
 		out.append([Enchanting.random_book(rng), 1])
 	return out
 
-static func energy_cost(rod: int) -> float:
-	return maxf(1.0, 2.0 - 0.25 * rod)
-
 static func rod_spec(level: int) -> Dictionary:
 	var rods: Array = Data.fish_meta.get("rods", [])
 	return rods[level] if level >= 0 and level < rods.size() else {}

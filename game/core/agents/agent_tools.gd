@@ -5,7 +5,7 @@ extends RefCounted
 
 const MAX_AGENTS := 3
 const SCOPES := ["observe", "act", "chat", "economy"]
-const SAFE_ACT := ["use_tool", "use_item", "harvest_at", "load_machine", "ship", "eat", "pick_up_object",
+const SAFE_ACT := ["use_tool", "use_item", "harvest_at", "load_machine", "ship", "pick_up_object",
 	"craft", "construct", "set_job_act", "move_creature_act", "set_pair_act", "clear_pair_act", "incubate",
 	"fish_cast_act", "fish_result_act", "equip_tackle_act", "deep_enter_act", "enchant_act", "anvil_act",
 	"grindstone_act", "casino_wheel_act", "roulette_act", "blackjack_act", "slots_act", "poker_act", "race_act",
@@ -162,7 +162,7 @@ static func status(pid: String) -> Dictionary:
 		return {"started": GameState.started}
 	return {
 		"name": p.name, "map": p.map_id, "tile": {"x": GameState.to_tile(p.pos).x, "y": GameState.to_tile(p.pos).y},
-		"energy": int(p.energy), "max_energy": int(p.max_energy), "money": GameState.money(),
+		"money": GameState.money(),
 		"chips": int(p.chips), "season": GameState.season(), "weather": str(GameState.world.get("weather", "")),
 		"minute": int(GameState.world.get("minute", 0)), "level": p.level, "day": GameState.day(),
 	}

@@ -13492,3 +13492,13 @@ msgstr "HUD-Größe"
 msgid "100% keeps the HUD the same size as the rest of the UI."
 msgstr "100 % lässt das HUD so groß wie den Rest der UI."
 
+#, c-format
+msgid "%s → %s. Water runs farther along the trenches you dig."
+msgstr "%s → %s. Wasser läuft weiter entlang der Gräben, die du gräbst."
+
+msgid "Cooked meals make good gifts, and Wildlings love a treat."
+msgstr "Gekochte Gerichte sind gute Geschenke, und Wildlinge lieben ein Leckerli."
+
+msgid "Water flows 3 tiles farther along trenches per level."
+msgstr "Wasser fließt pro Stufe 3 Felder weiter die Gräben entlang."
+

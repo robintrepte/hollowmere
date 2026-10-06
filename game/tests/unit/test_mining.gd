@@ -8,7 +8,6 @@ func before_each() -> void:
 	GameState.new_game({"seed": 77, "starter": "puddlop"})
 	pid = Net.local_id()
 	p = GameState.local_player()
-	p.energy = p.max_energy
 
 func _find(g: FarmGrid, test: Callable) -> Vector2i:
 	for y in g.h:

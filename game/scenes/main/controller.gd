@@ -95,16 +95,7 @@ func _on_use(t: Vector2i) -> void:
 	if npc and npc.vid != "":
 		_gift(npc, e)
 		return
-	if Data.is_edible(e.id):
-		_eat(e)
-		return
 	_on_interact(t)
-
-func _eat(e: Dictionary) -> void:
-	var it: Dictionary = Data.get_item(e.id)
-	var c: int = await ui.ask(tr("Eat %s? (+%d energy)") % [Data.item_name(e.id, int(e.q)), int(it.get("energy", 0))], ["Eat", "No"])
-	if c == 0:
-		_act("eat", [e.uid])
 
 # --- Interact (right click / X) --------------------------------------------------------------
 

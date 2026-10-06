@@ -209,7 +209,6 @@ func test_trees_take_three_swings_and_ground_wood_takes_one() -> void:
 	GameState.new_game({"seed": 5, "starter": "puddlop"})
 	var pid := Net.local_id()
 	var p := GameState.local_player()
-	p.energy = p.max_energy
 	var g := GameState.grid("farm")
 	var stick := Vector2i(2, 2)
 	var tree := Vector2i(4, 2)

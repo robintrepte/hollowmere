@@ -10,7 +10,6 @@ func before_each() -> void:
 	GameState.new_game({"seed": 31, "starter": "puddlop"})
 	pid = Net.local_id()
 	p = GameState.local_player()
-	p.energy = p.max_energy
 	g = GameState.grid("farm")
 
 func _free_tile(skip: Array = []) -> Vector2i:
@@ -37,7 +36,7 @@ func test_data_is_consistent() -> void:
 		for tl in e.get("mods", {}):
 			assert_true(tl in e.tools, "%s mods only its own tools" % id)
 	for tl in Enchanting.tools():
-		assert_gt(Enchanting.for_tool(tl).size(), 1, "%s has a choice of enchantments" % tl)
+		assert_gte(Enchanting.for_tool(tl).size(), 1, "%s has an enchantment" % tl)
 	for id in ["arcane_essence", "glimmer_dust", "enchanting_table", "anvil", "grindstone", "bookshelf"]:
 		assert_true(Data.has_item(id), id)
 		assert_true(Data.recipes.crafting.has(id), "%s is craftable" % id)
@@ -110,16 +109,16 @@ func test_apply_book_rules() -> void:
 	assert_eq(Enchanting.apply_book({"fortune": 1}, "pickaxe", "fortune", 3).enchants, {"fortune": 3}, "a stronger book replaces")
 	assert_false(Enchanting.apply_book({"fortune": 3}, "pickaxe", "fortune", 3).ok, "capped at max")
 	assert_false(Enchanting.apply_book({"fortune": 2}, "pickaxe", "fortune", 1).ok, "a weaker book does nothing")
-	assert_false(Enchanting.apply_book({"fortune": 1, "efficiency": 1, "thrift": 1}, "pickaxe", "gentle", 1).ok, "three at most")
+	assert_false(Enchanting.apply_book({"fortune": 1, "efficiency": 1, "extra": 1}, "pickaxe", "gentle", 1).ok, "three at most")
 	assert_eq(Enchanting.combine_books("book:gentle:1"), "", "max-1 books don't combine")
 	assert_eq(Enchanting.parse_book("book:nope:1"), [])
-	assert_eq(Enchanting.parse_book("book:thrift:9"), ["thrift", 3], "levels are clamped")
-	assert_string_contains(Data.item_name("book:thrift:2"), "II")
-	assert_eq(Data.get_item("book:thrift:2").get("cat", ""), "book")
+	assert_eq(Enchanting.parse_book("book:efficiency:9"), ["efficiency", 3], "levels are clamped")
+	assert_string_contains(Data.item_name("book:efficiency:2"), "II")
+	assert_eq(Data.get_item("book:efficiency:2").get("cat", ""), "book")
 
 func test_grindstone_refunds_half() -> void:
 	var t := _station("grindstone")
-	p.tool_enchants["axe"] = {"efficiency": 3, "thrift": 1}
+	p.tool_enchants["axe"] = {"efficiency": 3, "lumberjack": 1}
 	var have := p.inventory.count("arcane_essence")
 	var r := GameState.grindstone_act(pid, "farm", t.x, t.y, "axe")
 	assert_true(r.ok)
@@ -128,7 +127,7 @@ func test_grindstone_refunds_half() -> void:
 	assert_eq(p.inventory.count("arcane_essence"), have + 2)
 	assert_false(GameState.grindstone_act(pid, "farm", t.x, t.y, "axe").ok, "nothing left to grind")
 
-func test_enchantments_feed_modifiers_and_energy() -> void:
+func test_enchantments_feed_modifiers() -> void:
 	var speed := Modifiers.mult(p, "mine_speed")
 	var cap := p.water_capacity()
 	p.tool_enchants["pickaxe"] = {"efficiency": 2}
@@ -137,22 +136,14 @@ func test_enchantments_feed_modifiers_and_energy() -> void:
 	assert_almost_eq(Modifiers.mult(p, "mine_speed"), speed + 0.5, 0.001)
 	assert_almost_eq(Modifiers.value(p, "fish_bite"), 0.12, 0.001)
 	assert_eq(p.water_capacity(), cap + 30)
-	assert_eq(Enchanting.energy_scale(p, "hoe"), 1.0)
-	p.tool_enchants["hoe"] = {"thrift": 3}
-	assert_almost_eq(Enchanting.energy_scale(p, "hoe"), 0.7, 0.001)
-	p.tool_enchants["shovel"] = {"thrift": 3, "deep_dig": 2}
-	assert_almost_eq(Enchanting.energy_scale(p, "shovel"), 0.42, 0.001, "thrift and deep dig multiply")
 
-func test_thrift_saves_energy_on_the_hoe() -> void:
-	var t := _free_tile()
-	var e0 := p.energy
-	assert_true(GameState.use_tool(pid, "farm", t, "hoe").ok)
-	var plain := e0 - p.energy
-	p.tool_enchants["hoe"] = {"thrift": 3}
-	var t2 := _free_tile([t])
-	var e1 := p.energy
-	assert_true(GameState.use_tool(pid, "farm", t2, "hoe").ok)
-	assert_lt(e1 - p.energy, plain, "Thrift III costs less energy")
+func test_shovel_and_deep_dig_extend_trenches() -> void:
+	GameState._apply_relief(p)
+	assert_eq(g.trench_extra, 0)
+	p.tool_levels["shovel"] = 2
+	p.tool_enchants["shovel"] = {"deep_dig": 2}
+	GameState._apply_relief(p)
+	assert_eq(g.trench_extra, 10, "two shovel tiers and Deep Dig II")
 
 func test_wide_furrow_tills_three() -> void:
 	p.tool_enchants["hoe"] = {"wide_furrow": 1}

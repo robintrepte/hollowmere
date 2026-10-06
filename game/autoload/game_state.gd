@@ -477,8 +477,12 @@ func idle_advance(to: float, offline: bool = false) -> Dictionary:
 
 func _apply_relief(p: PlayerData) -> void:
 	var rv := Modifiers.value(p, "season_relief") if p else 0.0
+	var extra := 0
+	if p:
+		extra = p.tool_level("shovel") * 2 + Enchanting.level(p, "shovel", "deep_dig") * 3
 	for m in grids:
 		grids[m].relief = rv
+		grids[m].trench_extra = extra
 
 func _grow_all(from: float, to: float, mult: float, rep: Dictionary) -> void:
 	if to <= from:
@@ -585,10 +589,6 @@ func catch_up() -> Dictionary:
 		var ship := _pay_shipping()
 		rep["shipped"] = ship.shipped
 		rep["ship_total"] = ship.total
-		for pid in players:
-			var pl: PlayerData = players[pid]
-			var cap := pl.energy_cap()
-			pl.energy = minf(cap, pl.energy + cap * clampf(away * Modifiers.mult(pl, "energy_regen") / (8.0 * 3600.0), 0.0, 1.0))
 	return rep
 
 ## What a shopkeeper pays this player for one item, with their sell bonus.
@@ -643,7 +643,7 @@ func _guarded() -> bool:
 	return false
 
 ## Ends the game day: shipping, weather, luck, friendships, weekly tasks. Sleeping skips the rest of
-## the night, refills energy and wakes you at the farm; otherwise the clock just rolls over at 6:00.
+## the night and wakes you at the farm; otherwise the clock just rolls over at 6:00.
 ## The farm itself runs in real time (idle_advance), so nothing grows here. Returns the report.
 func end_day(slept: bool = true) -> Dictionary:
 	SaveManager.set_quiet(true)
@@ -688,7 +688,6 @@ func end_day(slept: bool = true) -> Dictionary:
 		var p: PlayerData = players[pid]
 		p.heal_party()
 		if slept:
-			p.energy = p.energy_cap()
 			p.map_id = "farm"
 			var spawn: Array = Data.get_map("farm").spawn
 			p.pos = tile_center(Vector2i(int(spawn[0]), int(spawn[1])))
@@ -732,27 +731,10 @@ func _anyone_has(id: String) -> bool:
 ## All return {ok, fx: [[text, color]], sfx, reason}
 
 func _res(ok: bool, reason: String = "") -> Dictionary:
-	return {"ok": ok, "fx": [], "sfx": "", "reason": reason, "energy": 0.0}
-
-## Enchantment energy factor for the tool in use (Thrift); 1.0 outside tool use.
-var _energy_scale := 1.0
-
-func _spend_energy(p: PlayerData, n: float, farm_tool: bool = false) -> bool:
-	if n <= 0:
-		return true
-	n *= _energy_scale * Modifiers.mult(p, "energy_cost", 0.3) * (Modifiers.mult(p, "farm_energy", 0.3) if farm_tool else 1.0)
-	if p.energy <= 0.0:
-		EventBus.toast.emit("You're too tired. Eat something or go to bed.", "zzz")
-		return false
-	p.energy = maxf(0.0, p.energy - n)
-	EventBus.energy_changed.emit(p.energy, p.energy_cap())
-	return true
+	return {"ok": ok, "fx": [], "sfx": "", "reason": reason}
 
 func use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictionary:
-	_energy_scale = Enchanting.energy_scale(player(pid), "pickaxe" if tool == "drill" else tool)
-	var r := _use_tool(pid, map_id, t, tool)
-	_energy_scale = 1.0
-	return r
+	return _use_tool(pid, map_id, t, tool)
 
 func _use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictionary:
 	var p := player(pid)
@@ -761,33 +743,27 @@ func _use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictio
 	var r := _res(false)
 	if p == null or g == null:
 		return r
+	_apply_relief(p)
 	var lvl := p.tool_level(tool)
-	var base_cost := maxf(0.5, 2.0 - 0.3 * lvl)
 	var at := tile_center(t)
 	match tool:
 		"hoe":
 			if g.can_till(t):
-				if not _spend_energy(p, base_cost, true):
-					return r
 				g.till(t)
 				r.ok = true
 				r.sfx = "hoe"
 				p.stat_add("till")
 				if Enchanting.level(p, "hoe", "wide_furrow") > 0:
 					for side in [t + Vector2i(1, 0), t + Vector2i(-1, 0)]:
-						if g.can_till(side) and _spend_energy(p, base_cost * 0.5, true):
+						if g.can_till(side):
 							g.till(side)
 							p.stat_add("till")
 							EventBus.tile_changed.emit(map_id, side)
 			elif g.crop_ruined(t):
-				if not _spend_energy(p, base_cost, true):
-					return r
 				g.clear_ruined(t)
 				r.ok = true
 				r.sfx = "hoe"
 			elif g.is_tilled(t) and g.crop_at(t).is_empty():
-				if not _spend_energy(p, base_cost, true):
-					return r
 				g.until(t)
 				r.ok = true
 				r.sfx = "hoe"
@@ -800,8 +776,6 @@ func _use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictio
 			elif g.is_tilled(t):
 				if p.water_left <= 0:
 					r.reason = tr("Your watering can is empty. Refill it at water.")
-					return r
-				if not _spend_energy(p, base_cost * 0.5, true):
 					return r
 				var reach := lvl + 2 * int(Modifiers.value(p, "water_range"))
 				if Enchanting.level(p, "watering_can", "mist") > 0:
@@ -825,14 +799,10 @@ func _use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictio
 				r.sfx = "water"
 		"shovel":
 			if g.is_trench(t):
-				if not _spend_energy(p, base_cost, true):
-					return r
 				g.fill_trench(t)
 				r.ok = true
 				r.sfx = "hoe"
 			elif g.can_dig_trench(t):
-				if not _spend_energy(p, base_cost * 1.5, true):
-					return r
 				g.dig_trench(t)
 				r.ok = true
 				r.sfx = "hoe"
@@ -871,8 +841,6 @@ func _use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictio
 		"pickaxe", "axe", "scythe":
 			if tool == "scythe":
 				if g.crop_ruined(t):
-					if not _spend_energy(p, base_cost * 0.5, true):
-						return r
 					g.clear_ruined(t)
 					r.ok = true
 					r.sfx = "scythe"
@@ -897,11 +865,6 @@ func _use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictio
 				r = _mine_block(p, map_id, g, info, t, lvl)
 			elif Tiles.DEBRIS.has(d) and (Tiles.DEBRIS[d].tool == tool or d == Tiles.DECO.weed):
 				var spec: Dictionary = Tiles.DEBRIS[d]
-				var cost := float(spec.energy) * maxf(0.4, 1.0 - 0.15 * lvl)
-				if tool == "pickaxe":
-					cost /= Modifiers.mult(p, "mine_speed")
-				elif tool == "axe":
-					cost /= Modifiers.mult(p, "chop_speed")
 				var hp := float(spec.get("hp", 1.0))
 				var chipped := false
 				if hp > 1.0 and lvl >= int(spec.min):
@@ -911,8 +874,6 @@ func _use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictio
 					var hits := maxi(2, ceili(hp / (Mining.power(lvl) * speed)))
 					var dmg := float(cracks.get(ck, 0.0)) + 1.0 / float(hits)
 					if dmg < 0.999:
-						if not _spend_energy(p, cost):
-							return r
 						cracks[ck] = dmg
 						_cracks[map_id] = cracks
 						r.ok = true
@@ -923,9 +884,6 @@ func _use_tool(pid: String, map_id: String, t: Vector2i, tool: String) -> Dictio
 					var res := g.clear_debris(t, tool, lvl, rng)
 					if not res.ok:
 						r.reason = res.reason
-						return r
-					if not _spend_energy(p, cost):
-						g.set_deco(t, d)
 						return r
 					_crack_clear(map_id, t)
 					if d == Tiles.DECO.ore:
@@ -2093,8 +2051,6 @@ func _mine_block(p: PlayerData, map_id: String, g: FarmGrid, info: Dictionary, t
 		r.reason = tr("Too hard for your pickaxe. It needs %s or better.") % tr(Mining.tier_name(int(spec.min)))
 		return r
 	var speed := Modifiers.mult(p, "mine_speed")
-	if not _spend_energy(p, float(spec.energy) * maxf(0.4, 1.0 - 0.12 * lvl) / speed):
-		return r
 	var cracks: Dictionary = _cracks.get(map_id, {})
 	var dmg := float(cracks.get(k, 0.0)) + Mining.power(lvl) * speed / float(spec.hp)
 	r.ok = true
@@ -2571,8 +2527,6 @@ func fish_cast_act(pid: String, map_id: String, t: Vector2i) -> Dictionary:
 		r.reason = tr("Cast into water.")
 		return r
 	var rod := p.tool_level("fishing_rod")
-	if not _spend_energy(p, Fishing.energy_cost(rod) * Enchanting.energy_scale(p, "fishing_rod")):
-		return r
 	var bait := str(p.fishing.get("bait", ""))
 	if bait != "":
 		if p.inventory.remove(bait, 1):
@@ -2884,26 +2838,6 @@ func _ranch_signature() -> String:
 		parts.append(c.uid + c.species_id)
 	return ",".join(parts)
 
-func eat(pid: String, uid: String) -> Dictionary:
-	var p := player(pid)
-	var r := _res(false)
-	var f := p.inventory.find(uid)
-	if f.is_empty():
-		return r
-	var it: Dictionary = Data.get_item(f.entry.id)
-	var e_gain: float = float(it.get("energy", 0))
-	if e_gain <= 0:
-		e_gain = maxf(5.0, Data.sell_price(f.entry.id, int(f.entry.q)) * 0.4) if Data.is_edible(f.entry.id) else 0.0
-	if e_gain <= 0:
-		return r
-	f.inv.take(uid, 1)
-	p.energy = minf(p.energy_cap(), p.energy + e_gain)
-	EventBus.energy_changed.emit(p.energy, p.energy_cap())
-	EventBus.inventory_changed.emit()
-	r.ok = true
-	r.sfx = "eat"
-	return r
-
 ## Puts a hat from the pack on (the old one goes back into the pack); uid "" takes the hat off.
 func wear_hat_act(pid: String, uid: String) -> Dictionary:
 	var p := player(pid)
@@ -2929,14 +2863,13 @@ func wear_hat_act(pid: String, uid: String) -> Dictionary:
 
 const HOTEL_PRICE := 500
 
-## A night at the Hôtel Lumière: full energy and a healed party, without ending the day.
+## A night at the Hôtel Lumière: the party is healed, without ending the day.
 func hotel_act(pid: String) -> Dictionary:
 	var p := player(pid)
 	if p == null:
 		return _res(false)
 	if not spend(HOTEL_PRICE, "Hotel"):
 		return _res(false, tr("Not enough gold."))
-	p.energy = p.energy_cap()
 	p.heal_party()
 	EventBus.party_changed.emit()
 	var r := _res(true)

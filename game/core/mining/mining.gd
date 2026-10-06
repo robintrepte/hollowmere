@@ -10,14 +10,14 @@ const LADDER_UP := Vector2i(3, 3)
 const ELEVATOR := Vector2i(7, 3)
 const TIER_NAMES := ["Basic", "Copper", "Iron", "Gold", "Mystic", "Crystal"]
 
-## Plain rock: hit points, lowest pickaxe level, energy per swing, tint for the wall sprite.
+## Plain rock: hit points, lowest pickaxe level, tint for the wall sprite.
 const BLOCKS := {
-	43: {"hp": 1.0, "min": 0, "energy": 0.6, "tint": "#b08a62"},
-	44: {"hp": 2.0, "min": 0, "energy": 1.0, "tint": "#c9c3d6"},
-	45: {"hp": 3.5, "min": 1, "energy": 1.2, "tint": "#8a8aa8"},
-	46: {"hp": 5.0, "min": 2, "energy": 1.4, "tint": "#6a5f68"},
-	47: {"hp": 8.0, "min": 3, "energy": 1.6, "tint": "#4a3a6a"},
-	50: {"hp": 2.0, "min": 0, "energy": 1.0, "tint": "#d8c8a0"},
+	43: {"hp": 1.0, "min": 0, "tint": "#b08a62"},
+	44: {"hp": 2.0, "min": 0, "tint": "#c9c3d6"},
+	45: {"hp": 3.5, "min": 1, "tint": "#8a8aa8"},
+	46: {"hp": 5.0, "min": 2, "tint": "#6a5f68"},
+	47: {"hp": 8.0, "min": 3, "tint": "#4a3a6a"},
+	50: {"hp": 2.0, "min": 0, "tint": "#d8c8a0"},
 }
 ## What a vein or crystal yields decides how hard it is.
 const ORES := {
@@ -55,11 +55,11 @@ static func power(level: int) -> float:
 static func tier_name(level: int) -> String:
 	return TIER_NAMES[clampi(level, 0, TIER_NAMES.size() - 1)]
 
-## {hp, min, energy} for the block at a tile; `what` is the vein/crystal item from ore_types.
+## {hp, min} for the block at a tile; `what` is the vein/crystal item from ore_types.
 static func block_spec(deco: int, what: String) -> Dictionary:
 	if deco == Tiles.DECO.vein or deco == Tiles.DECO.crystal:
 		var o: Dictionary = ORES.get(what, {"hp": 3.0, "min": 0})
-		return {"hp": float(o.hp), "min": int(o.min), "energy": 1.2}
+		return {"hp": float(o.hp), "min": int(o.min)}
 	return BLOCKS.get(deco, {})
 
 ## [[item, n], ...] for a broken block.

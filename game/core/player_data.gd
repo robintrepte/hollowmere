@@ -37,8 +37,6 @@ var emotes: Array = []
 var fishing: Dictionary = {}
 ## One-off per-player markers (gifts received, first visits).
 var flags: Dictionary = {}
-var energy: float = 270.0
-var max_energy: float = 270.0
 ## The equipped pack and every pack the player owns (switchable any time the contents fit).
 var backpack: String = "pack_rucksack"
 var packs: Array = ["pack_rucksack"]
@@ -170,10 +168,6 @@ func gain_xp(n: int) -> void:
 	if Skills.add_xp(self, n) > 0:
 		EventBus.player_leveled.emit(id, level)
 
-## Max energy with skill and item bonuses.
-func energy_cap() -> float:
-	return max_energy * Modifiers.mult(self, "max_energy")
-
 ## Villager friendship, with the friendship bonus.
 func add_friendship(vid: String, n: int) -> void:
 	Relationships.add_points(vid, relationship(vid), int(round(n * Modifiers.mult(self, "friendship"))) if n > 0 else n)
@@ -186,7 +180,7 @@ func to_dict() -> Dictionary:
 		"id": id, "name": name, "look": look, "hat": hat, "inventory": inventory.to_dict(), "hotbar": hotbar,
 		"selected": selected, "party": p, "tool_levels": tool_levels, "tool_enchants": tool_enchants, "water_left": water_left, "bucket_full": bucket_full, "chips": chips, "quests": quests, "skill_points": skill_points, "emotes": emotes, "level": level, "xp": xp, "tree": tree, "respecs": respecs,
 		"fishing": fishing, "flags": flags,
-		"energy": energy, "max_energy": max_energy, "backpack": backpack, "packs": packs,
+		"backpack": backpack, "packs": packs,
 		"relationships": relationships, "recipes": recipes, "cosmetics": cosmetics, "map_id": map_id,
 		"pos": [pos.x, pos.y], "stats": stats,
 	}
@@ -211,8 +205,11 @@ static func from_dict(d: Dictionary) -> PlayerData:
 	for tool in d.get("tool_enchants", {}):
 		var ench := {}
 		for id in d.tool_enchants[tool]:
+			if Enchanting.spec(str(id)).is_empty():
+				continue
 			ench[str(id)] = int(d.tool_enchants[tool][id])
-		p.tool_enchants[str(tool)] = ench
+		if not ench.is_empty():
+			p.tool_enchants[str(tool)] = ench
 	p.water_left = int(d.get("water_left", 40))
 	p.bucket_full = bool(d.get("bucket_full", false))
 	p.chips = int(d.get("chips", 0))
@@ -220,13 +217,14 @@ static func from_dict(d: Dictionary) -> PlayerData:
 	p.skill_points = int(d.get("skill_points", 0))
 	p.level = clampi(int(d.get("level", 1)), 1, Skills.MAX_LEVEL)
 	p.xp = int(d.get("xp", 0))
-	p.tree = d.get("tree", {})
+	p.tree = {}
+	for id in d.get("tree", {}):
+		if not Skills.node(str(id)).is_empty():
+			p.tree[str(id)] = int(d.tree[id])
 	p.respecs = int(d.get("respecs", 0))
 	p.emotes = d.get("emotes", [])
 	p.fishing = d.get("fishing", {})
 	p.flags = d.get("flags", {})
-	p.energy = float(d.get("energy", 270))
-	p.max_energy = float(d.get("max_energy", 270))
 	if d.has("backpack"):
 		p.backpack = str(d.backpack)
 		p.packs = d.get("packs", [p.backpack])

@@ -263,10 +263,9 @@ func _derive_items() -> void:
 		items[b.id] = {"name": b.name, "cat": "backpack", "sell": 0, "base": "_backpack", "icon": b.id, "desc": b.get("desc", "")}
 	for cid in crop_order:
 		var c: Dictionary = crops[cid]
-		var flower: bool = cid in ["tulip", "blue_jazz", "sunflower", "fairy_rose", "ice_lily", "moonbloom"]
 		items[cid] = {
 			"name": c.name, "cat": "crop", "sell": c.sell, "color": c.color, "icon": "crop",
-			"energy": 0 if flower else int(max(8, c.sell / 3)), "treat": 1.2, "crop": cid,
+			"treat": 1.2, "crop": cid,
 			"desc": "A fresh %s. Grows in %s." % [c.name.to_lower(), ", ".join(c.seasons)],
 		}
 		items[cid + "_seeds"] = {
@@ -282,7 +281,7 @@ func _derive_items() -> void:
 		items[sid] = {"name": sh.name, "cat": "fish", "sell": sh.price, "icon": sid, "treat": 1.3, "desc": sh.desc, "shell": true}
 	for tid in trees:
 		var t: Dictionary = trees[tid]
-		items[tid] = {"name": t.name, "cat": "fruit", "sell": t.sell, "energy": int(t.sell / 3), "treat": 1.4, "color": t.color, "icon": "berry", "desc": "Fresh from the orchard."}
+		items[tid] = {"name": t.name, "cat": "fruit", "sell": t.sell, "treat": 1.4, "color": t.color, "icon": "berry", "desc": "Fresh from the orchard."}
 		items[tid + "_sapling"] = {"name": t.name + " Sapling", "cat": "sapling", "sell": int(t.sapling / 2), "buy": t.sapling, "color": t.color, "icon": "sapling", "tree": tid, "size": [1, 2],
 			"desc": "Plant on open farmland. Grows into a tree in %d days, then gives fruit every day in %s." % [t.days, ", ".join(t.seasons)]}
 
@@ -341,15 +340,15 @@ func get_item(id: String) -> Dictionary:
 		var d := {}
 		match prefix:
 			"juice":
-				d = {"name": base.name + " Juice", "cat": "artisan", "sell": int(base.sell * 2.25), "energy": int(base.get("energy", 20) * 1.5), "treat": 1.5, "icon": "bottle", "color": base.get("color", "#ffffff"), "desc": "Fresh-pressed juice."}
+				d = {"name": base.name + " Juice", "cat": "artisan", "sell": int(base.sell * 2.25), "treat": 1.5, "icon": "bottle", "color": base.get("color", "#ffffff"), "desc": "Fresh-pressed juice."}
 			"jam":
-				d = {"name": base.name + " Jam", "cat": "artisan", "sell": int(base.sell * 2 + 50), "energy": int(base.get("energy", 20) * 1.5), "treat": 1.6, "icon": "jar", "color": base.get("color", "#ffffff"), "desc": "Sweet preserves."}
+				d = {"name": base.name + " Jam", "cat": "artisan", "sell": int(base.sell * 2 + 50), "treat": 1.6, "icon": "jar", "color": base.get("color", "#ffffff"), "desc": "Sweet preserves."}
 			"smoked":
 				if base.get("cat", "") != "fish":
 					return {}
-				d = {"name": "Smoked " + base.name, "cat": "artisan", "sell": int(base.sell * 2), "energy": maxi(30, int(base.sell / 4)), "treat": 1.5, "icon": parts[1], "desc": "Slow-smoked over hardwood."}
+				d = {"name": "Smoked " + base.name, "cat": "artisan", "sell": int(base.sell * 2), "treat": 1.5, "icon": parts[1], "desc": "Slow-smoked over hardwood."}
 			"preserved":
-				d = {"name": "Frozen " + base.name, "cat": "artisan", "sell": int(base.sell * 1.6 + 20), "energy": int(base.get("energy", 20)), "treat": 1.3, "icon": "crop", "color": base.get("color", "#ffffff"), "desc": "Preserved by a Frost Wildling."}
+				d = {"name": "Frozen " + base.name, "cat": "artisan", "sell": int(base.sell * 1.6 + 20), "treat": 1.3, "icon": "crop", "color": base.get("color", "#ffffff"), "desc": "Preserved by a Frost Wildling."}
 			_:
 				return {}
 		d["base"] = base_id
@@ -456,9 +455,6 @@ func seeds_for_season(season: String) -> Array:
 		if season in crops[cid].seasons:
 			out.append(cid + "_seeds")
 	return out
-
-func is_edible(id: String) -> bool:
-	return int(get_item(id).get("energy", 0)) > 0
 
 func treat_power(item_id: String, species_id: String) -> float:
 	var it := get_item(item_id)

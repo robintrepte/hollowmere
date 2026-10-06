@@ -7,7 +7,6 @@ signal day_ending()
 signal money_changed(money: int, delta: int)
 signal inventory_changed()
 signal hotbar_changed()
-signal energy_changed(energy: float, max_energy: float)
 signal party_changed()
 signal toast(text: String, icon: String)
 ## Farm Story style floating reward: world position, text, color.

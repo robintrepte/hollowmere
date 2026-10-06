@@ -84,7 +84,8 @@ func in_stick_zone(p: Vector2) -> bool:
 	var hotbar_left := s.x / 2.0 - Hud.SLOT * 5.5 - 10
 	if p.x > s.x * 0.42 or p.y < 84:
 		return false
-	return not (p.x > hotbar_left and p.y > s.y - 52)
+	# The hotbar and the lead Wildling card sit in this bottom strip.
+	return not (p.x > hotbar_left - 170 and p.y > s.y - 52)
 
 ## ScreenTouch on a phone is often in window pixels; the pad lives in the stretched canvas.
 func _to_pad(pos: Vector2) -> Vector2:

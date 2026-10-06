@@ -197,12 +197,10 @@ func test_end_day_progresses() -> void:
 	g.water(t)
 	GameState.world.shipping.append({"id": "parsnip", "n": 5, "q": 0})
 	var m0 := GameState.money()
-	p.energy = 10.0
 	var rep := GameState.end_day()
 	assert_eq(GameState.day(), 1)
 	assert_gt(GameState.money(), m0)
 	assert_gt(int(rep.ship_total), 0)
-	assert_eq(p.energy, p.max_energy, "sleeping refills energy")
 	var to := float(GameState.world.time.last) + 600.0
 	TimeService.fixed_now = to
 	GameState.idle_advance(to)

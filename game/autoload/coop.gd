@@ -11,7 +11,7 @@ signal chat_said(pid: String, text: String)
 signal emote_played(pid: String, id: String)
 
 const CHUNK := 3000
-const ACTIONS := ["use_tool", "use_item", "harvest_at", "load_machine", "ship", "eat", "pick_up_object", "buy", "sell",
+const ACTIONS := ["use_tool", "use_item", "harvest_at", "load_machine", "ship", "pick_up_object", "buy", "sell",
 	"craft", "construct", "upgrade_tool", "buy_backpack", "equip_backpack", "deliver_board", "set_pair_act", "clear_pair_act", "incubate", "set_job_act", "move_creature_act",
 	"befriend_act", "dex_seen_act", "reward_act", "warden_won_act", "guardian_result_act", "legend_result_act",
 	"mine_floor_act", "open_treasure_act", "festival_act", "story_seen_act", "chain_act", "show_act", "rematch_won_act", "claim_quest_act",
@@ -290,7 +290,6 @@ func _apply_player(json: String) -> void:
 		p.selected = old.selected
 	GameState.players[p.id] = p
 	EventBus.inventory_changed.emit()
-	EventBus.energy_changed.emit(p.energy, p.energy_cap())
 	_dirty_player = false
 
 func _process(delta: float) -> void:

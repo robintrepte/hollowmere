@@ -23,21 +23,21 @@ const DECO := {
 const BLOCKING_GROUND := [4, 16, 19]
 const NON_BLOCKING_DECO := [31, 40, 41, 42, 51, 53]
 const WATER_TILES := [4, 19]
-## Debris: deco id -> {tool, min_level, drops: [[item, min, max]], energy, hp?}
+## Debris: deco id -> {tool, min_level, drops: [[item, min, max]], hp?}
 ## hp is how many swings a basic axe needs. A stronger axe needs fewer, but never just one.
 ## Loose wood has no hp and falls in one swing.
 const DEBRIS := {
-	31: {"tool": "scythe", "min": 0, "drops": [["fiber", 1, 1]], "energy": 0},
-	32: {"tool": "axe", "min": 0, "drops": [["wood", 1, 2]], "energy": 2},
-	33: {"tool": "axe", "min": 1, "drops": [["hardwood", 2, 2]], "energy": 4},
-	29: {"tool": "pickaxe", "min": 0, "drops": [["stone", 1, 1]], "energy": 2},
-	30: {"tool": "pickaxe", "min": 2, "drops": [["stone", 15, 15]], "energy": 6},
-	24: {"tool": "axe", "min": 0, "drops": [["wood", 8, 12], ["sap", 1, 3]], "energy": 4, "hp": 3.0},
-	25: {"tool": "axe", "min": 0, "drops": [["wood", 8, 12], ["sap", 1, 3]], "energy": 4, "hp": 3.0},
-	27: {"tool": "axe", "min": 0, "drops": [["wood", 4, 6]], "energy": 3, "hp": 3.0},
-	37: {"tool": "axe", "min": 0, "drops": [["wood", 1, 2], ["wild_berry", 0, 1]], "energy": 2},
-	39: {"tool": "pickaxe", "min": 0, "drops": [], "energy": 3},
-	38: {"tool": "pickaxe", "min": 0, "drops": [["stone", 1, 2]], "energy": 2},
+	31: {"tool": "scythe", "min": 0, "drops": [["fiber", 1, 1]]},
+	32: {"tool": "axe", "min": 0, "drops": [["wood", 1, 2]]},
+	33: {"tool": "axe", "min": 1, "drops": [["hardwood", 2, 2]]},
+	29: {"tool": "pickaxe", "min": 0, "drops": [["stone", 1, 1]]},
+	30: {"tool": "pickaxe", "min": 2, "drops": [["stone", 15, 15]]},
+	24: {"tool": "axe", "min": 0, "drops": [["wood", 8, 12], ["sap", 1, 3]], "hp": 3.0},
+	25: {"tool": "axe", "min": 0, "drops": [["wood", 8, 12], ["sap", 1, 3]], "hp": 3.0},
+	27: {"tool": "axe", "min": 0, "drops": [["wood", 4, 6]], "hp": 3.0},
+	37: {"tool": "axe", "min": 0, "drops": [["wood", 1, 2], ["wild_berry", 0, 1]]},
+	39: {"tool": "pickaxe", "min": 0, "drops": []},
+	38: {"tool": "pickaxe", "min": 0, "drops": [["stone", 1, 2]]},
 }
 
 static func id_of(name: String) -> int:

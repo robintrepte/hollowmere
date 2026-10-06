@@ -123,12 +123,13 @@ func test_hats_go_on_and_come_off() -> void:
 	p.inventory.add("parsnip", 1)
 	assert_false(GameState.wear_hat_act(pid, p.inventory.first_of("parsnip").uid).ok, "only hats")
 
-func test_hotel_restores_energy_for_gold() -> void:
+func test_hotel_heals_the_party_for_gold() -> void:
 	GameState.add_money(GameState.HOTEL_PRICE)
 	var gold := GameState.money()
-	p.energy = 10.0
+	var lead: Creature = p.party[0]
+	lead.hp = 1
 	assert_true(GameState.hotel_act(pid).ok)
-	assert_eq(p.energy, p.energy_cap())
+	assert_eq(lead.hp, lead.max_hp())
 	assert_eq(GameState.money(), gold - GameState.HOTEL_PRICE)
 
 func test_jukebox_needs_the_record() -> void:

@@ -14,9 +14,8 @@
   "lure": {"name": "Lure", "tools": ["fishing_rod"], "max": 3, "weight": 8, "desc": "Fish bite sooner.", "mods": {"fishing_rod": {"fish_bite": 0.12}}},
   "sea_luck": {"name": "Luck of the Sea", "tools": ["fishing_rod"], "max": 3, "weight": 6, "desc": "Treasure turns up more often.", "mods": {"fishing_rod": {"fish_luck": 0.06}}},
   "steady": {"name": "Steady Hand", "tools": ["fishing_rod"], "max": 3, "weight": 6, "desc": "A larger catch zone while reeling.", "mods": {"fishing_rod": {"fish_zone": 0.08}}},
-  "deep_dig": {"name": "Deep Dig", "tools": ["shovel"], "max": 2, "weight": 6, "desc": "Trenches cost 20% less energy per level."},
-  "big_splash": {"name": "Big Splash", "tools": ["bucket"], "max": 1, "weight": 5, "desc": "A full bucket soaks a 5×5 patch."},
-  "thrift": {"name": "Thrift", "tools": ["hoe", "watering_can", "pickaxe", "axe", "scythe", "fishing_rod", "shovel", "bucket"], "max": 3, "weight": 7, "desc": "This tool uses 10% less energy per level."}
+  "deep_dig": {"name": "Deep Dig", "tools": ["shovel"], "max": 2, "weight": 6, "desc": "Water flows 3 tiles farther along trenches per level."},
+  "big_splash": {"name": "Big Splash", "tools": ["bucket"], "max": 1, "weight": 5, "desc": "A full bucket soaks a 5×5 patch."}
  },
  "offers": {
   "essence": [1, 2, 3],

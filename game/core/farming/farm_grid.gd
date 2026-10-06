@@ -21,6 +21,8 @@ var bucket_until: Dictionary = {}  # dry trench key -> unix time a poured bucket
 const WATER_RANGE := 4
 ## How far water flows along a dug trench from its source.
 const TRENCH_REACH := 8
+## Extra tiles from the owner's shovel. Set by GameState, not saved.
+var trench_extra: int = 0
 const BUCKET_SECONDS := 24 * 3600
 var _wet: Dictionary = {}
 var _wet_dirty := true
@@ -222,7 +224,7 @@ static func roll_quality(fert: String, pollinated: bool, boost: int, luck: float
 		return 1
 	return 0
 
-## Clears debris on a tile with a tool. Returns {ok, drops:[[id,n]], energy} or {ok:false, reason}
+## Clears debris on a tile with a tool. Returns {ok, drops:[[id,n]]} or {ok:false, reason}
 func clear_debris(p: Vector2i, tool: String, tool_level: int, rng: RandomNumberGenerator) -> Dictionary:
 	var d := get_deco(p)
 	if not Tiles.DEBRIS.has(d):
@@ -238,7 +240,7 @@ func clear_debris(p: Vector2i, tool: String, tool_level: int, rng: RandomNumberG
 		if n > 0:
 			drops.append([dr[0], n])
 	set_deco(p, 0)
-	return {"ok": true, "drops": drops, "energy": int(info.energy)}
+	return {"ok": true, "drops": drops}
 
 func place_object(p: Vector2i, item_id: String) -> bool:
 	if Data.get_item(item_id).get("place", "") == "crab_pot":
@@ -502,7 +504,8 @@ func is_trench(p: Vector2i) -> bool:
 	return trenches.has(Tiles.key(p))
 
 ## Water flows from natural water (and freshly poured buckets) along connected trenches up to
-## TRENCH_REACH tiles. Trenches that lose their source dry out. Returns true if any tile changed.
+## TRENCH_REACH plus the owner's shovel bonus. Trenches that lose their source dry out.
+## Returns true if any tile changed.
 func _refresh_trenches(now: float) -> bool:
 	if trenches.is_empty():
 		return false
@@ -520,7 +523,7 @@ func _refresh_trenches(now: float) -> bool:
 	while not queue.is_empty():
 		var p: Vector2i = queue.pop_front()
 		var dd: int = dist[Tiles.key(p)]
-		if dd >= TRENCH_REACH:
+		if dd >= TRENCH_REACH + trench_extra:
 			continue
 		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 			var nk := Tiles.key(p + d)
