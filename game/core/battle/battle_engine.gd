@@ -8,6 +8,8 @@ enum Kind { WILD, TRAINER, PVP }
 const STAGE_STATS := ["power", "guard", "focus", "speed"]
 const MAJOR_STATUS := ["burn", "soak", "root", "daze", "sleep"]
 const WEATHER_TURNS := 5
+## Battle XP is half again the old yield, so a level takes fewer fights without collapsing the curve.
+const XP_YIELD := 1.5
 const WEATHER := {
 	"sun": {"mult": {"ember": 1.5, "tide": 0.6}, "start": "The sunlight turned harsh!", "end": "The sunlight faded."},
 	"rain": {"mult": {"tide": 1.5, "ember": 0.6}, "start": "Rain started to pour!", "end": "The rain stopped."},
@@ -771,7 +773,7 @@ func _award_xp(foe: Creature, ev: Array) -> void:
 	var bst := 0
 	for s in Data.STATS:
 		bst += int(sp.base_stats[s])
-	var total := int(float(bst) / 4.0 * float(foe.level) / 7.0 * xp_mult) + 5
+	var total := int((float(bst) / 4.0 * float(foe.level) / 7.0 * xp_mult + 5.0) * XP_YIELD)
 	var alive: Array = []
 	for c in sides[0].team:
 		if participants.has(c.uid) and not c.is_fainted():

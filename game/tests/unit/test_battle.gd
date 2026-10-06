@@ -85,6 +85,7 @@ func test_befriend_grants_the_same_xp_as_a_knockout() -> void:
 	ko_eng._check_faints([])
 	assert_gt(caught.xp, 0)
 	assert_eq(caught.xp, knocked.xp)
+	assert_eq(knocked.xp - Creature.xp_for_level(10), 106, "a level-8 Sproutle is worth half again the old yield")
 
 func test_a_lead_switched_out_before_acting_earns_no_xp() -> void:
 	var lead := _mk("puddlop", 12)
