@@ -8274,6 +8274,9 @@ msgstr "Steuerkreuz bewegen · A aufnehmen / ablegen · X Aktionen · B drehen �
 msgid "Drag to move · Double-click a bag to open · R rotate · Right-click for actions · Shift-click quick move · Esc close"
 msgstr "Ziehen zum Verschieben · Doppelklick öffnet Taschen · R drehen · Rechtsklick für Aktionen · Shift-Klick verschiebt schnell · Esc schließen"
 
+msgid "Drag to pan. Scroll or pinch to zoom."
+msgstr "Ziehen zum Verschieben. Scrollen oder mit zwei Fingern zoomen."
+
 msgid "Tap to pick up, tap again to place · Double-tap a bag to open · Hold an item for actions · Rotate turns it · X closes"
 msgstr "Tippen zum Aufnehmen, erneut tippen zum Ablegen · Doppeltippen öffnet Taschen · Gedrückt halten für Aktionen · Drehen dreht das Item · X schließt"
 
@@ -9813,6 +9816,9 @@ msgstr "Skill-Reset"
 
 msgid "Skill tree"
 msgstr "Skilltree"
+
+msgid "Travel"
+msgstr "Reisen"
 
 #, c-format
 msgid "Travel to %s"

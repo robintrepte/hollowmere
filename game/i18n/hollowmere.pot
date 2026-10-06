@@ -67,7 +67,7 @@ msgstr ""
 msgid " (1 ribbon)"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:146
+#: scenes/ui/journal_panel.gd:146 scenes/ui/map_panel.gd:179
 #, c-format
 msgid " / %d"
 msgstr ""
@@ -247,7 +247,7 @@ msgstr ""
 msgid "%d skill points free"
 msgstr ""
 
-#: scenes/ui/hud.gd:300
+#: scenes/ui/hud.gd:317
 #, c-format
 msgid "%d skill points to spend ({skills})"
 msgstr ""
@@ -342,12 +342,12 @@ msgstr ""
 msgid "%s Apply it to a tool at an anvil."
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:146
+#: scenes/ui/journal_panel.gd:146 scenes/ui/map_panel.gd:180
 #, c-format
 msgid "%s B%d%s"
 msgstr ""
 
-#: scenes/ui/map_panel.gd:73
+#: scenes/ui/map_panel.gd:208
 #, c-format
 msgid "%s B%s"
 msgstr ""
@@ -387,7 +387,7 @@ msgstr ""
 msgid "%s Leaf damage"
 msgstr ""
 
-#: scenes/ui/hud.gd:416
+#: scenes/ui/hud.gd:433
 #, c-format
 msgid "%s Lv%d"
 msgstr ""
@@ -1325,7 +1325,7 @@ msgstr ""
 msgid "1 skill point free"
 msgstr ""
 
-#: scenes/ui/hud.gd:300
+#: scenes/ui/hud.gd:317
 msgid "1 skill point to spend ({skills})"
 msgstr ""
 
@@ -2179,7 +2179,7 @@ msgstr ""
 msgid "Ammonite"
 msgstr ""
 
-#: scenes/ui/hud.gd:246
+#: scenes/ui/hud.gd:263
 msgid "An agent is playing. You are watching."
 msgstr ""
 
@@ -3457,7 +3457,7 @@ msgstr ""
 msgid "Cave lake"
 msgstr ""
 
-#: scenes/ui/skill_panel.gd:40
+#: scenes/ui/map_panel.gd:92 scenes/ui/skill_panel.gd:40
 msgid "Center"
 msgstr ""
 
@@ -3657,7 +3657,7 @@ msgstr ""
 msgid "Close farm"
 msgstr ""
 
-#: scenes/ui/map_panel.gd:55 scenes/ui/map_panel.gd:98
+#: scenes/ui/map_panel.gd:149
 msgid "Closed"
 msgstr ""
 
@@ -4374,6 +4374,10 @@ msgstr ""
 msgid "Drag to move · Double-click a bag to open · R rotate · Right-click for actions · Shift-click quick move · Esc close"
 msgstr ""
 
+#: scenes/ui/map_panel.gd:116
+msgid "Drag to pan. Scroll or pinch to zoom."
+msgstr ""
+
 #: data/moves.json
 msgid "Drains energy to restore HP."
 msgstr ""
@@ -4830,12 +4834,12 @@ msgstr ""
 msgid "Farm Level %d!"
 msgstr ""
 
-#: scenes/ui/hud.gd:375
+#: scenes/ui/hud.gd:392
 #, c-format
 msgid "Farm Lv %d"
 msgstr ""
 
-#: scenes/ui/hud.gd:96
+#: scenes/ui/hud.gd:97
 msgid "Farm Lv 1"
 msgstr ""
 
@@ -4860,7 +4864,7 @@ msgstr ""
 msgid "Farm job: %s. %s"
 msgstr ""
 
-#: scenes/ui/hud.gd:216
+#: scenes/ui/hud.gd:233
 #, c-format
 msgid "Farm level %d!"
 msgstr ""
@@ -6295,7 +6299,7 @@ msgstr ""
 msgid "Hide the casino (closes it and hides its quests)"
 msgstr ""
 
-#: scenes/ui/hud.gd:194
+#: scenes/ui/hud.gd:211
 msgid "Hide this hint"
 msgstr ""
 
@@ -7615,17 +7619,17 @@ msgstr ""
 msgid "Let's trade"
 msgstr ""
 
-#: scenes/ui/hud.gd:381 scenes/ui/skill_panel.gd:75
+#: scenes/ui/hud.gd:398 scenes/ui/skill_panel.gd:75
 #, c-format
 msgid "Level %d"
 msgstr ""
 
-#: scenes/ui/hud.gd:227
+#: scenes/ui/hud.gd:244
 #, c-format
 msgid "Level %d! You earned a skill point."
 msgstr ""
 
-#: scenes/ui/hud.gd:87
+#: scenes/ui/hud.gd:88
 msgid "Level 1"
 msgstr ""
 
@@ -7941,7 +7945,7 @@ msgstr ""
 msgid "Map Reader"
 msgstr ""
 
-#: scenes/ui/map_panel.gd:49
+#: scenes/ui/map_panel.gd:120
 msgid "Map Reader: click an open place to travel there."
 msgstr ""
 
@@ -8940,7 +8944,7 @@ msgstr ""
 msgid "Open your farm to friends. They join with their own character and help with everything; the farm, money and Wildlings stay yours and save on your computer."
 msgstr ""
 
-#: scenes/ui/map_panel.gd:50
+#: scenes/ui/map_panel.gd:184
 msgid "Opened by restoring shrines"
 msgstr ""
 
@@ -10651,11 +10655,11 @@ msgstr ""
 msgid "Shrimp"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:142
+#: scenes/ui/journal_panel.gd:142 scenes/ui/map_panel.gd:172
 msgid "Shrine awake ✓"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:142
+#: scenes/ui/journal_panel.gd:142 scenes/ui/map_panel.gd:170
 msgid "Shrine ready to wake"
 msgstr ""
 
@@ -11921,7 +11925,7 @@ msgstr ""
 msgid "Take a break! Your farm will wait for you."
 msgstr ""
 
-#: scenes/ui/hud.gd:247
+#: scenes/ui/hud.gd:264
 msgid "Take control back"
 msgstr ""
 
@@ -13141,7 +13145,7 @@ msgstr ""
 msgid "Today's free chips are collected. Come back tomorrow."
 msgstr ""
 
-#: scenes/ui/hud.gd:294
+#: scenes/ui/hud.gd:311
 #, c-format
 msgid "Today: %s at the Show Ring"
 msgstr ""
@@ -13151,7 +13155,7 @@ msgstr ""
 msgid "Today: %s in the village!"
 msgstr ""
 
-#: scenes/ui/hud.gd:296
+#: scenes/ui/hud.gd:313
 msgid "Today: Creature Show at the Show Ring"
 msgstr ""
 
@@ -13266,13 +13270,12 @@ msgstr ""
 msgid "Trash"
 msgstr ""
 
-#: data/progression.json
-msgid "Travel by wayshrine to Cinder Ridge. Beat Ash and wake the shrine."
+#: scenes/ui/map_panel.gd:188
+msgid "Travel"
 msgstr ""
 
-#: scenes/ui/map_panel.gd:118
-#, c-format
-msgid "Travel to %s"
+#: data/progression.json
+msgid "Travel by wayshrine to Cinder Ridge. Beat Ash and wake the shrine."
 msgstr ""
 
 #: data/villagers.json
@@ -13521,7 +13524,7 @@ msgstr ""
 msgid "Valley Grower"
 msgstr ""
 
-#: scenes/ui/map_panel.gd:31 scenes/ui/settings_panel.gd:114
+#: scenes/ui/settings_panel.gd:114
 msgid "Valley map"
 msgstr ""
 
@@ -13750,7 +13753,7 @@ msgstr ""
 msgid "Want to watch the sunset sometime?"
 msgstr ""
 
-#: scenes/ui/journal_panel.gd:142
+#: scenes/ui/journal_panel.gd:142 scenes/ui/map_panel.gd:168
 #, c-format
 msgid "Warden %s awaits"
 msgstr ""
@@ -14451,7 +14454,7 @@ msgstr ""
 msgid "You also need %d %s."
 msgstr ""
 
-#: scenes/ui/map_panel.gd:37
+#: scenes/ui/map_panel.gd:85
 #, c-format
 msgid "You are in %s"
 msgstr ""
@@ -15063,7 +15066,7 @@ msgstr ""
 msgid "harvests forever"
 msgstr ""
 
-#: scenes/ui/hud.gd:446 scenes/ui/inventory_panel.gd:383
+#: scenes/ui/hud.gd:462 scenes/ui/inventory_panel.gd:383
 #, c-format
 msgid "hotbar_%d"
 msgstr ""
@@ -15164,7 +15167,7 @@ msgstr ""
 msgid "the trainer"
 msgstr ""
 
-#: scenes/ui/map_panel.gd:74
+#: scenes/ui/map_panel.gd:209
 msgid "the valley"
 msgstr ""
 
