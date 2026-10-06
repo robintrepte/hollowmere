@@ -37,7 +37,7 @@ const TOOLS = [
   { name: "sell", description: "Sell an inventory uid. Valuable sales need the economy scope.", inputSchema: { type: "object", properties: { uid: { type: "string" }, n: { type: "number" } }, required: ["uid"] } },
   { name: "craft", description: "Craft a recipe.", inputSchema: { type: "object", properties: { id: { type: "string" }, n: { type: "number" } }, required: ["id"] } },
   { name: "set_job", description: "Assign a farm job to a Wildling.", inputSchema: { type: "object", properties: { uid: { type: "string" }, job: { type: "string" } }, required: ["uid"] } },
-  { name: "move_creature", description: "Move a Wildling to party or den.", inputSchema: { type: "object", properties: { uid: { type: "string" }, where: { type: "string" } }, required: ["uid"] } },
+  { name: "move_creature", description: "Move a Wildling to party, den, or sanctuary.", inputSchema: { type: "object", properties: { uid: { type: "string" }, where: { type: "string", enum: ["party", "den", "sanctuary"] } }, required: ["uid"] } },
   { name: "chat_say", description: "Speak in farm chat. Needs the chat scope.", inputSchema: { type: "object", properties: { text: { type: "string" } }, required: ["text"] } },
   { name: "emote", description: "Play an emote the player knows.", inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] } },
   { name: "sleep", description: "Go to bed (skips the night).", inputSchema: { type: "object", properties: {} } },

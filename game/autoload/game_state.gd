@@ -336,10 +336,12 @@ func find_creature(uid: String) -> Creature:
 			return c
 	return null
 
-## Moves a creature between "party:<pid>", "den", "sanctuary". Returns ok.
+## Moves a creature between "party", "den" and "sanctuary". Returns ok.
 func move_creature(uid: String, dest: String, p: PlayerData) -> bool:
 	var c := find_creature(uid)
-	if c == null:
+	if c == null or p == null:
+		return false
+	if dest != "party" and dest != "den" and dest != "sanctuary":
 		return false
 	if dest == "party" and p.party.size() >= PlayerData.PARTY_MAX:
 		return false
@@ -360,7 +362,7 @@ func move_creature(uid: String, dest: String, p: PlayerData) -> bool:
 		"den":
 			ranch.append(c)
 			c.start_default_job()
-		_: sanctuary.append(c)
+		"sanctuary": sanctuary.append(c)
 	EventBus.party_changed.emit()
 	return true
 

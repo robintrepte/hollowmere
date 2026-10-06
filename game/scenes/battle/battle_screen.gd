@@ -840,9 +840,6 @@ func _show_main_menu() -> void:
 	_cmd_button(tr("Forfeit") if pvp else tr("Run"), func():
 		if pvp:
 			_confirm_forfeit()
-		elif setup.get("kind", "wild") != "wild":
-			_msg.text = tr("You can't run from a trainer battle!")
-			Audio.sfx("error")
 		else:
 			_picked.emit({"k": "run"}))
 	f.call_deferred("grab_focus")

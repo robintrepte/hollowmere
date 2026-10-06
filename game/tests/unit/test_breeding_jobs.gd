@@ -195,6 +195,22 @@ func test_befriended_overflow_goes_to_work_in_the_den() -> void:
 	assert_eq(GameState.add_creature(p, c), "den")
 	assert_eq(c.job, "water")
 
+func test_party_wildlings_can_wait_in_the_shelter_and_come_back() -> void:
+	GameState.new_game({"seed": 13})
+	var p := GameState.local_player()
+	var lead: Creature = p.party[0]
+	var spare := Creature.create("embercub", 5, rng)
+	p.party.append(spare)
+	assert_true(GameState.move_creature(spare.uid, "sanctuary", p))
+	assert_true(spare in GameState.sanctuary)
+	assert_false(spare in p.party)
+	assert_eq(spare.job, "")
+	assert_false(GameState.move_creature(lead.uid, "sanctuary", p), "the last party member stays")
+	assert_true(lead in p.party)
+	assert_true(GameState.move_creature(spare.uid, "party", p))
+	assert_true(spare in p.party)
+	assert_false(spare in GameState.sanctuary)
+
 func test_sanctuary_wildlings_can_rejoin_the_party_or_the_den() -> void:
 	GameState.new_game({"seed": 12})
 	var p := GameState.local_player()

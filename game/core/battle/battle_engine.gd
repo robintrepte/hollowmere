@@ -270,7 +270,7 @@ func submit(a0: Dictionary, a1: Dictionary) -> Array:
 	# 1. Run / forfeit
 	for side in [0, 1]:
 		if acts[side].get("k", "") == "run":
-			if kind == Kind.WILD and side == 0:
+			if kind != Kind.PVP and side == 0:
 				run_attempts += 1
 				if active(0).status == "root":
 					ev.append({"t": "text", "msg": tr("%s is rooted and can't escape!") % active(0).display_name()})

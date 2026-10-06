@@ -1,6 +1,6 @@
 class_name PartyPanel
 extends PanelContainer
-## Party, farm and Shelter Wildlings: details, lead order, moving between party and the Den, farm jobs.
+## Party, farm and Shelter Wildlings: details, lead order, moving between party, Den and Shelter, farm jobs.
 
 signal closed
 
@@ -99,7 +99,7 @@ func _refresh() -> void:
 	if arr.is_empty():
 		var empty_l: Label
 		if tab == "sanctuary":
-			empty_l = UITheme.label("No Wildlings are waiting in the Shelter.\nThey land here when your party and the Den are full.", 9, UITheme.MUTED)
+			empty_l = UITheme.label("No Wildlings are waiting in the Shelter.\nSend some here from your party, or they land here when your party and the Den are full.", 9, UITheme.MUTED)
 		elif tab == "party":
 			empty_l = UITheme.label("Your party is empty.", 9, UITheme.MUTED)
 		else:
@@ -285,7 +285,7 @@ func _show_detail() -> void:
 					_show_detail()))
 	# Farm job. Shelter Wildlings are stored, not working.
 	if tab == "sanctuary":
-		var wait := UITheme.label(tr("Waiting here because your party and the Den were full."), 9, UITheme.LEAF.darkened(0.35))
+		var wait := UITheme.label(tr("Resting in the Shelter. They can rejoin your party when there's room."), 9, UITheme.LEAF.darkened(0.35))
 		wait.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_detail.add_child(wait)
 	else:
@@ -315,6 +315,15 @@ func _show_detail() -> void:
 				EventBus.toast.emit(tr("The Den is full, or this is your last party member."), ""))
 		send.disabled = player.party.size() <= 1
 		acts.add_child(send)
+		var shelter := UITheme.button("Send to Shelter", func():
+			if Coop.act("move_creature_act", [c.uid, "sanctuary"]).ok:
+				EventBus.toast.emit(tr("%s is waiting in the Shelter.") % c.display_name(), "")
+				_sel = null
+				_refresh()
+			else:
+				EventBus.toast.emit(tr("This is your last party member."), ""))
+		shelter.disabled = player.party.size() <= 1
+		acts.add_child(shelter)
 	elif tab == "farm":
 		var join := UITheme.button("Join party", func():
 			if Coop.act("move_creature_act", [c.uid, "party"]).ok:

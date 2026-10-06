@@ -121,6 +121,17 @@ func test_run_from_wild() -> void:
 	eng.submit({"k": "run"}, {"k": "move", "i": 0})
 	assert_eq(eng.result, "run")
 
+func test_run_from_trainer() -> void:
+	var eng := BattleEngine.new([_mk("puddlop", 10)], [_mk("sproutle", 12)], BattleEngine.Kind.TRAINER, 3, "Rowan")
+	eng.start()
+	eng.submit({"k": "run"}, {"k": "move", "i": 0})
+	assert_eq(eng.result, "run")
+	var rooted := BattleEngine.new([_mk("puddlop", 10)], [_mk("sproutle", 12)], BattleEngine.Kind.TRAINER, 4, "Rowan")
+	rooted.start()
+	rooted.active(0).status = "root"
+	rooted.submit({"k": "run"}, {"k": "none"})
+	assert_eq(rooted.result, "", "a rooted Wildling still can't leave")
+
 func test_xp_and_level_up() -> void:
 	var c := _mk("sproutle", 5)
 	var before := c.level

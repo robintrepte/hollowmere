@@ -319,6 +319,10 @@ msgstr "%s hält sich in der Nähe auf. Vielleicht würde es sich dir anschließ
 msgid "%s moved to the farm and started working: %s."
 msgstr "%s ist auf den Hof gezogen und arbeitet jetzt als %s."
 
+#, c-format
+msgid "%s is waiting in the Shelter."
+msgstr "%s wartet im Unterschlupf."
+
 #: scenes/main/adventure_flow.gd:340
 #, c-format
 msgid "%s moves up to the %s class!"
@@ -4915,6 +4919,9 @@ msgstr "Senden"
 msgid "Send to farm"
 msgstr "Zum Hof schicken"
 
+msgid "Send to Shelter"
+msgstr "In den Unterschlupf schicken"
+
 #: scenes/ui/account_panel.gd:110
 msgid "Server"
 msgstr "Server"
@@ -5603,6 +5610,9 @@ msgstr "Die Tiefen Steine"
 #: scenes/ui/party_panel.gd:273
 msgid "The Den is full, or this is your last party member."
 msgstr "Der Bau ist voll, oder das ist dein letztes Party-Mitglied."
+
+msgid "This is your last party member."
+msgstr "Das ist dein letztes Party-Mitglied."
 
 #: data/progression.json
 msgid "The Frost Shrine gleams! The path to Umbral Glade appears."
@@ -7772,9 +7782,6 @@ msgstr "Wildlings"
 
 msgid "Worker"
 msgstr "Helfer"
-
-msgid "You can't run from a trainer battle!"
-msgstr "Aus einem Trainerkampf kannst du nicht fliehen!"
 
 msgid "You don't know that recipe yet."
 msgstr "Das Rezept kennst du noch nicht."
@@ -13417,8 +13424,8 @@ msgstr "Gießt bis zu %d Felder pro Stunde."
 msgid "Wheel"
 msgstr "Rad"
 
-msgid "No Wildlings are waiting in the Shelter.\nThey land here when your party and the Den are full."
-msgstr "Im Unterschlupf wartet kein Wildling.\nNeue landen hier, wenn Party und Bau voll sind."
+msgid "No Wildlings are waiting in the Shelter.\nSend some here from your party, or they land here when your party and the Den are full."
+msgstr "Im Unterschlupf wartet kein Wildling.\nSchick welche aus der Party hierher, oder neue landen hier, wenn Party und Bau voll sind."
 
 msgid "Safe here until your party or the Den has room."
 msgstr "Hier in Sicherheit, bis in der Party oder im Bau Platz ist."
@@ -13431,8 +13438,8 @@ msgstr "Unterschlupf %d"
 msgid "Waiting  ·  HP %d/%d"
 msgstr "Wartet  ·  KP %d/%d"
 
-msgid "Waiting here because your party and the Den were full."
-msgstr "Wartet hier, weil Party und Bau voll waren."
+msgid "Resting in the Shelter. They can rejoin your party when there's room."
+msgstr "Ruht im Unterschlupf. Kann zurück in die Party, sobald Platz ist."
 
 msgid "Your party is empty."
 msgstr "Deine Party ist leer."
