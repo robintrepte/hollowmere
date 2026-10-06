@@ -19,7 +19,8 @@ const TRELLIS := ["green_bean", "tomato", "grape", "hot_pepper", "snowpea", "cra
 const STALK := ["corn", "wheat", "sunflower", "amaranth"]
 const FLOWERS := ["tulip", "blue_jazz", "fairy_rose", "ice_lily", "moonbloom"]
 const BIG := ["melon", "pumpkin", "winter_squash", "glacier_melon"]
-## Row block in grass_edge_<season>.png. Tallgrass and flowers spill as grass.
+## Row block in grass_edge_<season>.png. Tallgrass and flowers are grass with
+## something on top, so they share its rank and never fringe against the lawn.
 ## A higher rank creeps onto a lower one; the lip is the same ragged edge as path-to-grass.
 const SPILL_BLOCK := {
 	0: 0, 1: 0, 11: 0,
@@ -35,7 +36,7 @@ const SPILL_BLOCK := {
 	21: 10,
 }
 const SPILL_RANK := {
-	1: 60, 11: 60, 0: 50, 18: 48,
+	0: 50, 1: 50, 11: 50, 18: 48,
 	7: 40,
 	3: 36, 9: 36, 12: 36, 13: 36, 14: 36, 15: 36,
 	2: 30,

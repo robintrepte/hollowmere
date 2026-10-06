@@ -146,35 +146,58 @@ PETALS = {
 
 
 def _field(name, season):
-    """Shared noise for a ground. Tallgrass and flowers keep grass's field so a patch
-    meets the lawn the way two grass tiles meet, instead of cutting on a square."""
+    """Shared noise for a ground. Tallgrass and flowers are grass with something on top,
+    so they use the grass field and never grow a seam of their own."""
     key = "grass" if name in ("tallgrass", "flowers") else name
     return fbm(np.random.default_rng(zlib.crc32(f"{key}:{season}".encode())))
 
 
+def _stamp(img, x, y, color):
+    """Paint one pixel and drop anything that would wrap onto the far edge."""
+    if 0 <= x < T and 0 <= y < T:
+        img[y, x] = hexc(color) if isinstance(color, str) else color
+
+
+def _on_grass(name, season, variant, shared_only):
+    """Same grass tile as the lawn, with flowers or blades kept off the border."""
+    img = np.array(make_tile("grass", season, variant, shared_only), dtype=np.float64)
+    if shared_only:
+        return np.clip(img, 0, 255).astype(np.uint8)
+    rng = np.random.default_rng(zlib.crc32(f"{name}:{season}:{variant}".encode()))
+    if name == "flowers":
+        for _ in range(5):
+            x, y = spot(rng, 8)
+            c = PETALS[season][rng.integers(0, len(PETALS[season]))]
+            for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
+                _stamp(img, x + dx, y + dy, c)
+            _stamp(img, x, y, "#f8e070")
+    else:
+        dark = DARK[season]
+        lean = 1 if variant % 2 else -1
+        for _ in range(16):
+            x, y = spot(rng, 8)
+            y = max(int(y), 16)
+            h = int(rng.integers(4, 7))
+            for i in range(h):
+                _stamp(img, x + (i // 3) * lean, y - i, dark[1] if i < h - 1 else dark[3])
+            _stamp(img, x + 1, y, dark[0])
+    return np.clip(img, 0, 255).astype(np.uint8)
+
+
 def make_tile(name, season, variant, shared_only=False):
+    if name in ("flowers", "tallgrass"):
+        return _on_grass(name, season, variant, shared_only)
     rng = np.random.default_rng(zlib.crc32(f"{name}:{season}:{variant}".encode()))
     shared = _field(name, season)
     # Shores use the shared field alone so they meet the neighboring ground tile.
     n = shared if shared_only else shared + (fbm(rng) - shared) * EDGE_W
-    if name in ("grass", "flowers", "tallgrass"):
+    if name == "grass":
         g = GRASS[season]
         img = ramp(n * 0.55 + 0.25, g)
         if season == "winter":
             specks(img, rng, 6, ["#ffffff", "#b8c8dc"])
         else:
-            tufts(img, rng, 7 if name == "grass" else 10, g[0], g[3])
-        if name == "flowers":
-            flowers(img, rng, 5, PETALS[season])
-        if name == "tallgrass":
-            dark = DARK[season]
-            for _ in range(16):
-                x, y = spot(rng)
-                y = max(y, 11)
-                h = rng.integers(4, 8)
-                for i in range(h):
-                    put(img, x + (i // 3) * (1 if variant % 2 else -1), y - i, dark[1] if i < h - 1 else dark[3])
-                put(img, x + 1, y, dark[0])
+            tufts(img, rng, 7, g[0], g[3])
     elif name == "darkgrass":
         img = ramp(n * 0.55 + 0.25, DARK[season])
         tufts(img, rng, 8, DARK[season][0], DARK[season][3])
