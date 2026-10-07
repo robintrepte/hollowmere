@@ -367,6 +367,115 @@ func move_creature(uid: String, dest: String, p: PlayerData) -> bool:
 	EventBus.party_changed.emit()
 	return true
 
+func candy_count(p: PlayerData) -> int:
+	if p == null:
+		return 0
+	return p.inventory.count(WildlingCandy.ITEM) + farm_chest.count(WildlingCandy.ITEM)
+
+## Sends a Shelter Wildling away. The candy has to fit in the pack or the farm chest first.
+func release_creature(uid: String, p: PlayerData) -> Dictionary:
+	var c := find_creature(uid)
+	var r := _res(false, tr("Only a Wildling waiting in the Shelter can be sent off."))
+	if c == null or p == null or not c in sanctuary:
+		return r
+	var n := WildlingCandy.yield_for(c)
+	var who := c.display_name()
+	if not _give_all(p, WildlingCandy.ITEM, n):
+		r.reason = tr("No room for the candy. Make space in your pack or the farm chest.")
+		return r
+	sanctuary.erase(c)
+	clear_pair(uid)
+	EventBus.party_changed.emit()
+	r = _res(true)
+	r.sfx = "gift"
+	r.candies = n
+	r.name = who
+	return r
+
+## Feeds Wildling Candy to a party, farm or Shelter Wildling. `until_level` spends enough for one level.
+func feed_candy(uid: String, p: PlayerData, until_level: bool) -> Dictionary:
+	var c := find_creature(uid)
+	var r := _res(false)
+	if c == null or p == null or not (c in p.party or c in ranch or c in sanctuary):
+		r.reason = tr("That Wildling isn't with you.")
+		return r
+	if c.level >= Creature.MAX_LEVEL:
+		r.reason = tr("%s can't grow any higher.") % c.display_name()
+		return r
+	var have := candy_count(p)
+	if have <= 0:
+		r.reason = tr("You don't have any Wildling Candy.")
+		return r
+	var spend := 1
+	if until_level:
+		spend = mini(have, WildlingCandy.candies_left(c))
+	if spend <= 0 or not _take_candy(p, spend):
+		r.reason = tr("You don't have any Wildling Candy.")
+		return r
+	var start := c.level
+	var before := c.display_name()
+	var events: Array = []
+	var used := 0
+	for _i in spend:
+		var grant := mini(c.xp_to_next(), WildlingCandy.xp_per_candy(c.level))
+		if grant <= 0:
+			break
+		used += 1
+		events.append_array(c.gain_xp(grant))
+		if c.level != start:
+			break
+	if used < spend:
+		_give_all(p, WildlingCandy.ITEM, spend - used)
+	var learned: Array = []
+	for e in events:
+		if str(e.get("t", "")) == "learn":
+			learned.append({"move": str(e.move), "equipped": bool(e.get("equipped", false))})
+	var evolved := ""
+	if c.can_evolve() != "":
+		c.evolve()
+		Progression.mark(world.dex, c.species_id, true, c.starry)
+		evolved = c.species_id
+	EventBus.party_changed.emit()
+	r = _res(true)
+	r.sfx = "levelup" if c.level > start or evolved != "" else "gift"
+	r.spent = used
+	r.level = c.level
+	r.gained_level = c.level > start
+	r.learned = learned
+	r.evolved = evolved
+	r.name = before
+	return r
+
+func _give_all(p: PlayerData, id: String, n: int) -> bool:
+	if n <= 0:
+		return true
+	var pack_d := p.inventory.to_dict()
+	var chest_d := farm_chest.to_dict()
+	var left := p.inventory.add(id, n)
+	var spilled := left
+	if left > 0:
+		left = farm_chest.add(id, left)
+	if left > 0:
+		p.inventory.from_dict(pack_d)
+		farm_chest.from_dict(chest_d)
+		return false
+	if spilled > 0:
+		EventBus.toast.emit(tr("Pack full: %d %s sent to the farm chest.") % [spilled, Data.item_name(id)], "chest")
+	EventBus.inventory_changed.emit()
+	return true
+
+func _take_candy(p: PlayerData, n: int) -> bool:
+	if n <= 0 or candy_count(p) < n:
+		return false
+	var from_pack := mini(n, p.inventory.count(WildlingCandy.ITEM))
+	var from_chest := n - from_pack
+	if from_pack > 0:
+		p.inventory.remove(WildlingCandy.ITEM, from_pack)
+	if from_chest > 0:
+		farm_chest.remove(WildlingCandy.ITEM, from_chest)
+	EventBus.inventory_changed.emit()
+	return true
+
 func set_job(uid: String, job_id: String) -> bool:
 	var c := find_creature(uid)
 	if c == null or not c in ranch:
@@ -1461,6 +1570,12 @@ func set_job_act(pid: String, uid: String, job_id: String) -> Dictionary:
 func move_creature_act(pid: String, uid: String, dest: String) -> Dictionary:
 	var ok := move_creature(uid, dest, player(pid))
 	return _res(ok, "" if ok else tr("There's no room there."))
+
+func release_creature_act(pid: String, uid: String) -> Dictionary:
+	return release_creature(uid, player(pid))
+
+func feed_candy_act(pid: String, uid: String, until_level: bool = false) -> Dictionary:
+	return feed_candy(uid, player(pid), until_level)
 
 ## A co-op client befriended a Wildling in its own battle; the host files it (dex, den, farm XP).
 func befriend_act(pid: String, creature_json: String) -> Dictionary:
@@ -2835,7 +2950,9 @@ func apply_meta(d: Dictionary) -> void:
 func _ranch_signature() -> String:
 	var parts: PackedStringArray = []
 	for c: Creature in ranch:
-		parts.append(c.uid + c.species_id)
+		parts.append("%s:%s:%d" % [c.uid, c.species_id, c.level])
+	for c: Creature in sanctuary:
+		parts.append("s:%s:%s:%d" % [c.uid, c.species_id, c.level])
 	return ",".join(parts)
 
 ## Puts a hat from the pack on (the old one goes back into the pack); uid "" takes the hat off.

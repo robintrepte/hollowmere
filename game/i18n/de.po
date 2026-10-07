@@ -2995,8 +2995,8 @@ msgid "Holds %dx%d%s"
 msgstr "Fasst %dx%d%s"
 
 #: data/items.json
-msgid "Holds treats, charms, salves and food."
-msgstr "Nimmt Leckerli, Amulette, Salben und Essen auf."
+msgid "Holds treats, charms, salves, food and candy."
+msgstr "Nimmt Leckerli, Amulette, Salben, Essen und Bonbons auf."
 
 #: data/regions.json
 msgid "Hollow Meadow"
@@ -13440,8 +13440,8 @@ msgstr "Rad"
 msgid "No Wildlings are waiting in the Shelter.\nSend some here from your party, or they land here when your party and the Den are full."
 msgstr "Im Unterschlupf wartet kein Wildling.\nSchick welche aus der Party hierher, oder neue landen hier, wenn Party und Bau voll sind."
 
-msgid "Safe here until your party or the Den has room."
-msgstr "Hier in Sicherheit, bis in der Party oder im Bau Platz ist."
+msgid "Safe here until your party or the Den has room. Send one on its way to leave Wildling Candy."
+msgstr "Hier in Sicherheit, bis in der Party oder im Bau Platz ist. Schick einen weiter, dann bleibt ein Wildling-Bonbon zurück."
 
 #, c-format
 msgid "Shelter %d"
@@ -13451,8 +13451,8 @@ msgstr "Unterschlupf %d"
 msgid "Waiting  ·  HP %d/%d"
 msgstr "Wartet  ·  KP %d/%d"
 
-msgid "Resting in the Shelter. They can rejoin your party when there's room."
-msgstr "Ruht im Unterschlupf. Kann zurück in die Party, sobald Platz ist."
+msgid "Resting in the Shelter. They can rejoin your party when there's room, or leave Wildling Candy behind if you send them on."
+msgstr "Ruht im Unterschlupf. Kann zurück in die Party, sobald Platz ist, oder lässt ein Wildling-Bonbon zurück, wenn du ihn wegschickst."
 
 msgid "Your party is empty."
 msgstr "Deine Party ist leer."
@@ -13507,4 +13507,70 @@ msgstr "Gekochte Gerichte sind gute Geschenke, und Wildlinge lieben ein Leckerli
 
 msgid "Water flows 3 tiles farther along trenches per level."
 msgstr "Wasser fließt pro Stufe 3 Felder weiter die Gräben entlang."
+
+msgid "Wildling Candy"
+msgstr "Wildling-Bonbon"
+
+msgid "Left behind by a Wildling sent on its way. Feed it from the Party screen to help another grow."
+msgstr "Bleibt zurück, wenn ein Wildling weiterzieht. Füttere es im Party-Bildschirm, damit ein anderer wächst."
+
+msgid "Waiting · ×%d candy"
+msgstr "Wartet · ×%d Bonbon"
+
+msgid "Send on their way"
+msgstr "Wegschicken"
+
+msgid "One candy, plus another for every 10 levels. Starry and legendary Wildlings leave one extra. You can't call them back."
+msgstr "Ein Bonbon, plus eins für jede 10 Stufen. Sternen- und legendäre Wildlinge lassen eins extra zurück. Zurückholen geht nicht."
+
+msgid "Leaves ×%d Wildling Candy."
+msgstr "Lässt ×%d Wildling-Bonbon zurück."
+
+msgid "Send off"
+msgstr "Wegschicken"
+
+msgid "You have ×%d. %s needs %d more for the next level."
+msgstr "Du hast ×%d. %s braucht noch %d bis zur nächsten Stufe."
+
+msgid "%s can't grow any higher."
+msgstr "%s kann nicht weiter wachsen."
+
+msgid "Send a Shelter Wildling on its way to earn some."
+msgstr "Schick einen Wildling aus dem Unterschlupf weg, um welche zu bekommen."
+
+msgid "Give one"
+msgstr "Eins geben"
+
+msgid "Give until next level (%d)"
+msgstr "Bis zur nächsten Stufe (%d)"
+
+msgid "Give all ×%d"
+msgstr "Alle ×%d geben"
+
+msgid "%s (Lv %d) heads out for good and leaves ×%d Wildling Candy."
+msgstr "%s (Lv %d) zieht für immer weiter und lässt ×%d Wildling-Bonbon zurück."
+
+msgid "This Wildling is legendary. "
+msgstr "Dieser Wildling ist legendär. "
+
+msgid "%s left ×%d Wildling Candy."
+msgstr "%s lässt ×%d Wildling-Bonbon zurück."
+
+msgid "Only a Wildling waiting in the Shelter can be sent off."
+msgstr "Nur ein Wildling im Unterschlupf kann weggeschickt werden."
+
+msgid "No room for the candy. Make space in your pack or the farm chest."
+msgstr "Kein Platz für das Bonbon. Mach Platz in der Tasche oder in der Hoftruhe."
+
+msgid "That Wildling isn't with you."
+msgstr "Dieser Wildling ist nicht bei dir."
+
+msgid "You don't have any Wildling Candy."
+msgstr "Du hast kein Wildling-Bonbon."
+
+msgid "Gave %s a Wildling Candy."
+msgstr "Du gibst %s ein Wildling-Bonbon."
+
+msgid "Feed Wildling Candy from the Party screen."
+msgstr "Füttere Wildling-Bonbons im Party-Bildschirm."
 

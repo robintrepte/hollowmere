@@ -1,6 +1,7 @@
 class_name PartyPanel
 extends PanelContainer
 ## Party, farm and Shelter Wildlings: details, lead order, moving between party, Den and Shelter, farm jobs.
+## Shelter Wildlings can be sent off for Wildling Candy, which any of yours can eat to grow.
 
 signal closed
 
@@ -12,6 +13,7 @@ var tab := "party"
 var _sel: Creature
 var _swap_slot := -1
 var _picking_mate := false
+var _busy := false
 var _list: VBoxContainer
 var _detail: VBoxContainer
 var _tabs: HBoxContainer
@@ -60,7 +62,13 @@ func _ready() -> void:
 	_detail.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_detail.add_theme_constant_override("separation", 3)
 	dsc.add_child(_detail)
+	EventBus.party_changed.connect(_on_state)
+	EventBus.inventory_changed.connect(_on_state)
 	_refresh()
+
+func _on_state() -> void:
+	if is_inside_tree() and not _busy:
+		_refresh()
 
 func _open_tab(id: String) -> void:
 	tab = id
@@ -74,6 +82,10 @@ func _creatures() -> Array:
 		_: return GameState.sanctuary
 
 func _refresh() -> void:
+	var live := GameState.local_player()
+	if live != null and player != null and live.id == player.id:
+		player = live
+	var keep := _sel.uid if _sel != null else ""
 	for c in _tabs.get_children():
 		c.queue_free()
 	for t in [
@@ -87,12 +99,18 @@ func _refresh() -> void:
 	for c in _list.get_children():
 		c.queue_free()
 	var arr := _creatures()
-	if _sel == null or not _sel in arr:
-		_sel = arr[0] if arr.size() > 0 else null
+	_sel = null
+	if keep != "":
+		for c in arr:
+			if c.uid == keep:
+				_sel = c
+				break
+	if _sel == null and not arr.is_empty():
+		_sel = arr[0]
 	if tab == "farm" and not arr.is_empty():
 		_list.add_child(_farm_overview(arr))
 	elif tab == "sanctuary" and not arr.is_empty():
-		var note := UITheme.label(tr("Safe here until your party or the Den has room."), 8, UITheme.WOOD)
+		var note := UITheme.label(tr("Safe here until your party or the Den has room. Send one on its way to leave Wildling Candy."), 8, UITheme.WOOD)
 		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		note.custom_minimum_size = Vector2(190, 0)
 		_list.add_child(note)
@@ -147,7 +165,7 @@ func _row(c: Creature) -> Control:
 		else:
 			sub = (tr("Job: %s") % name) + (tr("  ·  energy %d") % int(c.energy))
 	elif tab == "sanctuary":
-		sub = tr("Waiting  ·  HP %d/%d") % [c.hp, c.max_hp()]
+		sub = tr("Waiting · ×%d candy") % WildlingCandy.yield_for(c)
 	else:
 		sub = tr("HP %d/%d%s") % [c.hp, c.max_hp(), tr("  ·  fainted") if c.is_fainted() else ""]
 	var sl := UITheme.label(sub, 8, UITheme.MUTED)
@@ -288,7 +306,7 @@ func _show_detail() -> void:
 					_show_detail()))
 	# Farm job. Shelter Wildlings are stored, not working.
 	if tab == "sanctuary":
-		var wait := UITheme.label(tr("Resting in the Shelter. They can rejoin your party when there's room."), 9, UITheme.LEAF.darkened(0.35))
+		var wait := UITheme.label(tr("Resting in the Shelter. They can rejoin your party when there's room, or leave Wildling Candy behind if you send them on."), 9, UITheme.LEAF.darkened(0.35))
 		wait.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_detail.add_child(wait)
 	else:
@@ -354,6 +372,122 @@ func _show_detail() -> void:
 				EventBus.toast.emit(tr("There's no room there."), ""))
 		to_farm.disabled = GameState.ranch.size() >= GameState.den_capacity()
 		acts.add_child(to_farm)
+		_send_off_section(c)
+	_candy_section(c)
+
+func _send_off_section(c: Creature) -> void:
+	_detail.add_child(UITheme.label("Send on their way", 10, UITheme.WOOD))
+	var rule := UITheme.label(tr("One candy, plus another for every 10 levels. Starry and legendary Wildlings leave one extra. You can't call them back."), 8, UITheme.MUTED)
+	rule.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	rule.custom_minimum_size = Vector2(200, 0)
+	_detail.add_child(rule)
+	var n := WildlingCandy.yield_for(c)
+	var leaves := UITheme.label(tr("Leaves ×%d Wildling Candy.") % n, 9, UITheme.INK)
+	_detail.add_child(leaves)
+	_detail.add_child(UITheme.button("Send off", _send_off))
+
+func _candy_section(c: Creature) -> void:
+	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", 4)
+	_detail.add_child(head)
+	head.add_child(UITheme.icon_rect(Art.item(WildlingCandy.ITEM), 16))
+	head.add_child(UITheme.label("Wildling Candy", 10, UITheme.WOOD))
+	var have := GameState.candy_count(player)
+	if c.level >= Creature.MAX_LEVEL:
+		var done := UITheme.label(tr("%s can't grow any higher.") % c.display_name(), 9, UITheme.MUTED)
+		done.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		done.custom_minimum_size = Vector2(200, 0)
+		_detail.add_child(done)
+		return
+	var need := WildlingCandy.candies_left(c)
+	var line := UITheme.label(tr("You have ×%d. %s needs %d more for the next level.") % [have, c.display_name(), need], 9, UITheme.INK)
+	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	line.custom_minimum_size = Vector2(200, 0)
+	_detail.add_child(line)
+	if have <= 0:
+		var hint := UITheme.label(tr("Send a Shelter Wildling on its way to earn some."), 8, UITheme.MUTED)
+		hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		hint.custom_minimum_size = Vector2(200, 0)
+		_detail.add_child(hint)
+		return
+	var row := HFlowContainer.new()
+	row.add_theme_constant_override("h_separation", 4)
+	row.add_theme_constant_override("v_separation", 4)
+	_detail.add_child(row)
+	row.add_child(UITheme.button("Give one", _feed.bind(false)))
+	var many_text := tr("Give until next level (%d)") % need if have >= need else tr("Give all ×%d") % have
+	row.add_child(UITheme.button(many_text, _feed.bind(true)))
+
+func _send_off() -> void:
+	var c := _sel
+	if c == null or _busy:
+		return
+	var ui := _ui()
+	if ui == null:
+		return
+	_busy = true
+	var uid := c.uid
+	var name := c.display_name()
+	var lvl := c.level
+	var n := WildlingCandy.yield_for(c)
+	var prompt := tr("%s (Lv %d) heads out for good and leaves ×%d Wildling Candy.") % [name, lvl, n]
+	if c.species().get("legendary", false):
+		prompt = tr("This Wildling is legendary. ") + prompt
+	var choice: int = await ui.ask(prompt, [tr("Send off"), tr("Keep")])
+	if not is_instance_valid(self) or choice != 0:
+		_busy = false
+		return
+	var res: Dictionary = await Coop.act_async("release_creature_act", [uid])
+	_busy = false
+	if not is_instance_valid(self):
+		return
+	if res.ok:
+		Audio.sfx("gift")
+		EventBus.toast.emit(tr("%s left ×%d Wildling Candy.") % [name, int(res.get("candies", n))], "")
+		if _sel != null and _sel.uid == uid:
+			_sel = null
+	elif str(res.get("reason", "")) != "":
+		EventBus.toast.emit(res.reason, "")
+	_refresh()
+
+func _feed(until_level: bool) -> void:
+	var c := _sel
+	if c == null or _busy:
+		return
+	_busy = true
+	var uid := c.uid
+	var name := c.display_name()
+	var res: Dictionary = await Coop.act_async("feed_candy_act", [uid, until_level])
+	_busy = false
+	if not is_instance_valid(self):
+		return
+	if res.ok:
+		Audio.sfx(str(res.get("sfx", "gift")))
+		if bool(res.get("gained_level", false)):
+			EventBus.toast.emit(tr("%s grew to level %d!") % [name, int(res.level)], "")
+		else:
+			EventBus.toast.emit(tr("Gave %s a Wildling Candy.") % name, "")
+		for ev in res.get("learned", []):
+			var move_name := tr(str(Data.get_move(str(ev.get("move", ""))).name))
+			if bool(ev.get("equipped", false)):
+				EventBus.toast.emit(tr("%s learned %s!") % [name, move_name], "")
+			else:
+				EventBus.toast.emit(tr("%s can now use %s! (Equip it from the Party menu.)") % [name, move_name], "")
+		if str(res.get("evolved", "")) != "":
+			EventBus.toast.emit(tr("%s evolved into %s!") % [name, Data.species_name(str(res.evolved))], "")
+	elif str(res.get("reason", "")) != "":
+		EventBus.toast.emit(res.reason, "")
+	_refresh()
+
+func _ui() -> UIRoot:
+	var n: Node = self
+	while n:
+		if n is MenuShell:
+			return (n as MenuShell).ui
+		if n is UIRoot:
+			return n
+		n = n.get_parent()
+	return null
 
 func _farm_overview(arr: Array) -> Control:
 	var box := VBoxContainer.new()

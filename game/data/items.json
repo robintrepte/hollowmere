@@ -87,6 +87,7 @@
   "basic_treat":    {"name": "Basic Treat", "cat": "treat", "sell": 10, "buy": 30, "treat": 1.0, "color": "#c0a070", "icon": "treat", "desc": "Offer to a weakened wild Wildling to befriend it."},
   "sweet_treat":    {"name": "Sweet Treat", "cat": "treat", "sell": 30, "buy": 90, "treat": 1.5, "color": "#e890b0", "icon": "treat", "desc": "A tastier treat. Better befriending odds."},
   "deluxe_treat":   {"name": "Deluxe Treat", "cat": "treat", "sell": 80, "buy": 250, "treat": 2.2, "color": "#f0d040", "icon": "treat", "desc": "Few Wildlings can resist it."},
+  "wildling_candy": {"name": "Wildling Candy", "cat": "candy", "sell": 0, "color": "#f0a0c8", "icon": "candy", "desc": "Left behind by a Wildling sent on its way. Feed it from the Party screen to help another grow."},
 
   "lure_charm":     {"name": "Lure Charm", "cat": "charm", "sell": 25, "buy": 100, "charm": 1.0, "color": "#e05050", "icon": "charm", "desc": "A charm that calls to wild Wildlings."},
   "great_charm":    {"name": "Great Charm", "cat": "charm", "sell": 75, "buy": 300, "charm": 1.5, "color": "#5080e0", "icon": "charm", "desc": "A stronger charm."},
@@ -131,7 +132,7 @@
   "wildling_egg":   {"name": "Wildling Egg", "cat": "egg", "sell": 0, "size": [2, 2], "color": "#f0e8d0", "icon": "egg", "desc": "Place it in the Hatchery. Something is moving inside!"},
 
   "seed_pouch":     {"name": "Seed Pouch", "cat": "container", "sell": 200, "buy": 800, "size": [1, 1], "container": {"w": 3, "h": 3, "filter": ["seed", "sapling"]}, "color": "#a08050", "icon": "bag", "desc": "Small outside, roomy inside. Holds seeds and saplings, which go into it automatically."},
-  "treat_tin":      {"name": "Treat Tin", "cat": "container", "sell": 300, "buy": 1200, "size": [1, 1], "container": {"w": 3, "h": 2, "filter": ["treat", "charm", "medicine", "food"]}, "color": "#d06070", "icon": "chest", "desc": "Holds treats, charms, salves and food."},
+  "treat_tin":      {"name": "Treat Tin", "cat": "container", "sell": 300, "buy": 1200, "size": [1, 1], "container": {"w": 3, "h": 2, "filter": ["treat", "charm", "medicine", "food", "candy"]}, "color": "#d06070", "icon": "chest", "desc": "Holds treats, charms, salves, food and candy."},
   "tool_belt":      {"name": "Tool Belt", "cat": "container", "sell": 400, "buy": 1500, "size": [2, 1], "container": {"w": 5, "h": 2, "filter": ["tool"]}, "color": "#8a5a30", "icon": "bag", "desc": "Keeps all your tools in a tidy 5x2 grid."},
   "forage_basket":  {"name": "Forage Basket", "cat": "container", "sell": 600, "buy": 2500, "size": [2, 2], "container": {"w": 4, "h": 4, "filter": ["forage", "crop", "produce", "fruit"]}, "color": "#c0a060", "icon": "bag", "desc": "A woven basket for crops, fruit, forage and produce."},
   "egg_carrier":    {"name": "Egg Carrier", "cat": "container", "sell": 500, "buy": 2000, "size": [2, 2], "container": {"w": 4, "h": 4, "filter": ["egg"]}, "color": "#f0e0c0", "icon": "egg", "desc": "A padded carrier that holds four Wildling eggs."},

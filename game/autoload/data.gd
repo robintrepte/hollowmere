@@ -295,7 +295,7 @@ const BIG_ITEMS := {
 }
 const STACKS := {
 	"seed": 99, "crop": 24, "forage": 24, "fruit": 24, "material": 99, "ore": 50, "bar": 20, "gem": 10, "produce": 20,
-	"food": 10, "treat": 20, "fish": 20, "bait": 99, "tackle": 1, "junk": 20, "charm": 20, "medicine": 10, "artisan": 10, "fertilizer": 50, "placeable": 10,
+	"food": 10, "treat": 20, "candy": 99, "fish": 20, "bait": 99, "tackle": 1, "junk": 20, "charm": 20, "medicine": 10, "artisan": 10, "fertilizer": 50, "placeable": 10,
 	"key": 1, "gift": 5, "cosmetic": 1, "tool": 1, "egg": 1, "container": 1, "sapling": 5,
 	"artifact": 10, "mining": 99, "bomb": 20, "book": 10, "magic": 99, "enchanting": 10,
 }

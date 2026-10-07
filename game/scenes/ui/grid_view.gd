@@ -9,7 +9,7 @@ signal hover_changed(view: GridView, entry: Dictionary)
 const CELL := 26
 const CAT_TINT := {
 	"tool": Color("#b0b8c8"), "seed": Color("#d8c890"), "crop": Color("#b8d898"), "fruit": Color("#e8b0a0"),
-	"container": Color("#c8a878"), "treat": Color("#f0c0d0"), "charm": Color("#d0b8f0"), "food": Color("#f0d0a0"),
+	"container": Color("#c8a878"), "treat": Color("#f0c0d0"), "candy": Color("#f0a0c8"), "charm": Color("#d0b8f0"), "food": Color("#f0d0a0"),
 	"medicine": Color("#f0b0b0"), "artisan": Color("#e0c0e8"), "gem": Color("#b8e0f0"), "ore": Color("#c0c0c8"),
 	"bar": Color("#f0e0a0"), "placeable": Color("#d8c0a0"), "material": Color("#d0c0a8"),
 }

@@ -88,6 +88,9 @@ func _on_use(t: Vector2i) -> void:
 	if it.has("hat"):
 		_act("wear_hat_act", [e.uid])
 		return
+	if cat == "candy":
+		EventBus.toast.emit(tr("Feed Wildling Candy from the Party screen."), "")
+		return
 	if cat in ["seed", "sapling"] or it.has("fert") or it.has("place") or it.has("mine_place") or it.has("blast"):
 		_act("use_item", [world.map_id, t, e.uid])
 		return
