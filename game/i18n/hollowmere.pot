@@ -772,7 +772,7 @@ msgstr ""
 msgid "%s joined your farm!"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:187
+#: scenes/ui/agent_panel.gd:195
 #, c-format
 msgid "%s joined. In the helper, set actor to %s."
 msgstr ""
@@ -1062,7 +1062,7 @@ msgstr ""
 msgid "%s x%d"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:131 scenes/ui/day_report.gd:31
+#: scenes/ui/agent_panel.gd:138 scenes/ui/day_report.gd:31
 #, c-format
 msgid "%s · %s"
 msgstr ""
@@ -1695,7 +1695,7 @@ msgstr ""
 msgid "A headlamp clip and ore straps: you see further underground and find more ore."
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:106
+#: scenes/ui/agent_panel.gd:113
 msgid "A helper plays in this open game. Keep the window in front."
 msgstr ""
 
@@ -2131,7 +2131,7 @@ msgstr ""
 msgid "Add email to this account"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:117
+#: scenes/ui/agent_panel.gd:124
 msgid "Address"
 msgstr ""
 
@@ -2171,7 +2171,7 @@ msgstr ""
 msgid "All save slots are full. Delete a farm from the Load menu first."
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:137
+#: scenes/ui/agent_panel.gd:144
 msgid "Allow spending gold"
 msgstr ""
 
@@ -3807,7 +3807,7 @@ msgstr ""
 msgid "Confirm: learn %s"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:115
+#: scenes/ui/agent_panel.gd:122
 msgid "Connect"
 msgstr ""
 
@@ -3868,7 +3868,7 @@ msgstr ""
 msgid "Cool wool from Frostpip and Snowpaca."
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:172 scenes/ui/agent_panel.gd:205 scenes/ui/agent_panel.gd:230 scenes/ui/agent_panel.gd:249 ...
+#: scenes/ui/agent_panel.gd:180 scenes/ui/agent_panel.gd:213 scenes/ui/agent_panel.gd:238 scenes/ui/agent_panel.gd:257 ...
 msgid "Copied!"
 msgstr ""
 
@@ -3884,11 +3884,11 @@ msgstr ""
 msgid "Copper Ore"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:172 scenes/ui/agent_panel.gd:230 scenes/ui/coop_panel.gd:204
+#: scenes/ui/agent_panel.gd:180 scenes/ui/agent_panel.gd:238 scenes/ui/coop_panel.gd:204
 msgid "Copy"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:124
+#: scenes/ui/agent_panel.gd:131
 msgid "Copy for Cursor"
 msgstr ""
 
@@ -3948,11 +3948,11 @@ msgstr ""
 msgid "Corn! Summer is all about corn."
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:185
+#: scenes/ui/agent_panel.gd:193
 msgid "Could not add a farmhand (host only, up to 3)."
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:207
+#: scenes/ui/agent_panel.gd:215
 msgid "Could not create a token."
 msgstr ""
 
@@ -4081,7 +4081,7 @@ msgstr ""
 msgid "Create account"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:145
+#: scenes/ui/agent_panel.gd:152
 msgid "Create token"
 msgstr ""
 
@@ -4957,11 +4957,11 @@ msgstr ""
 msgid "Farmer's Pack"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:177
+#: scenes/ui/agent_panel.gd:185
 msgid "Farmhand name"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:162
+#: scenes/ui/agent_panel.gd:169
 #, c-format
 msgid "Farmhands (%d/%d)"
 msgstr ""
@@ -6762,7 +6762,7 @@ msgstr ""
 msgid "I'd walk through fire for you. Literally."
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:153
+#: scenes/ui/agent_panel.gd:160
 msgid "I'll play"
 msgstr ""
 
@@ -6960,7 +6960,7 @@ msgstr ""
 msgid "Inventory"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:189
+#: scenes/ui/agent_panel.gd:197
 msgid "Invite"
 msgstr ""
 
@@ -7507,7 +7507,7 @@ msgstr ""
 msgid "Keep playing"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:108
+#: scenes/ui/agent_panel.gd:115
 msgid "Keep this tab in front. A hidden browser tab pauses the farm."
 msgstr ""
 
@@ -7700,7 +7700,7 @@ msgstr ""
 msgid "Let a helper (Claude, Cursor, ...) watch or play. Up to 3 partners. Free for everyone."
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:157
+#: scenes/ui/agent_panel.gd:164
 msgid "Let a helper play"
 msgstr ""
 
@@ -8686,7 +8686,7 @@ msgstr ""
 msgid "No thanks"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:127
+#: scenes/ui/agent_panel.gd:134
 msgid "No tokens yet."
 msgstr ""
 
@@ -9170,7 +9170,7 @@ msgstr ""
 msgid "Party %d/%d"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:163
+#: scenes/ui/agent_panel.gd:170
 msgid "Pass the copied id as actor."
 msgstr ""
 
@@ -10036,7 +10036,7 @@ msgstr ""
 msgid "Revives a fainted Wildling with half HP."
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:135
+#: scenes/ui/agent_panel.gd:142
 msgid "Revoke"
 msgstr ""
 
@@ -10566,7 +10566,7 @@ msgstr ""
 msgid "Send crash and error reports (no personal data)"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:173
+#: scenes/ui/agent_panel.gd:181
 msgid "Send home"
 msgstr ""
 
@@ -10614,7 +10614,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:124
+#: scenes/ui/agent_panel.gd:131
 msgid "Setup copied."
 msgstr ""
 
@@ -10771,7 +10771,7 @@ msgstr ""
 msgid "Show prize"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:123
+#: scenes/ui/agent_panel.gd:130
 msgid "Shown only once. Copy it now."
 msgstr ""
 
@@ -10803,7 +10803,7 @@ msgstr ""
 msgid "Sign in and your farm is backed up to the cloud."
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:119
+#: scenes/ui/agent_panel.gd:126
 msgid "Sign in to create a token."
 msgstr ""
 
@@ -13066,7 +13066,7 @@ msgstr ""
 msgid "Thick and sweet."
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:152
+#: scenes/ui/agent_panel.gd:159
 #, c-format
 msgid "Thinking: %s"
 msgstr ""
@@ -13287,7 +13287,7 @@ msgstr ""
 msgid "Today: Creature Show at the Show Ring"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:122
+#: scenes/ui/agent_panel.gd:129
 msgid "Token"
 msgstr ""
 
@@ -13959,11 +13959,11 @@ msgstr ""
 msgid "Watch for Spark Wildlings during storms."
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:245
+#: scenes/ui/agent_panel.gd:253
 msgid "Watch, play, chat"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:244
+#: scenes/ui/agent_panel.gd:252
 msgid "Watch, play, chat, gold"
 msgstr ""
 
@@ -14164,7 +14164,7 @@ msgstr ""
 msgid "Whisperwood"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:148
+#: scenes/ui/agent_panel.gd:155
 msgid "Who plays"
 msgstr ""
 
@@ -14598,7 +14598,7 @@ msgstr ""
 msgid "You are in %s"
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:150
+#: scenes/ui/agent_panel.gd:157
 msgid "You are watching."
 msgstr ""
 
@@ -15144,7 +15144,7 @@ msgstr ""
 msgid "Your things don't fit in the %s. Make some room first."
 msgstr ""
 
-#: scenes/ui/agent_panel.gd:125
+#: scenes/ui/agent_panel.gd:132
 msgid "Your tokens"
 msgstr ""
 
