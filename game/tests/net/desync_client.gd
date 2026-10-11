@@ -7,6 +7,7 @@ var lines: PackedStringArray = []
 var out_path := ""
 
 func _ready() -> void:
+	TimeService.fixed_now = TimeService.now()
 	var port := Net.ENET_PORT
 	var id := "bot"
 	var seed_v := 1
