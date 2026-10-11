@@ -14,22 +14,23 @@ const PUBLIC_URL = process.env.MCP_PUBLIC_URL || `http://127.0.0.1:${PORT}`;
 const RATE = Number(process.env.MCP_RATE_PER_MIN || 60);
 
 const TOOLS = [
-  { name: "get_status", description: "Where you are, time, season, weather, energy, gold.", inputSchema: { type: "object", properties: {} } },
+  { name: "get_status", description: "Where you are, time, season, weather, gold, the held item, and the lead Wildling's energy.", inputSchema: { type: "object", properties: {} } },
   { name: "look_around", description: "Tiles, objects, NPCs and players nearby, plus an ASCII sketch.", inputSchema: { type: "object", properties: { radius: { type: "number" } } } },
-  { name: "get_inventory", description: "Items in the backpack.", inputSchema: { type: "object", properties: {} } },
+  { name: "get_inventory", description: "Backpack items and the hotbar, including which slot is held.", inputSchema: { type: "object", properties: {} } },
   { name: "get_party", description: "Wildlings in the party.", inputSchema: { type: "object", properties: {} } },
   { name: "get_farm_overview", description: "Farm jobs, ripe crops, chest size.", inputSchema: { type: "object", properties: {} } },
   { name: "get_quests", description: "Active quests and the current step.", inputSchema: { type: "object", properties: {} } },
   { name: "get_map", description: "Current map id and name.", inputSchema: { type: "object", properties: {} } },
   { name: "get_shop", description: "A shop's stock. Pass id, or omit to list shops.", inputSchema: { type: "object", properties: { id: { type: "string" } } } },
   { name: "get_battle_state", description: "Whether a battle is on and the moves you can pick.", inputSchema: { type: "object", properties: {} } },
-  { name: "get_dialogue", description: "The line on screen, if a villager is talking.", inputSchema: { type: "object", properties: {} } },
-  { name: "read_chat", description: "Recent chat on this farm.", inputSchema: { type: "object", properties: {} } },
-  { name: "wait_for_events", description: "Wait until the next command finishes; poll get_status if nothing is happening.", inputSchema: { type: "object", properties: {} } },
+  { name: "get_dialogue", description: "The line on screen and any choices, if a villager is talking.", inputSchema: { type: "object", properties: {} } },
+  { name: "read_chat", description: "Recent farm chat: who said what, including helpers.", inputSchema: { type: "object", properties: {} } },
+  { name: "wait_for_events", description: "Recent chat lines. Poll get_status if nothing is happening.", inputSchema: { type: "object", properties: {} } },
   { name: "walk_to", description: "Walk to a tile. Optional map id warps first.", inputSchema: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, map: { type: "string" } }, required: ["x", "y"] } },
   { name: "interact", description: "Talk or use the tile in front of you.", inputSchema: { type: "object", properties: {} } },
-  { name: "use_tool", description: "Use the selected tool on a tile.", inputSchema: { type: "object", properties: { x: { type: "number" }, y: { type: "number" } } } },
-  { name: "plant", description: "Plant the selected seed on a tile.", inputSchema: { type: "object", properties: { x: { type: "number" }, y: { type: "number" } } } },
+  { name: "select_item", description: "Hold a backpack item. Pass slot (0-9) or an item id such as parsnip_seeds.", inputSchema: { type: "object", properties: { slot: { type: "number" }, id: { type: "string" } } } },
+  { name: "use_tool", description: "Use the held tool on a tile. select_item first.", inputSchema: { type: "object", properties: { x: { type: "number" }, y: { type: "number" } } } },
+  { name: "plant", description: "Plant the held seed on a tile. select_item first.", inputSchema: { type: "object", properties: { x: { type: "number" }, y: { type: "number" } } } },
   { name: "water_area", description: "Water a square of tiles.", inputSchema: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, r: { type: "number" } } } },
   { name: "harvest_area", description: "Harvest ripe crops in a square.", inputSchema: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, r: { type: "number" } } } },
   { name: "ship", description: "Empty the shipping bin.", inputSchema: { type: "object", properties: {} } },
@@ -38,19 +39,27 @@ const TOOLS = [
   { name: "craft", description: "Craft a recipe.", inputSchema: { type: "object", properties: { id: { type: "string" }, n: { type: "number" } }, required: ["id"] } },
   { name: "set_job", description: "Assign a farm job to a Wildling.", inputSchema: { type: "object", properties: { uid: { type: "string" }, job: { type: "string" } }, required: ["uid"] } },
   { name: "move_creature", description: "Move a Wildling to party, den, or sanctuary.", inputSchema: { type: "object", properties: { uid: { type: "string" }, where: { type: "string", enum: ["party", "den", "sanctuary"] } }, required: ["uid"] } },
-  { name: "chat_say", description: "Speak in farm chat. Needs the chat scope.", inputSchema: { type: "object", properties: { text: { type: "string" } }, required: ["text"] } },
-  { name: "emote", description: "Play an emote the player knows.", inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] } },
+  { name: "chat_say", description: "Say a line in farm chat. It shows in the log and in a bubble. Needs the chat scope.", inputSchema: { type: "object", properties: { text: { type: "string" } }, required: ["text"] } },
+  { name: "emote", description: "Play an emote the player knows (wave, bow, cheer, laugh, thumbs_up, heart, sit, sleep, dance_jig, dance_twirl, facepalm).", inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] } },
   { name: "sleep", description: "Go to bed (skips the night).", inputSchema: { type: "object", properties: {} } },
   { name: "narrate", description: "Show a short thought on the player's screen.", inputSchema: { type: "object", properties: { text: { type: "string" } }, required: ["text"] } },
   { name: "farm_routine", description: "Harvest ripe crops and water dry ones on the current map.", inputSchema: { type: "object", properties: {} } },
   { name: "go_shopping", description: "Buy a list from a shop. Needs economy.", inputSchema: { type: "object", properties: { shop: { type: "string" }, list: { type: "array" } } } },
   { name: "deposit_all", description: "Ship whatever is in the bin.", inputSchema: { type: "object", properties: {} } },
+  { name: "dialogue_advance", description: "Continue the conversation on screen.", inputSchema: { type: "object", properties: {} } },
+  { name: "dialogue_choose", description: "Pick a dialogue choice by index from get_dialogue.", inputSchema: { type: "object", properties: { i: { type: "number" } }, required: ["i"] } },
   { name: "battle_move", description: "Pick a move by index.", inputSchema: { type: "object", properties: { i: { type: "number" } } } },
   { name: "battle_switch", description: "Switch to party index.", inputSchema: { type: "object", properties: { i: { type: "number" } } } },
+  { name: "battle_item", description: "Use a battle item by id.", inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] } },
   { name: "battle_flee", description: "Run from a wild battle.", inputSchema: { type: "object", properties: {} } },
   { name: "enchant", description: "Take an enchanting-table offer.", inputSchema: { type: "object", properties: { tool: { type: "string" }, offer: { type: "number" } } } },
   { name: "casino_bet", description: "Place a casino bet. Needs economy.", inputSchema: { type: "object", properties: { game: { type: "string" }, bet: { type: "object" } } } },
 ];
+
+const ACTOR = { type: "string", description: "Who acts. Omit for the farmer, or pass agent:1 (agent:2, agent:3) for a farmhand." };
+for (const tool of TOOLS) {
+  tool.inputSchema.properties = { ...(tool.inputSchema.properties || {}), actor: ACTOR };
+}
 
 const PROMPTS = [
   { name: "farmer", description: "Play as a careful farmer.", arguments: [] },
@@ -171,6 +180,8 @@ async function handleRpc(msg, token) {
       "A cozy farm life sim. Crops grow in real time. Wildlings work jobs.",
       "Gold is in-game only. Casino chips have no real value.",
       "Never delete a save. Valuable sales need the economy scope.",
+      "Chat with chat_say and read_chat. select_item before planting. dialogue_advance continues talk.",
+      "Pass actor (agent:1) to play a farmhand invited in the AI helpers panel.",
       "Keep the game tab visible; background tabs pause the world.",
       "Tools: " + TOOLS.map((t) => t.name).join(", "),
     ].join("\n");
@@ -181,8 +192,8 @@ async function handleRpc(msg, token) {
   }
   if (method === "prompts/get") {
     const texts = {
-      farmer: "You are playing Hollowmere as a careful farmer. Look around, tend crops, talk to villagers. Narrate briefly.",
-      coop_partner: "You are a kind farmhand on someone else's farm. Help; don't sell their valuables. Chat when you do something big.",
+      farmer: "You are playing Hollowmere as a careful farmer. Look around, select_item the right tool, tend crops, and continue talk with dialogue_advance. Use chat_say when someone is nearby. Narrate briefly.",
+      coop_partner: "You are a kind farmhand. Pass actor as your agent id. Help, chat_say when you do something big, and don't sell their valuables.",
       battle_grind: "Train the party in tall grass. Use type advantage. Flee if you would faint.",
       optimize_farm: "Keep every farm Wildling on a job, water dry fields, harvest ripe crops, ship produce.",
     };
@@ -228,7 +239,7 @@ const server = http.createServer(async (req, res) => {
     return html(res, 200, `<!doctype html><meta charset="utf-8"><title>Hollowmere MCP</title>
       <body style="font-family:sans-serif;max-width:28rem;margin:3rem auto">
       <h1>Connect Hollowmere</h1>
-      <p>Paste a token from the in-game <b>AI agents</b> panel (Koop → Open agent panel).</p>
+      <p>Paste a token from the in-game <b>AI helpers</b> panel (Koop → Open agent panel). Copy the address and token there.</p>
       <form method="POST" action="/authorize">
         <input type="hidden" name="redirect_uri" value="${redirect.replace(/"/g, "")}">
         <input type="hidden" name="state" value="${state.replace(/"/g, "")}">
@@ -281,8 +292,16 @@ if (process.argv.includes("--self-test")) {
     process.exit(1);
   }
   const tools = await handleRpc({ jsonrpc: "2.0", id: 2, method: "tools/list" }, "");
-  if (!tools.result?.tools?.length) {
-    console.error("tools/list failed");
+  const names = new Set((tools.result?.tools || []).map((t) => t.name));
+  for (const need of ["read_chat", "chat_say", "select_item", "dialogue_advance", "dialogue_choose", "battle_item"]) {
+    if (!names.has(need)) {
+      console.error("missing tool", need);
+      process.exit(1);
+    }
+  }
+  const chat = tools.result.tools.find((t) => t.name === "chat_say");
+  if (!chat?.inputSchema?.properties?.actor || !chat.inputSchema.required?.includes("text")) {
+    console.error("chat_say schema incomplete");
     process.exit(1);
   }
   console.log("mcp self-test ok", tools.result.tools.length, "tools");

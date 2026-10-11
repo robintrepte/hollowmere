@@ -103,8 +103,6 @@ func _run_pending(kind: String, args: Dictionary, ctx: Dictionary) -> Dictionary
 			return await _farm_routine(who, main)
 		"deposit_all":
 			return AgentTools.call_act("ship", [], ctx)
-		"dialogue_choose":
-			return AgentTools.ok({"note": "pick with the dialogue UI; the line is already on screen"})
 		"battle_move", "battle_switch", "battle_item", "battle_flee":
 			return _battle_act(kind, args, main)
 		"mine_block", "place_block":

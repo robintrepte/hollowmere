@@ -158,6 +158,34 @@ func _process(delta: float) -> void:
 		_arrow.visible = _choice_buttons.is_empty()
 		_arrow.modulate.a = 0.55 + 0.45 * sin(Time.get_ticks_msec() / 150.0)
 
+func line_text() -> String:
+	return _text.text if _text else ""
+
+func speaker_name() -> String:
+	return _name.text if _name else ""
+
+func choice_labels() -> PackedStringArray:
+	var out := PackedStringArray()
+	for b in _choice_buttons:
+		if b is Button:
+			out.append((b as Button).text)
+	return out
+
+## Skips the typewriter and continues. Does nothing while choices are on screen.
+func advance_line() -> void:
+	if not _choice_buttons.is_empty():
+		return
+	if _typing:
+		_text.visible_characters = -1
+		_typing = false
+	advanced.emit()
+
+func pick_choice(i: int) -> bool:
+	if i < 0 or i >= _choice_buttons.size():
+		return false
+	chosen.emit(i)
+	return true
+
 func _advance() -> void:
 	if _typing:
 		_text.visible_characters = -1

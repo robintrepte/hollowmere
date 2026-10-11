@@ -383,6 +383,8 @@ func _on_chat_said(pid: String, text: String) -> void:
 func _player_node(pid: String) -> Player:
 	if player and (pid == Net.local_id() or pid == player.pid or pid == "local"):
 		return player
+	if AgentBridge.partners.has(pid) and is_instance_valid(AgentBridge.partners[pid]):
+		return AgentBridge.partners[pid]
 	return remotes.get(pid)
 
 func _open_chat() -> void:

@@ -13574,3 +13574,98 @@ msgstr "Du gibst %s ein Wildling-Bonbon."
 msgid "Feed Wildling Candy from the Party screen."
 msgstr "Füttere Wildling-Bonbons im Party-Bildschirm."
 
+#, c-format
+msgid "%s joined. In the helper, set actor to %s."
+msgstr "%s ist da. Im Helfer actor auf %s setzen."
+
+msgid "A helper plays in this open game. Keep the window in front."
+msgstr "Ein Helfer spielt in diesem offenen Spiel. Lass das Fenster im Vordergrund."
+
+msgid "AI helpers"
+msgstr "KI-Helfer"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "Allow spending gold"
+msgstr "Gold ausgeben erlauben"
+
+msgid "Connect"
+msgstr "Verbinden"
+
+msgid "Copy for Cursor"
+msgstr "Für Cursor kopieren"
+
+msgid "Could not add a farmhand (host only, up to 3)."
+msgstr "Nur der Host, und höchstens 3 Hofhelfer."
+
+msgid "Could not create a token."
+msgstr "Token konnte nicht erstellt werden."
+
+msgid "Create token"
+msgstr "Token erstellen"
+
+msgid "Farmhand name"
+msgstr "Name des Hofhelfers"
+
+#, c-format
+msgid "Farmhands (%d/%d)"
+msgstr "Hofhelfer (%d/%d)"
+
+msgid "I'll play"
+msgstr "Ich spiele"
+
+msgid "Invite"
+msgstr "Einladen"
+
+msgid "Join a friend online"
+msgstr "Einem Freund online beitreten"
+
+msgid "Keep this tab in front. A hidden browser tab pauses the farm."
+msgstr "Lass diesen Tab im Vordergrund. Ein versteckter Browser-Tab hält den Hof an."
+
+msgid "Let a helper play"
+msgstr "Helfer spielt"
+
+msgid "No tokens yet."
+msgstr "Noch kein Token."
+
+msgid "Online"
+msgstr "Online"
+
+msgid "Pass the copied id as actor."
+msgstr "Die kopierte Kennung als actor angeben."
+
+msgid "Same Wi-Fi or LAN"
+msgstr "Gleiches WLAN oder LAN"
+
+msgid "Set up a helper"
+msgstr "Helfer einrichten"
+
+msgid "Setup copied."
+msgstr "Einrichtung kopiert."
+
+msgid "Shown only once. Copy it now."
+msgstr "Nur dieses eine Mal sichtbar. Jetzt kopieren."
+
+msgid "Sign in to create a token."
+msgstr "Melde dich an, um ein Token zu erstellen."
+
+msgid "Token"
+msgstr "Token"
+
+msgid "Watch, play, chat"
+msgstr "Zuschauen, spielen, chatten"
+
+msgid "Watch, play, chat, gold"
+msgstr "Zuschauen, spielen, chatten, Gold"
+
+msgid "Who plays"
+msgstr "Wer spielt"
+
+msgid "You are watching."
+msgstr "Du schaust zu."
+
+msgid "Your tokens"
+msgstr "Deine Tokens"
+
