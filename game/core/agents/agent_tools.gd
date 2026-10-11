@@ -5,6 +5,17 @@ extends RefCounted
 
 const MAX_AGENTS := 3
 const SCOPES := ["observe", "act", "chat", "economy"]
+
+## Address a helper pastes into Cursor or Claude. Local Nakama uses the local relay;
+## a public host uses the mcp. subdomain from HOSTING.md.
+static func mcp_url(host: String = "") -> String:
+	var h := host.strip_edges() if host != "" else Settings.server_host.strip_edges()
+	if h == "" or h == "localhost" or h.begins_with("127."):
+		return "http://127.0.0.1:8787/mcp"
+	if h.begins_with("mcp."):
+		return "https://%s/mcp" % h
+	return "https://mcp.%s/mcp" % h
+
 const SAFE_ACT := ["use_tool", "use_item", "harvest_at", "load_machine", "ship", "pick_up_object",
 	"craft", "construct", "set_job_act", "move_creature_act", "set_pair_act", "clear_pair_act", "incubate",
 	"fish_cast_act", "fish_result_act", "equip_tackle_act", "deep_enter_act", "enchant_act", "anvil_act",
@@ -66,6 +77,11 @@ static func dispatch(tool: String, args: Dictionary, ctx: Dictionary) -> Diction
 			return ok(dialogue_view(ctx))
 		"read_chat":
 			return ok(Coop.chat_log.duplicate())
+		"wait_for_events":
+			var recent: Array = Coop.chat_log.slice(maxi(0, Coop.chat_log.size() - 8))
+			return ok({"chat": recent})
+		"select_item":
+			return select_item(p, args)
 		"walk_to":
 			return {"ok": true, "pending": "walk", "args": args}
 		"interact":
@@ -95,11 +111,15 @@ static func dispatch(tool: String, args: Dictionary, ctx: Dictionary) -> Diction
 		"move_creature":
 			return call_act("move_creature_act", [str(args.get("uid", "")), str(args.get("where", "den"))], ctx)
 		"chat_say":
-			Coop.send_chat(str(args.get("text", "")))
-			return ok({"said": true})
+			var said := Coop.say_as(pid, str(args.get("text", "")))
+			if not said.get("ok", false):
+				return err(str(said.get("error", "could not send chat")))
+			return ok(said.get("result", {}))
 		"emote":
-			Coop.send_emote(str(args.get("id", "wave")))
-			return ok({"emote": args.get("id", "wave")})
+			var em := Coop.play_emote(pid, str(args.get("id", "wave")))
+			if not em.get("ok", false):
+				return err(str(em.get("error", "unknown emote")))
+			return ok({"emote": em.get("emote", args.get("id", "wave"))})
 		"sleep":
 			return {"ok": true, "pending": "sleep", "args": args}
 		"narrate":
@@ -111,8 +131,8 @@ static func dispatch(tool: String, args: Dictionary, ctx: Dictionary) -> Diction
 			return shopping(args, ctx)
 		"deposit_all":
 			return {"ok": true, "pending": "deposit_all", "args": args}
-		"dialogue_choose":
-			return {"ok": true, "pending": "dialogue_choose", "args": args}
+		"dialogue_advance", "dialogue_choose":
+			return dialogue_act(tool, args, ctx)
 		"battle_move", "battle_switch", "battle_item", "battle_flee":
 			return {"ok": true, "pending": tool, "args": args}
 		"fish":
@@ -160,9 +180,11 @@ static func status(pid: String) -> Dictionary:
 	var p := GameState.player(pid)
 	if p == null:
 		return {"started": GameState.started}
+	var lead := p.lead()
 	return {
 		"name": p.name, "map": p.map_id, "tile": {"x": GameState.to_tile(p.pos).x, "y": GameState.to_tile(p.pos).y},
-		"money": GameState.money(),
+		"money": GameState.money(), "held": p.selected_id(),
+		"energy": int(lead.energy) if lead else 0,
 		"chips": int(p.chips), "season": GameState.season(), "weather": str(GameState.world.get("weather", "")),
 		"minute": int(GameState.world.get("minute", 0)), "level": p.level, "day": GameState.day(),
 	}
@@ -233,7 +255,14 @@ static func inventory_view(p: PlayerData) -> Dictionary:
 	var items: Array = []
 	for e in p.inventory.entries:
 		items.append({"uid": e.get("uid", ""), "id": e.get("id", ""), "n": e.get("n", 1), "q": e.get("q", 0)})
-	return {"w": p.inventory.w, "h": p.inventory.h, "items": items, "backpack": p.backpack}
+	var bar: Array = []
+	for i in PlayerData.HOTBAR_SIZE:
+		var slot := p.hotbar_entry(i)
+		if slot.is_empty():
+			bar.append({"slot": i, "id": ""})
+		else:
+			bar.append({"slot": i, "id": slot.get("id", ""), "n": slot.get("n", 1)})
+	return {"w": p.inventory.w, "h": p.inventory.h, "items": items, "hotbar": bar, "selected": p.selected, "backpack": p.backpack}
 
 static func party_view(p: PlayerData) -> Array:
 	var out: Array = []
@@ -278,11 +307,60 @@ static func battle_view(ctx: Dictionary) -> Dictionary:
 	var foe := b.engine.active(1)
 	return {"in_battle": true, "me": me.display_name() if me else "", "foe": foe.display_name() if foe else "", "moves": me.moves if me else []}
 
+static func select_item(p: PlayerData, args: Dictionary) -> Dictionary:
+	if args.has("slot"):
+		p.selected = clampi(int(args.slot), 0, PlayerData.HOTBAR_SIZE - 1)
+	elif str(args.get("id", "")) != "":
+		var id := str(args.id)
+		var found := -1
+		for i in PlayerData.HOTBAR_SIZE:
+			if str(p.hotbar_entry(i).get("id", "")) == id:
+				found = i
+				break
+		if found < 0:
+			var have: Dictionary = p.inventory.first_of(id)
+			if have.is_empty():
+				return err("not in the backpack")
+			p.bind_hotbar(p.selected, have)
+			found = p.selected
+		p.selected = found
+	else:
+		return err("pass slot or id")
+	if p.id == Net.local_id() or p.id == "local":
+		EventBus.hotbar_changed.emit()
+	return ok({"slot": p.selected, "id": p.selected_id()})
+
 static func dialogue_view(ctx: Dictionary) -> Dictionary:
-	var main: Node = ctx.get("main")
-	if main == null or main.ui == null or not main.ui.dialogue.visible:
+	var d := _dialogue(ctx)
+	if d == null:
 		return {"open": false}
-	return {"open": true, "text": str(main.ui.dialogue.get("text") if main.ui.dialogue.get("text") else "")}
+	return {"open": true, "speaker": d.speaker_name(), "text": d.line_text(), "choices": d.choice_labels()}
+
+static func dialogue_act(tool: String, args: Dictionary, ctx: Dictionary) -> Dictionary:
+	var d := _dialogue(ctx)
+	if d == null:
+		return err("nobody is talking")
+	var choices := d.choice_labels()
+	if not choices.is_empty():
+		if tool != "dialogue_choose":
+			return err("pick a choice")
+		var i := int(args.get("i", -1))
+		if not d.pick_choice(i):
+			return err("no such choice")
+		return ok({"chose": i, "text": str(choices[i])})
+	if tool == "dialogue_choose":
+		return err("there is nothing to choose")
+	d.advance_line()
+	return ok({"advanced": true})
+
+static func _dialogue(ctx: Dictionary) -> DialogueBox:
+	var main: Node = ctx.get("main")
+	if main == null or main.get("ui") == null:
+		return null
+	var d: DialogueBox = main.ui.dialogue
+	if d == null or not d.visible:
+		return null
+	return d
 
 static func shopping(args: Dictionary, ctx: Dictionary) -> Dictionary:
 	var shop := str(args.get("shop", "general_store"))
@@ -304,6 +382,8 @@ static func handbook() -> String:
 	var bits: Array = [
 		"# Hollowmere handbook for agents",
 		"You play a cozy farm life sim. Crops grow in real time. Wildlings work farm jobs and rest on their own. There is no rest job.",
+		"Hold a tool or seed with select_item before you plant or use a tool. Pass actor (agent:1) to play a farmhand.",
+		"Speak with chat_say. Read the farm chat with read_chat. Continue a conversation with dialogue_advance, or dialogue_choose when choices are listed.",
 		"Gold is the currency. Casino chips only work in Lumière and have no real value.",
 		"Never delete a save. Ask before selling items worth 200g or more.",
 		"Types: " + ", ".join(Data.types.keys()),

@@ -8,11 +8,11 @@ You can use Claude Desktop, Claude.ai (custom connector), Claude Code, Cursor, o
 
 1. Sign in.
 2. Load a farm (you host).
-3. Press **O** → **Open agent panel** (or Koop → AI agents).
-4. Create a token. Copy it once; it is not shown again.
+3. Press **O** → **Set up a helper** (or Koop → AI helpers).
+4. Copy the address. Create a token and copy it (it is shown only once). **Copy for Cursor** pastes a ready-made config.
 5. Optional:
-   - **Let an agent play (I watch)** — you become a spectator. **Take control back** at any time.
-   - **Invite helper** — up to 3 virtual partners (`agent:1` …). Pass `actor` in tools to steer them.
+   - **Let a helper play** — you watch. **I'll play** gives you the farmer back.
+   - **Invite** — up to 3 farmhands (`agent:1` …). Copy the id and pass it as `actor`.
 
 Keep the tab visible in a browser. Background tabs pause the simulation.
 
@@ -42,9 +42,9 @@ For a local stack: `http://127.0.0.1:8787/mcp` and the same Bearer header.
 
 ## 4. What the helper can do
 
-**See:** status, look around (JSON + ASCII map), inventory, party, farm, quests, shop, battle, dialogue, chat.
+**See:** status (including the held item), look around (JSON + ASCII map), inventory and hotbar, party, farm, quests, shop, battle, dialogue (with choices), chat.
 
-**Do:** walk, use tools, plant / water / harvest areas, ship, craft, jobs, chat, emotes, sleep, farm routine, battles, enchant, casino (economy scope).
+**Do:** select an item, walk, use tools, plant / water / harvest areas, ship, craft, jobs, chat (a bubble and the farm log), emotes, sleep, farm routine, continue or choose dialogue, battles, enchant, casino (economy scope).
 
 **Never:** delete a save. Selling items worth 200g or more needs the **economy** scope.
 

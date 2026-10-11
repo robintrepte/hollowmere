@@ -339,17 +339,41 @@ func pos_sync(pid: String, map_id: String, pos: Vector2, facing: Vector2, moving
 
 # --- Chat + trades ------------------------------------------------------------------------------------
 
-func send_chat(text: String) -> void:
+func send_chat(text: String) -> bool:
+	var r := say_as(Net.local_id(), text)
+	if not r.get("ok", false) and str(r.get("error", "")) == "slow down":
+		EventBus.toast.emit(tr("Slow down a little, the chat needs a breather."), "chat")
+	return bool(r.get("ok", false))
+
+## Speaks as the local farmer or a virtual farmhand. Shows the line in the log and in a bubble.
+func say_as(pid: String, text: String) -> Dictionary:
+	var who := pid if pid != "" and pid != "local" else Net.local_id()
 	text = Chat.clean(text, false)
 	if text == "":
+		return {"ok": false, "error": "empty message"}
+	if not Chat.allow(who):
+		return {"ok": false, "error": "slow down"}
+	var p := GameState.player(who)
+	var nm := p.name if p else "Helper"
+	var before := chat_log.size()
+	_show_chat(who, nm, text)
+	if chat_log.size() == before:
+		return {"ok": false, "error": "empty message"}
+	if who == Net.local_id():
+		if Net.is_online():
+			rpc("chat", who, nm, text)
+	elif Net.is_online() and Net.is_authority():
+		rpc("chat_agent", who, nm, text)
+	return {"ok": true, "result": {"said": str(chat_log.back().get("text", text)), "name": nm, "pid": who}}
+
+## Farmhand lines ride a host-only call so a guest cannot pretend to be one.
+@rpc("authority", "reliable")
+func chat_agent(pid: String, from_name: String, text: String) -> void:
+	if not str(pid).begins_with("agent:"):
 		return
-	if not Chat.allow(Net.local_id()):
-		EventBus.toast.emit(tr("Slow down a little, the chat needs a breather."), "chat")
+	if Chat.muted(pid) or not Chat.allow("in:" + pid):
 		return
-	var nm := GameState.local_player().name
-	_show_chat(Net.local_id(), nm, text)
-	if Net.is_online():
-		rpc("chat", Net.local_id(), nm, text)
+	_show_chat(pid, from_name.substr(0, 24), Chat.clean(text, false))
 
 ## The sender's id comes from the connection, so nobody can speak for someone else.
 @rpc("any_peer", "reliable")
@@ -373,11 +397,30 @@ func _show_chat(pid: String, from_name: String, text: String) -> void:
 
 ## Plays an emote the local player knows and shows it to everyone on the farm.
 func send_emote(id: String) -> void:
-	if not Emotes.knows(GameState.local_player(), id):
+	play_emote(Net.local_id(), id)
+
+## Plays an emote as the farmer or a farmhand, locally and for everyone on the farm.
+func play_emote(pid: String, id: String) -> Dictionary:
+	var who := pid if pid != "" and pid != "local" else Net.local_id()
+	var p := GameState.player(who)
+	if p == null or not Emotes.knows(p, id):
+		return {"ok": false, "error": "unknown emote"}
+	if who == Net.local_id():
+		emote_played.emit(who, id)
+		if Net.is_online():
+			rpc("emote_sync", who, id)
+		return {"ok": true, "emote": id}
+	emote_played.emit(who, id)
+	if Net.is_online() and Net.is_authority():
+		rpc("emote_agent", who, id)
+	return {"ok": true, "emote": id}
+
+@rpc("authority", "reliable")
+func emote_agent(pid: String, id: String) -> void:
+	if not str(pid).begins_with("agent:"):
 		return
-	emote_played.emit(Net.local_id(), id)
-	if Net.is_online():
-		rpc("emote_sync", Net.local_id(), id)
+	if Emotes.exists(id) and Chat.allow("emote:" + pid):
+		emote_played.emit(pid, id)
 
 @rpc("any_peer", "reliable")
 func emote_sync(pid: String, id: String) -> void:

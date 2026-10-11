@@ -52,6 +52,11 @@ static func act_randomly(rng: RandomNumberGenerator) -> void:
 				Coop.act("use_item", ["farm", t, seeds.uid])
 
 func _ready() -> void:
+	# Guests receive crop progress when a tile is synced (plant, water, a new
+	# growth stage, the day-start snapshot). The host keeps integrating the
+	# fraction between those copies. Pin the clock so a tick cannot move the
+	# host ahead of the snapshot before the hash.
+	TimeService.fixed_now = TimeService.now()
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--clients="):
 			clients = int(a.substr(10))

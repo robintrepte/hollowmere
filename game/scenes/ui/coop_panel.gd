@@ -109,9 +109,9 @@ func _join_view() -> void:
 	_hint("To host, load your farm, then press O (or Esc > Play together). Friends' progress is saved on the host's farm.")
 
 func _agents_section() -> void:
-	_heading("AI agents")
+	_heading("AI helpers")
 	_hint("Let a helper (Claude, Cursor, ...) watch or play. Up to 3 partners. Free for everyone.")
-	_body.add_child(UITheme.button("Open agent panel", func():
+	_body.add_child(UITheme.button("Set up a helper", func():
 		if ui:
 			ui.open(AgentPanel.new())
 		closed.emit()))
