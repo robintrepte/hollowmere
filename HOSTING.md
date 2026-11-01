@@ -251,6 +251,8 @@ The OAuth consent screen (Google Cloud → set the app to Production, and the sa
 
 `tools/release/fingerprint_web.sh` copies `game/web/legal/` into the export, so a normal web deploy publishes them. The loading screen links to both, which is what a review crawler sees in the homepage HTML.
 
+It also copies `game/web/seo/robots.txt` and `game/web/seo/sitemap.xml` into the export root (`https://$DOMAIN/robots.txt`, `https://$DOMAIN/sitemap.xml`). Both hard-code `https://hollowmere.tretu.de`; edit them if you deploy under another domain.
+
 ## 10. GitHub Actions deploy (after the box exists)
 
 `.github/workflows/build.yml` job `deploy-web` runs on `v*` tags. It rsyncs `build/web/` to `$SITE_DIR` and restarts **only** Nakama + Postgres (`docker compose up -d --build`, no `--profile prod`).
