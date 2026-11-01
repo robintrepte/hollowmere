@@ -17,11 +17,15 @@ Everything after `git tag` is automated by `.github/workflows/build.yml`:
 
 Step-by-step Hetzner + Ubuntu + nginx (the commands an agent can run): **[HOSTING.md](HOSTING.md)**.
 
-Short version: a CX22 is enough. Point `play.example.com` at the box, run nginx + certbot on the host, Docker only for Nakama + Postgres. Put the private SSH key in `DEPLOY_SSH_KEY` and the hostname in the `HOLLOWMERE_DOMAIN` variable. Leave `NAKAMA_SERVER_KEY` equal to `hollowmere/server/key` in `game/project.godot`: it ships inside every client and is not a secret.
+Short version: it runs on the Tretu Hetzner server: nginx + certbot on the host, Nakama and the MCP relay as PM2 processes (`ecosystem.config.cjs`), the `nakama` database on the shared Postgres. No Docker. Put the private SSH key in `DEPLOY_SSH_KEY` and the hostname in the `HOLLOWMERE_DOMAIN` variable. Leave `socket.server_key` in `server/nakama/hollowmere.yml` equal to `hollowmere/server/key` in `game/project.godot`: it ships inside every client and is not a secret.
 
 ### 1.2 Google sign-in
 
-Social buttons (Google / Apple / Discord) only appear when that provider's client id is injected into the web shell and the device supports it. Email and guest work without any of them. See HOSTING.md §9.
+Social buttons (Google / Apple / Discord) only appear when that provider's client id is injected into the web shell and the device supports it. Email and guest work without any of them. See HOSTING.md §14.
+
+### 1.3 Tretu-Konto, platform events, analytics
+
+"Mit Tretu-Konto anmelden" appears only in builds made with the `TRETU_AUTH_ISSUER` repository variable, and works only when the server has `TRETU_AUTH_ISSUER` in `server/nakama/local.yml`. Events and presence for tretu.de need `TRETU_PLATFORM_URL`, `TRETU_APP_ID`, `TRETU_APP_SECRET` there. Umami needs the `UMAMI_SRC` and `UMAMI_WEBSITE_ID` variables. All of it is off by default. See HOSTING.md §10–11.
 
 ### 1.3 Apple (macOS signing and notarization)
 
@@ -76,7 +80,7 @@ Jobs whose secrets are missing skip with a warning instead of failing.
      $G --path game res://tests/smoke/$s.tscn -- --out=$PWD/.shots; done      # look at the screenshots
    python3 tools/content/extract_strings.py
    ```
-   The co-op and account smokes need the local server (`cd server && docker compose up -d`).
+   The co-op and account smokes need the local server (`NAKAMA_ALLOW_DEFAULTS=1 NAKAMA_DATABASE_ADDRESS=postgres@127.0.0.1:5432/nakama server/nakama/nakama.sh start`, see README).
    To check an exported desktop build boots (needs the full export templates in
    `~/Library/Application Support/Godot/export_templates/4.7.2.stable/`):
    ```sh
@@ -106,7 +110,7 @@ Rollback: re-run the `deploy-web` job of the previous tag. The engine files carr
 ### Phase 2: free web launch
 - Make the itch page public, linking to the domain for browser play.
 - Launch-day checklist:
-  - [ ] VPS backups running, `docker compose ps` healthy, disk under 50%
+  - [ ] Backups running, `pm2 status` shows `hollowmere-nakama` and `hollowmere-mcp` online, `https://<domain>/api/health` is ok, disk under 50%
   - [ ] `curl -I https://<domain>/` shows `Cache-Control: no-cache`, and an `hm-*.wasm` shows `immutable` and `Content-Encoding: br`
   - [ ] Google sign-in works on the live domain
   - [ ] Nakama console (`ssh -L 7351:127.0.0.1:7351 deploy@<host>`, then http://127.0.0.1:7351) reachable, with the default password changed
@@ -138,7 +142,7 @@ Rollback: re-run the `deploy-web` job of the previous tag. The engine files carr
 Release builds send error reports (on by default, toggle in Settings, Privacy) and, if the player opted in, a session heartbeat. Both land in Nakama storage:
 
 ```sh
-ssh deploy@<host> docker exec -it hollowmere-postgres-1 psql -U nakama nakama
+ssh deploy@<host> psql -h 127.0.0.1 -U nakama nakama
 ```
 ```sql
 -- Most frequent errors (one row per signature)

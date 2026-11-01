@@ -52,15 +52,17 @@ Prompts the client can load: `farmer`, `coop_partner`, `battle_grind`, `optimize
 
 ## 5. Privacy
 
-Tokens are hashed on the server. Revoke them in the agent panel. Command logs stay in Nakama storage only long enough to return a result. See `store/TERMS.md`.
+Tokens are hashed on the server. Revoke them in the agent panel. Command logs stay in Nakama storage only long enough to return a result. See https://tretu.de/datenschutz and `store/TERMS.md`.
 
 ## 6. Run the relay yourself
 
 ```bash
-cd server
-docker compose up -d mcp
-# health: curl http://127.0.0.1:8787/health
-node mcp/server.mjs --self-test
+# On the server it runs under PM2 as "hollowmere-mcp" (ecosystem.config.cjs, HOSTING.md).
+pm2 start ecosystem.config.cjs --only hollowmere-mcp
+curl http://127.0.0.1:8787/health
+# Locally, next to a Nakama on 127.0.0.1:7350:
+NAKAMA_HTTP_KEY=<runtime.http_key> node server/mcp/server.mjs
+node server/mcp/test.mjs        # self-test, no server needed
 ```
 
 Point nginx at `127.0.0.1:8787` for `mcp.$DOMAIN` (see HOSTING.md).

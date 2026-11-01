@@ -9,6 +9,7 @@ on:
 env:
   GODOT_VERSION: "4.7.2"
   GODOT_RELEASE: "stable"
+  NAKAMA_VERSION: "3.41.0"
 
 jobs:
   test:
@@ -40,10 +41,38 @@ jobs:
         env:
           GODOT_OK: "Casino sim.+OK"
         run: tools/ci/godot.sh --headless --path game res://tests/sim/casino_rtp.tscn -- --rounds=1000000
-      - name: Start Nakama
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: MCP relay self-test
+        run: node server/mcp/test.mjs
+      - name: Install Nakama + Lua, start the runner's Postgres (no Docker, like production)
         run: |
-          docker compose -f server/docker-compose.yml up -d --build
+          curl -fsSL -o nakama.tgz "https://github.com/heroiclabs/nakama/releases/download/v${NAKAMA_VERSION}/nakama-${NAKAMA_VERSION}-linux-amd64.tar.gz"
+          mkdir -p .tools/nakama && tar -xzf nakama.tgz -C .tools/nakama
+          bin=$(find .tools/nakama -type f -name nakama | head -1)
+          chmod +x "$bin" && echo "NAKAMA_BIN=$PWD/$bin" >> "$GITHUB_ENV"
+          sudo apt-get install -y -qq lua5.1
+          sudo systemctl start postgresql.service
+          sudo -u postgres psql -qc "ALTER USER postgres PASSWORD 'postgres';"
+          sudo -u postgres createdb nakama
+      - name: Lua modules (syntax, Nakama load check, signing test vectors)
+        run: |
+          luac5.1 -p server/nakama/modules/*.lua
+          lua5.1 server/nakama/tests/tretu_test.lua
+          server/nakama/nakama.sh check
+      - name: Tretu integration test (fake issuer + platform, real Nakama)
+        env:
+          TEST_DB: postgres:postgres@127.0.0.1:5432/nakama_test
+        run: node server/nakama/tests/tretu_integration.mjs
+      - name: Start Nakama
+        env:
+          NAKAMA_ALLOW_DEFAULTS: "1"
+          NAKAMA_DATABASE_ADDRESS: postgres:postgres@127.0.0.1:5432/nakama
+        run: |
+          nohup server/nakama/nakama.sh start > nakama.log 2>&1 &
           for i in $(seq 1 60); do curl -sf http://127.0.0.1:7350/healthcheck && break; sleep 2; done
+          curl -sf http://127.0.0.1:7350/healthcheck
       - name: Server integration test
         env:
           GODOT_OK: "SERVER TEST DONE, 0 failures"
@@ -60,7 +89,9 @@ jobs:
         if: always()
         with:
           name: test-results
-          path: test-results.xml
+          path: |
+            test-results.xml
+            nakama.log
 
   export:
     needs: test
@@ -84,6 +115,14 @@ jobs:
       - name: Point release builds at the live server
         if: vars.HOLLOWMERE_DOMAIN != ''
         run: sed -i "s/%HOLLOWMERE_DOMAIN%/${{ vars.HOLLOWMERE_DOMAIN }}/" game/project.godot
+      - name: Turn on "Mit Tretu-Konto anmelden" (only with the TRETU_AUTH_ISSUER variable)
+        if: vars.TRETU_AUTH_ISSUER != ''
+        env:
+          ISSUER: ${{ vars.TRETU_AUTH_ISSUER }}
+        run: |
+          [[ "$ISSUER" =~ ^https://[A-Za-z0-9.-]+$ ]] || { echo "TRETU_AUTH_ISSUER must look like https://auth.tretu.de"; exit 1; }
+          sed -i "s|^auth_issuer=\"\"|auth_issuer=\"$ISSUER\"|" game/project.godot
+          grep -q "^auth_issuer=\"$ISSUER\"" game/project.godot
       - name: Export
         run: |
           mkdir -p build/windows build/macos build/web
@@ -96,12 +135,15 @@ jobs:
             macOS) test -f build/macos/Hollowmere.zip ;;
             Web) test -f build/web/index.html ;;
           esac || exit "${code:-1}"
-      - name: Inject OAuth client ids (web)
+      - name: Inject OAuth client ids and analytics (web)
         if: matrix.preset == 'Web'
-        run: |
-          sed -i "s/%GOOGLE_CLIENT_ID%/${{ secrets.GOOGLE_CLIENT_ID }}/" build/web/index.html
-          sed -i "s/%APPLE_CLIENT_ID%/${{ secrets.APPLE_CLIENT_ID }}/" build/web/index.html
-          sed -i "s/%DISCORD_CLIENT_ID%/${{ secrets.DISCORD_CLIENT_ID }}/" build/web/index.html
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
+          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+          UMAMI_SRC: ${{ vars.UMAMI_SRC }}
+          UMAMI_WEBSITE_ID: ${{ vars.UMAMI_WEBSITE_ID }}
+        run: python3 tools/release/inject_web_config.py build/web/index.html
       - name: Fingerprint and precompress (web)
         if: matrix.preset == 'Web'
         run: |
@@ -109,6 +151,7 @@ jobs:
           tools/release/fingerprint_web.sh build/web
           tools/release/precompress_web.sh build/web
           test -f build/web/robots.txt && test -f build/web/sitemap.xml
+          test -f build/web/auth/callback/index.html && test -f build/web/datenschutz/index.html
       - name: Web download budget (< 50 MB)
         if: matrix.preset == 'Web'
         run: |
@@ -186,18 +229,22 @@ jobs:
         with:
           name: hollowmere-web
           path: site
-      - name: Upload to server
+      - name: Upload to server and reload PM2
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER || 'deploy' }}
+          APP_DIR: ${{ vars.DEPLOY_APP_DIR || '/srv/hollowmere' }}
+          SITE_DIR: ${{ vars.DEPLOY_SITE_DIR || '/var/www/hollowmere' }}
         run: |
           if [ -z "$DEPLOY_HOST" ] || [ -z "$DEPLOY_KEY" ]; then
-            echo "::warning::Set DEPLOY_HOST and DEPLOY_SSH_KEY to rsync the web build (HOSTING.md)."
+            echo "::warning::Set DEPLOY_HOST and DEPLOY_SSH_KEY to deploy the web build (HOSTING.md)."
             exit 0
           fi
           mkdir -p ~/.ssh && echo "$DEPLOY_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
-          rsync -az --delete site/web/ deploy@"$DEPLOY_HOST":/srv/hollowmere/site/
-          rsync -az --exclude .env --exclude site/ server/ deploy@"$DEPLOY_HOST":/srv/hollowmere/
-          # nginx (HOSTING.md) already owns 80/443. Do not start the Caddy profile here.
-          ssh deploy@"$DEPLOY_HOST" "cd /srv/hollowmere && docker compose up -d --build"
+          rsync -az --delete site/web/ "$DEPLOY_USER@$DEPLOY_HOST:$SITE_DIR/"
+          # Server code: the checkout on the box follows the tag; PM2 runs migrations on start.
+          ssh "$DEPLOY_USER@$DEPLOY_HOST" bash -lc "'set -e; cd $APP_DIR && git fetch --tags --force origin && git checkout --detach $GITHUB_REF_NAME && server/nakama/nakama.sh check && pm2 reload ecosystem.config.cjs --update-env && pm2 save'"
+          sleep 5
+          ssh "$DEPLOY_USER@$DEPLOY_HOST" "curl -sf http://127.0.0.1:8787/api/health"

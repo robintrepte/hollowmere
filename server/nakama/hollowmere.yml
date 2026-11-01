@@ -1,3 +1,6 @@
+# Base Nakama config for Hollowmere (committed, no secrets). Secrets and the Tretu runtime env go in
+# server/nakama/local.yml (copy local.example.yml; never committed). server/nakama/nakama.sh loads
+# both and sets runtime.path / data_dir, so this file works from any checkout location.
 name: hollowmere
 logger:
   level: "INFO"
@@ -5,12 +8,19 @@ session:
   token_expiry_sec: 86400          # 1 day
   refresh_token_expiry_sec: 2592000 # 30 days
 socket:
+  # API + realtime on localhost only; nginx (deploy/nginx/hollowmere.tretu.de.conf) is the public side.
+  address: "127.0.0.1"
+  port: 7350
+  # Ships inside every client (hollowmere/server/key in game/project.godot); not a secret.
+  server_key: "hollowmere_dev"
   max_message_size_bytes: 1048576   # world snapshots are chunked by the client, this is headroom
   max_request_size_bytes: 4194304
   ping_period_ms: 10000
   pong_wait_ms: 25000
+console:
+  address: "127.0.0.1"             # reach it through an SSH tunnel, never publicly
+  port: 7351
 runtime:
-  path: "/nakama/data/modules"
   env:
     - "max_save_bytes=3145728"
     - "max_profile_bytes=65536"

@@ -6,9 +6,13 @@
  */
 import http from "node:http";
 import crypto from "node:crypto";
+import { readFileSync } from "node:fs";
 
 const PORT = Number(process.env.MCP_PORT || 8787);
-const NAKAMA = process.env.NAKAMA_URL || "http://nakama:7350";
+// PM2 runs this next to Nakama on the same host; nginx is the only public entry.
+const HOST = process.env.MCP_HOST || "127.0.0.1";
+const NAKAMA = process.env.NAKAMA_URL || "http://127.0.0.1:7350";
+const VERSION = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")).version;
 const HTTP_KEY = process.env.NAKAMA_HTTP_KEY || "dev_http_key_change_me";
 const PUBLIC_URL = process.env.MCP_PUBLIC_URL || `http://127.0.0.1:${PORT}`;
 const RATE = Number(process.env.MCP_RATE_PER_MIN || 60);
@@ -84,12 +88,13 @@ function rateOk(key) {
   return true;
 }
 
-async function nakamaRpc(id, body) {
+async function nakamaRpc(id, body, timeoutMs = 10_000) {
   const url = `${NAKAMA}/v2/rpc/${encodeURIComponent(id)}?http_key=${encodeURIComponent(HTTP_KEY)}`;
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(JSON.stringify(body)),
+    signal: AbortSignal.timeout(timeoutMs),
   });
   const text = await res.text();
   let json = {};
@@ -114,6 +119,25 @@ async function relay(token, tool, args, actor) {
     if (!poll.pending) return poll;
   }
   return { ok: false, error: "the game did not answer in time; is the farm open and the tab visible?" };
+}
+
+// Contract health shape for hollowmere.tretu.de/api/health (nginx proxies it here):
+// Nakama answers its health RPC, which also runs a database query.
+export function healthBody(nakama, now = new Date()) {
+  const ok = nakama?.ok === true && nakama?.checks?.db === "ok";
+  return {
+    status: ok ? "ok" : "error",
+    app: "hollowmere",
+    version: VERSION,
+    time: now.toISOString(),
+    checks: { nakama: nakama ? "ok" : "error", db: nakama?.checks?.db === "ok" ? "ok" : "error" },
+  };
+}
+
+async function health() {
+  let nakama = null;
+  try { nakama = await nakamaRpc("health", {}, 3000); } catch { nakama = null; }
+  return healthBody(nakama);
 }
 
 function bearer(req) {
@@ -224,6 +248,10 @@ const server = http.createServer(async (req, res) => {
   if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/health")) {
     return json(res, 200, { ok: true, service: "hollowmere-mcp" });
   }
+  if (req.method === "GET" && url.pathname === "/api/health") {
+    const body = await health();
+    return json(res, body.status === "ok" ? 200 : 503, body);
+  }
   if (req.method === "POST" && url.pathname === "/register") {
     const id = "cli_" + crypto.randomBytes(8).toString("hex");
     oauthClients.set(id, { redirect: true });
@@ -304,10 +332,16 @@ if (process.argv.includes("--self-test")) {
     console.error("chat_say schema incomplete");
     process.exit(1);
   }
+  const up = healthBody({ ok: true, checks: { db: "ok" } }, new Date(0));
+  const down = healthBody(null);
+  if (up.status !== "ok" || up.app !== "hollowmere" || up.time !== "1970-01-01T00:00:00.000Z" || down.status !== "error" || down.checks.db !== "error") {
+    console.error("health shape wrong", up, down);
+    process.exit(1);
+  }
   console.log("mcp self-test ok", tools.result.tools.length, "tools");
   process.exit(0);
 }
 
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`hollowmere-mcp on :${PORT} → ${NAKAMA}`);
+server.listen(PORT, HOST, () => {
+  console.log(`hollowmere-mcp on ${HOST}:${PORT} → ${NAKAMA}`);
 });

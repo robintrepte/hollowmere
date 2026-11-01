@@ -1,5 +1,5 @@
 extends Node
-## Integration test against a running Nakama (server/docker-compose.yml).
+## Integration test against a running Nakama (server/nakama/nakama.sh start, see README).
 ## Skips (exit 0) when no server answers, unless --require-server is passed.
 
 var _fails := 0
