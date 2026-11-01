@@ -797,7 +797,7 @@ msgstr ""
 msgid "%s left the battle."
 msgstr ""
 
-#: autoload/net.gd:483
+#: autoload/net.gd:495
 #, c-format
 msgid "%s left the farm."
 msgstr ""
@@ -1077,7 +1077,7 @@ msgstr ""
 msgid "%s · %s %s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:241
+#: scenes/ui/title_screen.gd:247
 #, c-format
 msgid "%s · %s Farm\n%s · %s"
 msgstr ""
@@ -3540,7 +3540,7 @@ msgstr ""
 msgid "Chat"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:259
+#: scenes/ui/title_screen.gd:265
 msgid "Checking the cloud..."
 msgstr ""
 
@@ -3701,7 +3701,7 @@ msgstr ""
 msgid "Cloud Fluff"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:266
+#: scenes/ui/title_screen.gd:272
 msgid "Cloud backups are up to date."
 msgstr ""
 
@@ -4301,11 +4301,11 @@ msgstr ""
 msgid "Defeat the beast of the Magma Depths."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:247
+#: scenes/ui/title_screen.gd:253
 msgid "Delete"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:247
+#: scenes/ui/title_screen.gd:253
 msgid "Delete this farm forever?"
 msgstr ""
 
@@ -7503,7 +7503,7 @@ msgstr ""
 msgid "Kale"
 msgstr ""
 
-#: scenes/ui/party_panel.gd:436 scenes/ui/skill_panel.gd:166 scenes/ui/title_screen.gd:247
+#: scenes/ui/party_panel.gd:436 scenes/ui/skill_panel.gd:166 scenes/ui/title_screen.gd:253
 msgid "Keep"
 msgstr ""
 
@@ -7867,7 +7867,7 @@ msgstr ""
 msgid "Load"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:234
+#: scenes/ui/title_screen.gd:240
 msgid "Load a farm"
 msgstr ""
 
@@ -8555,7 +8555,7 @@ msgstr ""
 msgid "New to your Fishdex!"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:268
+#: scenes/ui/title_screen.gd:274
 msgid "Newer in the cloud"
 msgstr ""
 
@@ -8666,7 +8666,7 @@ msgstr ""
 msgid "No eggs to add. Pair Wildlings in the Den and eggs appear in the farm chest."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:236
+#: scenes/ui/title_screen.gd:242
 msgid "No farms yet."
 msgstr ""
 
@@ -10819,7 +10819,7 @@ msgstr ""
 msgid "Side"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:100 scenes/ui/coop_panel.gd:104 scenes/ui/coop_panel.gd:170 scenes/ui/title_screen.gd:201
+#: scenes/ui/account_panel.gd:100 scenes/ui/coop_panel.gd:104 scenes/ui/coop_panel.gd:170 scenes/ui/title_screen.gd:203
 msgid "Sign in"
 msgstr ""
 
@@ -14620,7 +14620,7 @@ msgstr ""
 msgid "Wren: That's why I want to fix it. To see where she went."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:246
+#: scenes/ui/title_screen.gd:252
 msgid "X"
 msgstr ""
 
@@ -15414,12 +15414,12 @@ msgstr ""
 msgid "· status"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:201
+#: scenes/ui/title_screen.gd:203
 #, c-format
 msgid "● %s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:273
+#: scenes/ui/title_screen.gd:279
 #, c-format
 msgid "● %s · %s Farm\n%s · %s"
 msgstr ""
