@@ -1,6 +1,6 @@
 class_name AccountPanel
 extends PanelContainer
-## Hollowmere account: email / guest / Google, Apple, Discord, display name, cloud saves.
+## Hollowmere account: email / guest / Tretu-Konto / Google, Apple, Discord, display name, cloud saves.
 
 signal closed
 
@@ -8,6 +8,7 @@ var _body: VBoxContainer
 var _status: Label
 var _server_dot: Label
 var _busy := false
+var _tretu_pending := false
 
 func _ready() -> void:
 	add_theme_stylebox_override("panel", UITheme.parchment(10))
@@ -41,8 +42,13 @@ func _ready() -> void:
 	close.size_flags_horizontal = Control.SIZE_SHRINK_END
 	v.add_child(close)
 	Net.session_changed.connect(_on_session)
+	Tretu.status.connect(func(text: String): _say(text, true))
 	_rebuild()
 	_check_server()
+
+func _exit_tree() -> void:
+	if _tretu_pending:
+		Tretu.cancel()
 
 func _on_session(_in: bool) -> void:
 	_rebuild()
@@ -99,6 +105,7 @@ func _signed_out() -> void:
 		_run(func(): return await Net.login_email(email.text.strip_edges(), pw.text, true, nm.text.strip_edges()))))
 	var r2 := _row()
 	r2.add_child(UITheme.button("Play as guest", func(): _run(func(): return await Net.login_device())))
+	_tretu_button(r2)
 	_social_buttons()
 	pw.text_submitted.connect(func(_t: String): _run(func(): return await Net.login_email(email.text.strip_edges(), pw.text, false)))
 	if OS.get_name() != "Web":
@@ -153,6 +160,12 @@ func _signed_in() -> void:
 	var r2 := _row()
 	r2.add_child(UITheme.button("Upload all farms now", func(): _run(_upload_all, "Farms backed up to the cloud.")))
 	r2.add_child(UITheme.button("Sign out", func(): _run(_sign_out)))
+	if Net.is_tretu and Tretu.enabled():
+		var r3 := _row()
+		r3.add_child(UITheme.button("My account", func(): _open_url(Tretu.account_url())))
+		var profile := Tretu.profile_url(Tretu.profile_username)
+		if profile != "":
+			r3.add_child(UITheme.button("Tretu profile", func(): _open_url(profile)))
 
 func _upload_all() -> String:
 	var n: int = await SaveManager.upload_all()
@@ -183,6 +196,30 @@ func _run(fn: Callable, ok_msg := "") -> void:
 		if ok_msg == "":
 			_status.text = ""
 		Audio.sfx("open")
+
+## "Mit Tretu-Konto anmelden": shown only when the build has tretu/auth_issuer and tretu/client_id.
+func _tretu_button(row: HBoxContainer) -> void:
+	if not Tretu.enabled():
+		return
+	var b := UITheme.button("Sign in with Tretu", func(): _run(_tretu_sign_in))
+	b.icon = Art.social_icon("tretu")
+	b.expand_icon = true
+	b.add_theme_constant_override("icon_max_width", 14)
+	b.add_theme_constant_override("h_separation", 5)
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(b)
+
+func _tretu_sign_in() -> String:
+	_tretu_pending = true
+	var err: String = await Tretu.sign_in()
+	_tretu_pending = false
+	return err
+
+func _open_url(url: String) -> void:
+	if OS.get_name() == "Web":
+		JavaScriptBridge.eval("window.open(%s, '_blank', 'noopener')" % JSON.stringify(url), true)
+	else:
+		OS.shell_open(url)
 
 func _social_buttons() -> void:
 	var ids := Net.social_providers()

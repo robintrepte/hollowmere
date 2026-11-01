@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="noindex">
+	<meta name="referrer" content="no-referrer">
+	<title>Hollowmere – Anmeldung</title>
+	<link rel="icon" type="image/png" href="/icon-192.png">
+	<style>
+		:root { color-scheme: dark; }
+		body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center;
+			background: #1c2120; color: #f3ead8; font: 17px/1.55 "Trebuchet MS", sans-serif; }
+		h1 { color: #ffd36b; letter-spacing: 0.04em; font-size: 1.9rem; margin: 0 0 0.6rem; }
+		p { max-width: 26rem; margin: 0.4rem auto; }
+		.en { color: #b9c8a8; font-size: 0.92rem; }
+		a { color: #ffd36b; }
+	</style>
+</head>
+<body>
+<main>
+	<h1>Hollowmere</h1>
+	<p id="de">Einen Moment …</p>
+	<p id="en" class="en">One moment…</p>
+</main>
+<script>
+	// Redirect target of the Tretu-Konto sign-in (https://hollowmere.tretu.de/auth/callback).
+	// Hands {code, state, error} to the game page (web/shell.html) and gets out of the way.
+	(function () {
+		var q = new URLSearchParams(location.search);
+		var res = { code: q.get("code") || "", state: q.get("state") || "", error: q.get("error") || "" };
+		// Keep the code out of the history and of any later referrer.
+		try { history.replaceState(null, "", location.pathname); } catch (e) {}
+		var pending = null;
+		try { pending = JSON.parse(localStorage.getItem("hm-tretu-pending") || "null"); } catch (e) {}
+		if (pending && pending.mode === "popup") {
+			try {
+				if ("BroadcastChannel" in window) {
+					var bc = new BroadcastChannel("hm-tretu");
+					bc.postMessage(res);
+					bc.close();
+				}
+				localStorage.setItem("hm-tretu-result", JSON.stringify(res));
+			} catch (e) {}
+			document.getElementById("de").textContent = res.error ? "Die Anmeldung wurde abgebrochen. Du kannst dieses Fenster schließen." : "Du bist angemeldet. Du kannst dieses Fenster schließen.";
+			document.getElementById("en").textContent = res.error ? "Sign-in was cancelled. You can close this window." : "You're signed in. You can close this window.";
+			setTimeout(function () { window.close(); }, 400);
+			return;
+		}
+		// Full-page redirect (the popup was blocked): back to the game in this tab.
+		try { sessionStorage.setItem("hm-tretu-result", JSON.stringify(res)); } catch (e) {}
+		location.replace("/");
+	}());
+</script>
+<noscript><p>Hollowmere braucht JavaScript. <a href="/">Zurück zum Spiel</a></p></noscript>
+</body>
+</html>

@@ -551,6 +551,8 @@ func _on_battle_requested(s: Dictionary) -> void:
 		player.encounter_grace = WILD_FLEE_GRACE
 	player.locked = false
 	GameClock.resume("battle")
+	if not res.has("kind"):
+		res["kind"] = str(s.get("kind", ""))
 	EventBus.battle_finished.emit(res)
 
 ## Fleeing one Wildling must not drop you into the next one standing on the same spot.

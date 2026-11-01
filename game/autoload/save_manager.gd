@@ -96,6 +96,7 @@ func make_payload() -> Dictionary:
 			"farm": GameState.world.farm_name, "player": p.name if p else "", "day": GameState.day(),
 			"date": Calendar.date_string(GameState.day()), "year": Calendar.year(GameState.day()),
 			"money": GameState.money(), "dex": Progression.owned_count(GameState.world.dex),
+			"befriended": int(GameState.world.get("stats", {}).get("befriend", 0)),
 			"saved_at": Time.get_unix_time_from_system(), "farm_level": int(GameState.world.farm.level),
 		},
 		"state": GameState.to_dict(),

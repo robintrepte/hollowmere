@@ -88,7 +88,7 @@ func _join_view() -> void:
 	_heading("Join a friend online")
 	if Net.has_session():
 		var r := _row()
-		var code := _edit(r, "", "Farm code, e.g. K7QM2D")
+		var code := _edit(r, Net.web_join_code(), "Farm code, e.g. K7QM2D")
 		code.max_length = 8
 		code.text_changed.connect(func(t: String):
 			var up := t.to_upper()

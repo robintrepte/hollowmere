@@ -41,6 +41,7 @@ Net="*res://autoload/net.gd"
 Coop="*res://autoload/coop.gd"
 AgentBridge="*res://autoload/agent_bridge.gd"
 Telemetry="*res://autoload/telemetry.gd"
+Tretu="*res://autoload/tretu.gd"
 
 [debug]
 
@@ -73,6 +74,13 @@ server/key="hollowmere_dev"
 server/host.release="%HOLLOWMERE_DOMAIN%"
 server/port.release=443
 server/ssl.release=true
+
+[tretu]
+
+auth_issuer=""
+client_id="hollowmere"
+legal_url="https://tretu.de"
+platform_url="https://tretu.de"
 
 [input_devices]
 

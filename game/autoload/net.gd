@@ -36,7 +36,7 @@ func _make_client() -> void:
 	var host := Settings.server_host
 	var port := Settings.server_port
 	var ssl := Settings.server_ssl
-	## The web build talks to the server that served it (Caddy proxies /v2 and /ws to Nakama).
+	## The web build talks to the server that served it (nginx proxies /v2 and /ws to Nakama).
 	if OS.get_name() == "Web" and host == Settings.default_server("host", "127.0.0.1"):
 		var loc := str(JavaScriptBridge.eval("location.hostname", true))
 		if loc != "":
@@ -144,6 +144,17 @@ func login_discord(access_token: String) -> String:
 	var s: NakamaSession = await client.authenticate_custom_async("discord", null, true, {"discord_token": access_token})
 	return await _finish_login(s)
 
+## Tretu-Konto: the server hook asks auth.tretu.de who the access token belongs to and signs into
+## "tretu:<sub>" (an earlier Discord account of the same player is carried over). See autoload/tretu.gd.
+func login_tretu(access_token: String) -> String:
+	_make_client()
+	var s: NakamaSession = await client.authenticate_custom_async("tretu-login", null, true, {"tretu_token": access_token})
+	if s != null and s.is_exception() and s.get_exception().status_code in [400, 401, 403]:
+		if s.get_exception().message.contains("not enabled"):
+			return tr("Tretu sign-in is not enabled on this server.")
+		return tr("Tretu sign-in failed.")
+	return await _finish_login(s)
+
 func web_oauth_token(which: String) -> String:
 	if OS.get_name() != "Web":
 		return ""
@@ -154,6 +165,18 @@ func web_oauth_error(which: String) -> String:
 	if OS.get_name() != "Web":
 		return ""
 	return str(JavaScriptBridge.eval("window.hollowmere%sError || ''" % which.capitalize(), true))
+
+## Farm code from a join link (https://hollowmere.tretu.de/?join=K7QM2D, sent as the presence
+## joinUrl on tretu.de while a Tretu player hosts). "" when there is none.
+func web_join_code() -> String:
+	if OS.get_name() != "Web":
+		return ""
+	var raw := str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('join') || ''", true))
+	var code := ""
+	for ch in raw.to_upper():
+		if (ch >= "A" and ch <= "Z") or (ch >= "0" and ch <= "9"):
+			code += ch
+	return code if code.length() == 6 else ""
 
 func web_google_token() -> String:
 	return web_oauth_token("google")
@@ -210,12 +233,15 @@ func _finish_login(s: NakamaSession) -> String:
 	return ""
 
 var is_guest: bool = false
+## Signed in with a Tretu-Konto (custom id "tretu:<sub>"): presence and stats go to tretu.de.
+var is_tretu: bool = false
 
 func _load_account() -> void:
 	var acc = await client.get_account_async(session)
 	if acc.is_exception():
 		return
 	is_guest = acc.email == "" and acc.user.google_id == "" and acc.user.apple_id == "" and acc.custom_id == ""
+	is_tretu = acc.custom_id.begins_with("tretu:")
 	if acc.user.display_name != "":
 		display_name = acc.user.display_name
 	else:
@@ -244,7 +270,15 @@ func link_email(email: String, password: String) -> String:
 	session_changed.emit(true)
 	return ""
 
+## Restores the saved Nakama session; without one, a stored Tretu login signs in silently.
 func try_restore_session() -> bool:
+	if await _restore_nakama_session():
+		return true
+	if Tretu.enabled():
+		return await Tretu.silent_sign_in()
+	return false
+
+func _restore_nakama_session() -> bool:
 	_make_client()
 	var cfg := ConfigFile.new()
 	if cfg.load("user://session.cfg") != OK:
@@ -271,12 +305,17 @@ func try_restore_session() -> bool:
 	return true
 
 func logout() -> void:
+	if is_tretu and has_session():
+		await call_rpc("tretu_offline")
+	if is_tretu:
+		Tretu.forget_tokens()
 	if client and session:
 		await client.session_logout_async(session)
 	session = null
 	account_id = ""
 	display_name = ""
 	is_guest = false
+	is_tretu = false
 	DirAccess.remove_absolute("user://session.cfg")
 	session_changed.emit(false)
 

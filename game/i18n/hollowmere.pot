@@ -8,7 +8,7 @@ msgstr ""
 msgid "   (%d%%)"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:130
+#: scenes/ui/account_panel.gd:137
 msgid "  (guest)"
 msgstr ""
 
@@ -797,7 +797,7 @@ msgstr ""
 msgid "%s left the battle."
 msgstr ""
 
-#: autoload/net.gd:456
+#: autoload/net.gd:483
 #, c-format
 msgid "%s left the farm."
 msgstr ""
@@ -922,7 +922,7 @@ msgstr ""
 msgid "%s shop discount"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:231
+#: scenes/ui/account_panel.gd:268
 #, c-format
 msgid "%s sign-in timed out."
 msgstr ""
@@ -1077,7 +1077,7 @@ msgstr ""
 msgid "%s · %s %s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:239
+#: scenes/ui/title_screen.gd:241
 #, c-format
 msgid "%s · %s Farm\n%s · %s"
 msgstr ""
@@ -1242,7 +1242,7 @@ msgstr ""
 msgid "%s: Wow, you're good! Rematch tomorrow?"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:111 scenes/ui/shop_panel.gd:117
+#: scenes/ui/account_panel.gd:118 scenes/ui/shop_panel.gd:117
 #, c-format
 msgid "%s:%d"
 msgstr ""
@@ -2127,7 +2127,7 @@ msgstr ""
 msgid "Acornib"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:144
+#: scenes/ui/account_panel.gd:151
 msgid "Add email to this account"
 msgstr ""
 
@@ -3379,6 +3379,10 @@ msgstr ""
 msgid "Can't place that here."
 msgstr ""
 
+#: autoload/tretu.gd:177
+msgid "Can't reach the Tretu sign-in right now."
+msgstr ""
+
 #: scenes/main/controller.gd:532 scenes/ui/party_panel.gd:616
 msgid "Cancel"
 msgstr ""
@@ -3536,7 +3540,7 @@ msgstr ""
 msgid "Chat"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:257
+#: scenes/ui/title_screen.gd:259
 msgid "Checking the cloud..."
 msgstr ""
 
@@ -3681,7 +3685,7 @@ msgstr ""
 msgid "Clips the foe with wings."
 msgstr ""
 
-#: scenes/common/floating_window.gd:40 scenes/ui/account_panel.gd:40 scenes/ui/agent_panel.gd:35 scenes/ui/casino/casino_panel.gd:64 ...
+#: scenes/common/floating_window.gd:40 scenes/ui/account_panel.gd:41 scenes/ui/agent_panel.gd:35 scenes/ui/casino/casino_panel.gd:64 ...
 msgid "Close"
 msgstr ""
 
@@ -3697,7 +3701,7 @@ msgstr ""
 msgid "Cloud Fluff"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:264
+#: scenes/ui/title_screen.gd:266
 msgid "Cloud backups are up to date."
 msgstr ""
 
@@ -3956,6 +3960,10 @@ msgstr ""
 msgid "Could not create a token."
 msgstr ""
 
+#: autoload/tretu.gd:186
+msgid "Could not open a local port for the sign-in."
+msgstr ""
+
 #: scenes/ui/coop_panel.gd:177
 #, c-format
 msgid "Couldn't open port %d. Is another farm already open?"
@@ -4077,7 +4085,7 @@ msgstr ""
 msgid "Creamy, briny and very comforting."
 msgstr ""
 
-#: scenes/ui/account_panel.gd:95
+#: scenes/ui/account_panel.gd:101
 msgid "Create account"
 msgstr ""
 
@@ -4293,11 +4301,11 @@ msgstr ""
 msgid "Defeat the beast of the Magma Depths."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:245
+#: scenes/ui/title_screen.gd:247
 msgid "Delete"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:245
+#: scenes/ui/title_screen.gd:247
 msgid "Delete this farm forever?"
 msgstr ""
 
@@ -4574,7 +4582,7 @@ msgstr ""
 msgid "Elderbough"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:142 scenes/ui/account_panel.gd:89
+#: scenes/ui/account_panel.gd:149 scenes/ui/account_panel.gd:95
 msgid "Email"
 msgstr ""
 
@@ -4945,7 +4953,7 @@ msgstr ""
 msgid "Farm: gathers extra forage at any job."
 msgstr ""
 
-#: scenes/ui/account_panel.gd:91
+#: scenes/ui/account_panel.gd:97
 msgid "Farmer name (new accounts)"
 msgstr ""
 
@@ -5122,9 +5130,17 @@ msgstr ""
 msgid "Find hidden eggs around the village before time runs out!"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:211
+#: scenes/ui/account_panel.gd:248
 #, c-format
 msgid "Finish signing in with %s in the popup..."
+msgstr ""
+
+#: autoload/tretu.gd:261
+msgid "Finish signing in with Tretu in the popup..."
+msgstr ""
+
+#: autoload/tretu.gd:192
+msgid "Finish signing in with Tretu in your browser..."
 msgstr ""
 
 #: autoload/game_state.gd:1970 autoload/game_state.gd:2058
@@ -6109,7 +6125,7 @@ msgstr ""
 msgid "Guest"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:141
+#: scenes/ui/account_panel.gd:148
 msgid "Guest accounts live on this device. Add an email to keep your farms anywhere."
 msgstr ""
 
@@ -6518,7 +6534,7 @@ msgstr ""
 msgid "Hollowmere Village"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:27
+#: scenes/ui/account_panel.gd:28
 msgid "Hollowmere account"
 msgstr ""
 
@@ -6904,6 +6920,10 @@ msgstr ""
 
 #: data/villagers.json
 msgid "If you're losing, take a walk on the promenade. The sea is free."
+msgstr ""
+
+#: scenes/ui/title_screen.gd:158
+msgid "Imprint"
 msgstr ""
 
 #: data/items.json
@@ -7483,7 +7503,7 @@ msgstr ""
 msgid "Kale"
 msgstr ""
 
-#: scenes/ui/party_panel.gd:436 scenes/ui/skill_panel.gd:166 scenes/ui/title_screen.gd:245
+#: scenes/ui/party_panel.gd:436 scenes/ui/skill_panel.gd:166 scenes/ui/title_screen.gd:247
 msgid "Keep"
 msgstr ""
 
@@ -7847,7 +7867,7 @@ msgstr ""
 msgid "Load"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:232
+#: scenes/ui/title_screen.gd:234
 msgid "Load a farm"
 msgstr ""
 
@@ -8379,6 +8399,10 @@ msgstr ""
 msgid "My Nibblet likes you!"
 msgstr ""
 
+#: scenes/ui/account_panel.gd:165
+msgid "My account"
+msgstr ""
+
 #: data/villagers.json
 msgid "My birthday is in fall. I like cake."
 msgstr ""
@@ -8531,7 +8555,7 @@ msgstr ""
 msgid "New to your Fishdex!"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:266
+#: scenes/ui/title_screen.gd:268
 msgid "Newer in the cloud"
 msgstr ""
 
@@ -8642,7 +8666,7 @@ msgstr ""
 msgid "No eggs to add. Pair Wildlings in the Den and eggs appear in the farm chest."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:234
+#: scenes/ui/title_screen.gd:236
 msgid "No farms yet."
 msgstr ""
 
@@ -9061,7 +9085,7 @@ msgstr ""
 msgid "Opens up the lakeside land in the southeast."
 msgstr ""
 
-#: scenes/ui/account_panel.gd:191
+#: scenes/ui/account_panel.gd:228
 msgid "Or continue with"
 msgstr ""
 
@@ -9178,7 +9202,7 @@ msgstr ""
 msgid "Passive Income"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:143 scenes/ui/account_panel.gd:90
+#: scenes/ui/account_panel.gd:150 scenes/ui/account_panel.gd:96
 msgid "Password (8+ characters)"
 msgstr ""
 
@@ -9278,7 +9302,7 @@ msgstr ""
 msgid "Physical attackers may get burned."
 msgstr ""
 
-#: scenes/ui/account_panel.gd:97
+#: scenes/ui/account_panel.gd:103
 msgid "Pick a farmer name first."
 msgstr ""
 
@@ -9436,7 +9460,7 @@ msgstr ""
 msgid "Play a spin of roulette. Click the table to place chips; the Rules button explains every bet."
 msgstr ""
 
-#: scenes/ui/account_panel.gd:101
+#: scenes/ui/account_panel.gd:107
 msgid "Play as guest"
 msgstr ""
 
@@ -9933,7 +9957,7 @@ msgstr ""
 msgid "Remember that number. You'll bet it again on bad days. Everyone does."
 msgstr ""
 
-#: scenes/ui/account_panel.gd:139
+#: scenes/ui/account_panel.gd:146
 msgid "Rename"
 msgstr ""
 
@@ -10586,7 +10610,7 @@ msgstr ""
 msgid "Send to farm"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:109
+#: scenes/ui/account_panel.gd:116
 msgid "Server"
 msgstr ""
 
@@ -10795,7 +10819,7 @@ msgstr ""
 msgid "Side"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:94 scenes/ui/coop_panel.gd:104 scenes/ui/coop_panel.gd:170 scenes/ui/title_screen.gd:199
+#: scenes/ui/account_panel.gd:100 scenes/ui/coop_panel.gd:104 scenes/ui/coop_panel.gd:170 scenes/ui/title_screen.gd:201
 msgid "Sign in"
 msgstr ""
 
@@ -10807,15 +10831,19 @@ msgstr ""
 msgid "Sign in to create a token."
 msgstr ""
 
-#: scenes/ui/account_panel.gd:88
+#: scenes/ui/account_panel.gd:94
 msgid "Sign in to keep your farms in the cloud and play co-op online. Offline play always works."
 msgstr ""
 
-#: scenes/ui/account_panel.gd:155
+#: scenes/ui/account_panel.gd:204
+msgid "Sign in with Tretu"
+msgstr ""
+
+#: scenes/ui/account_panel.gd:162
 msgid "Sign out"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:130
+#: scenes/ui/account_panel.gd:137
 #, c-format
 msgid "Signed in as %s%s"
 msgstr ""
@@ -12082,7 +12110,7 @@ msgstr ""
 msgid "Talked ✓"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:174
+#: scenes/ui/account_panel.gd:187
 msgid "Talking to the server..."
 msgstr ""
 
@@ -12179,7 +12207,7 @@ msgstr ""
 msgid "Tend your Leaf Wildlings well."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:158
+#: scenes/ui/title_screen.gd:156
 msgid "Terms"
 msgstr ""
 
@@ -13438,6 +13466,30 @@ msgstr ""
 msgid "Treat Tin"
 msgstr ""
 
+#: scenes/ui/account_panel.gd:168
+msgid "Tretu profile"
+msgstr ""
+
+#: autoload/net.gd:155 autoload/tretu.gd:198 autoload/tretu.gd:200 autoload/tretu.gd:299 ...
+msgid "Tretu sign-in failed."
+msgstr ""
+
+#: autoload/net.gd:154
+msgid "Tretu sign-in is not enabled on this server."
+msgstr ""
+
+#: autoload/tretu.gd:165
+msgid "Tretu sign-in is not set up for this build."
+msgstr ""
+
+#: autoload/tretu.gd:196 autoload/tretu.gd:274
+msgid "Tretu sign-in timed out."
+msgstr ""
+
+#: autoload/tretu.gd:198
+msgid "Tretu sign-in was cancelled."
+msgstr ""
+
 #: data/items.json
 msgid "Trilobite"
 msgstr ""
@@ -13612,11 +13664,11 @@ msgstr ""
 msgid "Upgrade tools"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:154
+#: scenes/ui/account_panel.gd:161
 msgid "Upload all farms now"
 msgstr ""
 
-#: scenes/ui/account_panel.gd:120
+#: scenes/ui/account_panel.gd:127
 msgid "Use"
 msgstr ""
 
@@ -14568,7 +14620,7 @@ msgstr ""
 msgid "Wren: That's why I want to fix it. To see where she went."
 msgstr ""
 
-#: scenes/ui/title_screen.gd:244
+#: scenes/ui/title_screen.gd:246
 msgid "X"
 msgstr ""
 
@@ -15362,12 +15414,12 @@ msgstr ""
 msgid "· status"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:199
+#: scenes/ui/title_screen.gd:201
 #, c-format
 msgid "● %s"
 msgstr ""
 
-#: scenes/ui/title_screen.gd:271
+#: scenes/ui/title_screen.gd:273
 #, c-format
 msgid "● %s · %s Farm\n%s · %s"
 msgstr ""
