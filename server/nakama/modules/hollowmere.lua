@@ -1,6 +1,9 @@
 -- Hollowmere server module: invite codes for co-op, cloud-save validation, error reports,
--- opt-in play stats, health.
+-- opt-in play stats, health, and the Tretu account / platform integration (tretu.lua, off unless
+-- TRETU_* is set in runtime.env).
 local nk = require("nakama")
+local tretu = require("tretu")
+tretu.init(nk)
 
 local SYSTEM = "00000000-0000-0000-0000-000000000000"
 local CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" -- no 0/O/1/I
@@ -125,8 +128,10 @@ local function track_session(ctx, payload)
   return "{}"
 end
 
+-- Used by clients and by the MCP relay's /api/health (with the HTTP key). Includes a DB check.
 local function health(_ctx, _payload)
-  return nk.json_encode({ok = true, time = nk.time()})
+  local db_ok = pcall(nk.sql_query, "SELECT 1 AS ok", {})
+  return nk.json_encode({ok = db_ok, time = nk.time(), checks = {db = db_ok and "ok" or "error"}})
 end
 
 local PROFILE_KEYS = {settings = true, meta = true}
@@ -176,11 +181,18 @@ local function before_write(ctx, payload)
   return payload
 end
 
--- Discord OAuth: the client sends the access token in vars; we swap it for discord:<id>.
-local function before_auth_custom(_ctx, payload)
+-- Custom auth carries a provider token in vars; the hook swaps it for a verified custom id:
+--   vars.tretu_token   -> "tretu:<sub>"   (Tretu-Konto, see tretu.lua; off without TRETU_AUTH_ISSUER)
+--   vars.discord_token -> "discord:<id>"  (or the Tretu account it was carried over to)
+-- Without a token the request is refused, so nobody can claim a custom id directly.
+local function before_auth_custom(ctx, payload)
   local account = payload.account or payload
   local vars = account.vars or {}
-  local token = vars.discord_token or vars["discord_token"] or ""
+  local tretu_token = vars.tretu_token or ""
+  if tretu_token ~= "" then
+    return tretu.authenticate(ctx, payload, account, tretu_token)
+  end
+  local token = vars.discord_token or ""
   if token == "" then
     error({"Sign in with Discord first.", 3})
   end
@@ -198,9 +210,19 @@ local function before_auth_custom(_ctx, payload)
   if not ok or type(user) ~= "table" or type(user.id) ~= "string" or user.id == "" then
     error({"Discord sign-in failed.", 16})
   end
-  account.id = "discord:" .. user.id
+  account.id = tretu.redirect_discord(user.id) or ("discord:" .. user.id)
+  -- The Discord token is only needed here; keep it out of the signed Nakama session.
+  account.vars = {}
   payload.account = account
   return payload
+end
+
+-- Cloud saves tell the platform about new in-game days and befriended Wildlings (queued only).
+local function after_write(ctx, _out, payload)
+  local ok, err = pcall(tretu.after_saves, ctx, (payload and payload.objects) or {})
+  if not ok then
+    nk.logger_warn("Tretu progress hook: " .. tostring(err))
+  end
 end
 
 local function sha(s)
@@ -260,6 +282,9 @@ local function agent_list_tokens(ctx, _payload)
     if v.user == ctx.user_id then
       out[#out + 1] = {id = row.key, name = v.name, scopes = v.scopes, expires = v.expires}
     end
+  end
+  if #out == 0 then
+    return '{"tokens":[]}' -- an empty Lua table would encode as {}
   end
   return nk.json_encode({tokens = out})
 end
@@ -373,7 +398,18 @@ nk.register_rpc(agent_relay, "agent_relay")
 nk.register_rpc(agent_poll, "agent_poll")
 nk.register_rpc(agent_take, "agent_take")
 nk.register_rpc(agent_done, "agent_done")
+nk.register_rpc(tretu.rpc_heartbeat, "tretu_heartbeat")
+nk.register_rpc(tretu.rpc_offline, "tretu_offline")
+nk.register_rpc(tretu.rpc_report_battle, "tretu_report_battle")
 nk.register_req_before(before_write, "WriteStorageObjects")
+nk.register_req_after(after_write, "WriteStorageObjects")
 nk.register_req_before(before_auth_custom, "AuthenticateCustom")
+
+-- Proves the contract's signing test vector on this runtime at every start.
+if tretu.self_test() then
+  nk.logger_info("Tretu signing self-test ok")
+else
+  nk.logger_error("Tretu signing self-test FAILED: platform requests would be rejected")
+end
 
 nk.logger_info("Hollowmere module loaded")
