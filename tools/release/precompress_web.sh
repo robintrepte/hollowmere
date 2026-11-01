@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Writes .br and .gz next to the big web build files so Caddy can serve them precompressed.
+# Writes .br and .gz next to the big web build files so nginx can serve them precompressed
+# (gzip_static / brotli_static in deploy/nginx/hollowmere.tretu.de.conf).
 #   tools/release/precompress_web.sh build/web
 set -euo pipefail
 DIR="${1:-build/web}"

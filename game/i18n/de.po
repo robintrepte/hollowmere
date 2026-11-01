@@ -5565,7 +5565,7 @@ msgstr "Kümmere dich gut um deine Blatt-Wildlinge."
 
 #: scenes/ui/title_screen.gd
 msgid "Terms"
-msgstr "Nutzungsbedingungen"
+msgstr "AGB"
 
 #: data/creatures.json
 msgid "Terragorn"
@@ -13668,4 +13668,43 @@ msgstr "Du schaust zu."
 
 msgid "Your tokens"
 msgstr "Deine Tokens"
+
+msgid "Sign in with Tretu"
+msgstr "Mit Tretu-Konto anmelden"
+
+msgid "Can't reach the Tretu sign-in right now."
+msgstr "Die Tretu-Anmeldung ist gerade nicht erreichbar."
+
+msgid "Could not open a local port for the sign-in."
+msgstr "Für die Anmeldung konnte kein lokaler Port geöffnet werden."
+
+msgid "Finish signing in with Tretu in the popup..."
+msgstr "Melde dich im Pop-up mit Tretu an..."
+
+msgid "Finish signing in with Tretu in your browser..."
+msgstr "Melde dich in deinem Browser mit Tretu an..."
+
+msgid "Imprint"
+msgstr "Impressum"
+
+msgid "My account"
+msgstr "Mein Konto"
+
+msgid "Tretu profile"
+msgstr "Tretu-Profil"
+
+msgid "Tretu sign-in failed."
+msgstr "Die Anmeldung mit Tretu ist fehlgeschlagen."
+
+msgid "Tretu sign-in is not enabled on this server."
+msgstr "Die Tretu-Anmeldung ist auf diesem Server nicht aktiviert."
+
+msgid "Tretu sign-in is not set up for this build."
+msgstr "Die Tretu-Anmeldung ist in dieser Version nicht eingerichtet."
+
+msgid "Tretu sign-in timed out."
+msgstr "Die Anmeldung mit Tretu hat zu lange gedauert."
+
+msgid "Tretu sign-in was cancelled."
+msgstr "Die Anmeldung mit Tretu wurde abgebrochen."
 

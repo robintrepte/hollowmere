@@ -264,7 +264,8 @@ func take_back() -> void:
 func refresh_tokens() -> void:
 	var res: Dictionary = await Net.call_rpc("agent_list_tokens", {})
 	if not res.has("error"):
-		tokens = res.get("tokens", [])
+		var list = res.get("tokens", [])
+		tokens = list if list is Array else []
 
 func issue_token(tname: String, scopes: Array, days: int = 30) -> Dictionary:
 	var res: Dictionary = await Net.call_rpc("agent_issue_token", {"name": tname, "scopes": scopes, "days": days})

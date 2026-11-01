@@ -38,7 +38,7 @@ Invite friends to your farm in online co-op (best with 2 to 4 players). Everyone
 Fish from piers and Möwenbucht, dig lasting tunnels under Eisenkamm, enchant your tools, and spend play-money chips at the Grand Casino in Lumière. A skill tree, daily quests and skippable tutorials sit in a tabbed menu. Crops keep growing while you are away (up to 14 days).
 
 **Play anywhere.**
-Windows, macOS, or right in your browser with the same account and cloud saves. Full controller support, adjustable text size, a colorblind-friendly mode and remappable keys.
+Windows, macOS, or right in your browser with the same account and cloud saves (sign in with your Tretu-Konto to bring your friends and badges from tretu.de). Full controller support, adjustable text size, a colorblind-friendly mode and remappable keys.
 
 ## Key features (bullets for capsules, itch.io and press)
 

@@ -104,6 +104,8 @@ static func social_icon(id: String) -> Texture2D:
 			_social_apple(img)
 		"discord":
 			_social_discord(img)
+		"tretu":
+			_social_tretu(img)
 	var tex := ImageTexture.create_from_image(img)
 	_cache[key] = tex
 	return tex
@@ -111,6 +113,22 @@ static func social_icon(id: String) -> Texture2D:
 static func _px(img: Image, x: int, y: int, c: Color) -> void:
 	if x >= 0 and y >= 0 and x < 16 and y < 16:
 		img.set_pixel(x, y, c)
+
+## Tretu-Konto: a rounded tile with a white T.
+static func _social_tretu(img: Image) -> void:
+	var bg := Color("#2f8f7a")
+	var hi := Color("#45b39b")
+	for y in range(2, 14):
+		for x in range(2, 14):
+			var corner := (x == 2 or x == 13) and (y == 2 or y == 13)
+			if not corner:
+				_px(img, x, y, hi if y < 4 else bg)
+	for x in range(4, 12):
+		_px(img, x, 4, Color.WHITE)
+		_px(img, x, 5, Color.WHITE)
+	for y in range(6, 12):
+		_px(img, 7, y, Color.WHITE)
+		_px(img, 8, y, Color.WHITE)
 
 static func _social_google(img: Image) -> void:
 	var b := Color("#4285F4")

@@ -12,7 +12,7 @@ Prepared answers for the rating questionnaires (IARC for web, itch.io and the Mi
 | In-game purchases | None. The game is free and has no shop for real money, no loot boxes and no ads. | – |
 | User interaction | Yes: online co-op with friends (invite code), free-text chat between the players of one farm, no public lobbies. | Co-op |
 | Shares location | No. | – |
-| Personal data | Account (email or Google sign-in) for cloud saves; crash reports on by default, play stats only after opt-in. | Settings, Privacy |
+| Personal data | Account (Tretu-Konto, email, Google, Apple or Discord sign-in, or guest) for cloud saves; crash reports on by default, play stats only after opt-in. Privacy policy: https://tretu.de/datenschutz | Settings, Privacy |
 | Alcohol, drugs, tobacco | No. The casino bar serves tea, cake and pudding. | – |
 | Sexual content, nudity | No. Villagers can be courted and married (hand-holding level). | Town |
 | Language | No strong language. | – |

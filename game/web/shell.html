@@ -6,6 +6,7 @@
 	<meta name="google-client-id" content="%GOOGLE_CLIENT_ID%">
 	<meta name="apple-client-id" content="%APPLE_CLIENT_ID%">
 	<meta name="discord-client-id" content="%DISCORD_CLIENT_ID%">
+	<!-- UMAMI: tools/release/inject_web_config.py puts the analytics tag here when UMAMI_SRC and UMAMI_WEBSITE_ID are set. -->
 	<meta name="theme-color" content="#1c2120">
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -46,7 +47,7 @@
 		<progress id="status-progress"></progress>
 		<div id="status-notice"></div>
 		<div id="status-install"></div>
-		<div id="status-legal"><a href="/privacy" rel="privacy-policy">Privacy</a> · <a href="/terms">Terms</a></div>
+		<div id="status-legal"><a href="https://tretu.de/datenschutz" rel="privacy-policy">Datenschutz</a> · <a href="https://tretu.de/agb" rel="terms-of-service">AGB</a> · <a href="https://tretu.de/impressum">Impressum</a></div>
 	</div>
 	<div id="gsi-holder"></div>
 
@@ -154,6 +155,88 @@
 			const pop = window.open(url, "hm-discord", "width=500,height=720");
 			if (!pop) { window.hollowmereDiscordError = "The Discord sign-in popup was blocked."; }
 		};
+
+		// Tretu-Konto: OpenID Connect, authorization code + PKCE (S256), public client "hollowmere".
+		// The game calls hollowmereTretuSignIn(issuer, clientId) and polls window.hollowmereTretuToken.
+		// /auth/callback (web/auth/callback/index.html) relays {code, state} back here: through a
+		// BroadcastChannel + storage event for the popup, or sessionStorage after a full-page redirect
+		// (used when the popup is blocked). Popup state lives in localStorage only until it is used.
+		(function () {
+			const PENDING = "hm-tretu-pending", RESULT = "hm-tretu-result", MAX_AGE_MS = 15 * 60 * 1000;
+			window.hollowmereTretuToken = "";
+			window.hollowmereTretuError = "";
+			window.hollowmereTretuName = "";
+			window.hollowmereTretuResume = false;
+			const b64url = (bytes) => btoa(String.fromCharCode.apply(null, Array.from(bytes))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+			const rnd = (n) => { const a = new Uint8Array(n); crypto.getRandomValues(a); return b64url(a); };
+			const s256 = async (v) => b64url(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(v))));
+			const read = (store, k) => { try { return JSON.parse(store.getItem(k) || "null"); } catch (e) { return null; } };
+			const claims = (jwt) => {
+				try {
+					const p = jwt.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+					const bin = atob(p + "===".slice((p.length + 3) % 4));
+					return JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0))));
+				} catch (e) { return {}; }
+			};
+			let busy = false;
+			async function finish(res) {
+				const p = read(localStorage, PENDING);
+				if (busy || !p || !res || res.state !== p.state) return;
+				busy = true;
+				localStorage.removeItem(PENDING);
+				try {
+					if (Date.now() - (p.at || 0) > MAX_AGE_MS) throw new Error("expired");
+					if (res.error) {
+						window.hollowmereTretuError = res.error === "access_denied" ? "Tretu sign-in was cancelled." : "Tretu sign-in failed.";
+						return;
+					}
+					const body = new URLSearchParams({ grant_type: "authorization_code", code: res.code, redirect_uri: p.redirect, client_id: p.clientId, code_verifier: p.verifier });
+					const r = await fetch(p.tokenEndpoint, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" }, body: body });
+					const t = await r.json().catch(() => ({}));
+					if (!r.ok || !t.access_token) throw new Error("token");
+					const c = t.id_token ? claims(t.id_token) : {};
+					if (c.nonce && c.nonce !== p.nonce) throw new Error("nonce");
+					window.hollowmereTretuName = c.preferred_username || "";
+					window.hollowmereTretuToken = t.access_token;
+				} catch (e) {
+					window.hollowmereTretuError = "Tretu sign-in failed.";
+				} finally {
+					busy = false;
+				}
+			}
+			window.hollowmereTretuSignIn = function (issuer, clientId) {
+				window.hollowmereTretuToken = "";
+				window.hollowmereTretuError = "";
+				// Open the popup inside the click; it is pointed at the issuer once discovery is back.
+				const pop = window.open("", "hm-tretu", "width=520,height=740");
+				(async function () {
+					try {
+						const r = await fetch(issuer + "/.well-known/openid-configuration", { headers: { Accept: "application/json" } });
+						const d = r.ok ? await r.json() : {};
+						if ((d.issuer || "").replace(/\/$/, "") !== issuer || !d.authorization_endpoint || !d.token_endpoint) throw new Error("discovery");
+						const verifier = rnd(48), state = rnd(16), nonce = rnd(16);
+						const redirect = location.origin + "/auth/callback";
+						localStorage.setItem(PENDING, JSON.stringify({ state, nonce, verifier, redirect, clientId, tokenEndpoint: d.token_endpoint, mode: pop ? "popup" : "redirect", at: Date.now() }));
+						const q = new URLSearchParams({ response_type: "code", client_id: clientId, redirect_uri: redirect, scope: "openid profile email offline_access tretu", state, nonce, code_challenge: await s256(verifier), code_challenge_method: "S256" });
+						const url = d.authorization_endpoint + (d.authorization_endpoint.indexOf("?") >= 0 ? "&" : "?") + q.toString();
+						if (pop) { pop.location.href = url; } else { location.assign(url); }
+					} catch (e) {
+						if (pop) pop.close();
+						window.hollowmereTretuError = "Can't reach the Tretu sign-in right now.";
+					}
+				}());
+			};
+			if ("BroadcastChannel" in window) { new BroadcastChannel("hm-tretu").onmessage = (e) => finish(e.data); }
+			window.addEventListener("storage", (e) => {
+				if (e.key === RESULT && e.newValue) { localStorage.removeItem(RESULT); finish(read({ getItem: () => e.newValue }, RESULT)); }
+			});
+			const back = read(sessionStorage, RESULT);
+			if (back) {
+				sessionStorage.removeItem(RESULT);
+				window.hollowmereTretuResume = true;
+				finish(back);
+			}
+		}());
 	</script>
 	<script src="$GODOT_URL"></script>
 	<script>

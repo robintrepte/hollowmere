@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>__TITLE__ – Hollowmere</title>
+	<!-- Hollowmere's legal pages live on tretu.de. nginx answers this path with a 308
+	     (deploy/nginx/hollowmere.tretu.de.conf); this page covers any other static host. -->
+	<link rel="canonical" href="__TARGET__">
+	<meta http-equiv="refresh" content="0; url=__TARGET__">
+	<meta name="robots" content="noindex">
+	<style>
+		:root { color-scheme: dark; }
+		body { margin: 0; background: #1c2120; color: #f3ead8; font: 17px/1.55 "Trebuchet MS", sans-serif; text-align: center; padding: 3rem 1.2rem; }
+		a { color: #ffd36b; }
+	</style>
+</head>
+<body>
+	<p>__TITLE__: <a href="__TARGET__">__TARGET__</a></p>
+	<script>location.replace("__TARGET__");</script>
+</body>
+</html>

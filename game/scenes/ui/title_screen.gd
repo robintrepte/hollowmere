@@ -135,8 +135,8 @@ func _fill_menu() -> void:
 	if is_instance_valid(_account):
 		_on_session(Net.has_session())
 
-## Privacy and terms sit under the menu as quiet text links, so long
-## translations never widen the button stack.
+## Privacy, terms and imprint sit under the menu as quiet text links, so long
+## translations never widen the button stack. They live on tretu.de (tretu/legal_url).
 func _build_legal() -> void:
 	_legal = HBoxContainer.new()
 	_legal.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -151,12 +151,17 @@ func _build_legal() -> void:
 	_legal.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	_legal.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_legal)
-	_legal.add_child(_text_link("Privacy policy", "privacy"))
+	_legal.add_child(_text_link("Privacy policy", "datenschutz"))
+	_legal_dot()
+	_legal.add_child(_text_link("Terms", "agb"))
+	_legal_dot()
+	_legal.add_child(_text_link("Imprint", "impressum"))
+	_style_legal()
+
+func _legal_dot() -> void:
 	var dot := UITheme.label("·", 8, UITheme.CREAM, true)
 	dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_legal.add_child(dot)
-	_legal.add_child(_text_link("Terms", "terms"))
-	_style_legal()
 
 func _text_link(text: String, page: String) -> LinkButton:
 	var b := LinkButton.new()
@@ -186,17 +191,20 @@ func _style_legal() -> void:
 			c.add_theme_font_size_override("font_size", UITheme.fs(8))
 
 func _open_page(page: String) -> void:
-	var url := "https://hollowmere.tretu.de/" + page
+	var url := Tretu.legal_url() + "/" + page
 	if OS.get_name() == "Web":
-		var origin := str(JavaScriptBridge.eval("location.origin", true))
-		if origin.begins_with("http"):
-			url = origin + "/" + page
 		JavaScriptBridge.eval("window.open(%s, '_blank', 'noopener')" % JSON.stringify(url), true)
 		return
 	OS.shell_open(url)
 
+var _join_link_used := false
+
 func _on_session(signed_in: bool) -> void:
 	_account.text = (tr("● %s") % Net.display_name) if signed_in else tr("Sign in")
+	# Opened from a join link on tretu.de: go straight to the co-op panel (code filled in) once.
+	if signed_in and not _join_link_used and Net.web_join_code() != "":
+		_join_link_used = true
+		coop_requested.emit.call_deferred()
 	if signed_in:
 		_load_btn.disabled = false
 

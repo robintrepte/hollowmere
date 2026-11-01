@@ -1,2 +1,4 @@
 .env
 site/
+nakama/local.yml
+nakama/data/

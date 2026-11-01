@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/version-1.0.0-blue.svg" alt="1.0.0">
   <img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="MIT License">
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Web-2ea44f" alt="Windows, macOS, Web">
-  <img src="https://img.shields.io/badge/tests-344%20GUT-success" alt="344 GUT tests">
+  <img src="https://img.shields.io/badge/tests-391%20GUT-success" alt="391 GUT tests">
 </p>
 
 <p align="center">
@@ -75,11 +75,11 @@ Store copy and capsule art live in [`store/STORE_PAGE.md`](store/STORE_PAGE.md).
 
 | Build | How |
 |---|---|
-| Browser | Host the web export (see [HOSTING.md](HOSTING.md)) and open `https://play.example.com` |
+| Browser | `https://hollowmere.tretu.de` (or host the web export yourself, see [HOSTING.md](HOSTING.md)) |
 | Phone | Same URL, landscape. Safari / Chrome → **Add to Home Screen** for fullscreen |
 | Desktop | Windows and macOS exports from CI (`v*` tags) or a local Godot export |
 
-Accounts: email, guest, or Google. Cloud saves and co-op go through Nakama on your own server. AI clients talk to the MCP relay at `mcp.<your-domain>` with a token created in-game.
+Accounts: Tretu-Konto, email, guest, Google, Apple or Discord. Cloud saves and co-op go through Nakama on your own server. AI clients talk to the MCP relay at `mcp.<your-domain>` with a token created in-game.
 
 ## Run it locally
 
@@ -90,18 +90,29 @@ Needs **Godot 4.7.2**. Drop the editor at `.tools/Godot.app` (macOS) or put `god
 godot --path game
 ```
 
-Backend (accounts, cloud saves, co-op, MCP) is Docker:
+Backend (accounts, cloud saves, co-op, MCP): a [Nakama](https://github.com/heroiclabs/nakama/releases) 3.41 binary and a local Postgres, no Docker:
 
 ```bash
-cd server
-cp .env.example .env          # defaults are fine on localhost
-docker compose up -d --build
+createdb nakama                                   # once, on your local Postgres
+export NAKAMA_BIN=/path/to/nakama                 # from the release tarball
+NAKAMA_ALLOW_DEFAULTS=1 NAKAMA_DATABASE_ADDRESS=postgres@127.0.0.1:5432/nakama \
+  server/nakama/nakama.sh start                   # migrates, then runs
 # API     http://127.0.0.1:7350
-# Console http://127.0.0.1:7351  (admin / localdevpassword)
-# MCP     http://127.0.0.1:8787
+# Console http://127.0.0.1:7351  (admin / password, Nakama's dev defaults)
+NAKAMA_HTTP_KEY=defaulthttpkey node server/mcp/server.mjs   # MCP relay on :8787 (optional)
 ```
 
 Then run the game again. `game/project.godot` already points debug builds at `127.0.0.1:7350`.
+
+Server checks (Lua 5.1 and `psql` on PATH):
+
+```bash
+luac -p server/nakama/modules/*.lua
+lua server/nakama/tests/tretu_test.lua            # Tretu signing test vectors, progress rules
+server/nakama/nakama.sh check                     # Nakama loads the modules
+node server/nakama/tests/tretu_integration.mjs    # real Nakama + Postgres (drops/creates nakama_test)
+node server/mcp/test.mjs
+```
 
 ```bash
 # Compile check, unit tests, translations, one smoke
@@ -115,24 +126,32 @@ Release checklist, signing, itch and Steam: [RELEASE.md](RELEASE.md).
 
 ## Host it
 
-Production is a **Hetzner Ubuntu** box, **nginx** on the host, Docker for Nakama + Postgres + the MCP relay. The guide is written for humans and agents: one variable block at the top, then copy-paste commands.
+Production is `hollowmere.tretu.de` on the Tretu **Hetzner** server: **nginx** for TLS and the static web build, **PM2** for Nakama (`hollowmere-nakama`) and the MCP relay (`hollowmere-mcp`), the `nakama` database on the shared **Postgres**. No Docker. The guide is written for humans and agents: one variable block at the top, then copy-paste commands.
 
-**[HOSTING.md](HOSTING.md)** — DNS, nginx + certbot, secrets, first web deploy, GitHub Actions, backups, MCP subdomain.
+**[HOSTING.md](HOSTING.md)** — DNS, Postgres, Nakama binary, PM2, nginx + certbot, web deploy, Tretu-Konto and platform events, analytics, GitHub Actions, backups, moving off Docker.
 
-Example: `play.example.com` → your VPS. Replace the names in the variable block and keep going.
+## Tretu
+
+Hollowmere is part of the Tretu ecosystem (all optional, off unless configured, see HOSTING.md §10):
+
+- **Mit Tretu-Konto anmelden**: OpenID Connect with PKCE at auth.tretu.de (system browser + loopback on desktop, popup on the web). Earlier Discord players keep their farms.
+- **Platform events**: days played, Wildlings befriended and battle results go to tretu.de (stats, badges), plus "playing Hollowmere" presence with a join link while hosting co-op.
+- **Legal**: privacy policy, terms and imprint live on tretu.de (`/datenschutz`, `/agb`, `/impressum`).
 
 ## Repo map
 
 ```
 game/          Godot 4.7 project (scenes, data, i18n, tests)
-server/        Nakama + Postgres + MCP compose, Lua module, nginx / Caddy
+server/        Nakama config + Lua modules (hollowmere.lua, tretu.lua) + tests, MCP relay
+deploy/nginx/  nginx sites for hollowmere.tretu.de and mcp.hollowmere.tretu.de
+ecosystem.config.cjs  PM2 processes (hollowmere-nakama, hollowmere-mcp)
 docs/          Agent MCP setup (docs/agents.md)
 store/         Steam / itch capsules, screenshots, rating and store copy
 tools/         Art pipeline, string extraction, web fingerprint + precompress
-.github/       CI: 344 tests, Windows / macOS / Web export, tagged deploy
+.github/       CI: 391 GUT tests, Lua + Tretu integration tests, Windows / macOS / Web export, tagged deploy
 ```
 
-CI (every push and PR): script compile, GUT, translation template check, 112-day balance sim, casino RTP sim, Nakama integration, co-op and 4-peer desync tests, then Windows / macOS / Web exports. Tagged `v*` releases can sign macOS, push itch and rsync the web build.
+CI (every push and PR): script compile, GUT, translation template check, 112-day balance sim, casino RTP sim, Lua checks and the Tretu integration test on a real Nakama + Postgres, Nakama integration, co-op and 4-peer desync tests, then Windows / macOS / Web exports. Tagged `v*` releases can sign macOS, push itch, rsync the web build and reload PM2.
 
 ## Made with
 
