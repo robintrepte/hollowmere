@@ -11,7 +11,11 @@
 #   NAKAMA_LOCAL_CONFIG      secrets + Tretu env (default server/nakama/local.yml)
 #   NAKAMA_DATA_DIR          default server/nakama/data
 #   NAKAMA_DATABASE_ADDRESS  dev/CI only: user[:pass]@host:port/db instead of local.yml
-#   NAKAMA_ALLOW_DEFAULTS=1  dev/CI only: start without local.yml (insecure default keys)
+#   NAKAMA_ALLOW_DEFAULTS=1  dev/CI only: start without local.yml (insecure default keys, and no
+#                            Tretu sign-in: only guest play works)
+#
+# With local.yml (production), runtime.env must set TRETU_AUTH_ISSUER (the Tretu-Konto is the only
+# account sign-in); start and migrate refuse to run without it.
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BIN="${NAKAMA_BIN:-/opt/nakama/nakama}"
@@ -30,6 +34,10 @@ fi
 
 args=(--config "$HERE/hollowmere.yml")
 if [[ -f "$LOCAL" ]]; then
+  if ! grep -Eq '^[[:space:]]*-[[:space:]]*"?TRETU_AUTH_ISSUER=https?://[^"[:space:]]+' "$LOCAL"; then
+    echo "Tretu sign-in not configured: set \"TRETU_AUTH_ISSUER=https://auth.tretu.de\" under runtime.env in $LOCAL (HOSTING.md)" >&2
+    exit 1
+  fi
   args+=(--config "$LOCAL")
 elif [[ "${NAKAMA_ALLOW_DEFAULTS:-}" != "1" ]]; then
   echo "missing $LOCAL: copy server/nakama/local.example.yml and fill it in (HOSTING.md)" >&2

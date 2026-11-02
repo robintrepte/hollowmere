@@ -11,9 +11,9 @@ runtime:
   # Same value as NAKAMA_HTTP_KEY in server/.env (the MCP relay calls Nakama with it).
   http_key: "CHANGE_ME_HTTP_KEY"
   env:
-    # Tretu ecosystem (all optional; leave a line out or empty to keep that part off).
-    # Sign-in with a Tretu-Konto (needs tretu/auth_issuer in the game build too):
-    - "TRETU_AUTH_ISSUER="
+    # Tretu-Konto: the only account sign-in (REQUIRED, nakama.sh refuses to start without it).
+    # Must match tretu/auth_issuer in the game build (project.godot ships https://auth.tretu.de).
+    - "TRETU_AUTH_ISSUER=https://auth.tretu.de"
     # Events, presence, Tretu-Credits + notifications in the game (URL and secret must both be set):
     - "TRETU_PLATFORM_URL="
     - "TRETU_APP_ID=hollowmere"
@@ -25,7 +25,3 @@ runtime:
 console:
   username: "admin"
   password: "CHANGE_ME_CONSOLE_PASSWORD"
-social:
-  apple:
-    # Apple Services ID for web sign-in (Nakama checks the token audience); leave as is if unused.
-    bundle_id: "com.hollowmere.unset"
