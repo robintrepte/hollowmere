@@ -80,12 +80,26 @@ test("user.updated refreshes, unknown types are 204, nothing reaches Nakama unsi
   const { calls, rpc } = fakeRpc();
   const data = { sub: "s", username: "mia", links: { steam: "76561198000000001" } };
   assert.equal((await handleWebhook(signed(envelope("user.updated", "s", data)), rpc)).status, 200);
-  assert.deepEqual(calls[0], { id: "tretu_user_updated", body: { sub: "s", data } });
+  assert.deepEqual(calls[0], { id: "tretu_user_updated", body: { sub: "s", data, occurredAt: "2026-01-01T00:00:00.000Z" } });
   assert.equal((await handleWebhook(signed(envelope("badge.earned", "s", { badge: "x" })), rpc)).status, 204);
   assert.equal((await handleWebhook(signed(envelope("wallet.changed", "s")), rpc)).status, 204);
   const forged = signed(envelope("user.deleted", "s"), { secret: "attacker" });
   assert.equal((await handleWebhook(forged, rpc)).status, 401);
   assert.equal(calls.length, 1);
+});
+
+test("user.updated with locked reaches Nakama with the event time (orders retries); odd times are dropped", async () => {
+  const { calls, rpc } = fakeRpc();
+  const logs = [];
+  const lock = { ...envelope("user.updated", "s", { sub: "s", locked: true }), occurredAt: "2026-03-04T05:06:07.890+01:00" };
+  assert.equal((await handleWebhook(signed(lock), rpc, (l) => logs.push(l))).status, 200);
+  assert.deepEqual(calls[0], { id: "tretu_user_updated", body: { sub: "s", data: { sub: "s", locked: true }, occurredAt: "2026-03-04T04:06:07.890Z" } });
+  assert.ok(logs.some((l) => l.includes("lock")), "a lock is logged (without secrets)");
+  const odd = { ...envelope("user.updated", "s", { sub: "s", locked: false }), occurredAt: "yesterday" };
+  await handleWebhook(signed(odd), rpc);
+  assert.deepEqual(calls[1], { id: "tretu_user_updated", body: { sub: "s", data: { sub: "s", locked: false } } });
+  const down = fakeRpc(true);
+  assert.equal((await handleWebhook(signed(lock), down.rpc)).status, 503, "the platform retries a lock Nakama could not apply");
 });
 
 test("bad input and Nakama trouble", async () => {
