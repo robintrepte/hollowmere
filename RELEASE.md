@@ -19,15 +19,15 @@ Step-by-step Hetzner + Ubuntu + nginx (the commands an agent can run): **[HOSTIN
 
 Short version: it runs on the Tretu Hetzner server: nginx + certbot on the host, Nakama and the MCP relay as PM2 processes (`ecosystem.config.cjs`), the `nakama` database on the shared Postgres. No Docker. Put the private SSH key in `DEPLOY_SSH_KEY` and the hostname in the `HOLLOWMERE_DOMAIN` variable. Leave `socket.server_key` in `server/nakama/hollowmere.yml` equal to `hollowmere/server/key` in `game/project.godot`: it ships inside every client and is not a secret.
 
-### 1.2 Google sign-in
+### 1.2 Sign-in: Tretu-Konto only
 
-Social buttons (Google / Apple / Discord) only appear when that provider's client id is injected into the web shell and the device supports it. Email and guest work without any of them. See HOSTING.md §13.
+"Mit Tretu-Konto anmelden" is the only account sign-in; guest play stays, and a guest keeps its farm with "Save to Tretu-Konto". Every build ships with `tretu/auth_issuer="https://auth.tretu.de"` and `tretu/client_id="hollowmere"` (the `TRETU_AUTH_ISSUER` repository variable only overrides the issuer, e.g. for staging). The server needs `TRETU_AUTH_ISSUER` in `server/nakama/local.yml` (required, `nakama.sh` refuses to start without it). The email, Google, Apple and Discord sign-ins were removed; their accounts are carried over on the first Tretu login (`legacy_ids.hollowmere`, then Discord/Steam). Release order: auth.tretu.de live and the legacy import done first. See HOSTING.md §10.
 
-### 1.3 Tretu-Konto, platform events
+### 1.3 Tretu platform events
 
-"Mit Tretu-Konto anmelden" appears only in builds made with the `TRETU_AUTH_ISSUER` repository variable, and works only when the server has `TRETU_AUTH_ISSUER` in `server/nakama/local.yml`. Events and presence for tretu.de need `TRETU_PLATFORM_URL`, `TRETU_APP_ID`, `TRETU_APP_SECRET` there. All of it is off by default. See HOSTING.md §10.
+Events and presence for tretu.de need `TRETU_PLATFORM_URL`, `TRETU_APP_ID`, `TRETU_APP_SECRET` in `server/nakama/local.yml`; off until set. See HOSTING.md §10.
 
-### 1.3 Apple (macOS signing and notarization)
+### 1.4 Apple (macOS signing and notarization)
 
 Needs an Apple Developer Program membership ($99/year).
 
@@ -38,7 +38,7 @@ Needs an Apple Developer Program membership ($99/year).
 
 Locally: `tools/release/sign_macos.sh build/macos/Hollowmere.zip` with the same variables exported.
 
-### 1.4 itch.io (playtests and desktop downloads)
+### 1.5 itch.io (playtests and desktop downloads)
 
 1. Create the project page (Kind: Downloadable). Use `store/STORE_PAGE.md` for the text and `store/itch/` for the cover and banner.
 2. Generate an API key under Settings, API keys: that's `BUTLER_API_KEY`. Set the repository **variable** `ITCH_TARGET` to `<itch user>/<game slug>`.
@@ -53,9 +53,6 @@ Settings, Secrets and variables, Actions:
 |---|---|---|
 | `DEPLOY_HOST` | secret | deploy-web (VPS hostname or IP) |
 | `DEPLOY_SSH_KEY` | secret | deploy-web (private key of `deploy`) |
-| `GOOGLE_CLIENT_ID` | secret | web export (Google button) |
-| `APPLE_CLIENT_ID` | secret | web export + Nakama (Apple button, Services ID) |
-| `DISCORD_CLIENT_ID` | secret | web export (Discord button) |
 | `MACOS_SIGN_IDENTITY` | secret | sign-macos |
 | `MACOS_CERT_P12_BASE64` | secret | sign-macos |
 | `MACOS_CERT_PASSWORD` | secret | sign-macos |
@@ -112,7 +109,7 @@ Rollback: re-run the `deploy-web` job of the previous tag. The engine files carr
 - Launch-day checklist:
   - [ ] Backups running, `pm2 status` shows `hollowmere-nakama` and `hollowmere-mcp` online, `https://<domain>/api/health` is ok, disk under 50%
   - [ ] `curl -I https://<domain>/` shows `Cache-Control: no-cache`, and an `hm-*.wasm` shows `immutable` and `Content-Encoding: br`
-  - [ ] Google sign-in works on the live domain
+  - [ ] "Mit Tretu-Konto anmelden" works on the live domain (popup and, with popups blocked, the full-page redirect), and a guest's "Save to Tretu-Konto" keeps the farm
   - [ ] Nakama console (`ssh -L 7351:127.0.0.1:7351 deploy@<host>`, then http://127.0.0.1:7351) reachable, with the default password changed
   - [ ] Store screenshots are up to date (`store/screenshots/`, regenerate with `tests/smoke/store_shots.tscn`)
 - Post where cozy and creature-collector players are: r/CozyGamers, r/StardewValley (self-promo days), r/monstertamers, TIGSource, Bluesky/X with `#screenshotsaturday`.
@@ -137,7 +134,7 @@ Rollback: re-run the `deploy-web` job of the previous tag. The engine files carr
 5. Steam's review checks the page and the build (3 to 5 days). Release from the Steamworks dashboard.
 6. Not wired up yet, if wanted later: Steam achievements, Steam Cloud and the Steam overlay need GodotSteam (GDExtension) in the desktop builds only.
 7. **Sign-in on Steam builds: the Tretu-Konto, in the browser.** The Steam depots are the normal desktop exports, so "Mit Tretu-Konto anmelden" works unchanged: the game opens the system browser at auth.tretu.de (where players can also sign in *with Steam*, Steam OpenID) and receives the code on `http://127.0.0.1:<random port>/callback`; the refresh token is kept encrypted for silent sign-in on the next start. Requirements and notes:
-   - Build the depots with the `TRETU_AUTH_ISSUER` repository variable set (HOSTING.md §10), otherwise the button is hidden. Email, guest and the other sign-ins keep working.
+   - The depots are the normal exports, which ship with the Tretu issuer (HOSTING.md §10); guest play works too.
    - On Steam Deck in Gaming Mode, `OS.shell_open` opens the Steam overlay browser only if the overlay is available; otherwise the player switches to Desktop Mode once. After that first sign-in the stored refresh token signs in silently, so this is a one-time step. Mention it in the store FAQ.
    - The `steam_id` claim (when the player linked Steam in Mein Konto) is stored on the Nakama account (`metadata.steam_id`). Old Steam-only accounts (`users.steam_id` / custom id `steam:<id>`) are carried over or offered in "Wähle deine Farm" exactly like Discord accounts.
    - There is **no native Steam login** (Steam session tickets need GodotSteam and a Steam Web API publisher key on the server). If one is added later, use Nakama's `AuthenticateSteam` so it lands on `users.steam_id`: the farm choice already moves that id to the farm the player keeps.

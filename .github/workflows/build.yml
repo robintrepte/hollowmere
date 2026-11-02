@@ -139,14 +139,18 @@ jobs:
       - name: Point release builds at the live server
         if: vars.HOLLOWMERE_DOMAIN != ''
         run: sed -i "s/%HOLLOWMERE_DOMAIN%/${{ vars.HOLLOWMERE_DOMAIN }}/" game/project.godot
-      - name: Turn on "Mit Tretu-Konto anmelden" (only with the TRETU_AUTH_ISSUER variable)
+      # project.godot ships auth_issuer="https://auth.tretu.de" (the Tretu-Konto is the only account
+      # sign-in); the TRETU_AUTH_ISSUER variable only overrides it, e.g. for a staging issuer.
+      - name: Override the Tretu issuer (only with the TRETU_AUTH_ISSUER variable)
         if: vars.TRETU_AUTH_ISSUER != ''
         env:
           ISSUER: ${{ vars.TRETU_AUTH_ISSUER }}
         run: |
           [[ "$ISSUER" =~ ^https://[A-Za-z0-9.-]+$ ]] || { echo "TRETU_AUTH_ISSUER must look like https://auth.tretu.de"; exit 1; }
-          sed -i "s|^auth_issuer=\"\"|auth_issuer=\"$ISSUER\"|" game/project.godot
+          sed -i "s|^auth_issuer=\".*\"\$|auth_issuer=\"$ISSUER\"|" game/project.godot
           grep -q "^auth_issuer=\"$ISSUER\"" game/project.godot
+      - name: Tretu sign-in is configured in the build
+        run: grep -Eq '^auth_issuer="https://[A-Za-z0-9.-]+"$' game/project.godot && grep -q '^client_id="hollowmere"$' game/project.godot
       - name: Export
         run: |
           mkdir -p build/windows build/macos build/web
@@ -159,13 +163,6 @@ jobs:
             macOS) test -f build/macos/Hollowmere.zip ;;
             Web) test -f build/web/index.html ;;
           esac || exit "${code:-1}"
-      - name: Inject OAuth client ids (web)
-        if: matrix.preset == 'Web'
-        env:
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
-          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
-        run: python3 tools/release/inject_web_config.py build/web/index.html
       - name: Fingerprint and precompress (web)
         if: matrix.preset == 'Web'
         run: |

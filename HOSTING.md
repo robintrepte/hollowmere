@@ -112,8 +112,8 @@ Fill in (generate each secret with `openssl rand -hex 24`; never commit these fi
 | | `session.encryption_key`, `session.refresh_encryption_key` | random |
 | | `runtime.http_key` | random, **same** as `NAKAMA_HTTP_KEY` below |
 | | `console.username`, `console.password` | Nakama console login (not a game account) |
-| | `social.apple.bundle_id` | Apple Services ID if Apple sign-in is used |
-| | `runtime.env` `TRETU_*` | see step 10 (leave empty = off) |
+| | `runtime.env` `TRETU_AUTH_ISSUER` | **required**: `https://auth.tretu.de` (the Tretu-Konto is the only account sign-in; `nakama.sh start`/`migrate` refuse to run without it) |
+| | `runtime.env` other `TRETU_*` | see step 10 (platform part: leave empty = off) |
 | `server/.env` | `NAKAMA_HTTP_KEY` | same as `runtime.http_key` |
 | | `NAKAMA_BIN` | `/opt/nakama/nakama` |
 | | `MCP_PUBLIC_URL` | `https://$MCP_DOMAIN` |
@@ -176,8 +176,8 @@ frame-ancestors 'none'` (no framing of the game or its sign-in). nginx does not 
 `add_header` into a location that sets its own, so the file repeats them per location; keep that
 when you add a location.
 
-The web export is single-threaded: no COOP/COEP headers. Do not add them (COEP breaks Google
-sign-in, `COOP: same-origin` cuts the sign-in popups off from the game).
+The web export is single-threaded: no COOP/COEP headers. Do not add them (`COOP: same-origin` cuts
+the Tretu sign-in popup off from the game).
 For Brotli: `sudo apt install libnginx-mod-http-brotli-static` and uncomment `brotli_static on;`.
 
 ## 8. Web build
@@ -187,14 +187,11 @@ By hand, on a machine with Godot 4.7.2 and its export templates:
 
 ```bash
 sed -i.bak "s/%HOLLOWMERE_DOMAIN%/$DOMAIN/" game/project.godot
-# Optional: Tretu-Konto button (step 10)
-# sed -i 's|^auth_issuer=""|auth_issuer="https://auth.tretu.de"|' game/project.godot
+# The Tretu issuer ships as https://auth.tretu.de (tretu/auth_issuer); another one only for staging:
+# sed -i 's|^auth_issuer=".*"$|auth_issuer="https://auth.staging.example"|' game/project.godot
 godot --headless --path game --export-release "Web" "$PWD/build/web/index.html"
 mv game/project.godot.bak game/project.godot          # never commit a live domain
 
-# Public per-deployment values (each optional; unset = that feature off)
-GOOGLE_CLIENT_ID= APPLE_CLIENT_ID= DISCORD_CLIENT_ID= \
-  python3 tools/release/inject_web_config.py build/web/index.html
 tools/release/fingerprint_web.sh build/web     # hm-<hash> names, PWA files, legal redirects, /auth/callback
 tools/release/precompress_web.sh build/web
 rsync -az --delete build/web/ "$DEPLOY_USER@$SERVER_IP:$SITE_DIR/"
@@ -205,22 +202,36 @@ rsync -az --delete build/web/ "$DEPLOY_USER@$SERVER_IP:$SITE_DIR/"
 Desktop and web release builds read `hollowmere/server/host.release` (`%HOLLOWMERE_DOMAIN%` in the
 repo). CI fills it from the repository variable `HOLLOWMERE_DOMAIN` = `hollowmere.tretu.de`.
 
-## 10. Tretu ecosystem (all optional, all off by default)
+## 10. Tretu ecosystem
 
-Nothing here changes a build or a server until it is configured. Email, guest, Google, Apple and
-Discord keep working either way.
+**"Mit Tretu-Konto anmelden" is the only account sign-in.** The in-game email, Google, Apple and
+Discord sign-ins were removed; guest (device) play stays. The platform part (events, presence,
+Tretu-Credits) stays off until `TRETU_PLATFORM_URL` and `TRETU_APP_SECRET` are set.
 
-**Mit Tretu-Konto anmelden** needs both sides:
+**Deploy order (GO-LIVE):** auth.tretu.de must be live, the client `hollowmere` registered and the
+legacy import done (so `legacy_ids.hollowmere` is known for old players) **before** this version of
+the server and the game ships.
+
+Both sides:
 
 1. auth.tretu.de: client `hollowmere`, public (PKCE only, no secret), redirect URIs
    `https://hollowmere.tretu.de/auth/callback` and `http://127.0.0.1/callback` (any port, RFC 8252).
    The issuer must allow CORS from `https://hollowmere.tretu.de` on discovery and the token endpoint
-   (the web build exchanges the code in the browser).
-2. Server: `TRETU_AUTH_ISSUER=https://auth.tretu.de` in `runtime.env` of `server/nakama/local.yml`,
-   then `pm2 reload hollowmere-nakama`.
-3. Game builds: GitHub variable `TRETU_AUTH_ISSUER=https://auth.tretu.de` (CI writes it into
-   `tretu/auth_issuer` in `game/project.godot`; `tretu/client_id` is already `hollowmere`).
-   Builds without it show no Tretu button.
+   (the web build exchanges the code in the browser). Userinfo carries the `legacy_ids` claim
+   (scope `tretu`).
+2. Server (required): `TRETU_AUTH_ISSUER=https://auth.tretu.de` in `runtime.env` of
+   `server/nakama/local.yml` (the example has it), then `pm2 reload hollowmere-nakama`. Without it
+   `nakama.sh` stops with "Tretu sign-in not configured" (only `NAKAMA_ALLOW_DEFAULTS=1` dev/CI
+   runs without `local.yml` start without it, and then only guest play works).
+3. Game builds: `game/project.godot` ships `tretu/auth_issuer="https://auth.tretu.de"` and
+   `tretu/client_id="hollowmere"`. The GitHub variable `TRETU_AUTH_ISSUER` only overrides the issuer
+   (e.g. staging); CI fails the export if the setting is missing.
+
+**Server-side, the removed sign-ins are refused** (old clients, direct API calls): Nakama before-hooks
+answer `AuthenticateEmail/Google/Apple/Facebook/FacebookInstantGame/GameCenter/Steam`, the matching
+`Link*` calls and `UnlinkCustom` with "This sign-in is no longer available. Sign in with your Tretu
+account." A custom login needs a Tretu token (or a farm-switch ticket). The Discord token check
+(`discord.com` from Nakama) is gone.
 
 How it works: desktop builds open the system browser and receive the code on
 `http://127.0.0.1:<random port>/callback`; the web build uses a popup (or a full-page redirect
@@ -242,23 +253,35 @@ If auth.tretu.de is down, Tretu sign-in answers "Die Tretu-Anmeldung ist gerade 
 (Nakama remembers a failed discovery for 15 s instead of waiting on every attempt); players who are
 already signed in keep playing, because their Nakama session does not depend on the issuer.
 
-**Discord and Steam players keep their farms.** The `discord_id` and `steam_id` claims are kept
-server-side (`tretu_identity/<sub>`, not readable by players); `steam_id` is also written to the
-account metadata (`metadata.steam_id`, removed again when the player unlinks Steam in Mein Konto).
-If the player has an old account and no `tretu:<sub>` account yet, that account is re-keyed to
-`tretu:<sub>` (one guarded, idempotent `UPDATE users SET custom_id …`), so the same Nakama user
-(saves, profile, AI-helper tokens) continues:
+**Old players keep their farms (email, Google, Apple, Discord, Steam, guest).** The `legacy_ids`,
+`discord_id` and `steam_id` claims are kept server-side (`tretu_identity/<sub>`, not readable by
+players); `steam_id` is also written to the account metadata (`metadata.steam_id`, removed again when
+the player unlinks Steam in Mein Konto). On the first Tretu login (no `tretu:<sub>` account yet) the
+old account is re-keyed to `tretu:<sub>` (one guarded, idempotent `UPDATE users SET custom_id …`), so
+the same Nakama user (saves, profile, AI-helper tokens) continues. Matched in this order:
 
-| Old account | Recognised by |
-|---|---|
-| Discord | custom id `discord:<discord_id>` |
-| Steam | `users.steam_id = <steam_id>` (Nakama's native Steam auth) or custom id `steam:<steam_id>`. Hollowmere has no Steam sign-in today (Steam builds use the Tretu-Konto, see RELEASE.md), so this only matters if one is added later. |
+| Order | Old account | Recognised by |
+|---|---|---|
+| 1 | any (email, Google, Apple, Discord, Steam, device) | `legacy_ids.hollowmere` = its Nakama user id (from the legacy import at auth.tretu.de); never an account that already belongs to another Tretu-Konto (`tretu:<other>`) or is archived/disabled |
+| 2 | Discord | custom id `discord:<discord_id>` |
+| 3 | Steam | `users.steam_id = <steam_id>` (Nakama's native Steam auth) or custom id `steam:<steam_id>` |
 
-A marker in storage `tretu_links/<provider>:<id>` makes the old Discord button sign into the
-Tretu-Konto's farm afterwards.
+A marker in storage `tretu_links/<provider>:<id>` records a Discord/Steam carry-over (cleaned up
+with the account). Old email/Google/Apple data stays in the `users` row (no column is dropped in
+this change; a later cleanup can clear `email`, `password`, `google_id`, `apple_id` and the
+`tretu_links` markers once every old player has signed in).
+
+**Guests: "Save to Tretu-Konto".** A guest (device account) signs in with the same Tretu button; the
+game first calls Nakama `LinkCustom` with `vars.tretu_token`, the hook checks the token and links
+`tretu:<sub>` to the guest's own account, so the guest's farm (local and cloud saves) is the Tretu
+farm from then on. If the Tretu-Konto already has a Hollowmere account, Nakama answers
+`AlreadyExists` and the game signs in normally (the guest's saves stay on the device). An account
+that belongs to another Tretu-Konto is never moved. If `legacy_ids` (or Discord/Steam) also names an
+old account, it waits in the farm choice below.
 
 **Choose a farm (both accounts exist).** When the player already has a `tretu:<sub>` account *and*
-an old Discord/Steam account, nothing is merged on its own. After signing in, the game shows
+an old account (legacy_ids, Discord or Steam; e.g. after a guest upgrade), nothing is merged on its
+own. After signing in, the game shows
 "Wähle deine Farm" with the cloud saves of each account (RPC `tretu_farm_choice`), and the player
 keeps one (RPC `tretu_farm_choose`, also reachable later from the account panel). The switch is one
 SQL statement (a `DO` block, so all or nothing): every other account gets the custom id
@@ -374,8 +397,11 @@ rsyncs the web build to `$SITE_DIR`, checks out the tag in `$APP_DIR`, runs
 | `DEPLOY_SSH_KEY` | secret | private ed25519 key of the deploy user |
 | `DEPLOY_USER`, `DEPLOY_APP_DIR`, `DEPLOY_SITE_DIR` | variables | optional, default `deploy`, `/srv/hollowmere`, `/var/www/hollowmere` |
 | `HOLLOWMERE_DOMAIN` | variable | `hollowmere.tretu.de` |
-| `TRETU_AUTH_ISSUER` | variable | optional, `https://auth.tretu.de` (step 10) |
-| `GOOGLE_CLIENT_ID`, `APPLE_CLIENT_ID`, `DISCORD_CLIENT_ID` | secrets | optional (step 13) |
+| `TRETU_AUTH_ISSUER` | variable | optional override of the shipped `https://auth.tretu.de` (step 10) |
+
+The former `GOOGLE_CLIENT_ID`, `APPLE_CLIENT_ID` and `DISCORD_CLIENT_ID` secrets are no longer used
+(the social sign-ins and `tools/release/inject_web_config.py` were removed); delete them in the
+repository settings.
 
 ## 12. Deploy an update
 
@@ -395,17 +421,13 @@ curl -sf https://hollowmere.tretu.de/api/health
 Rollback: check out the previous tag and reload; rsync the previous web artifact. Engine files are
 named `hm-<content hash>.*`, so browsers cannot keep a stale wasm under a new name.
 
-## 13. Social sign-in (optional)
+## 13. Social sign-in (removed)
 
-Each button appears only when its public client id is injected into the page (step 8) and the device
-can use it (Apple only on Apple devices).
-
-- **Google**: OAuth client "Web application", JavaScript origin `https://$DOMAIN`.
-- **Apple**: Services ID with Sign in with Apple, return URL `https://$DOMAIN/`; also
-  `social.apple.bundle_id` in `local.yml` (Nakama checks the audience).
-- **Discord**: OAuth2 redirect `https://$DOMAIN/`.
-
-Consent screens can use the Tretu legal pages: `https://tretu.de/datenschutz`, `https://tretu.de/agb`.
+The Google, Apple and Discord buttons are gone: players sign in with the Tretu-Konto (which offers
+those providers itself at auth.tretu.de). Their old Hollowmere accounts are carried over (step 10).
+The Google OAuth client, the Apple Services ID and the Discord OAuth app of Hollowmere can be
+retired once the game version with Tretu-only sign-in is live; `social.apple` is no longer needed in
+`local.yml`.
 
 ## 14. Backups
 
@@ -439,7 +461,7 @@ Keep the old `NAKAMA_SESSION_KEY` / `NAKAMA_REFRESH_KEY` / `NAKAMA_HTTP_KEY` val
 
 - [ ] `https://hollowmere.tretu.de/` shows the title screen; Datenschutz / AGB / Impressum open tretu.de
 - [ ] Guest login → New farm → walk, sleep, reload → Continue
-- [ ] With Tretu on: "Mit Tretu-Konto anmelden" on web and desktop; `pm2 logs hollowmere-nakama` shows no Tretu warnings
+- [ ] "Mit Tretu-Konto anmelden" on web and desktop (the only account sign-in; no email/Google/Apple/Discord buttons); guest → "Save to Tretu-Konto" keeps the guest's farm; `pm2 logs hollowmere-nakama` shows no Tretu warnings
 - [ ] With the platform on: the account panel shows Tretu-Credits and notifications, and the buttons open tretu.de/wallet and tretu.de/benachrichtigungen
 - [ ] Phone landscape: on-screen controls; Add to Home Screen opens full screen
 - [ ] `curl -sf https://hollowmere.tretu.de/api/health` is `"status":"ok"`
@@ -453,8 +475,10 @@ Keep the old `NAKAMA_SESSION_KEY` / `NAKAMA_REFRESH_KEY` / `NAKAMA_HTTP_KEY` val
 | `/api/health` 503 | `checks.db` = Postgres down or `database.address`; `checks.nakama` = Nakama down or `NAKAMA_HTTP_KEY` ≠ `runtime.http_key` |
 | Game cannot reach the server | release build still has `%HOLLOWMERE_DOMAIN%`, or `http://` after certbot's redirect |
 | Co-op connects then drops | `/ws` upgrade headers; compare with `deploy/nginx/hollowmere.tretu.de.conf` |
-| Tretu button missing | build without `TRETU_AUTH_ISSUER` (step 10) |
-| "Tretu sign-in is not enabled on this server." | `TRETU_AUTH_ISSUER` missing in `local.yml`, or Nakama not reloaded |
+| Tretu button missing ("Tretu sign-in is not set up for this build.") | `tretu/auth_issuer` or `tretu/client_id` emptied in `game/project.godot` (step 10) |
+| "Tretu sign-in is not enabled on this server." | `TRETU_AUTH_ISSUER` missing in `local.yml` (only possible with `NAKAMA_ALLOW_DEFAULTS=1`), or Nakama not reloaded |
+| PM2 restarts `hollowmere-nakama`, log "Tretu sign-in not configured" | add `"TRETU_AUTH_ISSUER=https://auth.tretu.de"` under `runtime.env` in `local.yml` |
+| Old player starts with an empty farm | the legacy import at auth.tretu.de did not link the Hollowmere account (`legacy_ids.hollowmere`), and no Discord/Steam claim matched: find the old account (`SELECT id, username, email FROM users WHERE …`), have auth.tretu.de add the legacy link, then the player keeps it in "Wähle deine Farm" |
 | Tretu web sign-in fails right away | CORS on the issuer's discovery / token endpoint, or redirect URI not registered |
 | Log `Tretu platform POST /api/v1/events -> 401` | `TRETU_APP_SECRET` differs from `TRETU_APPS_JSON.hollowmere.secret` on tretu.de, or clock skew > 300 s |
 | Webhook deliveries fail with `401` (tretu.de admin / worker log) | `TRETU_APP_SECRET` in `server/.env` differs from `TRETU_APPS_JSON.hollowmere.secret`, or `hollowmere-mcp` was not reloaded with `--update-env`; `pm2 logs hollowmere-mcp` shows `tretu webhook rejected (<reason>)` |
