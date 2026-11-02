@@ -159,14 +159,12 @@ jobs:
             macOS) test -f build/macos/Hollowmere.zip ;;
             Web) test -f build/web/index.html ;;
           esac || exit "${code:-1}"
-      - name: Inject OAuth client ids and analytics (web)
+      - name: Inject OAuth client ids (web)
         if: matrix.preset == 'Web'
         env:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
           DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
-          UMAMI_SRC: ${{ vars.UMAMI_SRC }}
-          UMAMI_WEBSITE_ID: ${{ vars.UMAMI_WEBSITE_ID }}
         run: python3 tools/release/inject_web_config.py build/web/index.html
       - name: Fingerprint and precompress (web)
         if: matrix.preset == 'Web'

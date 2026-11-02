@@ -21,11 +21,11 @@ Short version: it runs on the Tretu Hetzner server: nginx + certbot on the host,
 
 ### 1.2 Google sign-in
 
-Social buttons (Google / Apple / Discord) only appear when that provider's client id is injected into the web shell and the device supports it. Email and guest work without any of them. See HOSTING.md §14.
+Social buttons (Google / Apple / Discord) only appear when that provider's client id is injected into the web shell and the device supports it. Email and guest work without any of them. See HOSTING.md §13.
 
-### 1.3 Tretu-Konto, platform events, analytics
+### 1.3 Tretu-Konto, platform events
 
-"Mit Tretu-Konto anmelden" appears only in builds made with the `TRETU_AUTH_ISSUER` repository variable, and works only when the server has `TRETU_AUTH_ISSUER` in `server/nakama/local.yml`. Events and presence for tretu.de need `TRETU_PLATFORM_URL`, `TRETU_APP_ID`, `TRETU_APP_SECRET` there. Umami needs the `UMAMI_SRC` and `UMAMI_WEBSITE_ID` variables. All of it is off by default. See HOSTING.md §10–11.
+"Mit Tretu-Konto anmelden" appears only in builds made with the `TRETU_AUTH_ISSUER` repository variable, and works only when the server has `TRETU_AUTH_ISSUER` in `server/nakama/local.yml`. Events and presence for tretu.de need `TRETU_PLATFORM_URL`, `TRETU_APP_ID`, `TRETU_APP_SECRET` there. All of it is off by default. See HOSTING.md §10.
 
 ### 1.3 Apple (macOS signing and notarization)
 
