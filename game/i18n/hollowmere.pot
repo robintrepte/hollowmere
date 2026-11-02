@@ -807,7 +807,7 @@ msgstr ""
 msgid "%s left the battle."
 msgstr ""
 
-#: autoload/net.gd:513
+#: autoload/net.gd:520
 #, c-format
 msgid "%s left the farm."
 msgstr ""
@@ -3423,11 +3423,11 @@ msgstr ""
 msgid "Can't place that here."
 msgstr ""
 
-#: autoload/net.gd:103 autoload/net.gd:110 autoload/net.gd:120
+#: autoload/net.gd:110 autoload/net.gd:117 autoload/net.gd:127
 msgid "Can't reach the Hollowmere server."
 msgstr ""
 
-#: autoload/net.gd:188 autoload/tretu.gd:213
+#: autoload/net.gd:195 autoload/tretu.gd:213
 msgid "Can't reach the Tretu sign-in right now."
 msgstr ""
 
@@ -4020,7 +4020,7 @@ msgstr ""
 msgid "Could not open a local port for the sign-in."
 msgstr ""
 
-#: autoload/net.gd:96 autoload/tretu.gd:589
+#: autoload/net.gd:103 autoload/tretu.gd:589
 msgid "Could not switch farms right now. Nothing was changed."
 msgstr ""
 
@@ -8544,7 +8544,7 @@ msgstr ""
 msgid "Mystic Ore"
 msgstr ""
 
-#: autoload/net.gd:130
+#: autoload/net.gd:137
 msgid "Names can use letters, numbers and _ (up to 20)."
 msgstr ""
 
@@ -9399,7 +9399,7 @@ msgstr ""
 msgid "Pick a skill to see what it does."
 msgstr ""
 
-#: autoload/net.gd:93
+#: autoload/net.gd:100
 msgid "Pick one of your farms."
 msgstr ""
 
@@ -10928,7 +10928,7 @@ msgstr ""
 msgid "Sign in and your farm is backed up to the cloud."
 msgstr ""
 
-#: autoload/net.gd:75
+#: autoload/net.gd:82
 msgid "Sign in first."
 msgstr ""
 
@@ -10940,15 +10940,15 @@ msgstr ""
 msgid "Sign in with Tretu"
 msgstr ""
 
-#: autoload/net.gd:90
+#: autoload/net.gd:97
 msgid "Sign in with your Tretu account again."
 msgstr ""
 
-#: autoload/net.gd:89
+#: autoload/net.gd:96
 msgid "Sign in with your Tretu account first."
 msgstr ""
 
-#: autoload/net.gd:209 autoload/tretu.gd:599
+#: autoload/net.gd:216 autoload/tretu.gd:599
 msgid "Sign in with your Tretu-Konto again."
 msgstr ""
 
@@ -10964,7 +10964,7 @@ msgstr ""
 msgid "Sign out"
 msgstr ""
 
-#: autoload/net.gd:105 autoload/net.gd:122
+#: autoload/net.gd:112 autoload/net.gd:129
 msgid "Sign-in expired, please sign in again."
 msgstr ""
 
@@ -11321,7 +11321,7 @@ msgstr ""
 msgid "Something huge is on the line!"
 msgstr ""
 
-#: autoload/net.gd:109 autoload/net.gd:131
+#: autoload/net.gd:116 autoload/net.gd:138
 msgid "Something went wrong."
 msgstr ""
 
@@ -12381,7 +12381,7 @@ msgstr ""
 msgid "That can't be turned into seeds."
 msgstr ""
 
-#: autoload/net.gd:94
+#: autoload/net.gd:101
 msgid "That farm is not one of yours."
 msgstr ""
 
@@ -12389,7 +12389,7 @@ msgstr ""
 msgid "That fossil you found? Older than the mountain. Think about that."
 msgstr ""
 
-#: autoload/net.gd:124
+#: autoload/net.gd:131
 msgid "That name is already taken."
 msgstr ""
 
@@ -13253,11 +13253,11 @@ msgstr ""
 msgid "This Wildling is legendary. "
 msgstr ""
 
-#: autoload/net.gd:128
+#: autoload/net.gd:135
 msgid "This account was archived when you picked a farm for your Tretu-Konto. Sign in with Tretu instead."
 msgstr ""
 
-#: autoload/net.gd:88
+#: autoload/net.gd:95
 msgid "This farm already belongs to another Tretu-Konto."
 msgstr ""
 
@@ -13273,7 +13273,7 @@ msgstr ""
 msgid "This isn't the right moment."
 msgstr ""
 
-#: autoload/net.gd:87
+#: autoload/net.gd:94
 msgid "This sign-in is no longer available. Sign in with your Tretu account."
 msgstr ""
 
@@ -13485,11 +13485,11 @@ msgstr ""
 msgid "Too hot for the promenade. The casino has the best air in town."
 msgstr ""
 
-#: autoload/net.gd:92
+#: autoload/net.gd:99
 msgid "Too many requests, try again in a minute."
 msgstr ""
 
-#: autoload/net.gd:107 autoload/net.gd:126
+#: autoload/net.gd:114 autoload/net.gd:133
 msgid "Too many tries. Wait a minute and try again."
 msgstr ""
 
@@ -13631,15 +13631,15 @@ msgstr ""
 msgid "Tretu profile"
 msgstr ""
 
-#: autoload/net.gd:194 autoload/tretu.gd:234 autoload/tretu.gd:236 autoload/tretu.gd:339 ...
+#: autoload/net.gd:201 autoload/tretu.gd:234 autoload/tretu.gd:236 autoload/tretu.gd:339 ...
 msgid "Tretu sign-in failed."
 msgstr ""
 
-#: autoload/net.gd:191
+#: autoload/net.gd:198
 msgid "Tretu sign-in is not enabled on this server."
 msgstr ""
 
-#: autoload/net.gd:91
+#: autoload/net.gd:98
 msgid "Tretu sign-in is not reachable right now."
 msgstr ""
 
@@ -15324,7 +15324,7 @@ msgstr ""
 msgid "Your Wildlings need a rest first."
 msgstr ""
 
-#: autoload/net.gd:95
+#: autoload/net.gd:102
 msgid "Your accounts changed in the meantime. Please look again."
 msgstr ""
 
@@ -15450,7 +15450,7 @@ msgstr ""
 msgid "bet %s"
 msgstr ""
 
-#: autoload/net.gd:86
+#: autoload/net.gd:93
 msgid "codes are 6 letters"
 msgstr ""
 
@@ -15539,7 +15539,7 @@ msgstr ""
 msgid "summer"
 msgstr ""
 
-#: autoload/net.gd:85
+#: autoload/net.gd:92
 msgid "that farm isn't open right now"
 msgstr ""
 
