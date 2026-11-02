@@ -371,8 +371,15 @@ func forget_tokens() -> void:
 	if FileAccess.file_exists(TOKEN_FILE):
 		DirAccess.remove_absolute(TOKEN_FILE)
 	profile_username = ""
-	if rt != "" and not _discovery.is_empty() and str(_discovery.get("revocation_endpoint", "")) != "":
-		_http(str(_discovery.revocation_endpoint), HTTPClient.METHOD_POST,
+	if rt != "":
+		_revoke(rt)
+
+## Best effort: the issuer forgets the refresh token too (discovery may not be loaded yet when the
+## session was restored from disk).
+func _revoke(rt: String) -> void:
+	var disc := await discover()
+	if str(disc.get("revocation_endpoint", "")) != "":
+		await _http(str(disc.revocation_endpoint), HTTPClient.METHOD_POST,
 			{"token": rt, "token_type_hint": "refresh_token", "client_id": client_id()})
 
 ## Encrypted with a key bound to this device, so a copied user:// folder is not a login.

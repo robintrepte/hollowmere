@@ -427,7 +427,7 @@ msgstr ""
 msgid "%s Stone damage"
 msgstr ""
 
-#: autoload/tretu.gd:468
+#: autoload/tretu.gd:475
 #, c-format
 msgid "%s TC"
 msgstr ""
@@ -862,7 +862,7 @@ msgstr ""
 msgid "%s nature · %s"
 msgstr ""
 
-#: autoload/tretu.gd:483
+#: autoload/tretu.gd:490
 #, c-format
 msgid "%s new"
 msgstr ""
@@ -4029,7 +4029,7 @@ msgstr ""
 msgid "Could not open a local port for the sign-in."
 msgstr ""
 
-#: autoload/net.gd:97 autoload/tretu.gd:575
+#: autoload/net.gd:97 autoload/tretu.gd:582
 msgid "Could not switch farms right now. Nothing was changed."
 msgstr ""
 
@@ -11006,7 +11006,7 @@ msgstr ""
 msgid "Sign in with your Tretu-Konto again."
 msgstr ""
 
-#: autoload/tretu.gd:570
+#: autoload/tretu.gd:577
 msgid "Sign in with your Tretu-Konto first."
 msgstr ""
 

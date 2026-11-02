@@ -217,7 +217,8 @@
 						const verifier = rnd(48), state = rnd(16), nonce = rnd(16);
 						const redirect = location.origin + "/auth/callback";
 						localStorage.setItem(PENDING, JSON.stringify({ state, nonce, verifier, redirect, clientId, tokenEndpoint: d.token_endpoint, mode: pop ? "popup" : "redirect", at: Date.now() }));
-						const q = new URLSearchParams({ response_type: "code", client_id: clientId, redirect_uri: redirect, scope: "openid profile email offline_access tretu", state, nonce, code_challenge: await s256(verifier), code_challenge_method: "S256" });
+						// No offline_access: the browser build never keeps a refresh token (the Nakama session is the login).
+						const q = new URLSearchParams({ response_type: "code", client_id: clientId, redirect_uri: redirect, scope: "openid profile email tretu", state, nonce, code_challenge: await s256(verifier), code_challenge_method: "S256" });
 						const url = d.authorization_endpoint + (d.authorization_endpoint.indexOf("?") >= 0 ? "&" : "?") + q.toString();
 						if (pop) { pop.location.href = url; } else { location.assign(url); }
 					} catch (e) {
@@ -230,6 +231,10 @@
 			window.addEventListener("storage", (e) => {
 				if (e.key === RESULT && e.newValue) { localStorage.removeItem(RESULT); finish(read({ getItem: () => e.newValue }, RESULT)); }
 			});
+			// An abandoned sign-in must not leave its PKCE verifier or a code lying around.
+			const stale = read(localStorage, PENDING);
+			if (stale && Date.now() - (stale.at || 0) > MAX_AGE_MS) localStorage.removeItem(PENDING);
+			localStorage.removeItem(RESULT);
 			const back = read(sessionStorage, RESULT);
 			if (back) {
 				sessionStorage.removeItem(RESULT);
