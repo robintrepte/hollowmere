@@ -154,7 +154,7 @@ tools/         Art pipeline, string extraction, web fingerprint + precompress
 .github/       CI: 413 GUT tests, Lua + Tretu integration tests, Windows / macOS / Web export, tagged deploy
 ```
 
-CI (every pull request and push to `main`): script compile, GUT, translation template check, 112-day balance sim, casino RTP sim, Lua checks and the Tretu integration test (official Nakama binary, `postgres:16` service, game client included), Nakama integration, co-op and 4-peer desync tests, then Windows / macOS / Web exports, with checksum-verified Godot and Nakama downloads. GitHub Actions must be enabled for the repository (see HOSTING.md §12). Tagged `v*` releases can sign macOS, push itch, rsync the web build and reload PM2.
+CI (every pull request and push to `main`): script compile, GUT, translation template check, 112-day balance sim, casino RTP sim, Lua checks and the Tretu integration test (official Nakama binary, `postgres:16` service, game client included), Nakama integration, co-op and 4-peer desync tests, then Windows / macOS / Web exports, with checksum-verified Godot and Nakama downloads. GitHub Actions must be enabled for the repository (see HOSTING.md §11). Tagged `v*` releases can sign macOS, push itch, rsync the web build and reload PM2.
 
 ## Made with
 

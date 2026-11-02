@@ -522,7 +522,7 @@ Spielclient des Spielers (Browser oder Desktop, Host der Welt)
 
 ### M3 Server und Betrieb · M
 - [x] `hollowmere.lua`: neue Collections (`profile`), Agent-RPCs, komprimierte Saves, Rate-Limits.
-- [x] PM2 statt Docker: `hollowmere-nakama` (Nakama-Binary über `server/nakama/nakama.sh`, Secrets in `server/nakama/local.yml`) und `hollowmere-mcp` (Secrets in `server/.env`), beide in `ecosystem.config.cjs`; die Datenbank `nakama` liegt auf dem gemeinsamen Postgres. nginx: Subdomain `mcp.`, TLS, Rate-Limit, WebSocket bzw. SSE-Timeouts. Umzug der alten Docker-Daten: `HOSTING.md` §16.
+- [x] PM2 statt Docker: `hollowmere-nakama` (Nakama-Binary über `server/nakama/nakama.sh`, Secrets in `server/nakama/local.yml`) und `hollowmere-mcp` (Secrets in `server/.env`), beide in `ecosystem.config.cjs`; die Datenbank `nakama` liegt auf dem gemeinsamen Postgres. nginx: Subdomain `mcp.`, TLS, Rate-Limit, WebSocket bzw. SSE-Timeouts. Umzug der alten Docker-Daten: `HOSTING.md` §15.
 - [x] Monitoring: Health-Endpoints, Fehlerberichte (gibt es schon) um MCP erweitern, Backups (Postgres) prüfen. `HOSTING.md` aktualisieren.
 
 ### M4 Lokalisierung · M

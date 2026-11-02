@@ -182,7 +182,7 @@ For Brotli: `sudo apt install libnginx-mod-http-brotli-static` and uncomment `br
 
 ## 8. Web build
 
-CI builds it on every push (artifact `hollowmere-web`) and deploys it on `v*` tags (step 12).
+CI builds it on every push (artifact `hollowmere-web`) and deploys it on `v*` tags (step 11).
 By hand, on a machine with Godot 4.7.2 and its export templates:
 
 ```bash
@@ -194,7 +194,6 @@ mv game/project.godot.bak game/project.godot          # never commit a live doma
 
 # Public per-deployment values (each optional; unset = that feature off)
 GOOGLE_CLIENT_ID= APPLE_CLIENT_ID= DISCORD_CLIENT_ID= \
-UMAMI_SRC=https://stats.tretu.de/script.js UMAMI_WEBSITE_ID=<uuid> \
   python3 tools/release/inject_web_config.py build/web/index.html
 tools/release/fingerprint_web.sh build/web     # hm-<hash> names, PWA files, legal redirects, /auth/callback
 tools/release/precompress_web.sh build/web
@@ -353,12 +352,7 @@ cache, `tretu_farm_choice` 12 and `tretu_farm_choose` 5 calls per minute (`429` 
 `tretu_report_battle` one per 8 s and 200 per day, `tretu_heartbeat` one per 30 s; sign-ins 30 per
 minute per IP in nginx.
 
-## 11. Analytics (optional)
-
-GitHub variables `UMAMI_SRC` (e.g. `https://stats.tretu.de/script.js`) and `UMAMI_WEBSITE_ID`.
-`tools/release/inject_web_config.py` adds the Umami tag to the web build only when both are set.
-
-## 12. GitHub Actions
+## 11. GitHub Actions
 
 `.github/workflows/build.yml` runs on every pull request and on pushes to `main` (and `v*` tags): script
 compile check, GUT, translation template check, balance + casino simulations, MCP relay self-test,
@@ -380,10 +374,9 @@ rsyncs the web build to `$SITE_DIR`, checks out the tag in `$APP_DIR`, runs
 | `DEPLOY_USER`, `DEPLOY_APP_DIR`, `DEPLOY_SITE_DIR` | variables | optional, default `deploy`, `/srv/hollowmere`, `/var/www/hollowmere` |
 | `HOLLOWMERE_DOMAIN` | variable | `hollowmere.tretu.de` |
 | `TRETU_AUTH_ISSUER` | variable | optional, `https://auth.tretu.de` (step 10) |
-| `UMAMI_SRC`, `UMAMI_WEBSITE_ID` | variables | optional (step 11) |
-| `GOOGLE_CLIENT_ID`, `APPLE_CLIENT_ID`, `DISCORD_CLIENT_ID` | secrets | optional (step 14) |
+| `GOOGLE_CLIENT_ID`, `APPLE_CLIENT_ID`, `DISCORD_CLIENT_ID` | secrets | optional (step 13) |
 
-## 13. Deploy an update
+## 12. Deploy an update
 
 Same steps as every Tretu app (CI does this on tags):
 
@@ -401,7 +394,7 @@ curl -sf https://hollowmere.tretu.de/api/health
 Rollback: check out the previous tag and reload; rsync the previous web artifact. Engine files are
 named `hm-<content hash>.*`, so browsers cannot keep a stale wasm under a new name.
 
-## 14. Social sign-in (optional)
+## 13. Social sign-in (optional)
 
 Each button appears only when its public client id is injected into the page (step 8) and the device
 can use it (Apple only on Apple devices).
@@ -413,7 +406,7 @@ can use it (Apple only on Apple devices).
 
 Consent screens can use the Tretu legal pages: `https://tretu.de/datenschutz`, `https://tretu.de/agb`.
 
-## 15. Backups
+## 14. Backups
 
 ```bash
 crontab -e
@@ -425,7 +418,7 @@ Put the password in `~/.pgpass` (`127.0.0.1:5432:nakama:nakama:<password>`, `chm
 the dumps off the server now and then. If the shared Postgres already has a server-wide backup,
 this database is included there.
 
-## 16. Moving from the old Docker setup
+## 15. Moving from the old Docker setup
 
 The data is in the old `hollowmere-postgres-1` container. One-time move into the shared Postgres:
 
@@ -441,7 +434,7 @@ docker compose -f /srv/hollowmere/docker-compose.yml down   # old stack, once th
 Keep the old `NAKAMA_SESSION_KEY` / `NAKAMA_REFRESH_KEY` / `NAKAMA_HTTP_KEY` values from the old
 `.env` in `local.yml` so signed-in players stay signed in.
 
-## 17. Smoke the live site
+## 16. Smoke the live site
 
 - [ ] `https://hollowmere.tretu.de/` shows the title screen; Datenschutz / AGB / Impressum open tretu.de
 - [ ] Guest login → New farm → walk, sleep, reload → Continue
@@ -451,7 +444,7 @@ Keep the old `NAKAMA_SESSION_KEY` / `NAKAMA_REFRESH_KEY` / `NAKAMA_HTTP_KEY` val
 - [ ] `curl -sf https://hollowmere.tretu.de/api/health` is `"status":"ok"`
 - [ ] Nakama console through a tunnel only: `ssh -L 7351:127.0.0.1:7351 $DEPLOY_USER@$SERVER_IP`, then `http://127.0.0.1:7351`
 
-## 18. If something is wrong
+## 17. If something is wrong
 
 | Symptom | Check |
 |---|---|
@@ -470,7 +463,7 @@ Keep the old `NAKAMA_SESSION_KEY` / `NAKAMA_REFRESH_KEY` / `NAKAMA_HTTP_KEY` val
 | `nginx -t` fails on `brotli_static` | leave it commented |
 | certbot "failed to authenticate" | DNS not pointing here yet, or port 80 blocked |
 
-## 19. AI helper relay
+## 18. AI helper relay
 
 `hollowmere-mcp` serves `https://mcp.hollowmere.tretu.de` (step 7). Players create tokens in the
 game; see `docs/agents.md`.
