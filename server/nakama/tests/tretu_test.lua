@@ -276,5 +276,78 @@ eq("tretu username", tretu.clean_tretu_username("mia_92"), "mia_92")
 eq("tretu username with spaces refused", tretu.clean_tretu_username("a b"), nil)
 eq("tretu username too long", tretu.clean_tretu_username(string.rep("a", 65)), nil)
 
+check("deletion and merge drop the lock record", del:find("collection = 'tretu_locks' AND key = '" .. SUB .. "'", 1, true) ~= nil
+  and mg:find("collection = 'tretu_locks' AND key = '" .. SUB .. "'", 1, true) ~= nil)
+
+-- Account lock from the central Tretu admin (user.updated locked).
+eq("iso_ms ms", tretu.iso_ms("2026-01-01T00:00:00.123Z"), 1767225600123)
+eq("iso_ms epoch", tretu.iso_ms("1970-01-01T00:00:00Z"), 0)
+eq("iso_ms leap day, one fraction digit", tretu.iso_ms("2024-02-29T12:34:56.7Z"), 1709210096700)
+eq("iso_ms end of day", tretu.iso_ms("2026-11-02T23:59:59.999Z"), 1793663999999)
+eq("iso_ms before 2000", tretu.iso_ms("1999-12-31T00:00:00Z"), 946598400000)
+eq("iso_ms rejects other formats", tretu.iso_ms("2026-01-01 00:00:00"), nil)
+eq("iso_ms rejects non-strings", tretu.iso_ms(42), nil)
+
+local store, bans, unbans, logouts = {}, {}, {}, {}
+local account = {id = "11111111-0000-4000-8000-000000000001", custom_id = "tretu:" .. SUB, disabled = false}
+fake_nk.storage_read = function(reqs)
+  local v = store[reqs[1].collection .. "/" .. reqs[1].key]
+  return v and {{value = v}} or {}
+end
+fake_nk.storage_write = function(objs)
+  for _, o in ipairs(objs) do
+    check("lock records are server-only", o.user_id == tretu.SYSTEM and o.permission_read == 0 and o.permission_write == 0)
+    store[o.collection .. "/" .. o.key] = o.value
+  end
+end
+fake_nk.sql_query = function(q, params)
+  if q:find("FROM users WHERE custom_id = $1", 1, true) and account and params[1] == account.custom_id then return {account} end
+  return {}
+end
+fake_nk.users_ban_id = function(ids) bans[#bans + 1] = ids[1]; account.disabled = true end
+fake_nk.users_unban_id = function(ids) unbans[#unbans + 1] = ids[1]; account.disabled = false end
+fake_nk.session_logout = function(id) logouts[#logouts + 1] = id end
+
+check("not locked before anything happened", not tretu.is_locked(SUB))
+eq("lock", tretu.apply_lock(SUB, true, 1000), "locked")
+check("lock bans the tretu:<sub> account and ends its sessions", bans[1] == account.id and #bans == 1 and logouts[1] == account.id)
+check("locked", tretu.is_locked(SUB) and store["tretu_locks/" .. SUB].banned == true)
+eq("repeated lock", tretu.apply_lock(SUB, true, 1000), "locked")
+eq("repeated lock bans once", #bans, 1)
+eq("older unlock is stale", tretu.apply_lock(SUB, false, 999), "stale")
+check("still locked after a stale unlock", tretu.is_locked(SUB) and account.disabled)
+eq("unlock", tretu.apply_lock(SUB, false, 2000), "unlocked")
+check("unlock lifts the ban", unbans[1] == account.id and not account.disabled and not tretu.is_locked(SUB))
+eq("older lock after a newer unlock is stale", tretu.apply_lock(SUB, true, 1500), "stale")
+check("stays unlocked", not account.disabled and #bans == 1)
+eq("repeated unlock", tretu.apply_lock(SUB, false, 2000), "unlocked")
+eq("repeated unlock unbans once", #unbans, 1)
+-- An account disabled for another reason is never enabled by an unlock.
+account.disabled = true
+tretu.apply_lock(SUB, true, 3000)
+eq("no ban on an already disabled account", #bans, 1)
+tretu.apply_lock(SUB, false, 4000)
+check("unlock leaves a disable it did not set", account.disabled and #unbans == 1)
+-- A lock before the player has a Hollowmere account: remembered, sign-in refused, nothing to ban.
+local OTHER = "22222222-0000-4000-8000-000000000002"
+eq("lock without account", tretu.apply_lock(OTHER, true, nil), "locked")
+check("lock without account is remembered", tretu.is_locked(OTHER) and store["tretu_locks/" .. OTHER].banned == false)
+check("invalid subs are never locked", not tretu.is_locked("a/b"))
+
+-- A lost unlock webhook: a successful Tretu sign-in (auth.tretu.de answered userinfo) lifts a lock recorded before
+-- the question, never one recorded after it.
+local THIRD = "33333333-0000-4000-8000-000000000003"
+account = {id = "33333333-1111-4000-8000-000000000003", custom_id = "tretu:" .. THIRD, disabled = false}
+local unbans_before = #unbans
+tretu.apply_lock(THIRD, true, 5000)
+check("sign-in asked before the lock: still locked", not tretu.unlock_by_sign_in(THIRD, 5000) and not tretu.unlock_by_sign_in(THIRD, 4000)
+  and tretu.is_locked(THIRD) and account.disabled)
+check("no time, no proof", not tretu.unlock_by_sign_in(THIRD, nil))
+check("sign-in asked after the lock lifts it and the ban", tretu.unlock_by_sign_in(THIRD, 6000) and not tretu.is_locked(THIRD)
+  and not account.disabled and #unbans == unbans_before + 1)
+check("nothing locked: sign-in goes through", tretu.unlock_by_sign_in(THIRD, 1))
+eq("a late retry of the old lock is stale afterwards", tretu.apply_lock(THIRD, true, 5000), "stale")
+check("a lock without time from before the question is lifted too", tretu.unlock_by_sign_in(OTHER, clock_ms + 1) and not tretu.is_locked(OTHER))
+
 print(string.format("TRETU LUA TESTS: %d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

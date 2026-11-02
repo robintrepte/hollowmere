@@ -34,6 +34,10 @@
 -- in batches, signed (contract section 3), from RPCs the game calls in the background (heartbeat,
 -- battle report). A cloud save only queues, so saving never waits on the platform.
 --
+-- Account lock (central Tretu admin): user.updated with locked = true disables ("bans") the
+-- "tretu:<sub>" Nakama account, which ends its sessions and sockets and refuses sign-in and refresh;
+-- locked = false enables it again. See M.apply_lock.
+--
 -- Wallet + notifications (RPC tretu_account): the Tretu-Credits balance and the unread count, read
 -- from the platform server-side (signed, short timeout), cached per player for a minute and served
 -- from the last good value (marked stale) while the platform is down.
@@ -418,6 +422,7 @@ function M.authenticate_switch(ctx, payload, account, ticket)
   if not used or (v.exp or 0) < M.now_sec() or not M.valid_sub(v.sub) then
     error({"Sign in with your Tretu account again.", 16})
   end
+  if M.is_locked(v.sub) then error({M.LOCKED_MESSAGE, 7}) end
   local acc = M.account_by_custom_id("tretu:" .. v.sub)
   if acc == nil or acc.id ~= v.user_id then error({"Sign in with your Tretu account again.", 16}) end
   account.id = "tretu:" .. v.sub
@@ -435,10 +440,15 @@ function M.authenticate(ctx, payload, account, token)
   if type(token) ~= "string" or #token < 8 or #token > 8192 then
     error({"Sign in with your Tretu account first.", 3})
   end
+  -- auth.tretu.de answers userinfo only for unlocked accounts (a lock revokes every token), so a successful answer
+  -- proves the Tretu-Konto was unlocked when we asked: that lifts a local lock recorded before the question (in case
+  -- the unlock webhook got lost). A lock recorded after it (an overlapping lock) still refuses the sign-in.
+  local asked_ms = nk.time()
   local info, err, code = M.userinfo(cfg, token)
   if info == nil then
     error({err, code or 16})
   end
+  if M.is_locked(info.sub) and not M.unlock_by_sign_in(info.sub, asked_ms) then error({M.LOCKED_MESSAGE, 7}) end
   local custom_id = "tretu:" .. info.sub
   local links = M.claim_links(info)
   M.remember_identity(info.sub, links, info.preferred_username)
@@ -1117,6 +1127,7 @@ function M.deletion_sql(sub)
     "  DELETE FROM users WHERE id::text IN (SELECT id FROM hm_gone);\n",
     string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_archive' AND value->>'sub' = %s;\n", sys, S),
     string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_identity' AND key = %s;\n", sys, S),
+    string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_locks' AND key = %s;\n", sys, S),
     string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_links' AND value->>'custom_id' = %s;\n", sys, T),
     "END\n$hm$",
   })
@@ -1152,6 +1163,7 @@ function M.merge_sql(sub, target, now)
     "  END IF;\n",
     string.format("  UPDATE storage SET value = jsonb_set(value, '{sub}', to_jsonb(%s::text)), update_time = now()\n    WHERE user_id = %s AND collection = 'tretu_archive' AND value->>'sub' = %s;\n", L(target), sys, S),
     string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_identity' AND key = %s;\n", sys, S),
+    string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_locks' AND key = %s;\n", sys, S),
     string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_switch' AND value->>'sub' = %s;\n", sys, S),
     "END\n$hm$",
   })
@@ -1193,9 +1205,93 @@ function M.rpc_user_deleted(ctx, payload)
   return nk.json_encode({deleted = true, accounts = #ids})
 end
 
--- RPC tretu_user_updated (server only). payload {"sub", "data": <auth user shape>}
--- Refreshes the linked ids and the account metadata (steam_id, tretu_username). Nothing is stored
--- for Tretu users who never played Hollowmere.
+M.LOCKED_MESSAGE = "Your Tretu account is locked. If you have questions, please contact Tretu support."
+
+-- Flags of a storage value as plain Lua booleans. (`return rec ~= nil and rec.locked == true` crashed
+-- Nakama's gopher-lua VM with a nil pointer; the record is normalised with type() checks instead.)
+local function flag(v)
+  return type(v) == "boolean" and v or false
+end
+
+local function lock_record(sub)
+  local rows = nk.storage_read({{collection = "tretu_locks", key = sub, user_id = SYSTEM}})
+  local v = rows[1] and rows[1].value
+  if type(v) ~= "table" then return nil end
+  return {locked = flag(v.locked), banned = flag(v.banned), at = type(v.at) == "number" and v.at or nil}
+end
+
+-- Whether the central Tretu admin locked this Tretu-Konto (SYSTEM-owned record tretu_locks/<sub>).
+function M.is_locked(sub)
+  if not M.valid_sub(sub) then return false end
+  local rec = lock_record(sub)
+  return rec ~= nil and rec.locked
+end
+
+-- Lock or unlock from user.updated. at_ms: the event time (occurredAt) or nil. -> "locked" |
+-- "unlocked" | "stale". Locking bans the "tretu:<sub>" account: Nakama sets disable_time (no
+-- sign-in, no refresh), invalidates every token issued so far and closes its sockets; the record
+-- refuses Tretu sign-ins of the sub even before an account exists. Unlocking lifts only a ban this
+-- lock set (an archived farm or another disable stays) - old tokens stay invalid, the player signs
+-- in again. Idempotent; the record orders retries: an event older than the last applied one is
+-- ignored, so a late retry of a lock never undoes a newer unlock.
+function M.apply_lock(sub, locked, at_ms)
+  local cur = lock_record(sub)
+  if cur ~= nil and cur.at ~= nil and type(at_ms) == "number" and at_ms < cur.at then return "stale" end
+  local acc = M.account_by_custom_id("tretu:" .. sub)
+  local banned_by_lock = cur ~= nil and cur.banned
+  if locked then
+    if acc ~= nil and not acc.disabled then
+      nk.users_ban_id({acc.id})
+      banned_by_lock = true
+    end
+    if acc ~= nil then
+      pcall(nk.session_logout, acc.id)
+      nk.localcache_delete("tretu:sub:" .. acc.id)
+    end
+  else
+    if acc ~= nil and acc.disabled and banned_by_lock then nk.users_unban_id({acc.id}) end
+    banned_by_lock = false
+  end
+  nk.storage_write({{
+    collection = "tretu_locks", key = sub, user_id = SYSTEM,
+    value = {locked = locked, banned = banned_by_lock, at = at_ms or (M.now_sec() * 1000)},
+    permission_read = 0, permission_write = 0,
+  }})
+  if cur == nil or cur.locked ~= locked then
+    nk.logger_info(string.format("Tretu: account %s by the central Tretu admin%s", locked and "locked" or "unlocked",
+      acc ~= nil and "" or " (no Hollowmere account yet)"))
+  end
+  return locked and "locked" or "unlocked"
+end
+
+-- A successful Tretu sign-in that asked auth.tretu.de at asked_ms (epoch ms) proves the account was unlocked then:
+-- lifts a lock recorded before that (and its ban). -> true when the account is unlocked now.
+function M.unlock_by_sign_in(sub, asked_ms)
+  local cur = lock_record(sub)
+  if cur == nil or not cur.locked then return true end
+  if type(asked_ms) ~= "number" or cur.at == nil or cur.at >= asked_ms then return false end
+  local done = M.apply_lock(sub, false, asked_ms) == "unlocked"
+  if done then nk.logger_info("Tretu: lock lifted by a fresh Tretu sign-in (auth.tretu.de only answers for unlocked accounts)") end
+  return done
+end
+
+-- ISO 8601 time from the envelope (occurredAt) -> epoch ms, or nil.
+function M.iso_ms(s)
+  if type(s) ~= "string" then return nil end
+  local y, mo, d, h, mi, sec, frac = string.match(s, "^(%d%d%d%d)-(%d%d)-(%d%d)T(%d%d):(%d%d):(%d%d)%.?(%d*)Z$")
+  if y == nil then return nil end
+  y, mo, d = tonumber(y), tonumber(mo), tonumber(d)
+  -- Days since 1970-01-01 (proleptic Gregorian, UTC; no os.time so the server's timezone never matters).
+  local a = mo <= 2 and 1 or 0
+  local yy, mm = y - a, mo + 12 * a - 3
+  local days = d + math.floor((153 * mm + 2) / 5) + 365 * yy + math.floor(yy / 4) - math.floor(yy / 100) + math.floor(yy / 400) - 719469
+  local ms = frac ~= "" and math.floor(tonumber((frac .. "00"):sub(1, 3))) or 0
+  return ((days * 24 + tonumber(h)) * 60 + tonumber(mi)) * 60000 + tonumber(sec) * 1000 + ms
+end
+
+-- RPC tretu_user_updated (server only). payload {"sub", "data": <auth user shape>, "occurredAt"?}
+-- Refreshes the linked ids and the account metadata (steam_id, tretu_username) and applies the
+-- lock (data.locked). Nothing is stored for Tretu users who never played Hollowmere.
 function M.rpc_user_updated(ctx, payload)
   server_only(ctx)
   local req = decode_payload(payload)
@@ -1208,13 +1304,15 @@ function M.rpc_user_updated(ctx, payload)
     known = rows[1] ~= nil
   end
   if not known then return nk.json_encode({updated = false}) end
+  local lock = nil
+  if type(data.locked) == "boolean" then lock = M.apply_lock(sub, data.locked, M.iso_ms(req.occurredAt)) end
   local links = type(data.links) == "table" and data.links or {}
   local ident = M.claim_links({discord_id = links.discord, steam_id = links.steam})
   local username = M.clean_tretu_username(data.username) or M.identity(sub).username
   M.remember_identity(sub, ident, username)
   ident.username = M.clean_tretu_username(username)
   local n = M.sync_metadata(sub, ident)
-  return nk.json_encode({updated = true, metadata = n > 0})
+  return nk.json_encode({updated = true, metadata = n > 0, lock = lock})
 end
 
 -- RPC tretu_archive_purge (server to server only: needs the runtime HTTP key, refused for players).

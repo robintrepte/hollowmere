@@ -5,7 +5,8 @@
 // hollowmere secret in TRETU_APPS_JSON on tretu.de (and TRETU_APP_SECRET in Nakama's runtime env).
 //
 //   user.deleted -> Nakama RPC tretu_user_deleted {sub, mergedInto?}   (deletes or merges the farm)
-//   user.updated -> Nakama RPC tretu_user_updated {sub, data}           (linked ids, username)
+//   user.updated -> Nakama RPC tretu_user_updated {sub, data, occurredAt} (linked ids, username,
+//                   account lock: data.locked true disables the "tretu:<sub>" account, false enables it)
 //   anything else -> 204
 import crypto from "node:crypto";
 
@@ -45,7 +46,10 @@ export function parseEnvelope(rawBody) {
   if (typeof e.type !== "string" || e.type.length > 64) return null;
   if (e.sub !== null && e.sub !== undefined && (typeof e.sub !== "string" || !SUB.test(e.sub))) return null;
   if (e.data !== undefined && (e.data === null || typeof e.data !== "object" || Array.isArray(e.data))) return null;
-  return { id: e.id, type: e.type, app: e.app, sub: e.sub ?? null, data: e.data ?? {} };
+  // occurredAt orders retries (an older lock never undoes a newer unlock); anything odd is dropped, not fatal.
+  const occurredAt = typeof e.occurredAt === "string" && e.occurredAt.length <= 40 && !Number.isNaN(Date.parse(e.occurredAt))
+    ? new Date(e.occurredAt).toISOString() : undefined;
+  return { id: e.id, type: e.type, app: e.app, sub: e.sub ?? null, occurredAt, data: e.data ?? {} };
 }
 
 /**
@@ -71,7 +75,8 @@ export async function handleWebhook({ headers, method, path, rawBody, secret, no
       log(`tretu webhook ${e.id} user.deleted: ${JSON.stringify(out)}`);
       return { status: 200, body: { ok: true } };
     }
-    await rpc("tretu_user_updated", { sub: e.sub, data: e.data });
+    const out = await rpc("tretu_user_updated", e.occurredAt ? { sub: e.sub, data: e.data, occurredAt: e.occurredAt } : { sub: e.sub, data: e.data });
+    if (typeof e.data.locked === "boolean") log(`tretu webhook ${e.id} user.updated: lock ${JSON.stringify(out?.lock ?? null)}`);
     return { status: 200, body: { ok: true } };
   } catch (err) {
     log(`tretu webhook ${e.id} ${e.type} failed: ${err?.message || err}`);
