@@ -37,8 +37,14 @@ openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj "/CN=hollowmere.tretu.de
 printf 'ssl_session_cache shared:le_nginx_SSL:1m;\nssl_session_timeout 1440m;\nssl_protocols TLSv1.2 TLSv1.3;\nssl_prefer_server_ciphers off;\n' > "$T/le/options-ssl-nginx.conf"
 openssl dhparam -dsaparam -out "$T/le/ssl-dhparams.pem" 2048 2>/dev/null
 
+# The site uses `http2 on;` (nginx 1.25.1+). Older nginx (Ubuntu 24.04: 1.24) gets the equivalent listen parameter.
+LEGACY_HTTP2=()
+NGX_VERSION="$(nginx -v 2>&1 | sed -E 's#.*nginx/([0-9.]+).*#\1#')"
+if [ "$(printf '%s\n' 1.25.1 "$NGX_VERSION" | sort -V | head -n1)" != "1.25.1" ]; then
+  LEGACY_HTTP2=(-e "/^[[:space:]]*http2 on;/d" -e "s#listen 127.0.0.1:$P443 ssl;#listen 127.0.0.1:$P443 ssl http2;#")
+fi
 sed -e "s#listen 80;#listen 127.0.0.1:$P80;#; s#listen \[::\]:80;##" \
-    -e "s#listen 443 ssl http2;#listen 127.0.0.1:$P443 ssl http2;#; s#listen \[::\]:443 ssl http2;##" \
+    -e "s#listen 443 ssl;#listen 127.0.0.1:$P443 ssl;#; s#listen \[::\]:443 ssl;##" "${LEGACY_HTTP2[@]}" \
     -e "s#/etc/letsencrypt#$T/le#g; s#/var/www/hollowmere/site#$T/www/site#g; s#root /var/www/html;#root $T/acme;#" \
     -e "s#127.0.0.1:7350#127.0.0.1:$PNK#g; s#127.0.0.1:8787#127.0.0.1:$PMCP#g" "$SITE_CONF" > "$T/site.conf"
 grep -q "/var/www/hollowmere/site" "$SITE_CONF" || { echo "FAIL site root is not /var/www/hollowmere/site"; exit 1; }
@@ -53,7 +59,7 @@ http {
   include $T/site.conf;
 }
 EOF
-nginx -t -c "$T/nginx.conf" -p "$T" 2>&1 | grep -v "http2\" directive is deprecated" || true
+nginx -t -c "$T/nginx.conf" -p "$T" 2>&1 | grep -v "http2\" directive is deprecated" || true   # only with the 1.24 fallback
 nginx -t -q -c "$T/nginx.conf" -p "$T"
 
 # Fake upstreams: answer with what they received.
