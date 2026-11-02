@@ -1,4 +1,11 @@
 import { spawn } from "node:child_process";
 
-const child = spawn(process.execPath, ["server.mjs", "--self-test"], { cwd: import.meta.dirname, stdio: "inherit" });
-child.on("exit", (code) => process.exit(code ?? 1));
+// Relay self-test, then the Tretu webhook unit tests.
+const run = (args) => new Promise((resolve) => {
+  const child = spawn(process.execPath, args, { cwd: import.meta.dirname, stdio: "inherit" });
+  child.on("exit", (code) => resolve(code ?? 1));
+});
+const a = await run(["server.mjs", "--self-test"]);
+const b = await run(["--test", "--test-reporter=dot", "tretu_webhook.test.mjs"]);
+if (b === 0) console.log("tretu webhook tests ok");
+process.exit(a || b);

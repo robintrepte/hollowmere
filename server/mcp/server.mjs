@@ -7,6 +7,7 @@
 import http from "node:http";
 import crypto from "node:crypto";
 import { readFileSync } from "node:fs";
+import { handleWebhook, MAX_BODY_BYTES } from "./tretu_webhook.mjs";
 
 const PORT = Number(process.env.MCP_PORT || 8787);
 // PM2 runs this next to Nakama on the same host; nginx is the only public entry.
@@ -16,6 +17,8 @@ const VERSION = JSON.parse(readFileSync(new URL("./package.json", import.meta.ur
 const HTTP_KEY = process.env.NAKAMA_HTTP_KEY || "dev_http_key_change_me";
 const PUBLIC_URL = process.env.MCP_PUBLIC_URL || `http://127.0.0.1:${PORT}`;
 const RATE = Number(process.env.MCP_RATE_PER_MIN || 60);
+// Tretu platform webhook (/api/tretu/webhook): off unless set. Same value as Nakama's TRETU_APP_SECRET.
+const TRETU_SECRET = process.env.TRETU_APP_SECRET || "";
 
 const TOOLS = [
   { name: "get_status", description: "Where you are, time, season, weather, gold, the held item, and the lead Wildling's energy.", inputSchema: { type: "object", properties: {} } },
@@ -226,6 +229,20 @@ async function handleRpc(msg, token) {
   return rpcError(id, "unknown method " + method);
 }
 
+// Raw bytes (the webhook signature covers them exactly); stops reading past `limit`.
+function readRaw(req, limit) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    let size = 0;
+    req.on("data", (c) => {
+      size += c.length;
+      if (size <= limit) chunks.push(c);
+    });
+    req.on("end", () => resolve(size > limit ? Buffer.alloc(limit + 1) : Buffer.concat(chunks)));
+    req.on("error", reject);
+  });
+}
+
 function readBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -251,6 +268,20 @@ const server = http.createServer(async (req, res) => {
   if (req.method === "GET" && url.pathname === "/api/health") {
     const body = await health();
     return json(res, body.status === "ok" ? 200 : 503, body);
+  }
+  if (url.pathname === "/api/tretu/webhook") {
+    if (req.method !== "POST") return json(res, 405, { error: "method_not_allowed" });
+    const rawBody = await readRaw(req, MAX_BODY_BYTES);
+    const out = await handleWebhook(
+      { headers: req.headers, method: req.method, path: req.url, rawBody, secret: TRETU_SECRET },
+      (id, body) => nakamaRpc(id, body, 8000),
+      (line) => console.log(line),
+    );
+    if (out.status === 204) {
+      res.writeHead(204);
+      return res.end();
+    }
+    return json(res, out.status, out.body);
   }
   if (req.method === "POST" && url.pathname === "/register") {
     const id = "cli_" + crypto.randomBytes(8).toString("hex");

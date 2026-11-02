@@ -451,7 +451,7 @@ Ziel: Spieler können ihren eigenen Charakter (dann im Zuschauermodus) **oder** 
 KI-Client (Claude / Cursor / …)
    │  MCP (Streamable HTTP, OAuth 2.1 oder Personal Access Token)
    ▼
-hollowmere-mcp  (Node/TypeScript, @modelcontextprotocol/sdk, Docker neben Nakama)
+hollowmere-mcp  (Node, PM2-Prozess neben Nakama, ohne Docker)
    │  Nakama Server-API (Token-Prüfung) + Realtime-Stream pro User
    ▼
 Spielclient des Spielers (Browser oder Desktop, Host der Welt)
@@ -460,7 +460,7 @@ Spielclient des Spielers (Browser oder Desktop, Host der Welt)
 - [x] Die Welt wird **nur im Spielclient** simuliert, das Spiel muss also offen sein. Der MCP-Server ist ein reiner Relay mit Auth, Rate-Limits und Request/Response-Korrelation (Timeouts, Fehlercodes).
 - [x] Transport Spiel ↔ Server über Nakama-Realtime (Stream oder Notifications). Neue RPCs `agent_register_client`, `agent_command_result`.
 - [x] Auth: (a) **OAuth 2.1 mit Dynamic Client Registration** für Claude.ai bzw. Desktop-Connectors (Login-Seite unter der Spiel-Domain, Nakama-Login), (b) **Personal Access Token** aus dem Spiel für Claude Code, Cursor und andere. Token mit Scopes (`observe`, `act`, `chat`, `economy`), widerrufbar, Ablaufdatum.
-- [x] Deployment: neuer Service in `server/docker-compose.yml`, nginx-Route `mcp.hollowmere.tretu.de`, Healthcheck, Logs, Rate-Limit pro Token.
+- [x] Deployment: PM2-Prozess `hollowmere-mcp` in `ecosystem.config.cjs` (kein Docker mehr), nginx-Route `mcp.hollowmere.tretu.de` (`deploy/nginx/`), Healthcheck `/api/health`, Logs über `pm2 logs`, Rate-Limit pro Token. Anleitung: `HOSTING.md`.
 
 ### K2 Modi im Spiel · L
 - [x] Neues Panel **„KI-Agenten“** (im Koop-Tab der Menü-Shell): Token erzeugen bzw. widerrufen, Verbindungsstatus, Modus wählen.
@@ -522,7 +522,7 @@ Spielclient des Spielers (Browser oder Desktop, Host der Welt)
 
 ### M3 Server und Betrieb · M
 - [x] `hollowmere.lua`: neue Collections (`profile`), Agent-RPCs, komprimierte Saves, Rate-Limits.
-- [x] `docker-compose.yml`: Service `hollowmere-mcp`, Secrets in `.env`. nginx: Subdomain `mcp.`, TLS, Rate-Limit, WebSocket bzw. SSE-Timeouts.
+- [x] PM2 statt Docker: `hollowmere-nakama` (Nakama-Binary über `server/nakama/nakama.sh`, Secrets in `server/nakama/local.yml`) und `hollowmere-mcp` (Secrets in `server/.env`), beide in `ecosystem.config.cjs`; die Datenbank `nakama` liegt auf dem gemeinsamen Postgres. nginx: Subdomain `mcp.`, TLS, Rate-Limit, WebSocket bzw. SSE-Timeouts. Umzug der alten Docker-Daten: `HOSTING.md` §16.
 - [x] Monitoring: Health-Endpoints, Fehlerberichte (gibt es schon) um MCP erweitern, Backups (Postgres) prüfen. `HOSTING.md` aktualisieren.
 
 ### M4 Lokalisierung · M
