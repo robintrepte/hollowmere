@@ -8,6 +8,7 @@ import http from "node:http";
 import crypto from "node:crypto";
 import { readFileSync } from "node:fs";
 import { handleWebhook, MAX_BODY_BYTES } from "./tretu_webhook.mjs";
+import { log } from "./log.mjs";
 
 const PORT = Number(process.env.MCP_PORT || 8787);
 // PM2 runs this next to Nakama on the same host; nginx is the only public entry.
@@ -137,10 +138,24 @@ export function healthBody(nakama, now = new Date()) {
   };
 }
 
+let lastHealth = "";
 async function health() {
-  let nakama = null;
-  try { nakama = await nakamaRpc("health", {}, 3000); } catch { nakama = null; }
-  return healthBody(nakama);
+  let nakama = null, error;
+  try { nakama = await nakamaRpc("health", {}, 3000); } catch (e) { nakama = null; error = e.message; }
+  const body = healthBody(nakama);
+  // Log changes only (nginx / monitoring may poll this every few seconds).
+  if (body.status !== lastHealth) {
+    (body.status === "ok" ? log.info : log.error)("health " + body.status, { checks: body.checks, error });
+    lastHealth = body.status;
+  }
+  return body;
+}
+
+// nginx (127.0.0.1) passes the real client address in X-Real-IP; otherwise the socket address.
+function clientAddress(req) {
+  const peer = req.socket?.remoteAddress || "";
+  const real = String(req.headers["x-real-ip"] || "").trim();
+  return /^(127\.|::1$|::ffff:127\.)/.test(peer) && /^[\w.:]{1,64}$/.test(real) ? real : peer;
 }
 
 function bearer(req) {
@@ -185,14 +200,21 @@ async function handleRpc(msg, token) {
   }
   if (method === "tools/call") {
     if (!token) return rpcError(id, "sign in with a Hollowmere MCP token");
-    if (!rateOk(token)) return rpcError(id, "slow down (rate limit)");
     const name = params?.name;
+    const tool = typeof name === "string" ? name.slice(0, 64) : "";
+    if (!rateOk(token)) {
+      log.warn("relay rate limited", { tool });
+      return rpcError(id, "slow down (rate limit)");
+    }
     const args = params?.arguments || {};
     if (name === "delete_save" || name === "wipe") return rpcError(id, "refused: saves cannot be deleted");
+    const started = Date.now();
     try {
       const out = await relay(token, name, args, args.actor || "");
+      log.info("relay tool call", { tool, ok: out?.ok !== false, ms: Date.now() - started });
       return rpcResult(id, { content: [{ type: "text", text: JSON.stringify(out.result ?? out, null, 2) }] });
     } catch (e) {
+      log.warn("relay tool call failed", { tool, ms: Date.now() - started, error: e.message });
       return rpcError(id, e.message);
     }
   }
@@ -270,12 +292,15 @@ const server = http.createServer(async (req, res) => {
     return json(res, body.status === "ok" ? 200 : 503, body);
   }
   if (url.pathname === "/api/tretu/webhook") {
-    if (req.method !== "POST") return json(res, 405, { error: "method_not_allowed" });
+    if (req.method !== "POST") {
+      log.warn("tretu webhook rejected", { reason: "method_not_allowed", status: 405, method: req.method, remote: clientAddress(req) });
+      return json(res, 405, { error: "method_not_allowed" });
+    }
     const rawBody = await readRaw(req, MAX_BODY_BYTES);
     const out = await handleWebhook(
-      { headers: req.headers, method: req.method, path: req.url, rawBody, secret: TRETU_SECRET },
+      { headers: req.headers, method: req.method, path: req.url, rawBody, secret: TRETU_SECRET, remote: clientAddress(req) },
       (id, body) => nakamaRpc(id, body, 8000),
-      (line) => console.log(line),
+      log,
     );
     if (out.status === 204) {
       res.writeHead(204);
@@ -374,5 +399,13 @@ if (process.argv.includes("--self-test")) {
 }
 
 server.listen(PORT, HOST, () => {
-  console.log(`hollowmere-mcp on ${HOST}:${PORT} → ${NAKAMA}`);
+  log.info("hollowmere-mcp started", { host: HOST, port: PORT, nakama: NAKAMA, version: VERSION, webhook: TRETU_SECRET ? "on" : "off" });
 });
+server.on("error", (e) => {
+  log.error("hollowmere-mcp could not start", { error: e.message, host: HOST, port: PORT });
+  process.exit(1);
+});
+for (const sig of ["SIGINT", "SIGTERM"]) {
+  process.on(sig, () => { log.info("hollowmere-mcp stopping", { signal: sig }); server.close(() => process.exit(0)); setTimeout(() => process.exit(0), 3000).unref(); });
+}
+process.on("unhandledRejection", (e) => log.error("unhandled rejection", { error: String(e?.message || e) }));

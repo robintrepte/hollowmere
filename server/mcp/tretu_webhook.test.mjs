@@ -3,6 +3,14 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { signature, verify, parseEnvelope, handleWebhook, MAX_BODY_BYTES } from "./tretu_webhook.mjs";
+import { makeLogger } from "./log.mjs";
+
+/** A real logger (log.mjs) writing into an array: [{ts, level, msg, ...}] plus the raw lines. */
+function capture() {
+  const lines = [];
+  const logger = makeLogger({ out: (l) => lines.push(l), err: (l) => lines.push(l) });
+  return { logger, lines, entries: () => lines.map((l) => JSON.parse(l)) };
+}
 
 const VECTOR_BODY = '{"id":"0b9f1c2e-1111-4a5b-8c9d-123456789abc","type":"stat.increment","app":"saga","sub":"user-sub-1","occurredAt":"2026-01-01T00:00:00.000Z","data":{"key":"saga.turns","by":1}}';
 const SECRET = "hook-secret-0123456789abcdef0123";
@@ -90,11 +98,12 @@ test("user.updated refreshes, unknown types are 204, nothing reaches Nakama unsi
 
 test("user.updated with locked reaches Nakama with the event time (orders retries); odd times are dropped", async () => {
   const { calls, rpc } = fakeRpc();
-  const logs = [];
+  const cap = capture();
   const lock = { ...envelope("user.updated", "s", { sub: "s", locked: true }), occurredAt: "2026-03-04T05:06:07.890+01:00" };
-  assert.equal((await handleWebhook(signed(lock), rpc, (l) => logs.push(l))).status, 200);
+  assert.equal((await handleWebhook(signed(lock), rpc, cap.logger)).status, 200);
   assert.deepEqual(calls[0], { id: "tretu_user_updated", body: { sub: "s", data: { sub: "s", locked: true }, occurredAt: "2026-03-04T04:06:07.890Z" } });
-  assert.ok(logs.some((l) => l.includes("lock")), "a lock is logged (without secrets)");
+  const handled = cap.entries().find((e) => e.msg === "tretu webhook handled");
+  assert.ok(handled && "lock" in handled && handled.eventType === "user.updated", "a lock is logged (without secrets)");
   const odd = { ...envelope("user.updated", "s", { sub: "s", locked: false }), occurredAt: "yesterday" };
   await handleWebhook(signed(odd), rpc);
   assert.deepEqual(calls[1], { id: "tretu_user_updated", body: { sub: "s", data: { sub: "s", locked: false } } });
@@ -112,4 +121,35 @@ test("bad input and Nakama trouble", async () => {
   assert.equal((await handleWebhook(signed(envelope("user.deleted", "s")), down.rpc)).status, 503, "platform retries");
   const r = signed(envelope("user.deleted", "s"));
   assert.equal((await handleWebhook({ ...r, secret: "" }, rpc)).status, 503, "off until configured");
+});
+
+test("rejected deliveries are logged with the reason, app, event and address, never secret material", async () => {
+  const { rpc } = fakeRpc();
+  const cap = capture();
+  const remote = "203.0.113.7";
+  const run = (req) => handleWebhook({ ...req, remote }, rpc, cap.logger);
+  const ev = envelope("user.deleted", "sub-9");
+  const forged = signed(ev, { secret: "attacker-secret-0123456789" });
+  await run(forged);
+  await run(signed(ev, { ts: NOW - 999 }));
+  await run(signed(ev, { app: "saga" }));
+  await run(signed(envelope("user.updated", "s", { pad: "x".repeat(MAX_BODY_BYTES) })));
+  await run(signed("{not json"));
+  await run(signed(envelope("user.deleted", null)));
+  await run({ ...signed(ev), secret: "" });
+  await handleWebhook({ ...signed(ev), remote }, fakeRpc(true).rpc, cap.logger);
+  const rejected = cap.entries().filter((e) => e.msg === "tretu webhook rejected");
+  assert.deepEqual(rejected.map((e) => e.reason),
+    ["bad_signature", "stale_timestamp", "wrong_app", "body_too_large", "malformed", "malformed", "not_configured", "nakama_error"]);
+  assert.deepEqual(rejected.map((e) => e.level), ["warn", "warn", "warn", "warn", "warn", "warn", "warn", "error"]);
+  for (const e of rejected) assert.equal(e.remote, remote);
+  const sig = rejected[0];
+  assert.equal(sig.app, "platform"); assert.equal(sig.eventId, ev.id); assert.equal(sig.eventType, "user.deleted"); assert.equal(sig.status, 401);
+  assert.equal(rejected[2].app, "saga");
+  assert.equal(rejected[4].eventId, undefined, "unparseable body: no event fields");
+  assert.equal(rejected[3].eventId, undefined, "an oversized body is not parsed");
+  const all = cap.lines.join("\n");
+  for (const secret of [SECRET, "attacker-secret-0123456789", forged.headers["x-tretu-signature"], forged.headers["x-tretu-signature"].slice(3), "sub-9", '"pad"', "xxxxxxxxxx"]) {
+    assert.ok(!all.includes(secret), "leaked: " + secret.slice(0, 20));
+  }
 });
