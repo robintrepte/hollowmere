@@ -66,6 +66,12 @@ jobs:
           node-version: "22"
       - name: MCP relay self-test
         run: node server/mcp/test.mjs
+      - name: Nakama runner (command line from the environment, production checks, redaction)
+        run: node --test server/nakama/tests/run_test.mjs
+      - name: nginx site file (nginx -t with dummy certificates, every location live)
+        run: |
+          sudo apt-get install -y -qq nginx
+          deploy/nginx/test_site.sh
       - name: Install the Nakama release binary + Lua (Nakama runs as a plain binary, like production)
         run: |
           curl -fsSL -o nakama.tgz "https://github.com/heroiclabs/nakama/releases/download/v${NAKAMA_VERSION}/nakama-${NAKAMA_VERSION}-linux-amd64.tar.gz"
@@ -254,7 +260,7 @@ jobs:
           DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           DEPLOY_USER: ${{ vars.DEPLOY_USER || 'deploy' }}
           APP_DIR: ${{ vars.DEPLOY_APP_DIR || '/srv/hollowmere' }}
-          SITE_DIR: ${{ vars.DEPLOY_SITE_DIR || '/var/www/hollowmere' }}
+          SITE_DIR: ${{ vars.DEPLOY_SITE_DIR || '/var/www/hollowmere/site' }}
         run: |
           if [ -z "$DEPLOY_HOST" ] || [ -z "$DEPLOY_KEY" ]; then
             echo "::warning::Set DEPLOY_HOST and DEPLOY_SSH_KEY to deploy the web build (HOSTING.md)."
