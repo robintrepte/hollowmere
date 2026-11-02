@@ -266,10 +266,16 @@ end
 
 -- Server-only record of the player's linked ids, keyed by sub (survives a farm choice that moves
 -- "tretu:<sub>" to another Nakama user). permission_read 0: clients never see it.
-function M.remember_identity(sub, links)
+-- Tretu username (profile link https://tretu.de/u/<username>): printable, at most 64 characters.
+function M.clean_tretu_username(name)
+  if type(name) ~= "string" or #name < 1 or #name > 64 or string.match(name, "^[%w%-_.]+$") == nil then return nil end
+  return name
+end
+
+function M.remember_identity(sub, links, username)
   local ok, err = pcall(nk.storage_write, {{
     collection = "tretu_identity", key = sub, user_id = SYSTEM,
-    value = {discord = links.discord, steam = links.steam, at = M.now_sec()},
+    value = {discord = links.discord, steam = links.steam, username = M.clean_tretu_username(username), at = M.now_sec()},
     permission_read = 0, permission_write = 0,
   }})
   if not ok then nk.logger_warn("Tretu: could not store linked ids: " .. tostring(err)) end
@@ -281,6 +287,7 @@ function M.identity(sub)
   local out = {}
   if M.valid_provider_id("discord", v.discord) then out.discord = v.discord end
   if M.valid_provider_id("steam", v.steam) then out.steam = v.steam end
+  out.username = M.clean_tretu_username(v.username)
   return out
 end
 
@@ -375,6 +382,50 @@ function M.redirect_discord(discord_id)
   return link.custom_id
 end
 
+-- --- Switch tickets (a full, refreshable session after choosing another farm) -------------------------
+
+local SWITCH_TTL_SEC = 120
+
+local function ticket_key(ticket)
+  return string.lower(nk.sha256_hash(ticket))
+end
+
+-- One-time ticket for the kept farm's user, redeemed by AuthenticateCustom vars.tretu_switch
+-- within 2 minutes. Only its hash is stored.
+function M.issue_switch_ticket(user_id, sub)
+  local ticket = string.gsub(nk.uuid_v4() .. nk.uuid_v4(), "-", "")
+  nk.storage_write({{
+    collection = "tretu_switch", key = ticket_key(ticket), user_id = SYSTEM,
+    value = {user_id = user_id, sub = sub, exp = M.now_sec() + SWITCH_TTL_SEC},
+    permission_read = 0, permission_write = 0,
+  }})
+  return ticket
+end
+
+-- AuthenticateCustom with vars.tretu_switch: signs into the farm the ticket was issued for, as a
+-- normal Nakama login (token + refresh token). Single use: the delete is conditional on the version.
+function M.authenticate_switch(ctx, payload, account, ticket)
+  if not M.config(ctx).auth_enabled then error({"Tretu sign-in is not enabled on this server.", 9}) end
+  if type(ticket) ~= "string" or string.match(ticket, "^%x+$") == nil or #ticket ~= 64 then
+    error({"Sign in with your Tretu account again.", 16})
+  end
+  local key = ticket_key(ticket)
+  local rows = nk.storage_read({{collection = "tretu_switch", key = key, user_id = SYSTEM}})
+  local row = rows[1]
+  if row == nil then error({"Sign in with your Tretu account again.", 16}) end
+  local used = pcall(nk.storage_delete, {{collection = "tretu_switch", key = key, user_id = SYSTEM, version = row.version}})
+  local v = row.value or {}
+  if not used or (v.exp or 0) < M.now_sec() or not M.valid_sub(v.sub) then
+    error({"Sign in with your Tretu account again.", 16})
+  end
+  local acc = M.account_by_custom_id("tretu:" .. v.sub)
+  if acc == nil or acc.id ~= v.user_id then error({"Sign in with your Tretu account again.", 16}) end
+  account.id = "tretu:" .. v.sub
+  account.vars = {tretu_sub = v.sub}
+  payload.account = account
+  return payload
+end
+
 -- AuthenticateCustom with vars.tretu_token. Returns the (modified) payload or raises.
 function M.authenticate(ctx, payload, account, token)
   local cfg = M.config(ctx)
@@ -390,7 +441,7 @@ function M.authenticate(ctx, payload, account, token)
   end
   local custom_id = "tretu:" .. info.sub
   local links = M.claim_links(info)
-  M.remember_identity(info.sub, links)
+  M.remember_identity(info.sub, links, info.preferred_username)
   local existing = user_by_custom_id(custom_id)
   if existing == nil then
     for _, provider in ipairs(PROVIDERS) do
@@ -412,16 +463,26 @@ end
 
 -- After a Tretu login: steam_id from the claims onto the account metadata (removed again when the
 -- player unlinks Steam). One guarded UPDATE, so nothing is written when it did not change.
+-- Account metadata from the identity record: "steam_id" (removed when unlinked) and
+-- "tretu_username" (for the in-game profile link). One guarded UPDATE: nothing is written when
+-- nothing changed. -> rows updated
+function M.sync_metadata(sub, ident)
+  local steam, uname = ident.steam or "", ident.username or ""
+  return nk.sql_exec([[
+    UPDATE users SET metadata = (metadata - 'steam_id' - 'tretu_username')
+        || CASE WHEN $2::text = '' THEN '{}'::jsonb ELSE jsonb_build_object('steam_id', $2::text) END
+        || CASE WHEN $3::text = '' THEN '{}'::jsonb ELSE jsonb_build_object('tretu_username', $3::text) END,
+      update_time = now()
+    WHERE custom_id = $1
+      AND ((metadata->>'steam_id') IS DISTINCT FROM NULLIF($2::text, '')
+        OR (metadata->>'tretu_username') IS DISTINCT FROM NULLIF($3::text, ''))
+  ]], {"tretu:" .. sub, steam, uname})
+end
+
 function M.after_authenticate(ctx)
   local sub = ctx.vars and ctx.vars.tretu_sub
   if not M.valid_sub(sub) or ctx.user_id == nil or ctx.user_id == "" then return end
-  local steam = M.identity(sub).steam or ""
-  nk.sql_exec([[
-    UPDATE users SET metadata = CASE WHEN $2::text = '' THEN metadata - 'steam_id'
-                                     ELSE metadata || jsonb_build_object('steam_id', $2::text) END,
-                     update_time = now()
-    WHERE id = $1::uuid AND custom_id = $3 AND (metadata->>'steam_id') IS DISTINCT FROM NULLIF($2::text, '')
-  ]], {ctx.user_id, steam, "tretu:" .. sub})
+  M.sync_metadata(sub, M.identity(sub))
 end
 
 -- --- Who is this player on Tretu? -------------------------------------------------------------------
@@ -1003,9 +1064,157 @@ function M.rpc_farm_choose(ctx, payload)
       local rows = nk.sql_query("SELECT username FROM users WHERE id = $1::uuid", {keep.id})
       username = rows[1] and rows[1].username or ""
     end
+    -- `switch`: one-time ticket for a full session (AuthenticateCustom vars.tretu_switch, refreshable
+    -- like any login). `token`: a plain session for the kept farm, used only if that login fails.
+    out.switch = M.issue_switch_ticket(keep.id, sub)
     out.token = nk.authenticate_token_generate(keep.id, username, 0, {tretu_sub = sub})
   end
   return nk.json_encode(out)
+end
+
+-- --- Account events from the platform (webhook, relayed by hollowmere-mcp) ---------------------------
+
+local function server_only(ctx)
+  if ctx.user_id ~= nil and ctx.user_id ~= "" then
+    error({"Not available.", 7})
+  end
+end
+
+-- Nakama users that belong to this sub: the active "tretu:<sub>" account and its archived farms.
+function M.accounts_of_sub(sub)
+  local out = {}
+  for _, r in ipairs(nk.sql_query([[
+    SELECT id::text AS id FROM users WHERE custom_id = $1
+    UNION
+    SELECT u.id::text FROM storage s JOIN users u ON u.id::text = s.key
+    WHERE s.collection = 'tretu_archive' AND s.user_id = '00000000-0000-0000-0000-000000000000'
+      AND s.value->>'sub' = $2 AND u.custom_id = 'archived:' || u.id::text
+  ]], {"tretu:" .. sub, sub})) do
+    out[#out + 1] = r.id
+  end
+  return out
+end
+
+-- Everything Hollowmere keeps for a deleted Tretu-Konto, as ONE statement:
+-- the "tretu:<sub>" account and the archived farms of that sub (their saves, profile, outbox,
+-- progress marks go with them: storage rows cascade), their AI-helper tokens and inboxes, the co-op
+-- codes they host, the identity record, archive records and the Discord/Steam markers.
+function M.deletion_sql(sub)
+  local L = M.sql_lit
+  local S, T = L(sub), L("tretu:" .. sub)
+  local sys = L(SYSTEM) .. "::uuid"
+  local ids = string.format([[(SELECT id::text FROM users WHERE custom_id = %s
+      UNION SELECT s.key FROM storage s JOIN users u ON u.id::text = s.key
+      WHERE s.collection = 'tretu_archive' AND s.user_id = %s AND s.value->>'sub' = %s
+        AND u.custom_id = 'archived:' || u.id::text)]], T, sys, S)
+  return table.concat({
+    "DO $hm$\nBEGIN\n",
+    string.format("  CREATE TEMP TABLE hm_gone ON COMMIT DROP AS SELECT * FROM %s AS g(id);\n", ids),
+    string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'agent_tokens' AND value->>'user' IN (SELECT id FROM hm_gone);\n", sys),
+    string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'agent_inbox' AND key IN (SELECT id FROM hm_gone);\n", sys),
+    string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'coop_codes' AND value->>'host' IN (SELECT id FROM hm_gone);\n", sys),
+    string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_switch' AND value->>'sub' = %s;\n", sys, S),
+    "  DELETE FROM users WHERE id::text IN (SELECT id FROM hm_gone);\n",
+    string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_archive' AND value->>'sub' = %s;\n", sys, S),
+    string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_identity' AND key = %s;\n", sys, S),
+    string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_links' AND value->>'custom_id' = %s;\n", sys, T),
+    "END\n$hm$",
+  })
+end
+
+-- A legacy sub joined into another Tretu-Konto ({"mergedInto": target}). The "tretu:<sub>" farm
+-- becomes "tretu:<target>" when the target has no Hollowmere account yet; otherwise it is archived
+-- under the target, so the player can pick it in the farm choice. Archived farms of the old sub
+-- move to the target too. Queued events of the old sub are dropped (the platform erased it).
+function M.merge_sql(sub, target, now)
+  local L = M.sql_lit
+  local S, T, NT = L(sub), L("tretu:" .. sub), L("tretu:" .. target)
+  local sys = L(SYSTEM) .. "::uuid"
+  return table.concat({
+    "DO $hm$\nBEGIN\n",
+    string.format("  DELETE FROM storage WHERE collection = 'tretu_outbox' AND user_id IN (SELECT id FROM users WHERE custom_id = %s);\n", T),
+    string.format("  IF EXISTS (SELECT 1 FROM users WHERE custom_id = %s) THEN\n", NT),
+    string.format([[    INSERT INTO storage (collection, key, user_id, value, version, read, write)
+      SELECT 'tretu_archive', id::text, %s, jsonb_build_object('sub', %s::text, 'user_id', id::text,
+        'custom_id', custom_id, 'steam_id', steam_id, 'kind', 'tretu', 'at', %d, 'mergedFrom', %s::text),
+        md5(id::text || ':merged:' || %d::text), 0, 0
+      FROM users WHERE custom_id = %s
+      ON CONFLICT (collection, key, user_id) DO UPDATE SET value = EXCLUDED.value, version = EXCLUDED.version, update_time = now();
+    UPDATE users SET custom_id = 'archived:' || id::text, steam_id = NULL, disable_time = now(), update_time = now()
+      WHERE custom_id = %s;
+    DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_links' AND value->>'custom_id' = %s;
+]], sys, L(target), now, S, now, T, T, sys, T),
+    "  ELSE\n",
+    string.format([[    UPDATE users SET custom_id = %s, update_time = now() WHERE custom_id = %s;
+    UPDATE storage SET value = jsonb_set(value, '{custom_id}', to_jsonb(%s::text)), update_time = now()
+      WHERE user_id = %s AND collection = 'tretu_links' AND value->>'custom_id' = %s;
+]], NT, T, NT, sys, T),
+    "  END IF;\n",
+    string.format("  UPDATE storage SET value = jsonb_set(value, '{sub}', to_jsonb(%s::text)), update_time = now()\n    WHERE user_id = %s AND collection = 'tretu_archive' AND value->>'sub' = %s;\n", L(target), sys, S),
+    string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_identity' AND key = %s;\n", sys, S),
+    string.format("  DELETE FROM storage WHERE user_id = %s AND collection = 'tretu_switch' AND value->>'sub' = %s;\n", sys, S),
+    "END\n$hm$",
+  })
+end
+
+-- Sessions of these users end now (their sub changed, or the account is gone / archived: `ban`
+-- also closes their sockets and keeps old tokens out until they expire).
+local function end_sessions(ids, ban)
+  for _, id in ipairs(ids) do
+    pcall(nk.session_logout, id)
+    nk.localcache_delete("tretu:sub:" .. id)
+  end
+  if ban and #ids > 0 then pcall(nk.users_ban_id, ids) end
+end
+
+-- RPC tretu_user_deleted (server only, HTTP key; called by hollowmere-mcp for the platform's
+-- user.deleted webhook). payload {"sub", "mergedInto"?} -> {deleted | merged, accounts}
+-- Idempotent: a repeat finds nothing left and answers the same shape with accounts = 0.
+function M.rpc_user_deleted(ctx, payload)
+  server_only(ctx)
+  local req = decode_payload(payload)
+  local sub, target = req.sub, req.mergedInto
+  if not M.valid_sub(sub) then error({"sub required", 3}) end
+  if target ~= nil and (not M.valid_sub(target) or target == sub) then error({"bad mergedInto", 3}) end
+  local ids = M.accounts_of_sub(sub)
+  if target ~= nil then
+    local active = M.account_by_custom_id("tretu:" .. sub)
+    local into_existing = M.account_by_custom_id("tretu:" .. target) ~= nil
+    nk.sql_exec(M.merge_sql(sub, target, M.now_sec()))
+    -- Re-keyed: the farm now signs in with the surviving Tretu-Konto (old sessions carry the old sub).
+    -- Archived: disabled like any farm the player did not keep.
+    if active ~= nil then end_sessions({active.id}, into_existing) end
+    nk.logger_info(string.format("Tretu: merged a deleted Tretu-Konto into another (%s)", into_existing and "archived" or "re-keyed"))
+    return nk.json_encode({merged = true, archived = into_existing and active ~= nil, rekeyed = (not into_existing) and active ~= nil, accounts = active and 1 or 0})
+  end
+  nk.sql_exec(M.deletion_sql(sub))
+  end_sessions(ids, true)
+  nk.logger_info(string.format("Tretu: deleted %d account(s) of a deleted Tretu-Konto", #ids))
+  return nk.json_encode({deleted = true, accounts = #ids})
+end
+
+-- RPC tretu_user_updated (server only). payload {"sub", "data": <auth user shape>}
+-- Refreshes the linked ids and the account metadata (steam_id, tretu_username). Nothing is stored
+-- for Tretu users who never played Hollowmere.
+function M.rpc_user_updated(ctx, payload)
+  server_only(ctx)
+  local req = decode_payload(payload)
+  local sub = req.sub
+  if not M.valid_sub(sub) then error({"sub required", 3}) end
+  local data = type(req.data) == "table" and req.data or {}
+  local known = M.account_by_custom_id("tretu:" .. sub) ~= nil
+  if not known then
+    local rows = nk.storage_read({{collection = "tretu_identity", key = sub, user_id = SYSTEM}})
+    known = rows[1] ~= nil
+  end
+  if not known then return nk.json_encode({updated = false}) end
+  local links = type(data.links) == "table" and data.links or {}
+  local ident = M.claim_links({discord_id = links.discord, steam_id = links.steam})
+  local username = M.clean_tretu_username(data.username) or M.identity(sub).username
+  M.remember_identity(sub, ident, username)
+  ident.username = M.clean_tretu_username(username)
+  local n = M.sync_metadata(sub, ident)
+  return nk.json_encode({updated = true, metadata = n > 0})
 end
 
 -- RPC tretu_archive_purge (server to server only: needs the runtime HTTP key, refused for players).
@@ -1032,6 +1241,9 @@ function M.rpc_archive_purge(ctx, payload)
         deleted = deleted + 1
       end
     end
+  end
+  if not req.dryRun then
+    nk.sql_exec("DELETE FROM storage WHERE collection = 'tretu_switch' AND user_id = '00000000-0000-0000-0000-000000000000' AND (value->>'exp')::bigint < $1", {M.now_sec()})
   end
   nk.logger_info(string.format("Tretu archive purge: %d of %d archived farm(s) past 90 days removed", deleted, #rows))
   return nk.json_encode({deleted = deleted, due = #rows})

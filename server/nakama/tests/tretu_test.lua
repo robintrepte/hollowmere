@@ -249,5 +249,32 @@ local off = tretu.config({env = {TRETU_PLATFORM_BACKOFF_SEC = "0"}})
 eq("backoff can be turned off", off.backoff_sec, 0)
 eq("default backoff", tretu.config({env = {}}).backoff_sec, 15)
 
+-- Account events (webhook): one statement each, only validated values inside.
+local del = tretu.deletion_sql(SUB)
+check("deletion is one DO block", del:match("^DO %$hm%$") ~= nil and select(2, del:gsub("%$hm%$", "")) == 2)
+check("deletion covers account, archives, identity, markers, tokens, co-op codes",
+  del:find("DELETE FROM users WHERE id::text IN (SELECT id FROM hm_gone)", 1, true) ~= nil
+  and del:find("collection = 'tretu_archive' AND value->>'sub' = '" .. SUB .. "'", 1, true) ~= nil
+  and del:find("collection = 'tretu_identity' AND key = '" .. SUB .. "'", 1, true) ~= nil
+  and del:find("collection = 'tretu_links' AND value->>'custom_id' = 'tretu:" .. SUB .. "'", 1, true) ~= nil
+  and del:find("'agent_tokens'", 1, true) ~= nil and del:find("'coop_codes'", 1, true) ~= nil)
+local cap_at = del:find("CREATE TEMP TABLE hm_gone", 1, true)
+check("ids are captured before anything is deleted", cap_at ~= nil and cap_at < del:find("DELETE FROM", 1, true))
+check("deletion refuses a bad sub", not pcall(tretu.deletion_sql, "x'; DROP TABLE users; --"))
+local NEW = "aaaaaaaa-0000-4000-8000-000000000001"
+local mg = tretu.merge_sql(SUB, NEW, 1767225600)
+check("merge: archive under the survivor when it has a farm, else re-key",
+  mg:find("IF EXISTS (SELECT 1 FROM users WHERE custom_id = 'tretu:" .. NEW .. "')", 1, true) ~= nil
+  and mg:find("UPDATE users SET custom_id = 'tretu:" .. NEW .. "', update_time = now() WHERE custom_id = 'tretu:" .. SUB .. "'", 1, true) ~= nil
+  and mg:find("'mergedFrom'", 1, true) ~= nil)
+check("merge: archives of the old sub move to the survivor",
+  mg:find("jsonb_set(value, '{sub}', to_jsonb('" .. NEW .. "'::text))", 1, true) ~= nil)
+check("merge refuses a bad target", not pcall(tretu.merge_sql, SUB, "a b", 1))
+check("players cannot call the account-event RPCs", not pcall(tretu.rpc_user_deleted, {user_id = "u1"}, '{"sub":"x"}')
+  and not pcall(tretu.rpc_user_updated, {user_id = "u1"}, '{"sub":"x"}'))
+eq("tretu username", tretu.clean_tretu_username("mia_92"), "mia_92")
+eq("tretu username with spaces refused", tretu.clean_tretu_username("a b"), nil)
+eq("tretu username too long", tretu.clean_tretu_username(string.rep("a", 65)), nil)
+
 print(string.format("TRETU LUA TESTS: %d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

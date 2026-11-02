@@ -5,7 +5,8 @@
 //
 // hollowmere-nakama  Nakama API + realtime on 127.0.0.1:7350, console 127.0.0.1:7351
 //                    (server/nakama/nakama.sh runs "nakama migrate up" before every start)
-// hollowmere-mcp     MCP relay for AI helpers on 127.0.0.1:8787, also serves /api/health
+// hollowmere-mcp     MCP relay for AI helpers on 127.0.0.1:8787, also serves /api/health and the
+//                    Tretu platform webhook /api/tretu/webhook
 //
 // Secrets: server/.env (this file reads it) and server/nakama/local.yml (Nakama reads it).
 const fs = require("node:fs");
@@ -56,6 +57,8 @@ module.exports = {
         MCP_PUBLIC_URL: env.MCP_PUBLIC_URL || "https://mcp.hollowmere.tretu.de",
         NAKAMA_URL: "http://127.0.0.1:7350",
         NAKAMA_HTTP_KEY: env.NAKAMA_HTTP_KEY || "",
+        // Tretu platform webhook (/api/tretu/webhook): off while empty.
+        TRETU_APP_SECRET: env.TRETU_APP_SECRET || "",
       },
       autorestart: true,
       restart_delay: 3000,

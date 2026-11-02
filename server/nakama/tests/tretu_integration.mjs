@@ -35,6 +35,8 @@ const SUB_DAVE = "d0d0d0d0-0000-4000-8000-00000000da01";
 const SUB_ERIN = "e0e0e0e0-0000-4000-8000-00000000e401";
 const SUB_GHOST = "90909090-0000-4000-8000-000000000404";
 const SUB_GINA = "61616161-0000-4000-8000-0000000061a1";
+const SUB_HANK = "4a4a4a4a-0000-4000-8000-0000000004a1";
+const SUB_DAVE_NEW = "d0d0d0d0-0000-4000-8000-00000000da02";
 const STEAM_DAVE = "76561198000000001";
 const STEAM_ERIN = "76561198000000002";
 const BACKOFF_SEC = 2;
@@ -56,6 +58,8 @@ const users = {
   "tok-erin": { sub: SUB_ERIN, preferred_username: "erin" },
   "tok-ghost": { sub: SUB_GHOST, preferred_username: "ghost" },
   "tok-gina": { sub: SUB_GINA, preferred_username: "gina" },
+  "tok-hank": { sub: SUB_HANK, preferred_username: "hank" },
+  "tok-dave-new": { sub: SUB_DAVE_NEW, preferred_username: "dave" },
 };
 const received = [];
 let platformDown = false;
@@ -482,9 +486,9 @@ try {
   check("Nakama log has no app secret, access token or signature", !logText.includes(SECRET)
     && !/tok-(alice|bobby|carol|dave|erin|ghost)/.test(logText) && !/v1=[0-9a-f]{64}/.test(logText));
 
-  // /api/health through the MCP relay.
+  // --- Platform webhook through the MCP relay (POST /api/tretu/webhook), and /api/health -----------
   mcp = spawn(process.execPath, [path.join(repo, "server/mcp/server.mjs")], {
-    env: { ...process.env, MCP_PORT: "18787", NAKAMA_URL: API, NAKAMA_HTTP_KEY: HTTP_KEY }, stdio: "ignore",
+    env: { ...process.env, MCP_PORT: "18787", NAKAMA_URL: API, NAKAMA_HTTP_KEY: HTTP_KEY, TRETU_APP_SECRET: SECRET }, stdio: "ignore",
   });
   let health = null;
   for (let i = 0; i < 40 && !health; i++) {
@@ -492,6 +496,105 @@ try {
     health = await fetch("http://127.0.0.1:18787/api/health").then(async (r) => ({ status: r.status, body: await r.json() }), () => null);
   }
   check("/api/health ok", health?.status === 200 && health.body.status === "ok" && health.body.app === "hollowmere" && health.body.checks.db === "ok", health);
+
+  const HOOK = "http://127.0.0.1:18787/api/tretu/webhook";
+  // What tretu.de's worker sends: x-tretu-app "platform", signed with Hollowmere's own secret.
+  const hookReq = (type, sub, data = {}, { ts = Math.floor(Date.now() / 1000), secret = SECRET, app = "platform" } = {}) => {
+    const body = JSON.stringify({ id: crypto.randomUUID(), type, app: "platform", sub, occurredAt: new Date().toISOString(), data });
+    const base = `${ts}\nPOST\n/api/tretu/webhook\n${sha256(body)}`;
+    return { body, headers: { "Content-Type": "application/json", "x-tretu-app": app, "x-tretu-timestamp": String(ts),
+      "x-tretu-signature": "v1=" + crypto.createHmac("sha256", secret).update(base).digest("hex") } };
+  };
+  const post = async (req) => {
+    const r = await fetch(HOOK, { method: "POST", headers: req.headers, body: req.body });
+    return { status: r.status, text: await r.text() };
+  };
+  const users0 = sql("SELECT count(*) FROM users");
+  const forged = await post(hookReq("user.deleted", SUB_BOB, {}, { secret: "not-the-secret-0123456789abcdef" }));
+  check("webhook: forged signature rejected", forged.status === 401 && sql("SELECT count(*) FROM users") === users0, forged);
+  const stale = await post(hookReq("user.deleted", SUB_BOB, {}, { ts: Math.floor(Date.now() / 1000) - 400 }));
+  check("webhook: replay of an old delivery (timestamp > 300 s) rejected", stale.status === 401 && sql("SELECT count(*) FROM users") === users0, stale);
+  const foreign = await post(hookReq("user.deleted", SUB_BOB, {}, { app: "saga" }));
+  check("webhook: only the platform may call it", foreign.status === 401, foreign);
+  const tampered = hookReq("user.deleted", SUB_ALICE);
+  tampered.body = tampered.body.replace(SUB_ALICE, SUB_BOB);
+  check("webhook: body is covered by the signature", (await post(tampered)).status === 401);
+  check("webhook: GET refused", (await fetch(HOOK)).status === 405);
+  check("webhook: unknown types answered 204", (await post(hookReq("badge.earned", SUB_BOB, { badge: "x" }))).status === 204);
+  const viaPlayer = await rpc(sb, "tretu_user_deleted", { sub: SUB_BOB });
+  check("players cannot call the deletion RPC", viaPlayer.status === 403 && sql(`SELECT count(*) FROM users WHERE custom_id = 'tretu:${SUB_BOB}'`) === "1", viaPlayer);
+
+  // user.updated: username + Steam link refreshed on the account metadata.
+  const upd = await post(hookReq("user.updated", SUB_ALICE, { sub: SUB_ALICE, username: "alice_new", links: { discord: "123456789012", steam: "76561198000000077" } }));
+  check("webhook: user.updated refreshes username and Steam metadata", upd.status === 200
+    && sql(`SELECT (metadata->>'tretu_username') || '|' || (metadata->>'steam_id') FROM users WHERE custom_id = 'tretu:${SUB_ALICE}'`) === "alice_new|76561198000000077", upd);
+  const idsBefore = sql("SELECT count(*) FROM storage WHERE collection = 'tretu_identity'");
+  await post(hookReq("user.updated", "77777777-0000-4000-8000-000000000777", { username: "never_played" }));
+  check("webhook: nothing stored for Tretu users who never played", sql("SELECT count(*) FROM storage WHERE collection = 'tretu_identity'") === idsBefore);
+
+  // user.deleted: Bob's account, saves, outbox, identity, co-op codes and AI-helper tokens are gone.
+  const bobUid = claims(sb).uid;
+  await save(sb, "slot_0", { farm: "Bob Farm", day: 2 });
+  const bobTok = await rpc(sb, "agent_issue_token", { name: "helper" });
+  await rpc(sb, "create_coop_code", { match_id: "integration-match-bob-0002" });
+  const del = hookReq("user.deleted", SUB_BOB, {});
+  const gone = await post(del);
+  check("webhook: user.deleted accepted", gone.status === 200, gone);
+  check("deleted: account and its storage are gone",
+    sql(`SELECT count(*) FROM users WHERE id = '${bobUid}'`) === "0" && sql(`SELECT count(*) FROM storage WHERE user_id = '${bobUid}'`) === "0");
+  check("deleted: identity, AI-helper token and co-op code are gone",
+    sql(`SELECT count(*) FROM storage WHERE collection = 'tretu_identity' AND key = '${SUB_BOB}'`) === "0"
+    && sql(`SELECT count(*) FROM storage WHERE collection = 'agent_tokens' AND value->>'user' = '${bobUid}'`) === "0"
+    && sql(`SELECT count(*) FROM storage WHERE collection = 'coop_codes' AND value->>'host' = '${bobUid}'`) === "0", bobTok);
+  check("deleted: the old session no longer works", (await rpc(sb, "tretu_heartbeat", {})).status === 401);
+  const again2 = await post(del);
+  check("deleted: a repeated delivery is harmless (idempotent)", again2.status === 200 && sql("SELECT count(*) FROM users WHERE custom_id LIKE 'tretu:%'") !== "0", again2);
+  check("deleted: other players untouched", sql(`SELECT count(*) FROM users WHERE custom_id = 'tretu:${SUB_ALICE}'`) === "1");
+
+  // user.deleted for a player with an archived farm: both accounts and the archive record go.
+  const erinIds = sql(`SELECT string_agg(key, ',') FROM storage WHERE collection = 'tretu_archive' AND value->>'sub' = '${SUB_ERIN}'`);
+  check("Erin has an archived farm before deletion", erinIds !== "", erinIds);
+  check("webhook: Erin deleted", (await post(hookReq("user.deleted", SUB_ERIN))).status === 200);
+  check("deleted: archived farms of that sub and their records are gone too",
+    sql(`SELECT count(*) FROM users WHERE id::text IN ('${erinIds.split(",").join("','")}') OR custom_id = 'tretu:${SUB_ERIN}'`) === "0"
+    && sql(`SELECT count(*) FROM storage WHERE collection = 'tretu_archive' AND value->>'sub' = '${SUB_ERIN}'`) === "0"
+    && sql(`SELECT count(*) FROM storage WHERE collection = 'tretu_links' AND value->>'custom_id' = 'tretu:${SUB_ERIN}'`) === "0");
+
+  // Merge, surviving sub has no Hollowmere account yet: the farm is re-keyed to it.
+  const daveUid = sql(`SELECT id FROM users WHERE custom_id = 'tretu:${SUB_DAVE}'`);
+  const daveSession = (await tretuLogin("tok-dave")).json.token;
+  // Nakama ends sessions by "issued before <second>": a token from the very same second survives.
+  // Real sessions are older; make this one at least a second old.
+  await sleep(1100);
+  const m1 = await post(hookReq("user.deleted", SUB_DAVE, { mergedInto: SUB_DAVE_NEW }));
+  check("merge: farm re-keyed to the surviving Tretu-Konto", m1.status === 200
+    && sql(`SELECT custom_id || '|' || (disable_time > 'epoch') FROM users WHERE id = '${daveUid}'`) === `tretu:${SUB_DAVE_NEW}|false`, m1);
+  check("merge: old session (old sub) ended", (await rpc(daveSession, "tretu_heartbeat", {})).status === 401);
+  const dn = await tretuLogin("tok-dave-new");
+  check("merge: surviving Tretu-Konto signs into that farm", dn.status === 200 && claims(dn.json.token).uid === daveUid, dn);
+  const m1b = await post(hookReq("user.deleted", SUB_DAVE, { mergedInto: SUB_DAVE_NEW }));
+  check("merge: repeated delivery changes nothing", m1b.status === 200 && sql(`SELECT custom_id FROM users WHERE id = '${daveUid}'`) === `tretu:${SUB_DAVE_NEW}`);
+
+  // Merge into a Tretu-Konto that already has a farm: the old farm waits in its archived farms.
+  const hk = await tretuLogin("tok-hank");
+  const hankUid = claims(hk.json.token).uid;
+  const aliceUid = sql(`SELECT id FROM users WHERE custom_id = 'tretu:${SUB_ALICE}'`);
+  const m2 = await post(hookReq("user.deleted", SUB_ALICE, { mergedInto: SUB_HANK }));
+  check("merge into an existing farm: old farm archived under the survivor", m2.status === 200
+    && sql(`SELECT custom_id || '|' || (disable_time > 'epoch') FROM users WHERE id = '${aliceUid}'`) === `archived:${aliceUid}|true`
+    && sql(`SELECT value->>'sub' FROM storage WHERE collection = 'tretu_archive' AND key = '${aliceUid}'`) === SUB_HANK, m2);
+  const hch = await rpc(hk.json.token, "tretu_farm_choice", {});
+  const offered = (hch.json.options || []).find((o) => o.id === aliceUid);
+  check("merge: the survivor can restore it in the farm choice", offered?.kind === "archived" && offered.saves?.some((x) => x.farm === "Moss"), hch);
+  const restoredA = await rpc(hk.json.token, "tretu_farm_choose", { keep: aliceUid });
+  check("merge: restoring it gives a refreshable session through the switch ticket", restoredA.status === 200 && /^[0-9a-f]{64}$/.test(restoredA.json.switch || ""), restoredA);
+  const sw = await api("POST", "/v2/account/authenticate/custom?create=false", { basic: true, body: { id: "tretu-switch", vars: { tretu_switch: restoredA.json.switch } } });
+  check("switch ticket signs into the kept farm with a refresh token", sw.status === 200 && claims(sw.json.token).uid === aliceUid
+    && claims(sw.json.token).vrs?.tretu_sub === SUB_HANK && typeof sw.json.refresh_token === "string" && sw.json.refresh_token.length > 20, sw);
+  const sw2 = await api("POST", "/v2/account/authenticate/custom?create=false", { basic: true, body: { id: "tretu-switch", vars: { tretu_switch: restoredA.json.switch } } });
+  check("switch ticket is single use", sw2.status === 401, sw2);
+  const swBad = await api("POST", "/v2/account/authenticate/custom?create=false", { basic: true, body: { id: "tretu-switch", vars: { tretu_switch: "0".repeat(64) } } });
+  check("unknown switch ticket refused", swBad.status === 401, swBad);
 } catch (e) {
   failures++;
   console.log("FAIL exception", e?.stack || e);

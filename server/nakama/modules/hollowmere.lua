@@ -183,6 +183,7 @@ end
 
 -- Custom auth carries a provider token in vars; the hook swaps it for a verified custom id:
 --   vars.tretu_token   -> "tretu:<sub>"   (Tretu-Konto, see tretu.lua; off without TRETU_AUTH_ISSUER)
+--   vars.tretu_switch  -> "tretu:<sub>"   (one-time ticket after choosing another farm, tretu.lua)
 --   vars.discord_token -> "discord:<id>"  (or the Tretu account it was carried over / chosen into)
 -- Without a token the request is refused, so nobody can claim a custom id directly.
 local function before_auth_custom(ctx, payload)
@@ -191,6 +192,9 @@ local function before_auth_custom(ctx, payload)
   local tretu_token = vars.tretu_token or ""
   if tretu_token ~= "" then
     return tretu.authenticate(ctx, payload, account, tretu_token)
+  end
+  if (vars.tretu_switch or "") ~= "" then
+    return tretu.authenticate_switch(ctx, payload, account, vars.tretu_switch)
   end
   local token = vars.discord_token or ""
   if token == "" then
@@ -416,6 +420,8 @@ nk.register_rpc(tretu.rpc_account, "tretu_account")
 nk.register_rpc(tretu.rpc_farm_choice, "tretu_farm_choice")
 nk.register_rpc(tretu.rpc_farm_choose, "tretu_farm_choose")
 nk.register_rpc(tretu.rpc_archive_purge, "tretu_archive_purge")
+nk.register_rpc(tretu.rpc_user_deleted, "tretu_user_deleted")
+nk.register_rpc(tretu.rpc_user_updated, "tretu_user_updated")
 nk.register_req_before(before_write, "WriteStorageObjects")
 nk.register_req_after(after_write, "WriteStorageObjects")
 nk.register_req_before(before_auth_custom, "AuthenticateCustom")
