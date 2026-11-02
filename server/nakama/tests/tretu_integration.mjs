@@ -39,6 +39,7 @@ const SUB_GINA = "61616161-0000-4000-8000-0000000061a1";
 const SUB_HANK = "4a4a4a4a-0000-4000-8000-0000000004a1";
 const SUB_DAVE_NEW = "d0d0d0d0-0000-4000-8000-00000000da02";
 const SUB_LENA = "1e4a1e4a-0000-4000-8000-0000000001e4";
+const SUB_LOST = "10511051-0000-4000-8000-000000001051";
 const STEAM_DAVE = "76561198000000001";
 const STEAM_ERIN = "76561198000000002";
 const BACKOFF_SEC = 2;
@@ -63,8 +64,10 @@ const users = {
   "tok-hank": { sub: SUB_HANK, preferred_username: "hank" },
   "tok-dave-new": { sub: SUB_DAVE_NEW, preferred_username: "dave" },
   "tok-lena": { sub: SUB_LENA, preferred_username: "lena" },
+  "tok-lost": { sub: SUB_LOST, preferred_username: "lost" },
 };
 const received = [];
+const lockedAtIssuer = new Set();
 let platformDown = false;
 let platformHang = false;
 const wallets = { [SUB_ALICE]: 120, [SUB_BOB]: 7, [SUB_GINA]: 4321 };
@@ -93,7 +96,8 @@ const fake = http.createServer((req, res) => {
     }
     if (req.url === "/userinfo") {
       const tok = String(req.headers.authorization || "").replace(/^Bearer /, "");
-      return users[tok] ? send(200, users[tok]) : send(401, { error: "invalid_token" });
+      // Like auth.tretu.de: a locked account gets no answer (its tokens are revoked).
+      return users[tok] && !lockedAtIssuer.has(users[tok].sub) ? send(200, users[tok]) : send(401, { error: "invalid_token" });
     }
     if (req.url.startsWith("/api/v1/")) {
       const ok = verify(req, raw);
@@ -554,18 +558,40 @@ try {
   check("lock: the old session no longer works", (await rpc(ln.json.token, "tretu_heartbeat", {})).status === 401);
   const refresh = await api("POST", "/v2/account/session/refresh", { basic: true, body: { token: ln.json.refresh_token } });
   check("lock: the refresh token is refused", refresh.status >= 400 && refresh.status < 500, refresh);
+  lockedAtIssuer.add(SUB_LENA);
+  const issuerRefused = await tretuLogin("tok-lena");
+  check("lock: auth.tretu.de refuses the locked account, so does the sign-in", issuerRefused.status === 401 && lenaDisabled(), issuerRefused);
+  lockedAtIssuer.delete(SUB_LENA);
+  // A lock recorded after auth.tretu.de answered (an overlapping lock) still refuses, with a clear message.
+  await post(hookReq("user.updated", SUB_LENA, { sub: SUB_LENA, locked: true }, { at: Date.now() + 600_000 }));
   const lockedLogin = await tretuLogin("tok-lena");
-  check("lock: Tretu sign-in refused with a clear message", lockedLogin.status === 403 && /locked/i.test(JSON.stringify(lockedLogin.json)), lockedLogin);
-  const lockAgain = await post(hookReq("user.updated", SUB_LENA, { sub: SUB_LENA, locked: true }, { at: lockAt }));
+  check("lock: Tretu sign-in refused with a clear message", lockedLogin.status === 403 && /locked/i.test(JSON.stringify(lockedLogin.json)) && lenaDisabled(), lockedLogin);
+  const lockAgain = await post(hookReq("user.updated", SUB_LENA, { sub: SUB_LENA, locked: true }, { at: lockAt + 600_000 }));
   check("lock: a repeated delivery is harmless", lockAgain.status === 200 && lenaDisabled(), lockAgain);
-  const unlocked = await post(hookReq("user.updated", SUB_LENA, { sub: SUB_LENA, locked: false }, { at: lockAt + 2000 }));
+  const unlocked = await post(hookReq("user.updated", SUB_LENA, { sub: SUB_LENA, locked: false }, { at: lockAt + 602_000 }));
   check("unlock: account enabled again", unlocked.status === 200 && !lenaDisabled(), unlocked);
-  const lateLock = await post(hookReq("user.updated", SUB_LENA, { sub: SUB_LENA, locked: true }, { at: lockAt + 1000 }));
+  const lateLock = await post(hookReq("user.updated", SUB_LENA, { sub: SUB_LENA, locked: true }, { at: lockAt + 601_000 }));
   check("unlock: a late retry of an older lock changes nothing", lateLock.status === 200 && !lenaDisabled(), lateLock);
   const back = await tretuLogin("tok-lena");
   check("unlock: the player signs into the same farm again", back.status === 200 && claims(back.json.token).uid === lenaUid, back.json);
   check("unlock: sessions from before the lock stay ended", (await rpc(ln.json.token, "tretu_heartbeat", {})).status === 401);
   check("unlock: the new session works", (await rpc(back.json.token, "tretu_heartbeat", {})).status === 200);
+
+  // The unlock webhook got lost: auth.tretu.de answering the sign-in proves the unlock, the lock (recorded before)
+  // and its ban are lifted, and the player signs into the same farm.
+  const lo = await tretuLogin("tok-lost");
+  const lostUid = claims(lo.json.token).uid;
+  const lostDisabled = () => sql(`SELECT disable_time > 'epoch' FROM users WHERE id = '${lostUid}'`) === "t";
+  await sleep(1100);
+  const lostAt = Date.now();
+  await post(hookReq("user.updated", SUB_LOST, { sub: SUB_LOST, locked: true }, { at: lostAt }));
+  check("lost unlock: locked and disabled", lostDisabled() && (await rpc(lo.json.token, "tretu_heartbeat", {})).status === 401);
+  await sleep(50);
+  const lostBack = await tretuLogin("tok-lost");
+  check("lost unlock: a successful Tretu sign-in lifts the lock", lostBack.status === 200 && claims(lostBack.json.token).uid === lostUid && !lostDisabled()
+    && sql(`SELECT value->>'locked' FROM storage WHERE collection = 'tretu_locks' AND key = '${SUB_LOST}'`) === "false", lostBack.json);
+  const retryOld = await post(hookReq("user.updated", SUB_LOST, { sub: SUB_LOST, locked: true }, { at: lostAt }));
+  check("lost unlock: a late retry of that lock changes nothing", retryOld.status === 200 && !lostDisabled(), retryOld);
 
   // user.deleted: Bob's account, saves, outbox, identity, co-op codes and AI-helper tokens are gone.
   const bobUid = claims(sb).uid;

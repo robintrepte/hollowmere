@@ -334,5 +334,20 @@ eq("lock without account", tretu.apply_lock(OTHER, true, nil), "locked")
 check("lock without account is remembered", tretu.is_locked(OTHER) and store["tretu_locks/" .. OTHER].banned == false)
 check("invalid subs are never locked", not tretu.is_locked("a/b"))
 
+-- A lost unlock webhook: a successful Tretu sign-in (auth.tretu.de answered userinfo) lifts a lock recorded before
+-- the question, never one recorded after it.
+local THIRD = "33333333-0000-4000-8000-000000000003"
+account = {id = "33333333-1111-4000-8000-000000000003", custom_id = "tretu:" .. THIRD, disabled = false}
+local unbans_before = #unbans
+tretu.apply_lock(THIRD, true, 5000)
+check("sign-in asked before the lock: still locked", not tretu.unlock_by_sign_in(THIRD, 5000) and not tretu.unlock_by_sign_in(THIRD, 4000)
+  and tretu.is_locked(THIRD) and account.disabled)
+check("no time, no proof", not tretu.unlock_by_sign_in(THIRD, nil))
+check("sign-in asked after the lock lifts it and the ban", tretu.unlock_by_sign_in(THIRD, 6000) and not tretu.is_locked(THIRD)
+  and not account.disabled and #unbans == unbans_before + 1)
+check("nothing locked: sign-in goes through", tretu.unlock_by_sign_in(THIRD, 1))
+eq("a late retry of the old lock is stale afterwards", tretu.apply_lock(THIRD, true, 5000), "stale")
+check("a lock without time from before the question is lifted too", tretu.unlock_by_sign_in(OTHER, clock_ms + 1) and not tretu.is_locked(OTHER))
+
 print(string.format("TRETU LUA TESTS: %d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

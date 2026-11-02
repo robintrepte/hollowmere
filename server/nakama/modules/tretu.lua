@@ -440,12 +440,15 @@ function M.authenticate(ctx, payload, account, token)
   if type(token) ~= "string" or #token < 8 or #token > 8192 then
     error({"Sign in with your Tretu account first.", 3})
   end
+  -- auth.tretu.de answers userinfo only for unlocked accounts (a lock revokes every token), so a successful answer
+  -- proves the Tretu-Konto was unlocked when we asked: that lifts a local lock recorded before the question (in case
+  -- the unlock webhook got lost). A lock recorded after it (an overlapping lock) still refuses the sign-in.
+  local asked_ms = nk.time()
   local info, err, code = M.userinfo(cfg, token)
   if info == nil then
     error({err, code or 16})
   end
-  -- auth.tretu.de refuses locked accounts itself; a lock that overlaps this sign-in is caught here.
-  if M.is_locked(info.sub) then error({M.LOCKED_MESSAGE, 7}) end
+  if M.is_locked(info.sub) and not M.unlock_by_sign_in(info.sub, asked_ms) then error({M.LOCKED_MESSAGE, 7}) end
   local custom_id = "tretu:" .. info.sub
   local links = M.claim_links(info)
   M.remember_identity(info.sub, links, info.preferred_username)
@@ -1259,6 +1262,17 @@ function M.apply_lock(sub, locked, at_ms)
       acc ~= nil and "" or " (no Hollowmere account yet)"))
   end
   return locked and "locked" or "unlocked"
+end
+
+-- A successful Tretu sign-in that asked auth.tretu.de at asked_ms (epoch ms) proves the account was unlocked then:
+-- lifts a lock recorded before that (and its ban). -> true when the account is unlocked now.
+function M.unlock_by_sign_in(sub, asked_ms)
+  local cur = lock_record(sub)
+  if cur == nil or not cur.locked then return true end
+  if type(asked_ms) ~= "number" or cur.at == nil or cur.at >= asked_ms then return false end
+  local done = M.apply_lock(sub, false, asked_ms) == "unlocked"
+  if done then nk.logger_info("Tretu: lock lifted by a fresh Tretu sign-in (auth.tretu.de only answers for unlocked accounts)") end
+  return done
 end
 
 -- ISO 8601 time from the envelope (occurredAt) -> epoch ms, or nil.
