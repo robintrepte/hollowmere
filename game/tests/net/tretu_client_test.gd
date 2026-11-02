@@ -4,7 +4,10 @@ extends Node
 ## Net / Tretu / TretuMenu / FarmChoicePanel code the player uses.
 ## Started by server/nakama/tests/tretu_integration.mjs (which runs the server and the fakes):
 ##   godot --headless --path game res://tests/net/tretu_client_test.tscn -- --port=17350 \
-##     --issuer=http://127.0.0.1:<fake> --token=tok-gina --discord-user=<uuid> [--shots=/abs/dir]
+##     --issuer=http://127.0.0.1:<fake> --token=tok-gina --discord-user=<uuid> \
+##     [--guest-token=tok-olga-guest] [--shots=/abs/dir]
+## With --guest-token it also plays as a guest and saves that farm to a Tretu-Konto through the
+## account panel ("Save to Tretu-Konto": Net.login_tretu links the guest account).
 
 var _fails := 0
 var _shots := ""
@@ -93,6 +96,28 @@ func _ready() -> void:
 	# Signing out clears the menu.
 	await Net.logout()
 	_ok(Tretu.summary.state == "" and not Tretu.farm_choice.pending, "sign-out clears the Tretu menu")
+
+	# Guest play, then "Save to Tretu-Konto": the guest's account (and farm) becomes the Tretu farm.
+	var guest_token := str(args.get("guest-token", ""))
+	if guest_token != "":
+		_ok(await Net.login_device("client-guest-%08x" % randi()) == "" and Net.is_guest, "playing as a guest")
+		var guest_uid := Net.account_id
+		_ok(await Net.cloud_save(1, {"version": 3, "meta": {"farm": "Guest Patch", "player": "Olga", "day": 2, "saved_at": 9.0}, "state": {"x": 1}}), "guest farm saved")
+		var gp := AccountPanel.new()
+		ui.open(gp)
+		await get_tree().process_frame
+		var save_btn := gp.find_child("TretuButton", true, false) as Button
+		_ok(save_btn != null and save_btn.text == "Save to Tretu-Konto", "account panel offers Save to Tretu-Konto")
+		await _shot("t04_guest_save_to_tretu")
+		ui.close_all()
+		var err2: String = await Net.login_tretu(guest_token)
+		_ok(err2 == "" and Net.is_tretu and not Net.is_guest, "guest upgraded: %s" % err2)
+		_ok(Net.account_id == guest_uid, "same account as the guest")
+		var gcloud: Array = await Net.cloud_list()
+		_ok(gcloud.size() == 1 and str(gcloud[0].meta.get("farm", "")) == "Guest Patch", "the guest's farm is now the Tretu farm")
+		await Net.logout()
+		_ok(await Net.login_tretu(guest_token) == "" and Net.account_id == guest_uid, "later Tretu sign-ins land on that farm")
+		await Net.logout()
 	ui.queue_free()
 	for k in keep:
 		Settings.set(k, keep[k])

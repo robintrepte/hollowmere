@@ -218,7 +218,7 @@ static func account_text(signed_in: bool, name: String, is_tretu: bool, summary:
 	var extra := Tretu.indicator_text(summary) if is_tretu else ""
 	return t + ("  ·  " + extra if extra != "" else "")
 
-## A Tretu login found a second (Discord / Steam) farm: let the player pick one right away.
+## A Tretu login found a second (old Hollowmere / Discord / Steam) farm: let the player pick one right away.
 func _offer_farm_choice() -> void:
 	if ui == null or not is_inside_tree():
 		return

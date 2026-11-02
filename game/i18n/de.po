@@ -13900,3 +13900,25 @@ msgstr "Diese Farm ist gerade nicht geöffnet."
 
 msgid "tretu.de is not reachable right now. Try again later."
 msgstr "tretu.de ist gerade nicht erreichbar. Versuch es später noch einmal."
+
+msgid "Guest farms live on this device. Save them to your Tretu-Konto to keep them anywhere and play on every device."
+msgstr "Gast-Farmen liegen nur auf diesem Gerät. Speichere sie in deinem Tretu-Konto, dann hast du sie überall und spielst auf jedem Gerät weiter."
+
+msgid "Old Hollowmere account"
+msgstr "Altes Hollowmere-Konto"
+
+msgid "Sign in with your Tretu-Konto to keep your farms in the cloud and play co-op online. One account for all Tretu games and apps. Offline play always works."
+msgstr "Melde dich mit deinem Tretu-Konto an, um deine Farmen in der Cloud zu sichern und online im Koop zu spielen. Ein Konto für alle Tretu-Spiele und -Apps. Offline spielen geht immer."
+
+msgid "That name is already taken."
+msgstr "Dieser Name ist schon vergeben."
+
+msgid "This farm already belongs to another Tretu-Konto."
+msgstr "Diese Farm gehört schon zu einem anderen Tretu-Konto."
+
+msgid "This sign-in is no longer available. Sign in with your Tretu account."
+msgstr "Diese Anmeldung gibt es nicht mehr. Melde dich mit deinem Tretu-Konto an."
+
+msgid "Save to Tretu-Konto"
+msgstr "Im Tretu-Konto speichern"
+

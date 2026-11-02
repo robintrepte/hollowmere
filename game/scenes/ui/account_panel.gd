@@ -1,6 +1,7 @@
 class_name AccountPanel
 extends PanelContainer
-## Hollowmere account: email / guest / Tretu-Konto / Google, Apple, Discord, display name, cloud saves.
+## Hollowmere account: "Mit Tretu-Konto anmelden" (the only account sign-in) or play as a guest;
+## display name, cloud saves. A guest saves its farm to the Tretu-Konto with the same Tretu sign-in.
 ## Tretu-Konto players also get the Tretu menu (Tretu-Credits, notifications, choose a farm).
 
 signal closed
@@ -76,15 +77,6 @@ func _rebuild() -> void:
 		_signed_out()
 		_fit_height()
 
-func _field(placeholder: String, secret := false) -> LineEdit:
-	var e := LineEdit.new()
-	e.placeholder_text = placeholder
-	e.secret = secret
-	e.add_theme_font_size_override("font_size", UITheme.fs(10))
-	e.custom_minimum_size = Vector2(0, 20)
-	_body.add_child(e)
-	return e
-
 func _hint(text: String) -> void:
 	var l := UITheme.label(text, 8, UITheme.MUTED)
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -98,23 +90,15 @@ func _row() -> HBoxContainer:
 	return h
 
 func _signed_out() -> void:
-	_hint("Sign in to keep your farms in the cloud and play co-op online. Offline play always works.")
-	var email := _field("Email")
-	var pw := _field("Password (8+ characters)", true)
-	var nm := _field("Farmer name (new accounts)")
-	nm.max_length = 20
+	_hint("Sign in with your Tretu-Konto to keep your farms in the cloud and play co-op online. One account for all Tretu games and apps. Offline play always works.")
+	_tretu_button(_row(), tr("Sign in with Tretu"))
+	if not Tretu.enabled():
+		_hint("Tretu sign-in is not set up for this build.")
 	var r := _row()
-	r.add_child(UITheme.button("Sign in", func(): _run(func(): return await Net.login_email(email.text.strip_edges(), pw.text, false))))
-	r.add_child(UITheme.button("Create account", func():
-		if nm.text.strip_edges() == "":
-			_say("Pick a farmer name first.")
-			return
-		_run(func(): return await Net.login_email(email.text.strip_edges(), pw.text, true, nm.text.strip_edges()))))
-	var r2 := _row()
-	r2.add_child(UITheme.button("Play as guest", func(): _run(func(): return await Net.login_device())))
-	_tretu_button(r2)
-	_social_buttons()
-	pw.text_submitted.connect(func(_t: String): _run(func(): return await Net.login_email(email.text.strip_edges(), pw.text, false)))
+	var guest := UITheme.button("Play as guest", func(): _run(func(): return await Net.login_device()))
+	guest.name = "GuestButton"
+	guest.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	r.add_child(guest)
 	if OS.get_name() != "Web":
 		_server_row()
 
@@ -151,11 +135,10 @@ func _signed_in() -> void:
 	nm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	r.add_child(nm)
 	r.add_child(UITheme.button("Rename", func(): _run(func(): return await Net.set_display_name(nm.text.strip_edges()), "Name saved.")))
-	if Net.is_guest:
-		_hint("Guest accounts live on this device. Add an email to keep your farms anywhere.")
-		var email := _field("Email")
-		var pw := _field("Password (8+ characters)", true)
-		_body.add_child(UITheme.button("Add email to this account", func(): _run(func(): return await Net.link_email(email.text.strip_edges(), pw.text), "Account secured.")))
+	if not Net.is_tretu:
+		# Guest (or an old account whose session is still stored): the Tretu sign-in keeps this farm.
+		_hint("Guest farms live on this device. Save them to your Tretu-Konto to keep them anywhere and play on every device.")
+		_tretu_button(_row(), tr("Save to Tretu-Konto"))
 	var cloud := CheckBox.new()
 	cloud.text = "Back up farms to the cloud when saving"
 	cloud.button_pressed = Settings.cloud_saves
@@ -229,11 +212,13 @@ func _run(fn: Callable, ok_msg := "") -> void:
 			_status.text = ""
 		Audio.sfx("open")
 
-## "Mit Tretu-Konto anmelden": shown only when the build has tretu/auth_issuer and tretu/client_id.
-func _tretu_button(row: HBoxContainer) -> void:
+## "Mit Tretu-Konto anmelden" / "Save to Tretu-Konto" (same sign-in; from a guest it keeps the farm).
+## Missing only in a build without tretu/auth_issuer and tretu/client_id.
+func _tretu_button(row: HBoxContainer, text: String) -> void:
 	if not Tretu.enabled():
 		return
-	var b := UITheme.button("Sign in with Tretu", func(): _run(_tretu_sign_in))
+	var b := UITheme.button(text, func(): _run(_tretu_sign_in))
+	b.name = "TretuButton"
 	b.icon = Art.social_icon("tretu")
 	b.expand_icon = true
 	b.add_theme_constant_override("icon_max_width", 14)
@@ -252,49 +237,3 @@ func _open_url(url: String) -> void:
 		JavaScriptBridge.eval("window.open(%s, '_blank', 'noopener')" % JSON.stringify(url), true)
 	else:
 		OS.shell_open(url)
-
-func _social_buttons() -> void:
-	var ids := Net.social_providers()
-	if ids.is_empty():
-		return
-	_hint(tr("Or continue with"))
-	var r := _row()
-	for id in ids:
-		r.add_child(_social_btn(id))
-
-func _social_btn(id: String) -> Button:
-	# Brand names stay untranslated ("Apple" must not become the fruit "Apfel").
-	var labels := {"google": "Google", "apple": "Apple", "discord": "Discord"}
-	var b := UITheme.button("", func(): _oauth(id))
-	b.text = str(labels.get(id, id))
-	b.icon = Art.social_icon(id)
-	b.expand_icon = true
-	b.add_theme_constant_override("icon_max_width", 14)
-	b.add_theme_constant_override("h_separation", 5)
-	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	return b
-
-func _oauth(which: String) -> void:
-	var start := {"google": "hollowmereGoogleSignIn", "apple": "hollowmereAppleSignIn", "discord": "hollowmereDiscordSignIn"}
-	JavaScriptBridge.eval("window.hollowmere%sToken=''; window.hollowmere%sError=''; window.%s()" % [which.capitalize(), which.capitalize(), start[which]], true)
-	_say(tr("Finish signing in with %s in the popup...") % which.capitalize(), true)
-	for i in 240:
-		await get_tree().create_timer(0.5).timeout
-		if not is_inside_tree():
-			return
-		var err := Net.web_oauth_error(which)
-		if err != "":
-			_say(err)
-			return
-		var tok := Net.web_oauth_token(which)
-		if tok != "":
-			JavaScriptBridge.eval("window.hollowmereHideGoogle && window.hollowmereHideGoogle()", true)
-			match which:
-				"google":
-					_run(func(): return await Net.login_google(tok))
-				"apple":
-					_run(func(): return await Net.login_apple(tok))
-				"discord":
-					_run(func(): return await Net.login_discord(tok))
-			return
-	_say(tr("%s sign-in timed out.") % which.capitalize())

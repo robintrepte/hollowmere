@@ -1,5 +1,6 @@
 extends GutTest
-## Tretu-Konto sign-in on the client: feature flag, PKCE, the loopback callback and helpers.
+## Tretu-Konto sign-in on the client (the only account sign-in): shipped config, PKCE, the loopback
+## callback and helpers.
 ## (The server side is covered by server/nakama/tests/.)
 
 var _saved := {}
@@ -12,9 +13,11 @@ func after_each() -> void:
 	for k in _saved:
 		ProjectSettings.set_setting("tretu/" + k, _saved[k])
 
-func test_off_in_the_shipped_config() -> void:
-	assert_eq(str(ProjectSettings.get_setting("tretu/auth_issuer", "")), "", "shipped builds keep Tretu sign-in off")
-	assert_false(Tretu.enabled())
+func test_on_in_the_shipped_config() -> void:
+	assert_eq(str(ProjectSettings.get_setting("tretu/auth_issuer", "")), "https://auth.tretu.de", "shipped builds sign in at auth.tretu.de")
+	assert_eq(str(ProjectSettings.get_setting("tretu/client_id", "")), "hollowmere")
+	assert_true(Tretu.enabled())
+	assert_eq(Tretu.account_url(), "https://auth.tretu.de/konto")
 
 func test_flag_needs_issuer_and_client_id() -> void:
 	ProjectSettings.set_setting("tretu/auth_issuer", "https://auth.tretu.de/")
