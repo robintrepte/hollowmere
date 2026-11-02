@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/version-1.0.0-blue.svg" alt="1.0.0">
   <img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="MIT License">
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Web-2ea44f" alt="Windows, macOS, Web">
-  <img src="https://img.shields.io/badge/tests-391%20GUT-success" alt="391 GUT tests">
+  <img src="https://img.shields.io/badge/tests-413%20GUT-success" alt="413 GUT tests">
 </p>
 
 <p align="center">
@@ -108,9 +108,10 @@ Server checks (Lua 5.1 and `psql` on PATH):
 
 ```bash
 luac -p server/nakama/modules/*.lua
-lua server/nakama/tests/tretu_test.lua            # Tretu signing test vectors, progress rules
+lua server/nakama/tests/tretu_test.lua            # signing test vectors, progress, wallet menu, farm choice SQL
 server/nakama/nakama.sh check                     # Nakama loads the modules
-node server/nakama/tests/tretu_integration.mjs    # real Nakama + Postgres (drops/creates nakama_test)
+GODOT=godot node server/nakama/tests/tretu_integration.mjs   # real Nakama + Postgres (drops/creates nakama_test)
+                                                  # + the game client against it (without GODOT: skipped)
 node server/mcp/test.mjs
 ```
 
@@ -134,7 +135,8 @@ Production is `hollowmere.tretu.de` on the Tretu **Hetzner** server: **nginx** f
 
 Hollowmere is part of the Tretu ecosystem (all optional, off unless configured, see HOSTING.md §10):
 
-- **Mit Tretu-Konto anmelden**: OpenID Connect with PKCE at auth.tretu.de (system browser + loopback on desktop, popup on the web). Earlier Discord players keep their farms.
+- **Mit Tretu-Konto anmelden**: OpenID Connect with PKCE at auth.tretu.de (system browser + loopback on desktop and Steam builds, popup on the web). Earlier Discord (and Steam) players keep their farms; if both a Tretu and an old farm exist, the player picks one in "Wähle deine Farm" and the other is archived, restorable for 90 days.
+- **Tretu menu in the game**: Tretu-Credits balance and unread notifications in the account panel and next to the player's name, with links to tretu.de/wallet and tretu.de/benachrichtigungen (read server-side by Nakama, signed; the app secret never reaches the game).
 - **Platform events**: days played, Wildlings befriended and battle results go to tretu.de (stats, badges), plus "playing Hollowmere" presence with a join link while hosting co-op.
 - **Legal**: privacy policy, terms and imprint live on tretu.de (`/datenschutz`, `/agb`, `/impressum`).
 
@@ -148,10 +150,10 @@ ecosystem.config.cjs  PM2 processes (hollowmere-nakama, hollowmere-mcp)
 docs/          Agent MCP setup (docs/agents.md)
 store/         Steam / itch capsules, screenshots, rating and store copy
 tools/         Art pipeline, string extraction, web fingerprint + precompress
-.github/       CI: 391 GUT tests, Lua + Tretu integration tests, Windows / macOS / Web export, tagged deploy
+.github/       CI: 413 GUT tests, Lua + Tretu integration tests, Windows / macOS / Web export, tagged deploy
 ```
 
-CI (every push and PR): script compile, GUT, translation template check, 112-day balance sim, casino RTP sim, Lua checks and the Tretu integration test on a real Nakama + Postgres, Nakama integration, co-op and 4-peer desync tests, then Windows / macOS / Web exports. Tagged `v*` releases can sign macOS, push itch, rsync the web build and reload PM2.
+CI (every pull request and push to `main`): script compile, GUT, translation template check, 112-day balance sim, casino RTP sim, Lua checks and the Tretu integration test (official Nakama binary, `postgres:16` service, game client included), Nakama integration, co-op and 4-peer desync tests, then Windows / macOS / Web exports, with checksum-verified Godot and Nakama downloads. GitHub Actions must be enabled for the repository (see HOSTING.md §12). Tagged `v*` releases can sign macOS, push itch, rsync the web build and reload PM2.
 
 ## Made with
 

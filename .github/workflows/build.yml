@@ -9,16 +9,36 @@ on:
 env:
   GODOT_VERSION: "4.7.2"
   GODOT_RELEASE: "stable"
+  # Official SHA-512 sums from the release's SHA512-SUMS.txt (HOSTING.md "Checksums").
+  GODOT_LINUX_SHA512: "9aa00f7a605200940bce3027a567b782f49bd8e940dd06ae9e987bd65aee1b1467edd56ed84fcdcbdd44354bf613bdbb4e5d2913e925850368e150c59ed54c65"
+  GODOT_TEMPLATES_SHA512: "ca4d71c4d7b81dfc15d1a98baa07534aa95b03fdda78a0075b06672e1648d2e5f40980c9adc28d23e1b92e732ee7bf3461997aa804af74ec2fcd7a93ccb84079"
   NAKAMA_VERSION: "3.41.0"
+  # Nakama publishes no checksum file: SHA-256 of the release tarball as pinned in HOSTING.md.
+  NAKAMA_SHA256: "71aea14384b097e043917d0b1e8c3799594064acbab01853e71ea10d80624ce2"
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    # The runner's Postgres is replaced by the same major version production uses (no Docker in
+    # production; this is only the CI database for the Nakama tests).
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
     steps:
       - uses: actions/checkout@v4
       - name: Install Godot
         run: |
           wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${GODOT_RELEASE}/Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64.zip
+          echo "${GODOT_LINUX_SHA512}  Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64.zip" | sha512sum -c -
           unzip -q Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64.zip
           sudo mv Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64 /usr/local/bin/godot
       - name: Import project
@@ -46,24 +66,26 @@ jobs:
           node-version: "22"
       - name: MCP relay self-test
         run: node server/mcp/test.mjs
-      - name: Install Nakama + Lua, start the runner's Postgres (no Docker, like production)
+      - name: Install the Nakama release binary + Lua (Nakama runs as a plain binary, like production)
         run: |
           curl -fsSL -o nakama.tgz "https://github.com/heroiclabs/nakama/releases/download/v${NAKAMA_VERSION}/nakama-${NAKAMA_VERSION}-linux-amd64.tar.gz"
+          echo "${NAKAMA_SHA256}  nakama.tgz" | sha256sum -c -
           mkdir -p .tools/nakama && tar -xzf nakama.tgz -C .tools/nakama
           bin=$(find .tools/nakama -type f -name nakama | head -1)
           chmod +x "$bin" && echo "NAKAMA_BIN=$PWD/$bin" >> "$GITHUB_ENV"
-          sudo apt-get install -y -qq lua5.1
-          sudo systemctl start postgresql.service
-          sudo -u postgres psql -qc "ALTER USER postgres PASSWORD 'postgres';"
-          sudo -u postgres createdb nakama
-      - name: Lua modules (syntax, Nakama load check, signing test vectors)
+          "$bin" --version
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lua5.1 postgresql-client
+          PGPASSWORD=postgres createdb -h 127.0.0.1 -U postgres nakama
+      - name: Lua modules (syntax, Nakama load check, unit tests incl. signing test vectors)
         run: |
           luac5.1 -p server/nakama/modules/*.lua
           lua5.1 server/nakama/tests/tretu_test.lua
           server/nakama/nakama.sh check
-      - name: Tretu integration test (fake issuer + platform, real Nakama)
+      - name: Tretu integration test (fake issuer + platform, real Nakama, game client)
         env:
           TEST_DB: postgres:postgres@127.0.0.1:5432/nakama_test
+          GODOT: godot
         run: node server/nakama/tests/tretu_integration.mjs
       - name: Start Nakama
         env:
@@ -104,9 +126,11 @@ jobs:
       - name: Install Godot + export templates
         run: |
           wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${GODOT_RELEASE}/Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64.zip
+          echo "${GODOT_LINUX_SHA512}  Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64.zip" | sha512sum -c -
           unzip -q Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64.zip
           sudo mv Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64 /usr/local/bin/godot
           wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${GODOT_RELEASE}/Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_export_templates.tpz
+          echo "${GODOT_TEMPLATES_SHA512}  Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_export_templates.tpz" | sha512sum -c -
           mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_RELEASE}
           unzip -q Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_export_templates.tpz
           mv templates/* ~/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_RELEASE}/

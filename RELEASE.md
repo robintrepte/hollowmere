@@ -136,6 +136,11 @@ Rollback: re-run the `deploy-web` job of the previous tag. The engine files carr
 4. Builds: one depot each for Windows and macOS. Upload with `steamcmd +login <builder> +run_app_build app_build.vdf`; that can be a fourth tagged job once there's an app id. Steam doesn't need notarization, but the notarized app works there too.
 5. Steam's review checks the page and the build (3 to 5 days). Release from the Steamworks dashboard.
 6. Not wired up yet, if wanted later: Steam achievements, Steam Cloud and the Steam overlay need GodotSteam (GDExtension) in the desktop builds only.
+7. **Sign-in on Steam builds: the Tretu-Konto, in the browser.** The Steam depots are the normal desktop exports, so "Mit Tretu-Konto anmelden" works unchanged: the game opens the system browser at auth.tretu.de (where players can also sign in *with Steam*, Steam OpenID) and receives the code on `http://127.0.0.1:<random port>/callback`; the refresh token is kept encrypted for silent sign-in on the next start. Requirements and notes:
+   - Build the depots with the `TRETU_AUTH_ISSUER` repository variable set (HOSTING.md §10), otherwise the button is hidden. Email, guest and the other sign-ins keep working.
+   - On Steam Deck in Gaming Mode, `OS.shell_open` opens the Steam overlay browser only if the overlay is available; otherwise the player switches to Desktop Mode once. After that first sign-in the stored refresh token signs in silently, so this is a one-time step. Mention it in the store FAQ.
+   - The `steam_id` claim (when the player linked Steam in Mein Konto) is stored on the Nakama account (`metadata.steam_id`). Old Steam-only accounts (`users.steam_id` / custom id `steam:<id>`) are carried over or offered in "Wähle deine Farm" exactly like Discord accounts.
+   - There is **no native Steam login** (Steam session tickets need GodotSteam and a Steam Web API publisher key on the server). If one is added later, use Nakama's `AuthenticateSteam` so it lands on `users.steam_id`: the farm choice already moves that id to the farm the player keeps.
 
 ## 4. Crash reports and play stats
 
