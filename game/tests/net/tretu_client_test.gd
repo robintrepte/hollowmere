@@ -67,6 +67,8 @@ func _ready() -> void:
 	(card.find_child("Confirm", true, false) as Button).pressed.emit()
 	_ok(await _until(func(): return switched.done), "farm switched")
 	_ok(Net.has_session() and Net.account_id == discord_uid and Net.is_tretu, "now signed in to the kept farm")
+	_ok(Net.session.refresh_token != "" and not Net.session.is_refresh_expired(), "a normal, refreshable session (switch ticket)")
+	_ok(Tretu.profile_username == "gina", "profile name from the account metadata")
 	var cloud: Array = await Net.cloud_list()
 	_ok(cloud.size() == 1 and str(cloud[0].meta.get("farm", "")) == "Gina's Old Grove", "the kept farm's cloud save is there")
 	_ok(await _until(func(): return not Tretu.farm_choice.pending and Tretu.archived_farms(Tretu.farm_choice).size() == 1), "nothing pending, one archived farm")

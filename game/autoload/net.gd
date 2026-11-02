@@ -200,8 +200,14 @@ func login_tretu(access_token: String) -> String:
 			return tr("Tretu sign-in failed.")
 	return await _finish_login(s)
 
-## A session the server minted for this player (after choosing a farm that belongs to another
-## Nakama user). Has no refresh token; desktop builds swap it for a full one right away.
+## After choosing another farm: redeem the server's one-time ticket for a normal login of that farm.
+func login_tretu_switch(ticket: String) -> String:
+	_make_client()
+	var s: NakamaSession = await client.authenticate_custom_async("tretu-switch", null, false, {"tretu_switch": ticket})
+	return await _finish_login(s)
+
+## A session the server minted for this player (fallback when the switch ticket could not be
+## redeemed). Has no refresh token.
 func adopt_session(token: String) -> String:
 	_make_client()
 	var s := NakamaSession.new(token, false, null)
@@ -299,6 +305,11 @@ func _load_account() -> void:
 		return
 	is_guest = acc.email == "" and acc.user.google_id == "" and acc.user.apple_id == "" and acc.custom_id == ""
 	is_tretu = acc.custom_id.begins_with("tretu:")
+	if is_tretu:
+		# Kept current by the platform's user.updated webhook (server side).
+		var meta = JSON.parse_string(str(acc.user.metadata)) if str(acc.user.metadata) != "" else null
+		if meta is Dictionary and str(meta.get("tretu_username", "")) != "":
+			Tretu.profile_username = str(meta.tretu_username)
 	if acc.user.display_name != "":
 		display_name = acc.user.display_name
 	else:

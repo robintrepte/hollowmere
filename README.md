@@ -112,7 +112,7 @@ lua server/nakama/tests/tretu_test.lua            # signing test vectors, progre
 server/nakama/nakama.sh check                     # Nakama loads the modules
 GODOT=godot node server/nakama/tests/tretu_integration.mjs   # real Nakama + Postgres (drops/creates nakama_test)
                                                   # + the game client against it (without GODOT: skipped)
-node server/mcp/test.mjs
+node server/mcp/test.mjs                          # relay self-test + Tretu webhook unit tests
 ```
 
 ```bash
@@ -136,6 +136,7 @@ Production is `hollowmere.tretu.de` on the Tretu **Hetzner** server: **nginx** f
 Hollowmere is part of the Tretu ecosystem (all optional, off unless configured, see HOSTING.md §10):
 
 - **Mit Tretu-Konto anmelden**: OpenID Connect with PKCE at auth.tretu.de (system browser + loopback on desktop and Steam builds, popup on the web). Earlier Discord (and Steam) players keep their farms; if both a Tretu and an old farm exist, the player picks one in "Wähle deine Farm" and the other is archived, restorable for 90 days.
+- **Account deletion reaches the game**: tretu.de's signed webhook (`/api/tretu/webhook`, served by `hollowmere-mcp`) deletes a deleted Tretu-Konto's farms and data, or moves them to the surviving account after a merge, and keeps the Steam link and username current.
 - **Tretu menu in the game**: Tretu-Credits balance and unread notifications in the account panel and next to the player's name, with links to tretu.de/wallet and tretu.de/benachrichtigungen (read server-side by Nakama, signed; the app secret never reaches the game).
 - **Platform events**: days played, Wildlings befriended and battle results go to tretu.de (stats, badges), plus "playing Hollowmere" presence with a join link while hosting co-op.
 - **Legal**: privacy policy, terms and imprint live on tretu.de (`/datenschutz`, `/agb`, `/impressum`).

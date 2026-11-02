@@ -117,6 +117,7 @@ Fill in (generate each secret with `openssl rand -hex 24`; never commit these fi
 | `server/.env` | `NAKAMA_HTTP_KEY` | same as `runtime.http_key` |
 | | `NAKAMA_BIN` | `/opt/nakama/nakama` |
 | | `MCP_PUBLIC_URL` | `https://$MCP_DOMAIN` |
+| | `TRETU_APP_SECRET` | optional, same as in `local.yml` (step 10, platform webhook) |
 
 The Nakama **server key** `hollowmere_dev` is in `server/nakama/hollowmere.yml` and in every game
 build (`hollowmere/server/key` in `game/project.godot`). It is not a secret; change both or neither.
@@ -163,6 +164,7 @@ What the site file does:
 | `/v2/*`, `/ws` | Nakama `127.0.0.1:7350` (websocket upgrade on `/ws`, no gzip on the proxy) |
 | `/healthcheck` | Nakama's liveness check |
 | `/api/health` | contract health JSON from `hollowmere-mcp` (Nakama health RPC incl. a DB query); 503 when not ok |
+| `/api/tretu/webhook` | Tretu platform webhook → `hollowmere-mcp` (POST only, 64 KB max, 120/min per IP, burst 60) |
 | `/privacy`, `/datenschutz`, `/terms`, `/agb`, `/impressum` | 308 to `https://tretu.de/datenschutz`, `/agb`, `/impressum` |
 | `/auth/callback` | the Tretu-Konto sign-in callback page (`no-store`, `no-referrer`) |
 | `/hm-*` | fingerprinted engine files, `immutable`, `application/wasm` for `.wasm`, `gzip_static` |
@@ -265,9 +267,11 @@ SQL statement (a `DO` block, so all or nothing): every other account gets the cu
 written (`tretu_archive/<user id>`: sub, old custom id, old Steam id, time). The kept account becomes
 `tretu:<sub>`. Each update is guarded by what the player was shown, so a concurrent change aborts
 the whole switch ("Deine Konten haben sich inzwischen geändert"); choosing the active farm again is
-a no-op. When the kept farm is another Nakama user, the RPC returns a fresh session for it (desktop
-builds then swap it for a full session from the stored Tretu login; on the web it lasts a day, then
-the player signs in again). Archived farms are **never deleted** by the game and can be restored from
+a no-op. When the kept farm is another Nakama user, the RPC also returns a one-time **switch ticket**
+(random, only its hash stored in `tretu_switch`, valid 2 minutes, single use). The game redeems it
+with `AuthenticateCustom` `vars.tretu_switch`, which is a normal Nakama login of the kept farm (token
+**and refresh token**, on web and desktop alike). A plain session token for the kept farm comes along
+only as a fallback if that login fails. Archived farms are **never deleted** by the game and can be restored from
 the same menu for 90 days (which archives the farm played at that time).
 
 To actually remove archives older than 90 days (data minimisation), run the purge RPC with the HTTP
@@ -280,6 +284,29 @@ key, e.g. daily from the deploy user's crontab (`dryRun: true` only counts):
 
 Players cannot call it. Restore by hand (Nakama console or psql) is possible as long as the archive
 row exists: `SELECT key, value FROM storage WHERE collection = 'tretu_archive';`.
+
+**Account deletion and updates (platform webhook).** On tretu.de, set the Hollowmere entry of
+`TRETU_APPS_JSON` to
+
+```json
+"hollowmere": { "secret": "<same as TRETU_APP_SECRET>", "webhook": "https://hollowmere.tretu.de/api/tretu/webhook" }
+```
+
+and put the same `TRETU_APP_SECRET` into `server/.env` (read by `hollowmere-mcp`), then
+`pm2 reload ecosystem.config.cjs --update-env`. `hollowmere-mcp` checks the contract §3 signature
+(`x-tretu-app: platform`, HMAC with Hollowmere's own secret over the raw body, ±300 s,
+constant-time) and answers `401` otherwise; unknown event types get `204`. It calls two Nakama RPCs
+with the HTTP key (players get `403`):
+
+| Event | Nakama RPC | Effect (one SQL statement each, idempotent) |
+|---|---|---|
+| `user.deleted` | `tretu_user_deleted {sub}` | deletes the `tretu:<sub>` account and every archived farm of that sub (with their saves, profile, queued events, progress marks), their AI-helper tokens and inboxes, co-op codes they host (the presence join link), the identity and archive records and the Discord/Steam markers; ends their sessions |
+| `user.deleted` with `{"mergedInto": "<sub2>"}` | `tretu_user_deleted {sub, mergedInto}` | if `<sub2>` has no Hollowmere farm yet: the farm is re-keyed to `tretu:<sub2>` (old sessions end; the player signs in with the surviving Tretu-Konto). Otherwise it is archived under `<sub2>` and appears in that player's farm choice for 90 days. Archived farms of the old sub move to `<sub2>`, its queued events are dropped |
+| `user.updated` | `tretu_user_updated {sub, data}` | refreshes the linked Discord/Steam ids and `metadata.steam_id` / `metadata.tretu_username` (used for the in-game profile link); nothing is stored for Tretu users who never played Hollowmere |
+
+A failed Nakama call answers `503`, so the platform retries (up to 24 h); repeats are harmless.
+Presence on tretu.de itself expires there within 120 s once the deleted player's session is gone.
+Without `TRETU_APP_SECRET` in `server/.env` the webhook answers `503 not_configured`.
 
 **Platform events and presence** need, in `runtime.env`:
 
@@ -436,6 +463,7 @@ Keep the old `NAKAMA_SESSION_KEY` / `NAKAMA_REFRESH_KEY` / `NAKAMA_HTTP_KEY` val
 | "Tretu sign-in is not enabled on this server." | `TRETU_AUTH_ISSUER` missing in `local.yml`, or Nakama not reloaded |
 | Tretu web sign-in fails right away | CORS on the issuer's discovery / token endpoint, or redirect URI not registered |
 | Log `Tretu platform POST /api/v1/events -> 401` | `TRETU_APP_SECRET` differs from `TRETU_APPS_JSON.hollowmere.secret` on tretu.de, or clock skew > 300 s |
+| Webhook deliveries fail with `401` (tretu.de admin / worker log) | `TRETU_APP_SECRET` in `server/.env` differs from `TRETU_APPS_JSON.hollowmere.secret`, or `hollowmere-mcp` was not reloaded with `--update-env`; `pm2 logs hollowmere-mcp` shows `tretu webhook rejected (<reason>)` |
 | Tretu menu always says "nicht erreichbar" | `pm2 logs hollowmere-nakama` for `Tretu platform GET /api/v1/wallet/…`: `0` = tretu.de unreachable from the server, `401` = secret/clock as above |
 | Player "lost" a farm after choosing | it is archived, not gone: restore it in the game (account panel → Archivierte Farmen) within 90 days, or find it with `SELECT key, value FROM storage WHERE collection = 'tretu_archive'` |
 | Sign-in says "too many tries" (`429`) | nginx `hollowmere_auth` limit (30/min per IP); raise `rate`/`burst` at the top of the site file if a venue shares one IP |

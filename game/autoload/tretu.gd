@@ -581,15 +581,16 @@ func choose_farm(id: String) -> String:
 	if not is_true(r.get("ok")):
 		return tr("Could not switch farms right now. Nothing was changed.")
 	_choice_asked = true
+	var ticket := str(r.get("switch", ""))
 	var token := str(r.get("token", ""))
-	if token != "":
-		# The old session belonged to the farm that was just archived.
-		var err: String = await Net.adopt_session(token)
-		if err != "":
-			return err
-		if OS.get_name() != "Web":
-			# A full session with a refresh token, from the stored Tretu login.
-			await silent_sign_in()
-	else:
-		await check_farm_choice()
+	if ticket != "" or token != "":
+		# The old session belonged to the farm that was just archived. The one-time ticket gives a
+		# normal session (with refresh token) for the kept farm on every platform.
+		if ticket != "" and await Net.login_tretu_switch(ticket) == "":
+			return ""
+		if token == "":
+			return tr("Sign in with your Tretu-Konto again.")
+		# Fallback (ticket login failed): a plain session for the kept farm.
+		return await Net.adopt_session(token)
+	await check_farm_choice()
 	return ""

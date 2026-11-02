@@ -807,7 +807,7 @@ msgstr ""
 msgid "%s left the battle."
 msgstr ""
 
-#: autoload/net.gd:552
+#: autoload/net.gd:563
 #, c-format
 msgid "%s left the farm."
 msgstr ""
@@ -11002,7 +11002,7 @@ msgstr ""
 msgid "Sign in with your Tretu account first."
 msgstr ""
 
-#: autoload/net.gd:209
+#: autoload/net.gd:215 autoload/tretu.gd:592
 msgid "Sign in with your Tretu-Konto again."
 msgstr ""
 
