@@ -183,7 +183,7 @@ end
 
 -- Custom auth carries a provider token in vars; the hook swaps it for a verified custom id:
 --   vars.tretu_token   -> "tretu:<sub>"   (Tretu-Konto, see tretu.lua; off without TRETU_AUTH_ISSUER)
---   vars.discord_token -> "discord:<id>"  (or the Tretu account it was carried over to)
+--   vars.discord_token -> "discord:<id>"  (or the Tretu account it was carried over / chosen into)
 -- Without a token the request is refused, so nobody can claim a custom id directly.
 local function before_auth_custom(ctx, payload)
   local account = payload.account or payload
@@ -196,13 +196,16 @@ local function before_auth_custom(ctx, payload)
   if token == "" then
     error({"Sign in with Discord first.", 3})
   end
-  local code, _, body = nk.http_request(
+  local reached, code, _, body = pcall(nk.http_request,
     "https://discord.com/api/v10/users/@me",
     "GET",
     {Authorization = "Bearer " .. token, ["User-Agent"] = "Hollowmere"},
     "",
     8000
   )
+  if not reached or code == 0 or (tonumber(code) or 0) >= 500 then
+    error({"Discord sign-in is not reachable right now.", 14})
+  end
   if code ~= 200 then
     error({"Discord sign-in failed.", 16})
   end
@@ -215,6 +218,14 @@ local function before_auth_custom(ctx, payload)
   account.vars = {}
   payload.account = account
   return payload
+end
+
+-- After a Tretu login: linked Steam id onto the account metadata. Never fails the login.
+local function after_auth_custom(ctx, _out, _payload)
+  local ok, err = pcall(tretu.after_authenticate, ctx)
+  if not ok then
+    nk.logger_warn("Tretu login hook: " .. tostring(err))
+  end
 end
 
 -- Cloud saves tell the platform about new in-game days and befriended Wildlings (queued only).
@@ -401,9 +412,14 @@ nk.register_rpc(agent_done, "agent_done")
 nk.register_rpc(tretu.rpc_heartbeat, "tretu_heartbeat")
 nk.register_rpc(tretu.rpc_offline, "tretu_offline")
 nk.register_rpc(tretu.rpc_report_battle, "tretu_report_battle")
+nk.register_rpc(tretu.rpc_account, "tretu_account")
+nk.register_rpc(tretu.rpc_farm_choice, "tretu_farm_choice")
+nk.register_rpc(tretu.rpc_farm_choose, "tretu_farm_choose")
+nk.register_rpc(tretu.rpc_archive_purge, "tretu_archive_purge")
 nk.register_req_before(before_write, "WriteStorageObjects")
 nk.register_req_after(after_write, "WriteStorageObjects")
 nk.register_req_before(before_auth_custom, "AuthenticateCustom")
+nk.register_req_after(after_auth_custom, "AuthenticateCustom")
 
 -- Proves the contract's signing test vector on this runtime at every start.
 if tretu.self_test() then
