@@ -1,64 +1,19 @@
 #!/usr/bin/env bash
-# Runs the Hollowmere Nakama server without Docker. PM2 starts it as "hollowmere-nakama"
-# (ecosystem.config.cjs at the repo root).
+# Runs the Hollowmere Nakama server without Docker: a thin wrapper around server/nakama/run.mjs
+# (Node), which builds Nakama's command line from the environment / server/.env (secrets and the
+# Tretu runtime env as flags, never written to a file, redacted in every log line) and refuses to
+# start in production when a key is missing or still a default. PM2 runs run.mjs directly
+# (ecosystem.config.cjs).
 #
-#   server/nakama/nakama.sh start     migrate the database, then run Nakama (PM2 uses this)
+#   server/nakama/nakama.sh start     migrate the database, then run Nakama
 #   server/nakama/nakama.sh migrate   only "nakama migrate up" (deploy step)
 #   server/nakama/nakama.sh check     load the Lua modules once and exit (CI / before a reload)
+#   server/nakama/nakama.sh args      print the redacted command line and any problems
 #
-# Environment:
-#   NAKAMA_BIN               Nakama binary (default /opt/nakama/nakama, else nakama on PATH)
-#   NAKAMA_LOCAL_CONFIG      secrets + Tretu env (default server/nakama/local.yml)
-#   NAKAMA_DATA_DIR          default server/nakama/data
-#   NAKAMA_DATABASE_ADDRESS  dev/CI only: user[:pass]@host:port/db instead of local.yml
-#   NAKAMA_ALLOW_DEFAULTS=1  dev/CI only: start without local.yml (insecure default keys, and no
-#                            Tretu sign-in: only guest play works)
-#
-# With local.yml (production), runtime.env must set TRETU_AUTH_ISSUER (the Tretu-Konto is the only
-# account sign-in); start and migrate refuse to run without it.
+# Environment: see the header of run.mjs (NAKAMA_BIN, NAKAMA_HTTP_KEY, NAKAMA_SESSION_*,
+# NAKAMA_CONSOLE_*, NAKAMA_DATABASE_ADDRESS, TRETU_*, HOLLOWMERE_PUBLIC_URL, NAKAMA_LOCAL_CONFIG,
+# NAKAMA_DATA_DIR, NAKAMA_ALLOW_DEFAULTS=1 for dev/CI only).
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BIN="${NAKAMA_BIN:-/opt/nakama/nakama}"
-if [[ ! -x "$BIN" ]]; then
-  BIN="$(command -v nakama || true)"
-fi
-[[ -n "$BIN" && -x "$BIN" ]] || { echo "nakama binary not found (set NAKAMA_BIN, see HOSTING.md)" >&2; exit 1; }
-LOCAL="${NAKAMA_LOCAL_CONFIG:-$HERE/local.yml}"
-DATA="${NAKAMA_DATA_DIR:-$HERE/data}"
-
-cmd="${1:-start}"
-[[ $# -gt 0 ]] && shift
-if [[ "$cmd" == "check" ]]; then
-  exec "$BIN" check --runtime.path "$HERE/modules"
-fi
-
-args=(--config "$HERE/hollowmere.yml")
-if [[ -f "$LOCAL" ]]; then
-  if ! grep -Eq '^[[:space:]]*-[[:space:]]*"?TRETU_AUTH_ISSUER=https?://[^"[:space:]]+' "$LOCAL"; then
-    echo "Tretu sign-in not configured: set \"TRETU_AUTH_ISSUER=https://auth.tretu.de\" under runtime.env in $LOCAL (HOSTING.md)" >&2
-    exit 1
-  fi
-  args+=(--config "$LOCAL")
-elif [[ "${NAKAMA_ALLOW_DEFAULTS:-}" != "1" ]]; then
-  echo "missing $LOCAL: copy server/nakama/local.example.yml and fill it in (HOSTING.md)" >&2
-  exit 1
-fi
-if [[ -n "${NAKAMA_DATABASE_ADDRESS:-}" ]]; then
-  args+=(--database.address "$NAKAMA_DATABASE_ADDRESS")
-fi
-mkdir -p "$DATA"
-args+=(--runtime.path "$HERE/modules" --data_dir "$DATA")
-
-case "$cmd" in
-  migrate)
-    exec "$BIN" migrate up "${args[@]}"
-    ;;
-  start)
-    "$BIN" migrate up "${args[@]}"
-    exec "$BIN" "${args[@]}" "$@"
-    ;;
-  *)
-    echo "usage: $0 start|migrate|check" >&2
-    exit 2
-    ;;
-esac
+command -v node >/dev/null || { echo "node (22+) is required to run Nakama (HOSTING.md step 2)" >&2; exit 1; }
+exec node "$HERE/run.mjs" "$@"

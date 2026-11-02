@@ -18,7 +18,7 @@
 import http from "node:http";
 import crypto from "node:crypto";
 import { spawn, execFileSync } from "node:child_process";
-import { writeFileSync, mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -143,19 +143,17 @@ execFileSync(PSQL, [`postgres://${dbAdmin}`, "-qc", `CREATE DATABASE ${dbName}`]
 const sql = (q) => execFileSync(PSQL, [`postgres://${TEST_DB}`, "-Atqc", q]).toString().trim();
 
 const tmp = mkdtempSync(path.join(tmpdir(), "hm-tretu-"));
-const localYml = path.join(tmp, "local.yml");
-writeFileSync(localYml, `runtime:
-  http_key: "${HTTP_KEY}"
-  env:
-    - "TRETU_AUTH_ISSUER=${FAKE}"
-    - "TRETU_PLATFORM_URL=${FAKE}"
-    - "TRETU_APP_ID=hollowmere"
-    - "TRETU_APP_SECRET=${SECRET}"
-    - "TRETU_PLATFORM_BACKOFF_SEC=${BACKOFF_SEC}"
-`);
+// Production path of server/nakama/run.mjs: every key and the Tretu settings from the environment
+// (no local.yml, no NAKAMA_ALLOW_DEFAULTS), passed to Nakama as flags and redacted in the log.
 const nakamaLog = [];
 const nakama = spawn("bash", [path.join(repo, "server/nakama/nakama.sh"), "start", "--socket.port", "17350", "--console.port", "17351"], {
-  env: { ...process.env, NAKAMA_LOCAL_CONFIG: localYml, NAKAMA_DATABASE_ADDRESS: TEST_DB, NAKAMA_DATA_DIR: path.join(tmp, "data") },
+  env: { ...process.env, NAKAMA_ALLOW_DEFAULTS: "", NAKAMA_LOCAL_CONFIG: path.join(tmp, "no-local.yml"), NAKAMA_ENV_FILE: path.join(tmp, "no.env"),
+    NAKAMA_DATABASE_ADDRESS: TEST_DB, NAKAMA_DATA_DIR: path.join(tmp, "data"),
+    NAKAMA_HTTP_KEY: HTTP_KEY, NAKAMA_SESSION_ENCRYPTION_KEY: "integration-session-key-0123456789",
+    NAKAMA_SESSION_REFRESH_ENCRYPTION_KEY: "integration-refresh-key-0123456789", NAKAMA_CONSOLE_USERNAME: "hm-it",
+    NAKAMA_CONSOLE_PASSWORD: "integration-console-password-01", NAKAMA_CONSOLE_SIGNING_KEY: "integration-signing-key-0123456789",
+    TRETU_AUTH_ISSUER: FAKE, TRETU_PLATFORM_URL: FAKE, TRETU_APP_ID: "hollowmere", TRETU_APP_SECRET: SECRET,
+    TRETU_PLATFORM_BACKOFF_SEC: String(BACKOFF_SEC) },
   stdio: ["ignore", "pipe", "pipe"],
 });
 nakama.stdout.on("data", (d) => nakamaLog.push(d.toString()));
@@ -211,6 +209,10 @@ try {
   check("nakama is up", up, nakamaLog.join("").slice(-2000));
   if (!up) throw new Error("nakama did not start");
   check("signing self-test logged ok", nakamaLog.join("").includes("Tretu signing self-test ok"));
+  const startLine = nakamaLog.join("").split("\n").find((l) => l.startsWith("nakama start: ")) || "";
+  check("runner: secrets passed as flags, redacted in its log line", startLine.includes("TRETU_APP_SECRET=***")
+    && startLine.includes("--console.password ***") && startLine.includes("TRETU_AUTH_ISSUER=" + FAKE)
+    && startLine.includes("max_save_bytes=3145728") && !startLine.includes(SECRET) && !startLine.includes("integration-console-password"), startLine);
 
   // An existing Discord player with a cloud save.
   const dev = await api("POST", "/v2/account/authenticate/device?create=true", { basic: true, body: { id: "integration-device-0001" } });
@@ -605,7 +607,8 @@ try {
   }
   check("every platform request was correctly signed", received.every((r) => r.ok), received.filter((r) => !r.ok));
   const logText = nakamaLog.join("");
-  check("Nakama log has no app secret, access token or signature", !logText.includes(SECRET)
+  check("Nakama log has no app secret, console password, access token or signature", !logText.includes(SECRET)
+    && !logText.includes("integration-console-password") && !logText.includes("integration-signing-key")
     && !/tok-(alice|bobby|carol|dave|erin|ghost|ivy|jo|kim|max|ned|olga)/.test(logText) && !/v1=[0-9a-f]{64}/.test(logText));
 
   // --- Platform webhook through the MCP relay (POST /api/tretu/webhook), and /api/health -----------
