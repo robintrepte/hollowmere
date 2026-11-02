@@ -3,9 +3,6 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-	<meta name="google-client-id" content="%GOOGLE_CLIENT_ID%">
-	<meta name="apple-client-id" content="%APPLE_CLIENT_ID%">
-	<meta name="discord-client-id" content="%DISCORD_CLIENT_ID%">
 	<meta name="theme-color" content="#1c2120">
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,7 +30,6 @@
 		#status-notice { margin-top: 18px; max-width: 420px; text-align: center; line-height: 1.5; color: #ffb4a0; display: none; }
 		#status-legal { margin-top: 28px; font-size: 13px; }
 		#status-legal a { color: #b9c8a8; margin: 0 0.4rem; }
-		#gsi-holder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, 90px); display: none; z-index: 10; }
 	</style>
 	$GODOT_HEAD_INCLUDE
 </head>
@@ -48,7 +44,6 @@
 		<div id="status-install"></div>
 		<div id="status-legal"><a href="https://tretu.de/datenschutz" rel="privacy-policy">Datenschutz</a> · <a href="https://tretu.de/agb" rel="terms-of-service">AGB</a> · <a href="https://tretu.de/impressum">Impressum</a></div>
 	</div>
-	<div id="gsi-holder"></div>
 
 	<script>
 		// Size the canvas to the *visible* viewport (iOS home-screen apps report 100vh too tall,
@@ -94,67 +89,6 @@
 		document.addEventListener("contextmenu", (e) => e.preventDefault());
 	</script>
 	<script>
-		// Discord OAuth popup lands back on this page with #access_token=...
-		(function () {
-			const h = new URLSearchParams((location.hash || "").replace(/^#/, ""));
-			const tok = h.get("access_token");
-			if (tok && window.opener) {
-				window.opener.hollowmereDiscordToken = tok;
-				window.close();
-			}
-		}());
-
-		function hmMeta(name) {
-			const el = document.querySelector('meta[name="' + name + '"]');
-			return el ? (el.content || "") : "";
-		}
-
-		window.hollowmereGoogleToken = "";
-		window.hollowmereAppleToken = "";
-		window.hollowmereDiscordToken = "";
-		window.hollowmereGoogleSignIn = function () {
-			const cid = hmMeta("google-client-id");
-			if (!cid || cid.startsWith("%")) { window.hollowmereGoogleError = "Google sign-in is not configured."; return; }
-			const go = () => {
-				google.accounts.id.initialize({ client_id: cid, callback: (r) => { window.hollowmereGoogleToken = r.credential; document.getElementById("gsi-holder").style.display = "none"; } });
-				const holder = document.getElementById("gsi-holder");
-				holder.style.display = "block";
-				google.accounts.id.renderButton(holder, { theme: "filled_black", size: "large", shape: "pill" });
-				google.accounts.id.prompt();
-			};
-			if (window.google && google.accounts) { go(); return; }
-			const s = document.createElement("script");
-			s.src = "https://accounts.google.com/gsi/client";
-			s.onload = go;
-			document.head.appendChild(s);
-		};
-		window.hollowmereHideGoogle = function () { document.getElementById("gsi-holder").style.display = "none"; };
-
-		window.hollowmereAppleSignIn = function () {
-			const cid = hmMeta("apple-client-id");
-			if (!cid || cid.startsWith("%")) { window.hollowmereAppleError = "Apple sign-in is not configured."; return; }
-			const go = () => {
-				AppleID.auth.init({ clientId: cid, scope: "name email", redirectURI: location.origin + "/", usePopup: true });
-				AppleID.auth.signIn().then((r) => { window.hollowmereAppleToken = r.authorization.id_token; })
-					.catch((e) => { window.hollowmereAppleError = (e && e.error === "popup_closed_by_user") ? "Cancelled." : "Apple sign-in failed."; });
-			};
-			if (window.AppleID) { go(); return; }
-			const s = document.createElement("script");
-			s.src = "https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js";
-			s.onload = go;
-			document.head.appendChild(s);
-		};
-
-		window.hollowmereDiscordSignIn = function () {
-			const cid = hmMeta("discord-client-id");
-			if (!cid || cid.startsWith("%")) { window.hollowmereDiscordError = "Discord sign-in is not configured."; return; }
-			const redirect = location.origin + "/";
-			const url = "https://discord.com/api/oauth2/authorize?client_id=" + encodeURIComponent(cid)
-				+ "&response_type=token&redirect_uri=" + encodeURIComponent(redirect) + "&scope=identify";
-			const pop = window.open(url, "hm-discord", "width=500,height=720");
-			if (!pop) { window.hollowmereDiscordError = "The Discord sign-in popup was blocked."; }
-		};
-
 		// Tretu-Konto: OpenID Connect, authorization code + PKCE (S256), public client "hollowmere".
 		// The game calls hollowmereTretuSignIn(issuer, clientId) and polls window.hollowmereTretuToken.
 		// /auth/callback (web/auth/callback/index.html) relays {code, state} back here: through a

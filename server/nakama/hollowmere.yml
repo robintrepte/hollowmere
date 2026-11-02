@@ -1,6 +1,7 @@
-# Base Nakama config for Hollowmere (committed, no secrets). Secrets and the Tretu runtime env go in
-# server/nakama/local.yml (copy local.example.yml; never committed). server/nakama/nakama.sh loads
-# both and sets runtime.path / data_dir, so this file works from any checkout location.
+# Base Nakama config for Hollowmere (committed, no secrets). Secrets, the database address and the
+# Tretu runtime env come from server/.env: server/nakama/run.mjs passes them as flags (and passes
+# this file's runtime.env entries again, because a --runtime.env flag replaces the list), sets
+# runtime.path / data_dir, so this file works from any checkout location.
 name: hollowmere
 logger:
   level: "INFO"

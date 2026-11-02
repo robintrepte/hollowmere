@@ -1,12 +1,13 @@
 extends Node
-## "Mit Tretu-Konto anmelden": OpenID Connect sign-in at auth.tretu.de (public client, PKCE S256),
-## then a Nakama custom login with the access token (the server checks it at the issuer).
+## "Mit Tretu-Konto anmelden", the only account sign-in: OpenID Connect at auth.tretu.de (public
+## client, PKCE S256), then a Nakama custom login with the access token (the server checks it at the
+## issuer). Signed in as a guest, the same flow saves the guest's farm to the Tretu-Konto (Net.login_tretu).
 ## Also keeps the player's presence fresh on tretu.de, reports finished battles, shows the
 ## Tretu-Credits balance and unread notifications (read server-side by Nakama RPC tretu_account,
 ## the app secret never reaches the game), and lets a player with two farms keep one.
 ##
-## Off unless the project settings tretu/auth_issuer and tretu/client_id are both set
-## (the shipped project.godot leaves the issuer empty; see HOSTING.md "Tretu-Konto").
+## Configured by the project settings tretu/auth_issuer and tretu/client_id: the shipped project.godot
+## points at https://auth.tretu.de with client "hollowmere" (CI can override the issuer, HOSTING.md).
 ##   Desktop: system browser + loopback listener on http://127.0.0.1:<random port>/callback,
 ##            refresh token kept encrypted in user://tretu.cfg for silent sign-in.
 ##   Web:     popup (or full-page redirect) to the issuer, back to <origin>/auth/callback,
@@ -15,7 +16,7 @@ extends Node
 signal status(text: String)
 ## Balance / unread count changed (see `summary`).
 signal summary_changed
-## The player has a Tretu farm and an old Discord/Steam farm: the game should let them choose.
+## The player has a Tretu farm and an old Hollowmere/Discord/Steam farm: the game should let them choose.
 signal farm_choice_needed
 
 const SCOPES := "openid profile email offline_access tretu"
@@ -58,7 +59,8 @@ static func issuer() -> String:
 static func client_id() -> String:
 	return setting("client_id")
 
-## The feature flag: both values set (and not a leftover %PLACEHOLDER%).
+## Both values set (and not a leftover %PLACEHOLDER%). Only a broken build is without them: the
+## account panel then says that sign-in is not set up, guest play still works.
 static func enabled() -> bool:
 	var iss := issuer()
 	var cid := client_id()
@@ -317,6 +319,10 @@ func _resume_web_redirect() -> void:
 		if tok != "":
 			JavaScriptBridge.eval("window.hollowmereTretuToken=''; window.hollowmereTretuResume=false", true)
 			profile_username = str(JavaScriptBridge.eval("window.hollowmereTretuName || ''", true))
+			# A guest who went through the redirect: restore that session first, so the guest's farm is
+			# the one that gets linked ("Save to Tretu-Konto"), like in the popup flow.
+			if not Net.has_session():
+				await Net.restore_saved_session()
 			var err: String = await Net.login_tretu(tok)
 			if err != "":
 				EventBus.toast.emit(err, "")
@@ -502,10 +508,11 @@ func refresh_summary(force := false) -> void:
 	summary = parse_summary(r)
 	summary_changed.emit()
 
-# --- Two farms (Tretu-Konto + an old Discord / Steam account): keep one --------------------------------
+# --- Two farms (Tretu-Konto + an old Hollowmere / Discord / Steam account): keep one -------------------
 
 ## RPC answer -> {pending: bool, keep_days: int, options: [{id, kind, current, name, saves: [...],
-## archived_at, restore_until, was}]}; kind "tretu" | "discord" | "steam" | "archived".
+## archived_at, restore_until, was}]}; kind "tretu" | "hollowmere" | "discord" | "steam" | "archived".
+## "hollowmere": an old email / Google / Apple / guest account (matched through legacy_ids).
 static func parse_farm_choice(r: Dictionary) -> Dictionary:
 	var out := {"pending": false, "keep_days": 90, "options": []}
 	if not is_true(r.get("enabled")):
@@ -520,7 +527,7 @@ static func parse_farm_choice(r: Dictionary) -> Dictionary:
 		if not o is Dictionary or str(o.get("id", "")).length() != 36:
 			continue
 		var kind := str(o.get("kind", ""))
-		if not kind in ["tretu", "discord", "steam", "archived"]:
+		if not kind in ["tretu", "hollowmere", "discord", "steam", "archived"]:
 			continue
 		var saves: Array = []
 		var raw_saves = o.get("saves", [])
@@ -547,9 +554,9 @@ static func other_farms(choice: Dictionary) -> Array:
 static func archived_farms(choice: Dictionary) -> Array:
 	return (choice.get("options", []) as Array).filter(func(o): return o.kind == "archived")
 
-## "Discord", "Steam" for the old account a farm came from.
+## "Hollowmere", "Discord", "Steam" for the old account a farm came from.
 static func provider_name(kind: String) -> String:
-	return {"discord": "Discord", "steam": "Steam"}.get(kind, "Tretu")
+	return {"hollowmere": "Hollowmere", "discord": "Discord", "steam": "Steam"}.get(kind, "Tretu")
 
 ## Unix time -> "31.01.2027" (German) or "2027-01-31".
 static func date_text(unix: float) -> String:

@@ -1,7 +1,8 @@
 -- Tretu ecosystem integration for the Hollowmere Nakama server (library, used by hollowmere.lua).
 --
--- Everything here is OFF unless the runtime env (server/nakama/local.yml -> runtime.env) sets it:
---   TRETU_AUTH_ISSUER   e.g. https://auth.tretu.de    -> "Mit Tretu-Konto anmelden" works
+-- Runtime env (server/nakama/local.yml -> runtime.env):
+--   TRETU_AUTH_ISSUER   https://auth.tretu.de        REQUIRED: the Tretu-Konto is the only account sign-in
+--                       (server/nakama/nakama.sh refuses to start without it, except in dev/CI)
 --   TRETU_PLATFORM_URL  e.g. https://tretu.de         -> events, presence, wallet + notifications
 --   TRETU_APP_ID        hollowmere                    (signing, contract section 3)
 --   TRETU_APP_SECRET    32+ random bytes              (signing, never logged, never sent to clients)
@@ -15,15 +16,26 @@
 -- The discord_id / steam_id claims are kept server-side (storage tretu_identity/<sub>, SYSTEM-owned,
 -- not readable by clients); steam_id is also recorded on the account metadata ("steam_id").
 --
--- Carry-over: a player who used "Discord" before has an account with custom id "discord:<id>"; a
--- (future) native Steam account has users.steam_id = <SteamID64> or custom id "steam:<id>". When a
--- Tretu login brings a matching claim and no "tretu:<sub>" account exists yet, that account is
--- re-keyed to "tretu:<sub>" with one atomic, guarded UPDATE, so the same Nakama user id (and with
--- it every cloud save, profile, agent token) simply continues under the Tretu login. A marker in
--- storage (tretu_links/<provider>:<id>) keeps the old Discord button working: it now signs into
--- the same, re-keyed account. See carry_over() for the crash-safety argument.
+-- Sign-in is Tretu-Konto only (plus guest/device play). The earlier email, Google, Apple and
+-- Discord sign-ins are gone; their accounts are carried over on the player's first Tretu login,
+-- matched in this order while no "tretu:<sub>" account exists yet:
+--   1. legacy_ids.hollowmere (claim, scope tretu): the Nakama user id the legacy import linked to
+--      this Tretu-Konto (an email, Google, Apple, Discord, Steam or device account),
+--   2. the discord_id / steam_id claims: an account with custom id "discord:<id>", or a Steam
+--      account (users.steam_id = <SteamID64> or custom id "steam:<id>").
+-- The match is re-keyed to "tretu:<sub>" with one atomic, guarded UPDATE, so the same Nakama user
+-- id (and with it every cloud save, profile, agent token) simply continues under the Tretu login.
+-- Never an account that already belongs to another Tretu-Konto ("tretu:<other>") or is archived.
+-- A marker in storage (tretu_links/<provider>:<id>) records a Discord/Steam carry-over. See
+-- carry_over() for the crash-safety argument.
 --
--- Choose a farm: when BOTH a "tretu:<sub>" account and an old Discord/Steam account exist, nothing
+-- Guest upgrade ("Save to Tretu-Konto"): a signed-in guest calls LinkCustom with vars.tretu_token;
+-- the hook (link_guest) checks the token at the issuer and links "tretu:<sub>" to the guest's own
+-- account, so the guest's farm continues as the Tretu farm. Refused (AlreadyExists) when the
+-- Tretu-Konto already has a Hollowmere account: the game then signs in normally.
+--
+-- Choose a farm: when BOTH a "tretu:<sub>" account and an old account (legacy_ids / Discord /
+-- Steam match that was not re-keyed, e.g. after a guest upgrade) exist, nothing
 -- is merged on its own. The game shows both farms (RPC tretu_farm_choice) and the player keeps one
 -- (RPC tretu_farm_choose). The other account is archived in ONE database statement (a DO block:
 -- custom id -> "archived:<user id>", disabled, an archive record in storage tretu_archive), never
@@ -249,7 +261,21 @@ function M.pick_username(preferred, sub)
   return "tretu_" .. string.sub(string.gsub(nk.uuid_v4(), "-", ""), 1, 12)
 end
 
--- --- Linked identities (discord_id, steam_id claims) ------------------------------------------------
+-- --- Linked identities (discord_id, steam_id, legacy_ids.hollowmere claims) ---------------------------
+
+-- A Nakama user id (legacy_ids.hollowmere): a lowercase or uppercase UUID string.
+function M.valid_user_id(id)
+  return type(id) == "string"
+    and string.match(id, "^%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$") ~= nil
+end
+
+-- legacy_ids claim -> the Hollowmere (Nakama) user id, lowercased, or nil.
+function M.legacy_hollowmere(legacy_ids)
+  if type(legacy_ids) ~= "table" then return nil end
+  local id = legacy_ids.hollowmere
+  if not M.valid_user_id(id) then return nil end
+  return string.lower(id)
+end
 
 -- Discord snowflakes and SteamID64s are decimal strings. Numbers are refused: a JSON number this
 -- large has already lost digits.
@@ -260,11 +286,13 @@ function M.valid_provider_id(provider, id)
   return false
 end
 
--- Userinfo claims -> {discord = "<id>", steam = "<id>"} (each only when present and valid).
+-- Userinfo claims -> {discord = "<id>", steam = "<id>", hollowmere = "<user id>"} (each only when
+-- present and valid).
 function M.claim_links(info)
   local out = {}
   if M.valid_provider_id("discord", info and info.discord_id) then out.discord = info.discord_id end
   if M.valid_provider_id("steam", info and info.steam_id) then out.steam = info.steam_id end
+  out.hollowmere = M.legacy_hollowmere(info and info.legacy_ids)
   return out
 end
 
@@ -279,7 +307,8 @@ end
 function M.remember_identity(sub, links, username)
   local ok, err = pcall(nk.storage_write, {{
     collection = "tretu_identity", key = sub, user_id = SYSTEM,
-    value = {discord = links.discord, steam = links.steam, username = M.clean_tretu_username(username), at = M.now_sec()},
+    value = {discord = links.discord, steam = links.steam, hollowmere = links.hollowmere,
+      username = M.clean_tretu_username(username), at = M.now_sec()},
     permission_read = 0, permission_write = 0,
   }})
   if not ok then nk.logger_warn("Tretu: could not store linked ids: " .. tostring(err)) end
@@ -291,6 +320,7 @@ function M.identity(sub)
   local out = {}
   if M.valid_provider_id("discord", v.discord) then out.discord = v.discord end
   if M.valid_provider_id("steam", v.steam) then out.steam = v.steam end
+  if M.valid_user_id(v.hollowmere) then out.hollowmere = string.lower(v.hollowmere) end
   out.username = M.clean_tretu_username(v.username)
   return out
 end
@@ -307,9 +337,26 @@ function M.account_by_custom_id(custom_id)
   return account_rows("custom_id = $1", {custom_id})[1]
 end
 
--- Old accounts of this player from before the Tretu-Konto: "discord:<id>", and Steam accounts
--- (native users.steam_id, or custom id "steam:<id>"). Rows carry .kind = provider. Disabled
--- (banned) accounts are left alone.
+-- What an old account was, for the farm choice: "discord", "steam" or "hollowmere" (email, Google,
+-- Apple or device account).
+function M.legacy_kind(row)
+  local cid = row.custom_id
+  if type(cid) == "string" and string.sub(cid, 1, 8) == "discord:" then return "discord" end
+  if (type(cid) == "string" and string.sub(cid, 1, 6) == "steam:") or (row.steam_id ~= nil and row.steam_id ~= "") then return "steam" end
+  return "hollowmere"
+end
+
+-- An account legacy_ids.hollowmere may point at: active, not archived, not linked to a Tretu-Konto.
+function M.legacy_id_usable(row)
+  if row == nil or row.disabled then return false end
+  local cid = row.custom_id
+  if type(cid) ~= "string" then return true end
+  return string.sub(cid, 1, 6) ~= "tretu:" and string.sub(cid, 1, 9) ~= "archived:"
+end
+
+-- Old accounts of this player from before the Tretu-Konto: the legacy_ids.hollowmere account, and
+-- "discord:<id>" and Steam accounts (native users.steam_id, or custom id "steam:<id>"). Rows carry
+-- .kind ("discord" | "steam" | "hollowmere"). Disabled (banned) accounts are left alone.
 function M.legacy_accounts(links, exclude_id)
   local out, seen = {}, {}
   local function add(rows, kind)
@@ -320,6 +367,10 @@ function M.legacy_accounts(links, exclude_id)
         out[#out + 1] = r
       end
     end
+  end
+  if M.valid_user_id(links.hollowmere) then
+    local row = account_rows("id = $1::uuid", {links.hollowmere})[1]
+    if M.legacy_id_usable(row) then add({row}, M.legacy_kind(row)) end
   end
   if links.discord then add(account_rows("custom_id = $1", {"discord:" .. links.discord}), "discord") end
   if links.steam then add(account_rows("custom_id = $1 OR steam_id = $2", {"steam:" .. links.steam, links.steam}), "steam") end
@@ -367,23 +418,42 @@ function M.carry_over(provider, id, custom_id)
   return n == 1
 end
 
+-- legacy_ids.hollowmere: re-key exactly that account to "tretu:<sub>" (first Tretu login only).
+-- Same guard as carry_over: the custom id we saw, still enabled, no "tretu:<sub>" account yet.
+function M.carry_over_legacy(user_id, custom_id)
+  if not M.valid_user_id(user_id) then return false end
+  local row = account_rows("id = $1::uuid", {user_id})[1]
+  if not M.legacy_id_usable(row) then return false end
+  local kind = M.legacy_kind(row)
+  local guard = row.custom_id == nil and "custom_id IS NULL" or "custom_id = $3"
+  local params = {custom_id, row.id}
+  if row.custom_id ~= nil then params[3] = row.custom_id end
+  local ok, n = pcall(nk.sql_exec, [[
+    UPDATE users SET custom_id = $1, update_time = now()
+    WHERE id = $2::uuid AND ]] .. guard .. [[ AND disable_time = '1970-01-01 00:00:00+00'
+      AND NOT EXISTS (SELECT 1 FROM users WHERE custom_id = $1)
+  ]], params)
+  if not ok then
+    nk.logger_warn("Tretu: legacy carry-over did not apply: " .. tostring(n))
+    return false
+  end
+  if n == 1 then
+    nk.logger_info(string.format("Tretu: carried %s account %s over to a Tretu-Konto (legacy_ids)", kind, row.id))
+    local pid = type(row.custom_id) == "string" and string.match(row.custom_id, "^(%a+):(%d+)$")
+    if pid == "discord" or pid == "steam" then
+      M.write_marker(pid, string.match(row.custom_id, ":(%d+)$"), custom_id)
+    end
+  end
+  nk.localcache_delete("tretu:sub:" .. row.id)
+  return n == 1
+end
+
 function M.write_marker(provider, id, custom_id)
   nk.storage_write({{
     collection = "tretu_links", key = provider .. ":" .. id, user_id = SYSTEM,
     value = {custom_id = custom_id, at = M.now_sec()},
     permission_read = 0, permission_write = 0,
   }})
-end
-
--- Discord login after a carry-over or a farm choice: "discord:<id>" is gone, so follow the marker.
-function M.redirect_discord(discord_id)
-  local old_id = "discord:" .. tostring(discord_id)
-  if user_by_custom_id(old_id) ~= nil then return nil end
-  local rows = nk.storage_read({{collection = "tretu_links", key = old_id, user_id = SYSTEM}})
-  local link = rows[1] and rows[1].value
-  if link == nil or type(link.custom_id) ~= "string" then return nil end
-  if user_by_custom_id(link.custom_id) == nil then return nil end
-  return link.custom_id
 end
 
 -- --- Switch tickets (a full, refreshable session after choosing another farm) -------------------------
@@ -453,6 +523,10 @@ function M.authenticate(ctx, payload, account, token)
   local links = M.claim_links(info)
   M.remember_identity(info.sub, links, info.preferred_username)
   local existing = user_by_custom_id(custom_id)
+  -- First Tretu login: carry an old account over (legacy_ids first, then Discord / Steam).
+  if existing == nil and links.hollowmere and M.carry_over_legacy(links.hollowmere, custom_id) then
+    existing = user_by_custom_id(custom_id)
+  end
   if existing == nil then
     for _, provider in ipairs(PROVIDERS) do
       if links[provider] and M.carry_over(provider, links[provider], custom_id) then
@@ -469,6 +543,45 @@ function M.authenticate(ctx, payload, account, token)
   account.vars = {tretu_sub = info.sub}
   payload.account = account
   return payload
+end
+
+-- LinkCustom with vars.tretu_token from a signed-in guest (or any old account still signed in):
+-- links "tretu:<sub>" to the caller's own account, keeping its farms. Raises when the caller's
+-- account already belongs to a Tretu-Konto or is gone; Nakama itself refuses (AlreadyExists) when
+-- "tretu:<sub>" is already taken, and the game then signs in normally.
+function M.link_guest(ctx, payload, token)
+  local cfg = M.config(ctx)
+  if not cfg.auth_enabled then error({"Tretu sign-in is not enabled on this server.", 9}) end
+  if ctx.user_id == nil or ctx.user_id == "" then error({"Sign in first.", 16}) end
+  if type(token) ~= "string" or #token < 8 or #token > 8192 then
+    error({"Sign in with your Tretu account first.", 3})
+  end
+  local asked_ms = nk.time()
+  local info, err, code = M.userinfo(cfg, token)
+  if info == nil then error({err, code or 16}) end
+  if M.is_locked(info.sub) and not M.unlock_by_sign_in(info.sub, asked_ms) then error({M.LOCKED_MESSAGE, 7}) end
+  local custom_id = "tretu:" .. info.sub
+  local row = account_rows("id = $1::uuid", {ctx.user_id})[1]
+  if row == nil or row.disabled then error({"Sign in with your Tretu account again.", 16}) end
+  if type(row.custom_id) == "string" and string.sub(row.custom_id, 1, 6) == "tretu:" and row.custom_id ~= custom_id then
+    error({"This farm already belongs to another Tretu-Konto.", 9})
+  end
+  M.remember_identity(info.sub, M.claim_links(info), info.preferred_username)
+  nk.localcache_delete("tretu:sub:" .. ctx.user_id)
+  payload.id = custom_id
+  payload.vars = {}
+  return payload
+end
+
+-- After a guest upgrade (LinkCustom): metadata as after a Tretu login. -> rows updated
+function M.after_link(ctx, payload)
+  local id = payload and payload.id
+  if type(id) ~= "string" or string.sub(id, 1, 6) ~= "tretu:" then return 0 end
+  local sub = string.sub(id, 7)
+  if not M.valid_sub(sub) then return 0 end
+  nk.localcache_delete("tretu:sub:" .. tostring(ctx.user_id))
+  nk.logger_info("Tretu: guest account upgraded to a Tretu-Konto")
+  return M.sync_metadata(sub, M.identity(sub))
 end
 
 -- After a Tretu login: steam_id from the claims onto the account metadata (removed again when the
@@ -838,7 +951,7 @@ function M.rpc_account(ctx, payload)
   return nk.json_encode(M.summary_view(cached, cached and "stale" or "unavailable", now))
 end
 
--- --- Choose a farm when a Tretu account and an old Discord/Steam account both exist -----------------
+-- --- Choose a farm when a Tretu account and an old account (legacy_ids, Discord, Steam) both exist ---
 
 local SAVE_SUMMARY_SQL = [[
   SELECT key, value->'meta'->>'farm' AS farm, value->'meta'->>'player' AS player,
@@ -915,7 +1028,7 @@ local function tretu_session(ctx)
 end
 
 -- RPC tretu_farm_choice -> {enabled, pending, keepDays, options:[{id, kind, current, name, saves?,
--- archivedAt?, restoreUntil?, was?}]}. kind: "tretu" | "discord" | "steam" | "archived".
+-- archivedAt?, restoreUntil?, was?}]}. kind: "tretu" | "discord" | "steam" | "hollowmere" | "archived".
 function M.rpc_farm_choice(ctx, _payload)
   local sub = tretu_session(ctx)
   if sub == nil then return nk.json_encode({enabled = false}) end
@@ -1046,8 +1159,10 @@ function M.rpc_farm_choose(ctx, payload)
     return nk.json_encode({ok = true, changed = false, kept = keep.id, archived = 0})
   end
   local plan = {sub = sub, now = M.now_sec(), keep = keep, archive = archive, steam = c.links.steam}
-  -- The Discord (and Steam) button follows "tretu:<sub>" from now on, whichever farm that is.
-  for provider, id in pairs(c.links) do M.write_marker(provider, id, "tretu:" .. sub) end
+  -- The Discord / Steam markers follow "tretu:<sub>" from now on, whichever farm that is.
+  for _, provider in ipairs(PROVIDERS) do
+    if c.links[provider] then M.write_marker(provider, c.links[provider], "tretu:" .. sub) end
+  end
   if cfg.events_enabled then pcall(M.flush, cfg, ctx.user_id) end
   local ok, err = pcall(nk.sql_exec, M.choice_sql(plan))
   if not ok then
@@ -1307,8 +1422,11 @@ function M.rpc_user_updated(ctx, payload)
   local lock = nil
   if type(data.locked) == "boolean" then lock = M.apply_lock(sub, data.locked, M.iso_ms(req.occurredAt)) end
   local links = type(data.links) == "table" and data.links or {}
-  local ident = M.claim_links({discord_id = links.discord, steam_id = links.steam})
-  local username = M.clean_tretu_username(data.username) or M.identity(sub).username
+  local ident = M.claim_links({discord_id = links.discord, steam_id = links.steam, legacy_ids = data.legacy_ids})
+  local known_ident = M.identity(sub)
+  -- legacy_ids only comes with a sign-in (userinfo); keep the one we know unless the event brings one.
+  ident.hollowmere = ident.hollowmere or known_ident.hollowmere
+  local username = M.clean_tretu_username(data.username) or known_ident.username
   M.remember_identity(sub, ident, username)
   ident.username = M.clean_tretu_username(username)
   local n = M.sync_metadata(sub, ident)

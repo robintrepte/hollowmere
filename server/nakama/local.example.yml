@@ -1,31 +1,10 @@
-# Per-server Nakama settings for Hollowmere. Copy to server/nakama/local.yml, chmod 600, fill in.
-# Never commit local.yml (it is in .gitignore). Generate each secret with: openssl rand -hex 24
-database:
-  # Database "nakama" on the shared Postgres server (HOSTING.md step 3).
-  address:
-    - "nakama:CHANGE_ME_DB_PASSWORD@127.0.0.1:5432/nakama"
-session:
-  encryption_key: "CHANGE_ME_SESSION_KEY"
-  refresh_encryption_key: "CHANGE_ME_REFRESH_KEY"
-runtime:
-  # Same value as NAKAMA_HTTP_KEY in server/.env (the MCP relay calls Nakama with it).
-  http_key: "CHANGE_ME_HTTP_KEY"
-  env:
-    # Tretu ecosystem (all optional; leave a line out or empty to keep that part off).
-    # Sign-in with a Tretu-Konto (needs tretu/auth_issuer in the game build too):
-    - "TRETU_AUTH_ISSUER="
-    # Events, presence, Tretu-Credits + notifications in the game (URL and secret must both be set):
-    - "TRETU_PLATFORM_URL="
-    - "TRETU_APP_ID=hollowmere"
-    - "TRETU_APP_SECRET="
-    # Public game URL, used for presence join links to an open co-op farm:
-    - "HOLLOWMERE_PUBLIC_URL=https://hollowmere.tretu.de"
-    # After a platform timeout / 5xx, skip tretu.de for this many seconds (0 = never skip):
-    - "TRETU_PLATFORM_BACKOFF_SEC=15"
-console:
-  username: "admin"
-  password: "CHANGE_ME_CONSOLE_PASSWORD"
-social:
-  apple:
-    # Apple Services ID for web sign-in (Nakama checks the token audience); leave as is if unused.
-    bundle_id: "com.hollowmere.unset"
+# OPTIONAL extra Nakama settings for this server (server/nakama/local.yml, chmod 600, never committed).
+# Not needed for a normal setup: the database address, every key and the Tretu settings come from
+# server/.env (see server/.env.example) and server/nakama/run.mjs passes them to Nakama as flags.
+# Use this file only for other Nakama options, e.g. a different log level:
+#
+# logger:
+#   level: "DEBUG"
+#
+# Values from server/.env win over this file. Do not put secrets here; run.mjs only reads them
+# from the environment (it refuses to start while they are missing there).

@@ -2,7 +2,7 @@ class_name TretuMenu
 extends VBoxContainer
 ## The Tretu part of the account panel for players signed in with a Tretu-Konto:
 ## Tretu-Credits balance, unread notifications, links to tretu.de, Mein Konto / profile,
-## and the "choose a farm" notice when an old Discord / Steam farm is still waiting.
+## and the "choose a farm" notice when an old Hollowmere / Discord / Steam farm is still waiting.
 ## Built only from Tretu.summary / Tretu.farm_choice, so it can be filled without a server (tests).
 
 ## Player asked to see the farm chooser.

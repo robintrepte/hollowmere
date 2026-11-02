@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // End-to-end test of the Tretu integration on a real Nakama + Postgres, no Docker:
 // a fake OIDC issuer and a fake platform (both on 127.0.0.1) check what Nakama does:
-// sign-in + Discord/Steam carry-over, platform events, the in-game wallet/notification summary,
+// sign-in (Tretu-Konto only: the removed email/Google/Apple/Discord sign-ins are refused), carry-over
+// of old accounts (legacy_ids.hollowmere first, then Discord/Steam), "Save to Tretu-Konto" from a
+// guest (LinkCustom), platform events, the in-game wallet/notification summary,
 // choosing a farm when two accounts exist (archive, restore, atomicity, idempotency), purge,
 // the platform webhook through the MCP relay (deletion, merge, account lock from the central Tretu admin).
 //
@@ -16,7 +18,7 @@
 import http from "node:http";
 import crypto from "node:crypto";
 import { spawn, execFileSync } from "node:child_process";
-import { writeFileSync, mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -40,6 +42,12 @@ const SUB_HANK = "4a4a4a4a-0000-4000-8000-0000000004a1";
 const SUB_DAVE_NEW = "d0d0d0d0-0000-4000-8000-00000000da02";
 const SUB_LENA = "1e4a1e4a-0000-4000-8000-0000000001e4";
 const SUB_LOST = "10511051-0000-4000-8000-000000001051";
+const SUB_IVY = "1e1e1e1e-0000-4000-8000-0000000001e1";
+const SUB_JO = "10101010-0000-4000-8000-000000000101";
+const SUB_KIM = "c1c1c1c1-0000-4000-8000-00000000c1c1";
+const SUB_MAX = "3a3a3a3a-0000-4000-8000-0000000003a3";
+const SUB_NED = "4e4e4e4e-0000-4000-8000-0000000004e4";
+const SUB_OLGA = "0a0a0a0a-0000-4000-8000-000000000a1a";
 const STEAM_DAVE = "76561198000000001";
 const STEAM_ERIN = "76561198000000002";
 const BACKOFF_SEC = 2;
@@ -65,6 +73,12 @@ const users = {
   "tok-dave-new": { sub: SUB_DAVE_NEW, preferred_username: "dave" },
   "tok-lena": { sub: SUB_LENA, preferred_username: "lena" },
   "tok-lost": { sub: SUB_LOST, preferred_username: "lost" },
+  "tok-ivy-old": { sub: SUB_IVY, preferred_username: "ivy" },
+  "tok-jo-legacy": { sub: SUB_JO, preferred_username: "jo" },
+  "tok-kim-guest": { sub: SUB_KIM, preferred_username: "kim" },
+  "tok-max-guest": { sub: SUB_MAX, preferred_username: "max" },
+  "tok-ned-other": { sub: SUB_NED, preferred_username: "ned" },
+  "tok-olga-guest": { sub: SUB_OLGA, preferred_username: "olga" },
 };
 const received = [];
 const lockedAtIssuer = new Set();
@@ -129,19 +143,17 @@ execFileSync(PSQL, [`postgres://${dbAdmin}`, "-qc", `CREATE DATABASE ${dbName}`]
 const sql = (q) => execFileSync(PSQL, [`postgres://${TEST_DB}`, "-Atqc", q]).toString().trim();
 
 const tmp = mkdtempSync(path.join(tmpdir(), "hm-tretu-"));
-const localYml = path.join(tmp, "local.yml");
-writeFileSync(localYml, `runtime:
-  http_key: "${HTTP_KEY}"
-  env:
-    - "TRETU_AUTH_ISSUER=${FAKE}"
-    - "TRETU_PLATFORM_URL=${FAKE}"
-    - "TRETU_APP_ID=hollowmere"
-    - "TRETU_APP_SECRET=${SECRET}"
-    - "TRETU_PLATFORM_BACKOFF_SEC=${BACKOFF_SEC}"
-`);
+// Production path of server/nakama/run.mjs: every key and the Tretu settings from the environment
+// (no local.yml, no NAKAMA_ALLOW_DEFAULTS), passed to Nakama as flags and redacted in the log.
 const nakamaLog = [];
 const nakama = spawn("bash", [path.join(repo, "server/nakama/nakama.sh"), "start", "--socket.port", "17350", "--console.port", "17351"], {
-  env: { ...process.env, NAKAMA_LOCAL_CONFIG: localYml, NAKAMA_DATABASE_ADDRESS: TEST_DB, NAKAMA_DATA_DIR: path.join(tmp, "data") },
+  env: { ...process.env, NAKAMA_ALLOW_DEFAULTS: "", NAKAMA_LOCAL_CONFIG: path.join(tmp, "no-local.yml"), NAKAMA_ENV_FILE: path.join(tmp, "no.env"),
+    NAKAMA_DATABASE_ADDRESS: TEST_DB, NAKAMA_DATA_DIR: path.join(tmp, "data"),
+    NAKAMA_HTTP_KEY: HTTP_KEY, NAKAMA_SESSION_ENCRYPTION_KEY: "integration-session-key-0123456789",
+    NAKAMA_SESSION_REFRESH_ENCRYPTION_KEY: "integration-refresh-key-0123456789", NAKAMA_CONSOLE_USERNAME: "hm-it",
+    NAKAMA_CONSOLE_PASSWORD: "integration-console-password-01", NAKAMA_CONSOLE_SIGNING_KEY: "integration-signing-key-0123456789",
+    TRETU_AUTH_ISSUER: FAKE, TRETU_PLATFORM_URL: FAKE, TRETU_APP_ID: "hollowmere", TRETU_APP_SECRET: SECRET,
+    TRETU_PLATFORM_BACKOFF_SEC: String(BACKOFF_SEC) },
   stdio: ["ignore", "pipe", "pipe"],
 });
 nakama.stdout.on("data", (d) => nakamaLog.push(d.toString()));
@@ -181,6 +193,8 @@ const deviceUser = async (id) => {
 };
 const tretuLogin = (token, create = true) =>
   api("POST", `/v2/account/authenticate/custom?create=${create}`, { basic: true, body: { id: "tretu-login", vars: { tretu_token: token } } });
+// "Save to Tretu-Konto": a signed-in guest links its own account (what Net.login_tretu does first).
+const tretuLink = (session, token) => api("POST", "/v2/account/link/custom", { session, body: { id: "tretu-link", vars: { tretu_token: token } } });
 const claims = (jwt) => JSON.parse(Buffer.from(jwt.split(".")[1], "base64url").toString());
 const save = (session, slot, meta) => api("PUT", "/v2/storage", {
   session, body: { objects: [{ collection: "saves", key: slot, value: JSON.stringify({ version: 3, meta }), permission_read: 1, permission_write: 1 }] },
@@ -195,6 +209,10 @@ try {
   check("nakama is up", up, nakamaLog.join("").slice(-2000));
   if (!up) throw new Error("nakama did not start");
   check("signing self-test logged ok", nakamaLog.join("").includes("Tretu signing self-test ok"));
+  const startLine = nakamaLog.join("").split("\n").find((l) => l.startsWith("nakama start: ")) || "";
+  check("runner: secrets passed as flags, redacted in its log line", startLine.includes("TRETU_APP_SECRET=***")
+    && startLine.includes("--console.password ***") && startLine.includes("TRETU_AUTH_ISSUER=" + FAKE)
+    && startLine.includes("max_save_bytes=3145728") && !startLine.includes(SECRET) && !startLine.includes("integration-console-password"), startLine);
 
   // An existing Discord player with a cloud save.
   const dev = await api("POST", "/v2/account/authenticate/device?create=true", { basic: true, body: { id: "integration-device-0001" } });
@@ -228,6 +246,103 @@ try {
   check("unknown token is rejected", bad.status === 401, bad);
   const raw = await api("POST", "/v2/account/authenticate/custom?create=true", { basic: true, body: { id: `tretu:${SUB_ALICE}` } });
   check("custom id without a token is refused", raw.status >= 400 && raw.status < 500, raw);
+
+  // --- Tretu-Konto only: the removed sign-ins are refused by the server ---------------------------
+  const users1 = sql("SELECT count(*) FROM users");
+  const viaEmail = await api("POST", "/v2/account/authenticate/email?create=true", { basic: true, body: { email: "new@hollowmere.test", password: "password123" } });
+  check("email sign-up refused", viaEmail.status === 400 && /no longer available/.test(JSON.stringify(viaEmail.json)), viaEmail);
+  const viaGoogle = await api("POST", "/v2/account/authenticate/google?create=true", { basic: true, body: { token: "fake-google-id-token" } });
+  check("Google sign-in refused", viaGoogle.status === 400 && /no longer available/.test(JSON.stringify(viaGoogle.json)), viaGoogle);
+  const viaApple = await api("POST", "/v2/account/authenticate/apple?create=true", { basic: true, body: { token: "fake-apple-id-token" } });
+  check("Apple sign-in refused", viaApple.status === 400 && /no longer available/.test(JSON.stringify(viaApple.json)), viaApple);
+  const viaDiscord = await api("POST", "/v2/account/authenticate/custom?create=true", { basic: true, body: { id: "discord", vars: { discord_token: "x" } } });
+  check("Discord sign-in refused (no request to Discord)", viaDiscord.status === 400 && /Tretu/.test(JSON.stringify(viaDiscord.json)), viaDiscord);
+  const g0 = await deviceUser("integration-device-refuse");
+  const linkEmail = await api("POST", "/v2/account/link/email", { session: g0.token, body: { email: "g@hollowmere.test", password: "password123" } });
+  check("adding an email to a guest refused", linkEmail.status === 400, linkEmail);
+  const unlinkT = await api("POST", "/v2/account/unlink/custom", { session: a1.json.token, body: { id: `tretu:${SUB_ALICE}` } });
+  check("removing the Tretu link refused", unlinkT.status === 400
+    && sql(`SELECT custom_id FROM users WHERE id = '${discordUser}'`) === `tretu:${SUB_ALICE}`, unlinkT);
+  check("no account created by a refused sign-in", sql("SELECT count(*) FROM users") === String(Number(users1) + 1));
+
+  // --- Old accounts carried over on the first Tretu login: legacy_ids.hollowmere first -------------
+  // An email account (from the legacy import: the auth server's legacy_ids.hollowmere = its user id).
+  const iv = await deviceUser("integration-device-ivy");
+  sql(`UPDATE users SET email = 'ivy@hollowmere.test', password = 'x' WHERE id = '${iv.uid}'`);
+  sql(`DELETE FROM user_device WHERE user_id = '${iv.uid}'`);
+  await save(iv.token, "slot_0", { farm: "Ivy Glade", player: "Ivy", day: 40, saved_at: 100 });
+  users["tok-ivy-old"].legacy_ids = { hollowmere: iv.uid.toUpperCase(), saga: "17" };
+  const ivy = await tretuLogin("tok-ivy-old");
+  check("legacy_ids: the old email account becomes the Tretu farm", ivy.status === 200 && claims(ivy.json.token).uid === iv.uid
+    && sql(`SELECT custom_id FROM users WHERE id = '${iv.uid}'`) === `tretu:${SUB_IVY}`, ivy.json);
+  const ivySaves = await api("GET", `/v2/storage/saves/${iv.uid}?limit=10`, { session: ivy.json.token });
+  check("legacy_ids: its cloud save is there", (ivySaves.json.objects || []).some((o) => o.key === "slot_0"), ivySaves.json);
+  const ivyCh = await rpc(ivy.json.token, "tretu_farm_choice", {});
+  check("legacy_ids: nothing to choose afterwards", ivyCh.json.pending === false && ivyCh.json.options?.length === 1, ivyCh);
+  // legacy_ids wins over the Discord claim; the Discord account waits in the farm choice (never merged).
+  const joOld = await deviceUser("integration-device-jo-old");
+  await save(joOld.token, "slot_0", { farm: "Jo Old", player: "Jo", day: 12, saved_at: 10 });
+  const joDc = await deviceUser("integration-device-jo-discord");
+  sql(`UPDATE users SET custom_id = 'discord:888000888' WHERE id = '${joDc.uid}'`);
+  await save(joDc.token, "slot_1", { farm: "Jo Discord", player: "Jo", day: 3, saved_at: 20 });
+  users["tok-jo-legacy"].legacy_ids = { hollowmere: joOld.uid };
+  users["tok-jo-legacy"].discord_id = "888000888";
+  const jo = await tretuLogin("tok-jo-legacy");
+  check("legacy_ids before discord_id", jo.status === 200 && claims(jo.json.token).uid === joOld.uid
+    && sql(`SELECT custom_id FROM users WHERE id = '${joDc.uid}'`) === "discord:888000888", jo.json);
+  const joCh = await rpc(jo.json.token, "tretu_farm_choice", {});
+  check("the Discord account is offered in the farm choice", joCh.json.pending === true
+    && (joCh.json.options || []).some((o) => o.id === joDc.uid && o.kind === "discord" && o.saves?.[0]?.farm === "Jo Discord"), joCh);
+  // legacy_ids pointing at an account that already belongs to another Tretu-Konto: never taken.
+  users["tok-ned-other"].legacy_ids = { hollowmere: iv.uid };
+  const ned = await tretuLogin("tok-ned-other");
+  check("legacy_ids: an account linked to another Tretu-Konto is never re-keyed", ned.status === 200 && claims(ned.json.token).uid !== iv.uid
+    && sql(`SELECT custom_id FROM users WHERE id = '${iv.uid}'`) === `tretu:${SUB_IVY}`, ned.json);
+  const nedCh = await rpc(ned.json.token, "tretu_farm_choice", {});
+  check("…and not offered to the other player either", nedCh.json.pending === false && !(nedCh.json.options || []).some((o) => o.id === iv.uid), nedCh);
+  users["tok-ned-other"].legacy_ids = { hollowmere: "not-a-uuid'); DROP TABLE users; --" };
+  check("legacy_ids: a malformed id is ignored", (await tretuLogin("tok-ned-other")).status === 200 && sql("SELECT count(*) FROM users") !== "0");
+
+  // --- "Save to Tretu-Konto": a guest keeps its farm ------------------------------------------------
+  const kg = await deviceUser("integration-device-kim");
+  await save(kg.token, "slot_0", { farm: "Kim Meadow", player: "Kim", day: 7, saved_at: 70 });
+  const badLink = await tretuLink(kg.token, "tok-nobody");
+  check("guest upgrade: an unknown token is refused, the guest stays a guest", badLink.status === 401
+    && sql(`SELECT coalesce(custom_id, '-') FROM users WHERE id = '${kg.uid}'`) === "-", badLink);
+  const kl = await tretuLink(kg.token, "tok-kim-guest");
+  check("guest upgrade: linked", kl.status === 200 && sql(`SELECT custom_id FROM users WHERE id = '${kg.uid}'`) === `tretu:${SUB_KIM}`, kl);
+  const kim = await tretuLogin("tok-kim-guest");
+  check("guest upgrade: the Tretu sign-in lands on the guest's farm", kim.status === 200 && claims(kim.json.token).uid === kg.uid
+    && claims(kim.json.token).vrs?.tretu_sub === SUB_KIM, kim.json);
+  const kimSaves = await api("GET", `/v2/storage/saves/${kg.uid}?limit=10`, { session: kim.json.token });
+  check("guest upgrade: the guest's cloud save is kept", (kimSaves.json.objects || []).some((o) => o.key === "slot_0"), kimSaves.json);
+  check("guest upgrade: tretu_username on the metadata", sql(`SELECT metadata->>'tretu_username' FROM users WHERE id = '${kg.uid}'`) === "kim");
+  const kim2 = await tretuLink(kg.token, "tok-kim-guest");
+  check("guest upgrade: linking again is harmless", kim2.status === 200 && sql(`SELECT count(*) FROM users WHERE custom_id = 'tretu:${SUB_KIM}'`) === "1", kim2);
+  // A second guest of the same Tretu-Konto: the Tretu-Konto already has a farm -> AlreadyExists (the game signs in normally).
+  const kg2 = await deviceUser("integration-device-kim-2");
+  const taken = await tretuLink(kg2.token, "tok-kim-guest");
+  check("guest upgrade: Tretu-Konto already has a farm -> 409, nothing changed", taken.status === 409
+    && sql(`SELECT coalesce(custom_id, '-') FROM users WHERE id = '${kg2.uid}'`) === "-" && sql(`SELECT custom_id FROM users WHERE id = '${kg.uid}'`) === `tretu:${SUB_KIM}`, taken);
+  const other = await tretuLink(kim.json.token, "tok-ivy-old");
+  check("guest upgrade: a farm of another Tretu-Konto is never moved", other.status === 400
+    && sql(`SELECT custom_id FROM users WHERE id = '${kg.uid}'`) === `tretu:${SUB_KIM}`, other);
+  // Guest upgrade while legacy_ids names an old account: the guest's farm is kept, the old one is offered.
+  const mxOld = await deviceUser("integration-device-max-old");
+  sql(`UPDATE users SET email = 'max@hollowmere.test', password = 'x' WHERE id = '${mxOld.uid}'`);
+  await save(mxOld.token, "slot_0", { farm: "Max Old", player: "Max", day: 30, saved_at: 5 });
+  users["tok-max-guest"].legacy_ids = { hollowmere: mxOld.uid };
+  const mxGuest = await deviceUser("integration-device-max-guest");
+  check("guest upgrade with an old account: linked", (await tretuLink(mxGuest.token, "tok-max-guest")).status === 200);
+  const mx = await tretuLogin("tok-max-guest");
+  check("…the Tretu farm is the guest's", claims(mx.json.token).uid === mxGuest.uid && sql(`SELECT email FROM users WHERE id = '${mxOld.uid}'`) === "max@hollowmere.test");
+  const mxCh = await rpc(mx.json.token, "tretu_farm_choice", {});
+  check("…and the old Hollowmere account waits in the farm choice", mxCh.json.pending === true
+    && (mxCh.json.options || []).some((o) => o.id === mxOld.uid && o.kind === "hollowmere" && o.saves?.[0]?.farm === "Max Old"), mxCh);
+  const mxKeep = await rpc(mx.json.token, "tretu_farm_choose", { keep: mxOld.uid });
+  check("…keeping it re-keys the old account and archives the guest farm", mxKeep.status === 200 && mxKeep.json.changed === true
+    && sql(`SELECT custom_id FROM users WHERE id = '${mxOld.uid}'`) === `tretu:${SUB_MAX}`
+    && sql(`SELECT custom_id FROM users WHERE id = '${mxGuest.uid}'`) === `archived:${mxGuest.uid}`, mxKeep);
 
   // Progress from cloud saves -> queued stat events -> heartbeat delivers them (signed).
   const s1 = a1.json.token;
@@ -352,7 +467,7 @@ try {
   check("failed switch is rolled back completely",
     sql(`SELECT custom_id || '|' || (disable_time > 'epoch') FROM users WHERE id = '${carolT}'`) === `tretu:${SUB_CAROL}|false`
     && sql(`SELECT custom_id FROM users WHERE id = '${cd.uid}'`) === "discord:555000555"
-    && sql("SELECT count(*) FROM storage WHERE collection = 'tretu_archive'") === "0");
+    && sql(`SELECT count(*) FROM storage WHERE collection = 'tretu_archive' AND value->>'sub' = '${SUB_CAROL}'`) === "0");
   const stillOk = await rpc(st, "tretu_farm_choice", {});
   check("session still works after the rollback", stillOk.status === 200 && stillOk.json.pending === true, stillOk);
 
@@ -470,7 +585,7 @@ try {
     await save(gd.token, "slot_1", { farm: "Gina's Old Grove", player: "Gina", day: 61, money: 777, saved_at: 50 });
     users["tok-gina"].discord_id = "777000777";
     const args = ["--path", path.join(repo, "game"), "res://tests/net/tretu_client_test.tscn", "--",
-      "--port=17350", `--issuer=${FAKE}`, "--token=tok-gina", `--discord-user=${gd.uid}`];
+      "--port=17350", `--issuer=${FAKE}`, "--token=tok-gina", `--discord-user=${gd.uid}`, "--guest-token=tok-olga-guest"];
     if (process.env.SHOTS) args.push(`--shots=${process.env.SHOTS}`);
     else args.unshift("--headless");
     const out = await new Promise((resolve) => {
@@ -485,13 +600,16 @@ try {
     check("game client: Tretu menu and farm choice end to end", out.includes("TRETU CLIENT TEST DONE, 0 failures"),
       out.split("\n").filter((l) => /FAIL|ERROR|DONE/.test(l)).slice(0, 20));
     check("game client left the first farm active", sql(`SELECT custom_id FROM users WHERE id = '${ginaT}'`) === `tretu:${SUB_GINA}`);
+    check("game client: guest upgraded through the account panel", sql(`SELECT count(*) FROM users WHERE custom_id = 'tretu:${SUB_OLGA}'`) === "1"
+      && sql(`SELECT count(*) FROM user_device d JOIN users u ON u.id = d.user_id WHERE u.custom_id = 'tretu:${SUB_OLGA}'`) === "1");
   } else {
     console.log("skip game client test (set GODOT=/path/to/godot to run it)");
   }
   check("every platform request was correctly signed", received.every((r) => r.ok), received.filter((r) => !r.ok));
   const logText = nakamaLog.join("");
-  check("Nakama log has no app secret, access token or signature", !logText.includes(SECRET)
-    && !/tok-(alice|bobby|carol|dave|erin|ghost)/.test(logText) && !/v1=[0-9a-f]{64}/.test(logText));
+  check("Nakama log has no app secret, console password, access token or signature", !logText.includes(SECRET)
+    && !logText.includes("integration-console-password") && !logText.includes("integration-signing-key")
+    && !/tok-(alice|bobby|carol|dave|erin|ghost|ivy|jo|kim|max|ned|olga)/.test(logText) && !/v1=[0-9a-f]{64}/.test(logText));
 
   // --- Platform webhook through the MCP relay (POST /api/tretu/webhook), and /api/health -----------
   mcp = spawn(process.execPath, [path.join(repo, "server/mcp/server.mjs")], {

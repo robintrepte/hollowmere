@@ -66,6 +66,12 @@ jobs:
           node-version: "22"
       - name: MCP relay self-test
         run: node server/mcp/test.mjs
+      - name: Nakama runner (command line from the environment, production checks, redaction)
+        run: node --test server/nakama/tests/run_test.mjs
+      - name: nginx site file (nginx -t with dummy certificates, every location live)
+        run: |
+          sudo apt-get install -y -qq nginx
+          deploy/nginx/test_site.sh
       - name: Install the Nakama release binary + Lua (Nakama runs as a plain binary, like production)
         run: |
           curl -fsSL -o nakama.tgz "https://github.com/heroiclabs/nakama/releases/download/v${NAKAMA_VERSION}/nakama-${NAKAMA_VERSION}-linux-amd64.tar.gz"
@@ -139,14 +145,18 @@ jobs:
       - name: Point release builds at the live server
         if: vars.HOLLOWMERE_DOMAIN != ''
         run: sed -i "s/%HOLLOWMERE_DOMAIN%/${{ vars.HOLLOWMERE_DOMAIN }}/" game/project.godot
-      - name: Turn on "Mit Tretu-Konto anmelden" (only with the TRETU_AUTH_ISSUER variable)
+      # project.godot ships auth_issuer="https://auth.tretu.de" (the Tretu-Konto is the only account
+      # sign-in); the TRETU_AUTH_ISSUER variable only overrides it, e.g. for a staging issuer.
+      - name: Override the Tretu issuer (only with the TRETU_AUTH_ISSUER variable)
         if: vars.TRETU_AUTH_ISSUER != ''
         env:
           ISSUER: ${{ vars.TRETU_AUTH_ISSUER }}
         run: |
           [[ "$ISSUER" =~ ^https://[A-Za-z0-9.-]+$ ]] || { echo "TRETU_AUTH_ISSUER must look like https://auth.tretu.de"; exit 1; }
-          sed -i "s|^auth_issuer=\"\"|auth_issuer=\"$ISSUER\"|" game/project.godot
+          sed -i "s|^auth_issuer=\".*\"\$|auth_issuer=\"$ISSUER\"|" game/project.godot
           grep -q "^auth_issuer=\"$ISSUER\"" game/project.godot
+      - name: Tretu sign-in is configured in the build
+        run: grep -Eq '^auth_issuer="https://[A-Za-z0-9.-]+"$' game/project.godot && grep -q '^client_id="hollowmere"$' game/project.godot
       - name: Export
         run: |
           mkdir -p build/windows build/macos build/web
@@ -159,13 +169,6 @@ jobs:
             macOS) test -f build/macos/Hollowmere.zip ;;
             Web) test -f build/web/index.html ;;
           esac || exit "${code:-1}"
-      - name: Inject OAuth client ids (web)
-        if: matrix.preset == 'Web'
-        env:
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
-          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
-        run: python3 tools/release/inject_web_config.py build/web/index.html
       - name: Fingerprint and precompress (web)
         if: matrix.preset == 'Web'
         run: |
@@ -257,7 +260,7 @@ jobs:
           DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           DEPLOY_USER: ${{ vars.DEPLOY_USER || 'deploy' }}
           APP_DIR: ${{ vars.DEPLOY_APP_DIR || '/srv/hollowmere' }}
-          SITE_DIR: ${{ vars.DEPLOY_SITE_DIR || '/var/www/hollowmere' }}
+          SITE_DIR: ${{ vars.DEPLOY_SITE_DIR || '/var/www/hollowmere/site' }}
         run: |
           if [ -z "$DEPLOY_HOST" ] || [ -z "$DEPLOY_KEY" ]; then
             echo "::warning::Set DEPLOY_HOST and DEPLOY_SSH_KEY to deploy the web build (HOSTING.md)."

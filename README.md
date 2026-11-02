@@ -79,7 +79,7 @@ Store copy and capsule art live in [`store/STORE_PAGE.md`](store/STORE_PAGE.md).
 | Phone | Same URL, landscape. Safari / Chrome → **Add to Home Screen** for fullscreen |
 | Desktop | Windows and macOS exports from CI (`v*` tags) or a local Godot export |
 
-Accounts: Tretu-Konto, email, guest, Google, Apple or Discord. Cloud saves and co-op go through Nakama on your own server. AI clients talk to the MCP relay at `mcp.<your-domain>` with a token created in-game.
+Accounts: "Mit Tretu-Konto anmelden" (the only account sign-in) or play as a guest; a guest keeps its farm with "Save to Tretu-Konto". Cloud saves and co-op go through Nakama on your own server. AI clients talk to the MCP relay at `mcp.<your-domain>` with a token created in-game.
 
 ## Run it locally
 
@@ -133,9 +133,9 @@ Production is `hollowmere.tretu.de` on the Tretu **Hetzner** server: **nginx** f
 
 ## Tretu
 
-Hollowmere is part of the Tretu ecosystem (all optional, off unless configured, see HOSTING.md §10):
+Hollowmere is part of the Tretu ecosystem (see HOSTING.md §10; the Tretu-Konto sign-in is required, the platform part is off until configured):
 
-- **Mit Tretu-Konto anmelden**: OpenID Connect with PKCE at auth.tretu.de (system browser + loopback on desktop and Steam builds, popup on the web). Earlier Discord (and Steam) players keep their farms; if both a Tretu and an old farm exist, the player picks one in "Wähle deine Farm" and the other is archived, restorable for 90 days.
+- **Mit Tretu-Konto anmelden** (the only account sign-in, on in every build: issuer `https://auth.tretu.de`, client `hollowmere`): OpenID Connect with PKCE at auth.tretu.de (system browser + loopback on desktop and Steam builds, popup on the web). The former email, Google, Apple and Discord sign-ins are gone; those players keep their farms: the first Tretu login carries the old account over (`legacy_ids.hollowmere`, then the Discord/Steam claims). Guests stay, and "Save to Tretu-Konto" turns a guest's account into the Tretu farm. If both a Tretu and an old farm exist, the player picks one in "Wähle deine Farm" and the other is archived, restorable for 90 days.
 - **Account deletion reaches the game**: tretu.de's signed webhook (`/api/tretu/webhook`, served by `hollowmere-mcp`) deletes a deleted Tretu-Konto's farms and data, or moves them to the surviving account after a merge, and keeps the Steam link and username current.
 - **Tretu menu in the game**: Tretu-Credits balance and unread notifications in the account panel and next to the player's name, with links to tretu.de/wallet and tretu.de/benachrichtigungen (read server-side by Nakama, signed; the app secret never reaches the game).
 - **Platform events**: days played, Wildlings befriended and battle results go to tretu.de (stats, badges), plus "playing Hollowmere" presence with a join link while hosting co-op.

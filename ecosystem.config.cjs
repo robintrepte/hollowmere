@@ -4,11 +4,11 @@
 //   pm2 reload ecosystem.config.cjs --update-env
 //
 // hollowmere-nakama  Nakama API + realtime on 127.0.0.1:7350, console 127.0.0.1:7351
-//                    (server/nakama/nakama.sh runs "nakama migrate up" before every start)
+//                    (server/nakama/run.mjs runs "nakama migrate up" before every start)
 // hollowmere-mcp     MCP relay for AI helpers on 127.0.0.1:8787, also serves /api/health and the
 //                    Tretu platform webhook /api/tretu/webhook
 //
-// Secrets: server/.env (this file reads it) and server/nakama/local.yml (Nakama reads it).
+// Secrets: server/.env (chmod 600; this file reads it and hands them to the two processes).
 const fs = require("node:fs");
 const path = require("node:path");
 
@@ -27,17 +27,28 @@ function readEnv(file) {
 }
 
 const env = { ...readEnv(path.join(root, "server/.env")), ...process.env };
+// What hollowmere-nakama needs from server/.env (server/nakama/run.mjs).
+const NAKAMA_KEYS = ["NAKAMA_HTTP_KEY", "NAKAMA_SESSION_ENCRYPTION_KEY", "NAKAMA_SESSION_REFRESH_ENCRYPTION_KEY",
+  "NAKAMA_CONSOLE_USERNAME", "NAKAMA_CONSOLE_PASSWORD", "NAKAMA_CONSOLE_SIGNING_KEY", "NAKAMA_DATABASE_ADDRESS",
+  "NAKAMA_LOCAL_CONFIG", "NAKAMA_DATA_DIR", "TRETU_AUTH_ISSUER", "TRETU_PLATFORM_URL", "TRETU_APP_ID", "TRETU_APP_SECRET",
+  "HOLLOWMERE_PUBLIC_URL", "TRETU_PLATFORM_BACKOFF_SEC"];
+const pick = (from, keys) => Object.fromEntries(keys.filter((k) => from[k] !== undefined && from[k] !== "").map((k) => [k, from[k]]));
 
 module.exports = {
   apps: [
     {
+      // server/nakama/run.mjs: Nakama's keys and the Tretu runtime env come from server/.env and go to
+      // Nakama as flags (never written to a file, redacted in the log); it refuses to start while a
+      // key is missing or still a default. Only these keys are passed on, nothing else from .env.
       name: "hollowmere-nakama",
       cwd: root,
-      script: path.join(root, "server/nakama/nakama.sh"),
+      script: path.join(root, "server/nakama/run.mjs"),
       args: "start",
-      interpreter: "bash",
+      interpreter: "node",
       env: {
+        NODE_ENV: "production",
         NAKAMA_BIN: env.NAKAMA_BIN || "/opt/nakama/nakama",
+        ...pick(env, NAKAMA_KEYS),
       },
       autorestart: true,
       restart_delay: 3000,

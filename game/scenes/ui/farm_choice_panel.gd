@@ -1,6 +1,6 @@
 class_name FarmChoicePanel
 extends PanelContainer
-## "Choose your farm": a Tretu-Konto player who also has an old Discord / Steam account (or an
+## "Choose your farm": a Tretu-Konto player who also has an old Hollowmere / Discord / Steam account (or an
 ## archived farm) sees every farm with its cloud saves and keeps one. The server archives the
 ## others (never deletes them) and they stay restorable here for `keep_days` days.
 
@@ -61,7 +61,7 @@ func _ready() -> void:
 
 static func intro_text(choice: Dictionary) -> String:
 	var days := int(choice.get("keep_days", 90))
-	var waiting := (choice.get("options", []) as Array).filter(func(o): return o.kind in ["discord", "steam"])
+	var waiting := (choice.get("options", []) as Array).filter(func(o): return o.kind in ["hollowmere", "discord", "steam"])
 	if choice.get("pending", false) and not waiting.is_empty():
 		return TranslationServer.translate("Your Tretu-Konto and your old %s account each have a farm. Keep the one you want to play. The other one is archived, not deleted, and you can restore it here for %d days.") \
 			% [Tretu.provider_name(str(waiting[0].kind)), days]
@@ -72,6 +72,8 @@ static func option_title(o: Dictionary) -> String:
 	match str(o.get("kind", "")):
 		"tretu":
 			return TranslationServer.translate("Tretu-Konto (playing now)") if o.get("current", false) else TranslationServer.translate("Tretu-Konto")
+		"hollowmere":
+			return TranslationServer.translate("Old Hollowmere account")
 		"discord":
 			return TranslationServer.translate("Old Discord account")
 		"steam":

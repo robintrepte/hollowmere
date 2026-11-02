@@ -1,6 +1,7 @@
 -- Hollowmere server module: invite codes for co-op, cloud-save validation, error reports,
--- opt-in play stats, health, and the Tretu account / platform integration (tretu.lua, off unless
--- TRETU_* is set in runtime.env).
+-- opt-in play stats, health, and the Tretu account / platform integration (tretu.lua): accounts are
+-- Tretu-Konto only (TRETU_AUTH_ISSUER in runtime.env) plus guest play; the platform part stays off
+-- until TRETU_PLATFORM_URL and TRETU_APP_SECRET are set.
 local nk = require("nakama")
 local tretu = require("tretu")
 tretu.init(nk)
@@ -181,11 +182,11 @@ local function before_write(ctx, payload)
   return payload
 end
 
--- Custom auth carries a provider token in vars; the hook swaps it for a verified custom id:
---   vars.tretu_token   -> "tretu:<sub>"   (Tretu-Konto, see tretu.lua; off without TRETU_AUTH_ISSUER)
+-- Accounts: the Tretu-Konto is the only account sign-in; guest (device) play stays. Custom auth
+-- carries a Tretu token in vars; the hook swaps it for a verified custom id:
+--   vars.tretu_token   -> "tretu:<sub>"   (Tretu-Konto, see tretu.lua; needs TRETU_AUTH_ISSUER)
 --   vars.tretu_switch  -> "tretu:<sub>"   (one-time ticket after choosing another farm, tretu.lua)
---   vars.discord_token -> "discord:<id>"  (or the Tretu account it was carried over / chosen into)
--- Without a token the request is refused, so nobody can claim a custom id directly.
+-- Without one the request is refused, so nobody can claim a custom id directly.
 local function before_auth_custom(ctx, payload)
   local account = payload.account or payload
   local vars = account.vars or {}
@@ -196,32 +197,35 @@ local function before_auth_custom(ctx, payload)
   if (vars.tretu_switch or "") ~= "" then
     return tretu.authenticate_switch(ctx, payload, account, vars.tretu_switch)
   end
-  local token = vars.discord_token or ""
+  error({"Sign in with your Tretu account first.", 3})
+end
+
+-- "Save to Tretu-Konto": a signed-in guest links its account to the Tretu-Konto (tretu.link_guest).
+local function before_link_custom(ctx, payload)
+  local account = payload.account or payload
+  local vars = account.vars or {}
+  local token = vars.tretu_token or ""
   if token == "" then
-    error({"Sign in with Discord first.", 3})
+    error({"Sign in with your Tretu account first.", 3})
   end
-  local reached, code, _, body = pcall(nk.http_request,
-    "https://discord.com/api/v10/users/@me",
-    "GET",
-    {Authorization = "Bearer " .. token, ["User-Agent"] = "Hollowmere"},
-    "",
-    8000
-  )
-  if not reached or code == 0 or (tonumber(code) or 0) >= 500 then
-    error({"Discord sign-in is not reachable right now.", 14})
+  local out = tretu.link_guest(ctx, account, token)
+  if payload.account ~= nil then payload.account = out return payload end
+  return out
+end
+
+local function after_link_custom(ctx, _out, payload)
+  local ok, err = pcall(tretu.after_link, ctx, (payload and (payload.account or payload)) or {})
+  if not ok then
+    nk.logger_warn("Tretu link hook: " .. tostring(err))
   end
-  if code ~= 200 then
-    error({"Discord sign-in failed.", 16})
-  end
-  local ok, user = pcall(nk.json_decode, body)
-  if not ok or type(user) ~= "table" or type(user.id) ~= "string" or user.id == "" then
-    error({"Discord sign-in failed.", 16})
-  end
-  account.id = tretu.redirect_discord(user.id) or ("discord:" .. user.id)
-  -- The Discord token is only needed here; keep it out of the signed Nakama session.
-  account.vars = {}
-  payload.account = account
-  return payload
+end
+
+-- The email, Google, Apple and Discord sign-ins were removed (Tretu-Konto only). Their old
+-- accounts are carried over on the first Tretu login (tretu.lua); signing in or linking them
+-- directly is refused, as are the other providers Nakama offers and removing the Tretu link.
+local REMOVED_SIGN_IN = "This sign-in is no longer available. Sign in with your Tretu account."
+local function removed_sign_in(_ctx, _payload)
+  error({REMOVED_SIGN_IN, 9})
 end
 
 -- After a Tretu login: linked Steam id onto the account metadata. Never fails the login.
@@ -426,6 +430,14 @@ nk.register_req_before(before_write, "WriteStorageObjects")
 nk.register_req_after(after_write, "WriteStorageObjects")
 nk.register_req_before(before_auth_custom, "AuthenticateCustom")
 nk.register_req_after(after_auth_custom, "AuthenticateCustom")
+nk.register_req_before(before_link_custom, "LinkCustom")
+nk.register_req_after(after_link_custom, "LinkCustom")
+for _, id in ipairs({"AuthenticateEmail", "AuthenticateGoogle", "AuthenticateApple", "AuthenticateFacebook",
+    "AuthenticateFacebookInstantGame", "AuthenticateGameCenter", "AuthenticateSteam",
+    "LinkEmail", "LinkGoogle", "LinkApple", "LinkFacebook", "LinkFacebookInstantGame", "LinkGameCenter", "LinkSteam",
+    "UnlinkCustom"}) do
+  nk.register_req_before(removed_sign_in, id)
+end
 
 -- Proves the contract's signing test vector on this runtime at every start.
 if tretu.self_test() then

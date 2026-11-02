@@ -59,16 +59,23 @@ func server_label() -> String:
 
 func ping_server() -> bool:
 	_make_client()
-	var req := HTTPRequest.new()
-	req.timeout = 4.0
-	req.accept_gzip = false
-	add_child(req)
-	if req.request("%s://%s:%d/healthcheck" % [client.scheme, client.host, client.port]) != OK:
+	# HTTPRequest counts its timeout in frame time: the first frames after a slow start can be
+	# seconds long and end the request at once. Only a timeout in wall-clock time counts.
+	var started := Time.get_ticks_msec()
+	for attempt in 3:
+		var req := HTTPRequest.new()
+		req.timeout = 4.0
+		req.accept_gzip = false
+		add_child(req)
+		if req.request("%s://%s:%d/healthcheck" % [client.scheme, client.host, client.port]) != OK:
+			req.queue_free()
+			return false
+		var r: Array = await req.request_completed
 		req.queue_free()
-		return false
-	var r: Array = await req.request_completed
-	req.queue_free()
-	return int(r[0]) == HTTPRequest.RESULT_SUCCESS and int(r[1]) == 200
+		if int(r[0]) == HTTPRequest.RESULT_TIMEOUT and Time.get_ticks_msec() - started < 4000:
+			continue
+		return int(r[0]) == HTTPRequest.RESULT_SUCCESS and int(r[1]) == 200
+	return false
 
 func call_rpc(id: String, payload: Dictionary = {}) -> Dictionary:
 	if not has_session():
@@ -84,9 +91,8 @@ func call_rpc(id: String, payload: Dictionary = {}) -> Dictionary:
 const SERVER_TEXT := {
 	"coop_closed": "that farm isn't open right now",
 	"coop_code": "codes are 6 letters",
-	"discord_first": "Sign in with Discord first.",
-	"discord_failed": "Discord sign-in failed.",
-	"discord_down": "Discord sign-in is not reachable right now.",
+	"removed": "This sign-in is no longer available. Sign in with your Tretu account.",
+	"taken": "This farm already belongs to another Tretu-Konto.",
 	"tretu_first": "Sign in with your Tretu account first.",
 	"tretu_again": "Sign in with your Tretu account again.",
 	"tretu_down": "Tretu sign-in is not reachable right now.",
@@ -111,30 +117,22 @@ static func rpc_error(ex: NakamaException) -> String:
 			else TranslationServer.translate("Can't reach the Hollowmere server.")
 	return TranslationServer.translate(ex.message)
 
-## Errors from sign-in calls.
+## Errors from sign-in calls (Tretu-Konto, guest) and renaming.
 static func friendly_error(ex: NakamaException) -> String:
 	var m: String = ex.message
-	if m.contains("not reachable"):
+	if m.contains("not reachable") or m in SERVER_TEXT.values():
 		return TranslationServer.translate(m)
 	match ex.status_code:
 		-1, 0, 503:
 			return TranslationServer.translate("Can't reach the Hollowmere server.")
 		401:
-			if m.contains("password") or m.contains("credentials") or m.contains("Invalid"):
-				return TranslationServer.translate("Wrong email or password.")
 			return TranslationServer.translate("Sign-in expired, please sign in again.")
-		404:
-			return TranslationServer.translate("No account with that email. Create one?")
 		409:
-			return TranslationServer.translate("That name or email is already taken.")
+			return TranslationServer.translate("That name is already taken.")
 		429:
 			return TranslationServer.translate("Too many tries. Wait a minute and try again.")
 	if m.contains("banned"):
 		return TranslationServer.translate("This account was archived when you picked a farm for your Tretu-Konto. Sign in with Tretu instead.")
-	if m.contains("Password must be"):
-		return TranslationServer.translate("Password needs at least 8 characters.")
-	if m.contains("Invalid email"):
-		return TranslationServer.translate("That email doesn't look right.")
 	if m.contains("Username"):
 		return TranslationServer.translate("Names can use letters, numbers and _ (up to 20).")
 	return TranslationServer.translate(m) if m != "" else TranslationServer.translate("Something went wrong.")
@@ -155,50 +153,53 @@ func has_session() -> bool:
 
 # --- Accounts ----------------------------------------------------------------------------
 
-func login_email(email: String, password: String, create: bool, username: String = "") -> String:
-	_make_client()
-	var s: NakamaSession = await client.authenticate_email_async(email, password, username if username != "" else null, create)
-	return await _finish_login(s)
-
+## Guest play: an account for this device only (no sign-in). "Save to Tretu-Konto" upgrades it.
 func login_device(device_id: String = "") -> String:
 	_make_client()
 	var dev := device_id if device_id != "" else _device_id()
 	var s: NakamaSession = await client.authenticate_device_async(dev, null, true)
 	return await _finish_login(s)
 
-## Google sign-in: on Web the page shell obtains an ID token via Google Identity Services.
-func login_google(id_token: String) -> String:
-	_make_client()
-	var s: NakamaSession = await client.authenticate_google_async(id_token, null, true)
-	return await _finish_login(s)
-
-func login_apple(id_token: String) -> String:
-	_make_client()
-	var s: NakamaSession = await client.authenticate_apple_async(id_token, null, true)
-	return await _finish_login(s)
-
-## Discord: the server hook checks the access token and turns it into a custom id.
-func login_discord(access_token: String) -> String:
-	_make_client()
-	var s: NakamaSession = await client.authenticate_custom_async("discord", null, true, {"discord_token": access_token})
-	return await _finish_login(s)
-
-## Tretu-Konto: the server hook asks auth.tretu.de who the access token belongs to and signs into
-## "tretu:<sub>" (an earlier Discord account of the same player is carried over). See autoload/tretu.gd.
+## Tretu-Konto, the only account sign-in: the server hook asks auth.tretu.de who the access token
+## belongs to and signs into "tretu:<sub>". An old Hollowmere account of the same player (legacy_ids,
+## Discord, Steam) is carried over on the first login. See autoload/tretu.gd.
+## Signed in as a guest (or an old account): the Tretu-Konto is linked to THIS account first, so its
+## farms continue as the Tretu farms ("Save to Tretu-Konto"). If the Tretu-Konto already has a
+## Hollowmere account, this is a normal sign-in (the guest's farms stay on this device).
 func login_tretu(access_token: String) -> String:
 	_make_client()
+	if has_session() and not is_tretu:
+		var linked := await _link_tretu(access_token)
+		if linked != "":
+			return linked
 	var s: NakamaSession = await client.authenticate_custom_async("tretu-login", null, true, {"tretu_token": access_token})
 	if s != null and s.is_exception():
-		var ex := s.get_exception()
-		if ex.message.contains("not reachable"):
-			return tr("Can't reach the Tretu sign-in right now.")
-		if ex.status_code in [400, 401, 403]:
-			if ex.message.contains("not enabled"):
-				return tr("Tretu sign-in is not enabled on this server.")
-			if ex.message.contains("banned"):
-				return friendly_error(ex)
-			return tr("Tretu sign-in failed.")
+		return tretu_error(s.get_exception())
 	return await _finish_login(s)
+
+## Links the Tretu-Konto to the signed-in (guest) account. "" = linked, or nothing to link because the
+## Tretu-Konto already has a farm (AlreadyExists); otherwise the error to show.
+func _link_tretu(access_token: String) -> String:
+	var body := NakamaAPI.ApiAccountCustom.create(NakamaAPI, {"id": "tretu-link", "vars": {"tretu_token": access_token}})
+	var res: NakamaAsyncResult = await client._api_client.link_custom_async(session, body)
+	if not res.is_exception():
+		return ""
+	var ex := res.get_exception()
+	if ex.status_code == 409 or ex.grpc_status_code == 6:
+		return ""
+	return tretu_error(ex)
+
+## Errors from a Tretu sign-in (or guest upgrade) -> text for the account panel.
+static func tretu_error(ex: NakamaException) -> String:
+	if ex.message.contains("not reachable"):
+		return TranslationServer.translate("Can't reach the Tretu sign-in right now.")
+	if ex.status_code in [400, 401, 403]:
+		if ex.message.contains("not enabled"):
+			return TranslationServer.translate("Tretu sign-in is not enabled on this server.")
+		if ex.message.contains("banned") or ex.message in SERVER_TEXT.values() or ex.message.contains("locked"):
+			return friendly_error(ex)
+		return TranslationServer.translate("Tretu sign-in failed.")
+	return friendly_error(ex)
 
 ## After choosing another farm: redeem the server's one-time ticket for a normal login of that farm.
 func login_tretu_switch(ticket: String) -> String:
@@ -241,45 +242,6 @@ func web_join_code() -> String:
 			code += ch
 	return code if code.length() == 6 else ""
 
-func web_google_token() -> String:
-	return web_oauth_token("google")
-
-## Public OAuth client ids are baked into the web shell. Empty / leftover %PLACEHOLDER% means "not set up".
-func web_meta(name: String) -> String:
-	if OS.get_name() != "Web":
-		return ""
-	var v := str(JavaScriptBridge.eval(
-		"(document.querySelector('meta[name=\"%s\"]')||{}).content||''" % name, true))
-	return v.strip_edges()
-
-func oauth_configured(meta_name: String) -> bool:
-	var v := web_meta(meta_name)
-	return v != "" and not v.begins_with("%")
-
-func is_apple_device() -> bool:
-	if OS.get_name() in ["iOS", "macOS"]:
-		return true
-	if OS.get_name() != "Web":
-		return false
-	var ua := str(JavaScriptBridge.eval("navigator.userAgent||''", true))
-	var plat := str(JavaScriptBridge.eval("navigator.platform||''", true))
-	var taps := int(JavaScriptBridge.eval("navigator.maxTouchPoints||0", true))
-	return ua.contains("iPhone") or ua.contains("iPad") or ua.contains("Mac") \
-		or (plat == "MacIntel" and taps > 1)
-
-## Providers the account panel should show: configured in the page and usable on this device.
-func social_providers() -> PackedStringArray:
-	var out: PackedStringArray = []
-	if OS.get_name() != "Web":
-		return out
-	if oauth_configured("google-client-id"):
-		out.append("google")
-	if oauth_configured("apple-client-id") and is_apple_device():
-		out.append("apple")
-	if oauth_configured("discord-client-id"):
-		out.append("discord")
-	return out
-
 func _finish_login(s: NakamaSession) -> String:
 	if s == null:
 		return "Can't reach the Hollowmere server."
@@ -295,6 +257,8 @@ func _finish_login(s: NakamaSession) -> String:
 	TimeService.sync_server()
 	return ""
 
+## Guest (device-only) account. "Save to Tretu-Konto" links it (or an old email / Google / Apple /
+## Discord account whose session is still stored) to the Tretu-Konto: see login_tretu.
 var is_guest: bool = false
 ## Signed in with a Tretu-Konto (custom id "tretu:<sub>"): presence and stats go to tretu.de.
 var is_tretu: bool = false
@@ -303,8 +267,8 @@ func _load_account() -> void:
 	var acc = await client.get_account_async(session)
 	if acc.is_exception():
 		return
-	is_guest = acc.email == "" and acc.user.google_id == "" and acc.user.apple_id == "" and acc.custom_id == ""
 	is_tretu = acc.custom_id.begins_with("tretu:")
+	is_guest = acc.email == "" and acc.user.google_id == "" and acc.user.apple_id == "" and acc.custom_id == ""
 	if is_tretu:
 		# Kept current by the platform's user.updated webhook (server side).
 		var meta = JSON.parse_string(str(acc.user.metadata)) if str(acc.user.metadata) != "" else null
@@ -327,17 +291,6 @@ func set_display_name(nm: String) -> String:
 	session_changed.emit(true)
 	return ""
 
-## Turns a guest account into an email account, keeping its cloud saves.
-func link_email(email: String, password: String) -> String:
-	if not has_session():
-		return "Sign in first."
-	var res = await client.link_email_async(session, email, password)
-	if res.is_exception():
-		return friendly_error(res.get_exception())
-	is_guest = false
-	session_changed.emit(true)
-	return ""
-
 ## Restores the saved Nakama session; without one, a stored Tretu login signs in silently.
 func try_restore_session() -> bool:
 	if await _restore_nakama_session():
@@ -345,6 +298,10 @@ func try_restore_session() -> bool:
 	if Tretu.enabled():
 		return await Tretu.silent_sign_in()
 	return false
+
+## The session saved on this device, if it is still valid (no Tretu silent sign-in).
+func restore_saved_session() -> bool:
+	return await _restore_nakama_session()
 
 func _restore_nakama_session() -> bool:
 	_make_client()

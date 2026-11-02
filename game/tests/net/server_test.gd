@@ -17,13 +17,26 @@ func _ready() -> void:
 	var keep := Settings.synced_values()
 	var keep_stamps: Dictionary = Settings.stamps.duplicate()
 
-	# Guest login, then upgrade the guest to an email account.
-	_ok(await Net.login_device("test-device-%s" % tag) == "", "guest login")
-	_ok(Net.is_guest, "fresh device account is a guest")
+	# Guest login (the Tretu-Konto is the only account sign-in; tretu_integration.mjs covers it).
+	var device := "test-device-%s" % tag
+	_ok(await Net.login_device(device) == "", "guest login")
+	_ok(Net.is_guest and not Net.is_tretu, "fresh device account is a guest")
 	_ok(await Net.set_display_name("Tester%s" % tag.substr(0, 4)) == "", "rename")
-	var email := "t%s@hollowmere.test" % tag
-	_ok(await Net.link_email(email, "password123") == "", "link email to guest")
-	_ok(not Net.is_guest, "linked account is no longer a guest")
+	var guest_id := Net.account_id
+
+	# The removed sign-ins are refused by the server (old clients, direct API calls).
+	var em: NakamaSession = await Net.client.authenticate_email_async("t%s@hollowmere.test" % tag, "password123", "Mail%s" % tag.substr(0, 4), true)
+	_ok(em.is_exception() and em.get_exception().status_code == 400 and em.get_exception().message.contains("no longer available"), "email sign-up refused: %s" % em)
+	var link: NakamaAsyncResult = await Net.client.link_email_async(Net.session, "g%s@hollowmere.test" % tag, "password123")
+	_ok(link.is_exception() and link.get_exception().message.contains("no longer available"), "adding an email to a guest refused")
+	var goog: NakamaSession = await Net.client.authenticate_google_async("not-a-real-google-token", null, true)
+	_ok(goog.is_exception() and goog.get_exception().message.contains("no longer available"), "Google sign-in refused")
+	var appl: NakamaSession = await Net.client.authenticate_apple_async("not-a-real-apple-token", null, true)
+	_ok(appl.is_exception() and appl.get_exception().message.contains("no longer available"), "Apple sign-in refused")
+	var disc: NakamaSession = await Net.client.authenticate_custom_async("discord", null, true, {"discord_token": "x"})
+	_ok(disc.is_exception() and disc.get_exception().status_code == 400, "Discord sign-in refused")
+	var unlink: NakamaAsyncResult = await Net.client.unlink_custom_async(Net.session, "tretu:anything")
+	_ok(unlink.is_exception(), "removing a Tretu link refused")
 
 	# Cloud save round trip.
 	var payload := {"version": 1, "meta": {"farm": "Test", "player": "T", "day": 3, "saved_at": 1000.0}, "state": {"x": 1}}
@@ -91,18 +104,12 @@ func _ready() -> void:
 	await Telemetry.heartbeat()
 	_ok(Telemetry._beat_minutes == 5.0, "no play stats without opt-in")
 
-	# Email sign in / errors.
+	# Guest again on the same device: the same account.
 	await Net.logout()
 	_ok(not Net.has_session(), "logout")
-	_ok(await Net.login_email(email, "password123", false) == "", "email sign in")
-	await Net.logout()
-	var wrong: String = await Net.login_email(email, "wrongpass99", false)
-	_ok(wrong != "" and not wrong.contains("{"), "wrong password gives a friendly error: %s" % wrong)
-	var short: String = await Net.login_email("n%s@hollowmere.test" % tag, "abc", true, "Shorty")
-	_ok(short != "", "short password rejected: %s" % short)
+	_ok(await Net.login_device(device) == "" and Net.account_id == guest_id, "same device, same guest account")
 
 	# Restore session from disk.
-	_ok(await Net.login_email(email, "password123", false) == "", "sign in again")
 	Net.session = null
 	_ok(await Net.try_restore_session(), "session restores from disk")
 	_ok(Net.session.refresh_token != "", "restored session keeps its refresh token")

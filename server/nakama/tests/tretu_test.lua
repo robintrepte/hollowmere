@@ -153,6 +153,27 @@ check("own discord account is re-keyable", tretu.rekeyable({custom_id = "discord
 check("an account keyed to another id is not re-keyed", not tretu.rekeyable({custom_id = "discord:8"}, "steam", "1"))
 check("discord needs its custom id", not tretu.rekeyable({custom_id = nil}, "discord", "9"))
 
+-- legacy_ids.hollowmere (the Nakama user id the legacy import linked to this Tretu-Konto).
+local LEGACY = "5e0e5e0e-0000-4000-8000-00000000abcd"
+check("legacy id: a UUID", tretu.valid_user_id(LEGACY) and tretu.valid_user_id(string.upper(LEGACY)))
+check("legacy id: anything else refused", not tretu.valid_user_id("5e0e5e0e") and not tretu.valid_user_id(42)
+  and not tretu.valid_user_id(LEGACY .. "'; --") and not tretu.valid_user_id(nil))
+eq("legacy id from the claim, lowercased", tretu.legacy_hollowmere({hollowmere = string.upper(LEGACY), saga = "12"}), LEGACY)
+check("legacy id: other apps and junk ignored", tretu.legacy_hollowmere({saga = "1", play = "2"}) == nil
+  and tretu.legacy_hollowmere("x") == nil and tretu.legacy_hollowmere(nil) == nil and tretu.legacy_hollowmere({hollowmere = 7}) == nil)
+links = tretu.claim_links({discord_id = "42", legacy_ids = {hollowmere = LEGACY, ["tretu-web"] = "9"}})
+check("claim links carry legacy_ids.hollowmere", links.hollowmere == LEGACY and links.discord == "42")
+eq("legacy kind: discord account", tretu.legacy_kind({custom_id = "discord:42"}), "discord")
+eq("legacy kind: steam:<id> account", tretu.legacy_kind({custom_id = "steam:1"}), "steam")
+eq("legacy kind: native Steam account", tretu.legacy_kind({custom_id = nil, steam_id = "7656"}), "steam")
+eq("legacy kind: email / Google / Apple / device account", tretu.legacy_kind({custom_id = nil}), "hollowmere")
+check("legacy account: a plain old account may be matched", tretu.legacy_id_usable({custom_id = nil, disabled = false})
+  and tretu.legacy_id_usable({custom_id = "discord:42", disabled = false}))
+check("legacy account: never one linked to a Tretu-Konto, archived or disabled",
+  not tretu.legacy_id_usable({custom_id = "tretu:other", disabled = false})
+  and not tretu.legacy_id_usable({custom_id = "archived:x", disabled = true})
+  and not tretu.legacy_id_usable({custom_id = nil, disabled = true}) and not tretu.legacy_id_usable(nil))
+
 -- SQL literals: only generated / validated values, anything else raises.
 eq("sql literal", tretu.sql_lit("tretu:7f0c3c2e-8d1b-4f5a-9b6e-2c1d0e9f8a7b"), "'tretu:7f0c3c2e-8d1b-4f5a-9b6e-2c1d0e9f8a7b'")
 for _, bad in ipairs({"a'b", "a;b", "a b", "$hm$", "a\\b", "a\nb", "a--b'"}) do
