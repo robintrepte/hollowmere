@@ -7,7 +7,10 @@
 //   NAKAMA_BIN=/opt/nakama/nakama node server/nakama/tests/tretu_integration.mjs
 //
 // Env: NAKAMA_BIN (binary), TEST_DB (default postgres@127.0.0.1:5432/nakama_test; the database is
-// dropped and recreated, so never point this at real data), PSQL (default psql).
+// dropped and recreated, so never point this at real data), PSQL (default psql),
+// GODOT (Godot 4.7 binary: also runs the game client against this server,
+// game/tests/net/tretu_client_test.tscn; skipped with a notice when unset), SHOTS (optional
+// directory for client screenshots when Godot runs with a display).
 // Ports used: 17350 (API), 17351 (console), 18787 (MCP relay), random for the fakes.
 import http from "node:http";
 import crypto from "node:crypto";
@@ -31,6 +34,7 @@ const SUB_CAROL = "c0c0c0c0-0000-4000-8000-00000000ca01";
 const SUB_DAVE = "d0d0d0d0-0000-4000-8000-00000000da01";
 const SUB_ERIN = "e0e0e0e0-0000-4000-8000-00000000e401";
 const SUB_GHOST = "90909090-0000-4000-8000-000000000404";
+const SUB_GINA = "61616161-0000-4000-8000-0000000061a1";
 const STEAM_DAVE = "76561198000000001";
 const STEAM_ERIN = "76561198000000002";
 const BACKOFF_SEC = 2;
@@ -51,12 +55,13 @@ const users = {
   "tok-dave": { sub: SUB_DAVE, preferred_username: "dave", steam_id: STEAM_DAVE },
   "tok-erin": { sub: SUB_ERIN, preferred_username: "erin" },
   "tok-ghost": { sub: SUB_GHOST, preferred_username: "ghost" },
+  "tok-gina": { sub: SUB_GINA, preferred_username: "gina" },
 };
 const received = [];
 let platformDown = false;
 let platformHang = false;
-const wallets = { [SUB_ALICE]: 120, [SUB_BOB]: 7 };
-const unread = { [SUB_ALICE]: 3 };
+const wallets = { [SUB_ALICE]: 120, [SUB_BOB]: 7, [SUB_GINA]: 4321 };
+const unread = { [SUB_ALICE]: 3, [SUB_GINA]: 2 };
 const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");
 function verify(req, raw) {
   const ts = req.headers["x-tretu-timestamp"] || "";
@@ -444,6 +449,34 @@ try {
   check("purge removes archives older than 90 days", purged.status === 200 && purged.json.deleted === 1
     && sql(`SELECT count(*) FROM users WHERE id = '${cd.uid}'`) === "0"
     && sql(`SELECT count(*) FROM users WHERE id = '${es.uid}'`) === "1", purged);
+  // The real game client (Net, Tretu, TretuMenu, FarmChoicePanel) against this server.
+  if (process.env.GODOT) {
+    const gt = await tretuLogin("tok-gina");
+    const ginaT = claims(gt.json.token).uid;
+    await save(gt.json.token, "slot_0", { farm: "Gina New", player: "Gina", day: 1, saved_at: 5 });
+    const gd = await deviceUser("integration-device-gina");
+    sql(`UPDATE users SET custom_id = 'discord:777000777' WHERE id = '${gd.uid}'`);
+    await save(gd.token, "slot_1", { farm: "Gina's Old Grove", player: "Gina", day: 61, money: 777, saved_at: 50 });
+    users["tok-gina"].discord_id = "777000777";
+    const args = ["--path", path.join(repo, "game"), "res://tests/net/tretu_client_test.tscn", "--",
+      "--port=17350", `--issuer=${FAKE}`, "--token=tok-gina", `--discord-user=${gd.uid}`];
+    if (process.env.SHOTS) args.push(`--shots=${process.env.SHOTS}`);
+    else args.unshift("--headless");
+    const out = await new Promise((resolve) => {
+      const p = spawn(process.env.GODOT, args, { stdio: ["ignore", "pipe", "pipe"] });
+      let text = "";
+      p.stdout.on("data", (d) => (text += d));
+      p.stderr.on("data", (d) => (text += d));
+      const kill = setTimeout(() => p.kill("SIGKILL"), 300000); // slow machines: generous
+      p.on("close", () => { clearTimeout(kill); resolve(text); });
+    });
+    // Godot 4.7 can abort while tearing down after a clean quit (tools/ci/godot.sh): judge by output.
+    check("game client: Tretu menu and farm choice end to end", out.includes("TRETU CLIENT TEST DONE, 0 failures"),
+      out.split("\n").filter((l) => /FAIL|ERROR|DONE/.test(l)).slice(0, 20));
+    check("game client left the first farm active", sql(`SELECT custom_id FROM users WHERE id = '${ginaT}'`) === `tretu:${SUB_GINA}`);
+  } else {
+    console.log("skip game client test (set GODOT=/path/to/godot to run it)");
+  }
   check("every platform request was correctly signed", received.every((r) => r.ok), received.filter((r) => !r.ok));
   const logText = nakamaLog.join("");
   check("Nakama log has no app secret, access token or signature", !logText.includes(SECRET)

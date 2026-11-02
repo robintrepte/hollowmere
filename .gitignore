@@ -28,3 +28,6 @@ tools/art_pipeline/out/
 # OS
 .DS_Store
 Thumbs.db
+
+# Test output
+test-results.xml

@@ -1,7 +1,9 @@
 extends Node
 ## "Mit Tretu-Konto anmelden": OpenID Connect sign-in at auth.tretu.de (public client, PKCE S256),
 ## then a Nakama custom login with the access token (the server checks it at the issuer).
-## Also keeps the player's presence fresh on tretu.de and reports finished battles.
+## Also keeps the player's presence fresh on tretu.de, reports finished battles, shows the
+## Tretu-Credits balance and unread notifications (read server-side by Nakama RPC tretu_account,
+## the app secret never reaches the game), and lets a player with two farms keep one.
 ##
 ## Off unless the project settings tretu/auth_issuer and tretu/client_id are both set
 ## (the shipped project.godot leaves the issuer empty; see HOSTING.md "Tretu-Konto").
@@ -11,6 +13,10 @@ extends Node
 ##            code exchange in the page shell (window.hollowmereTretuSignIn in web/shell.html).
 
 signal status(text: String)
+## Balance / unread count changed (see `summary`).
+signal summary_changed
+## The player has a Tretu farm and an old Discord/Steam farm: the game should let them choose.
+signal farm_choice_needed
 
 const SCOPES := "openid profile email offline_access tretu"
 const TOKEN_FILE := "user://tretu.cfg"
@@ -18,6 +24,7 @@ const LOGIN_TIMEOUT_SEC := 300.0
 const HTTP_TIMEOUT_SEC := 10.0
 const HEARTBEAT_EVERY := 60.0
 const CALLBACK_PATH := "/callback"
+const SUMMARY_EVERY := 300.0
 
 var _discovery: Dictionary = {}
 var _cancelled := false
@@ -26,13 +33,17 @@ var _beat_t := 0.0
 var _beats_off := false
 ## Shown in the account panel as the Tretu profile name (from the ID token).
 var profile_username := ""
+## Wallet + notifications, normalised by parse_summary(). state "" = not loaded / not a Tretu player.
+var summary: Dictionary = parse_summary({})
+## Farms of this Tretu player, normalised by parse_farm_choice().
+var farm_choice: Dictionary = parse_farm_choice({})
+var _summary_t := 0.0
+var _choice_asked := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	EventBus.battle_finished.connect(_on_battle_finished)
-	Net.session_changed.connect(func(_on: bool):
-		_beats_off = false
-		_beat_t = HEARTBEAT_EVERY - 3.0)
+	Net.session_changed.connect(_on_session_changed)
 	if enabled() and OS.get_name() == "Web":
 		_resume_web_redirect()
 
@@ -64,6 +75,29 @@ static func legal_url() -> String:
 static func profile_url(username: String) -> String:
 	var base := setting("platform_url", "https://tretu.de").trim_suffix("/")
 	return "%s/u/%s" % [base, username.uri_encode()] if base.begins_with("http") and username != "" else ""
+
+func _on_session_changed(on: bool) -> void:
+	_beats_off = false
+	_beat_t = HEARTBEAT_EVERY - 3.0
+	_summary_t = 0.0
+	_choice_asked = false
+	summary = parse_summary({})
+	farm_choice = parse_farm_choice({})
+	summary_changed.emit()
+	if on and Net.is_tretu and enabled():
+		refresh_summary()
+		check_farm_choice()
+
+## tretu.de pages the in-game Tretu menu links to (contract: /wallet, /benachrichtigungen).
+static func platform_url() -> String:
+	var u := setting("platform_url", "https://tretu.de").trim_suffix("/")
+	return u if u.begins_with("http") else "https://tretu.de"
+
+static func wallet_url() -> String:
+	return platform_url() + "/wallet"
+
+static func notifications_url() -> String:
+	return platform_url() + "/benachrichtigungen"
 
 # --- PKCE and URL helpers (static, unit-tested) -----------------------------------------------------
 
@@ -368,7 +402,13 @@ func _load_refresh() -> String:
 # --- Platform: presence and battles -------------------------------------------------------------------
 
 func _process(delta: float) -> void:
-	if _beats_off or not Net.is_tretu or not Net.has_session():
+	if not Net.is_tretu or not Net.has_session():
+		return
+	_summary_t += delta
+	if _summary_t >= SUMMARY_EVERY:
+		_summary_t = 0.0
+		refresh_summary()
+	if _beats_off:
 		return
 	_beat_t += delta
 	if _beat_t >= HEARTBEAT_EVERY:
@@ -390,3 +430,159 @@ func _on_battle_finished(res: Dictionary) -> void:
 	if result == "":
 		return
 	Net.call_rpc("tretu_report_battle", {"result": result, "kind": str(res.get("kind", ""))})
+
+# --- Tretu menu: Tretu-Credits and notifications --------------------------------------------------------
+
+## RPC answer -> {state: ""|"off"|"ok"|"stale"|"unavailable", balance: int (-1 = unknown),
+## unread: int (-1 = unknown), age_min: int}. Anything odd from the network becomes "unknown".
+static func parse_summary(r: Dictionary) -> Dictionary:
+	var out := {"state": "", "balance": -1, "unread": -1, "age_min": 0}
+	if r.is_empty():
+		return out
+	if r.has("error"):
+		out.state = "unavailable"
+		return out
+	if not is_true(r.get("enabled")) or not is_true(r.get("platform", true)):
+		out.state = "off"
+		return out
+	var st := str(r.get("state", ""))
+	out.state = st if st in ["ok", "stale", "unavailable"] else "unavailable"
+	if _is_whole(r.get("balance")):
+		out.balance = int(r.balance)
+	if _is_whole(r.get("unread")) and float(r.unread) >= 0.0:
+		out.unread = int(r.unread)
+	if out.state == "stale" and _is_whole(r.get("ageSec")):
+		out.age_min = maxi(1, int(ceil(float(r.ageSec) / 60.0)))
+	if out.balance < 0 and out.unread < 0 and out.state != "unavailable":
+		out.state = "unavailable"
+	return out
+
+## JSON true (and nothing else: "yes", 1 and null are not).
+static func is_true(v) -> bool:
+	return typeof(v) == TYPE_BOOL and v
+
+static func _is_whole(v) -> bool:
+	return (v is int or v is float) and is_finite(float(v)) and float(v) == floor(float(v)) and absf(float(v)) < 1e15
+
+static func credits_text(balance: int) -> String:
+	return TranslationServer.translate("%s TC") % Num.group(balance)
+
+## "", "3", ... "99+"
+static func unread_badge(n: int) -> String:
+	if n <= 0:
+		return ""
+	return "99+" if n > 99 else str(n)
+
+## The small indicator next to the player's name on the title screen: "120 TC · 3 new".
+static func indicator_text(s: Dictionary) -> String:
+	var parts: PackedStringArray = []
+	if int(s.get("balance", -1)) >= 0:
+		parts.append(credits_text(int(s.balance)))
+	var badge := unread_badge(int(s.get("unread", -1)))
+	if badge != "":
+		parts.append(TranslationServer.translate("%s new") % badge)
+	return " · ".join(parts)
+
+## Asks Nakama for balance + unread count (cached there for a minute; `force` asks it to re-read,
+## at most every 15 s). Never fails loudly: the menu shows a note instead.
+func refresh_summary(force := false) -> void:
+	if not Net.is_tretu or not Net.has_session() or not enabled():
+		return
+	_summary_t = 0.0
+	var r: Dictionary = await Net.call_rpc("tretu_account", {"refresh": force})
+	if not Net.is_tretu or not Net.has_session():
+		return
+	summary = parse_summary(r)
+	summary_changed.emit()
+
+# --- Two farms (Tretu-Konto + an old Discord / Steam account): keep one --------------------------------
+
+## RPC answer -> {pending: bool, keep_days: int, options: [{id, kind, current, name, saves: [...],
+## archived_at, restore_until, was}]}; kind "tretu" | "discord" | "steam" | "archived".
+static func parse_farm_choice(r: Dictionary) -> Dictionary:
+	var out := {"pending": false, "keep_days": 90, "options": []}
+	if not is_true(r.get("enabled")):
+		return out
+	out.pending = is_true(r.get("pending"))
+	if _is_whole(r.get("keepDays")):
+		out.keep_days = int(r.keepDays)
+	var raw = r.get("options", [])
+	if not raw is Array:
+		return out
+	for o in raw:
+		if not o is Dictionary or str(o.get("id", "")).length() != 36:
+			continue
+		var kind := str(o.get("kind", ""))
+		if not kind in ["tretu", "discord", "steam", "archived"]:
+			continue
+		var saves: Array = []
+		var raw_saves = o.get("saves", [])
+		if raw_saves is Array:
+			for sv in raw_saves:
+				if sv is Dictionary:
+					saves.append({
+						"slot": int(sv.get("slot", 0)), "farm": str(sv.get("farm", "")), "player": str(sv.get("player", "")),
+						"day": int(sv.get("day", 0)), "money": int(sv.get("money", 0)),
+						"befriended": int(sv.get("befriended", 0)), "saved_at": float(sv.get("savedAt", 0)),
+					})
+		saves.sort_custom(func(a, b): return a.saved_at > b.saved_at)
+		out.options.append({
+			"id": str(o.id), "kind": kind, "current": is_true(o.get("current")), "name": str(o.get("name", "")),
+			"saves": saves, "archived_at": float(o.get("archivedAt", 0)), "restore_until": float(o.get("restoreUntil", 0)),
+			"was": str(o.get("was", "")),
+		})
+	return out
+
+## Options the player could switch to (old accounts first, then archived ones).
+static func other_farms(choice: Dictionary) -> Array:
+	return (choice.get("options", []) as Array).filter(func(o): return not o.current)
+
+static func archived_farms(choice: Dictionary) -> Array:
+	return (choice.get("options", []) as Array).filter(func(o): return o.kind == "archived")
+
+## "Discord", "Steam" for the old account a farm came from.
+static func provider_name(kind: String) -> String:
+	return {"discord": "Discord", "steam": "Steam"}.get(kind, "Tretu")
+
+## Unix time -> "31.01.2027" (German) or "2027-01-31".
+static func date_text(unix: float) -> String:
+	var d := Time.get_date_dict_from_unix_time(int(unix))
+	if TranslationServer.get_locale().begins_with("de"):
+		return "%d.%d.%d" % [d.day, d.month, d.year]
+	return "%04d-%02d-%02d" % [d.year, d.month, d.day]
+
+func check_farm_choice() -> void:
+	if not Net.is_tretu or not Net.has_session() or not enabled():
+		return
+	var r: Dictionary = await Net.call_rpc("tretu_farm_choice", {})
+	if r.has("error") or not Net.is_tretu:
+		return
+	farm_choice = parse_farm_choice(r)
+	summary_changed.emit()
+	if farm_choice.pending and not _choice_asked:
+		_choice_asked = true
+		farm_choice_needed.emit()
+
+## Keeps the farm with this id; every other one is archived (restorable for keep_days days).
+## Returns "" or a message for the player.
+func choose_farm(id: String) -> String:
+	if not Net.is_tretu or not Net.has_session():
+		return tr("Sign in with your Tretu-Konto first.")
+	var r: Dictionary = await Net.call_rpc("tretu_farm_choose", {"keep": id})
+	if r.has("error"):
+		return str(r.error)
+	if not is_true(r.get("ok")):
+		return tr("Could not switch farms right now. Nothing was changed.")
+	_choice_asked = true
+	var token := str(r.get("token", ""))
+	if token != "":
+		# The old session belonged to the farm that was just archived.
+		var err: String = await Net.adopt_session(token)
+		if err != "":
+			return err
+		if OS.get_name() != "Web":
+			# A full session with a refresh token, from the stored Tretu login.
+			await silent_sign_in()
+	else:
+		await check_farm_choice()
+	return ""

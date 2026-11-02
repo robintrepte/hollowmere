@@ -1,6 +1,7 @@
 class_name AccountPanel
 extends PanelContainer
 ## Hollowmere account: email / guest / Tretu-Konto / Google, Apple, Discord, display name, cloud saves.
+## Tretu-Konto players also get the Tretu menu (Tretu-Credits, notifications, choose a farm).
 
 signal closed
 
@@ -30,10 +31,15 @@ func _ready() -> void:
 	head.add_child(t)
 	_server_dot = UITheme.label("", 8, UITheme.MUTED)
 	head.add_child(_server_dot)
+	# Scrolls when the content is taller than the panel (Tretu menu, large text, small screens).
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	v.add_child(scroll)
 	_body = VBoxContainer.new()
 	_body.add_theme_constant_override("separation", 4)
-	_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	v.add_child(_body)
+	_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(_body)
 	_status = UITheme.label("", 9, UITheme.HEART)
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_status.custom_minimum_size = Vector2(300, 0)
@@ -68,6 +74,7 @@ func _rebuild() -> void:
 		_signed_in()
 	else:
 		_signed_out()
+		_fit_height()
 
 func _field(placeholder: String, secret := false) -> LineEdit:
 	var e := LineEdit.new()
@@ -161,11 +168,36 @@ func _signed_in() -> void:
 	r2.add_child(UITheme.button("Upload all farms now", func(): _run(_upload_all, "Farms backed up to the cloud.")))
 	r2.add_child(UITheme.button("Sign out", func(): _run(_sign_out)))
 	if Net.is_tretu and Tretu.enabled():
-		var r3 := _row()
-		r3.add_child(UITheme.button("My account", func(): _open_url(Tretu.account_url())))
-		var profile := Tretu.profile_url(Tretu.profile_username)
-		if profile != "":
-			r3.add_child(UITheme.button("Tretu profile", func(): _open_url(profile)))
+		_body.add_child(HSeparator.new())
+		var menu := TretuMenu.new()
+		menu.name = "TretuMenu"
+		menu.link_requested.connect(_open_url)
+		menu.choose_farm_requested.connect(_open_farm_choice)
+		_body.add_child(menu)
+		# Fresh numbers whenever the panel opens (the server caches and rate-limits this).
+		Tretu.refresh_summary(true)
+		Tretu.check_farm_choice()
+	_fit_height()
+
+## The Tretu menu adds rows: a taller panel (still inside the 360 px base view; the rest scrolls).
+func _fit_height() -> void:
+	var tall := Net.has_session() and Net.is_tretu and Tretu.enabled()
+	offset_top = -172 if tall else -148
+	offset_bottom = 172 if tall else 148
+
+func _open_farm_choice() -> void:
+	var ui := _ui_root()
+	if ui == null:
+		return
+	var p := FarmChoicePanel.new()
+	p.farm_switched.connect(_rebuild)
+	ui.open(p)
+
+func _ui_root() -> UIRoot:
+	var n := get_parent()
+	while n != null and not n is UIRoot:
+		n = n.get_parent()
+	return n as UIRoot
 
 func _upload_all() -> String:
 	var n: int = await SaveManager.upload_all()

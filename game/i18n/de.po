@@ -13708,3 +13708,195 @@ msgstr "Die Anmeldung mit Tretu hat zu lange gedauert."
 msgid "Tretu sign-in was cancelled."
 msgstr "Die Anmeldung mit Tretu wurde abgebrochen."
 
+
+msgid "%s Farm"
+msgstr "%s-Hof"
+
+msgid "%s TC"
+msgstr "%s TC"
+
+msgid "%s new"
+msgstr "%s neu"
+
+msgid "%s new notifications"
+msgstr "%s neue Benachrichtigungen"
+
+msgid "+%d more"
+msgstr "+%d weitere"
+
+msgid "1 new notification"
+msgstr "1 neue Benachrichtigung"
+
+msgid "An archived farm can be restored until %s."
+msgstr "Eine archivierte Farm kann bis %s wiederhergestellt werden."
+
+msgid "Archived farms"
+msgstr "Archivierte Farmen"
+
+msgid "Archived farms can be restored here for %d days. Restoring one archives the farm you play now."
+msgstr "Archivierte Farmen kannst du hier %d Tage lang wiederherstellen. Dabei wird die Farm archiviert, die du gerade spielst."
+
+msgid "Archived until %s"
+msgstr "Archiviert bis %s"
+
+msgid "As of %d min ago: tretu.de is not reachable right now."
+msgstr "Stand von vor %d Min.: tretu.de ist gerade nicht erreichbar."
+
+msgid "Can't reach the Hollowmere server."
+msgstr "Der Hollowmere-Server ist nicht erreichbar."
+
+msgid "Choose a farm"
+msgstr "Farm wählen"
+
+msgid "Choose your farm"
+msgstr "Wähle deine Farm"
+
+msgid "Could not switch farms right now. Nothing was changed."
+msgstr "Die Farm konnte gerade nicht gewechselt werden. Es wurde nichts geändert."
+
+msgid "Day %d"
+msgstr "Tag %d"
+
+msgid "Decide later"
+msgstr "Später entscheiden"
+
+msgid "Discord sign-in failed."
+msgstr "Die Anmeldung mit Discord ist fehlgeschlagen."
+
+msgid "Discord sign-in is not reachable right now."
+msgstr "Die Discord-Anmeldung ist gerade nicht erreichbar."
+
+msgid "Farm switched. The other farm is archived for %d days."
+msgstr "Farm gewechselt. Die andere Farm bleibt %d Tage lang archiviert."
+
+msgid "Keep this farm"
+msgstr "Diese Farm behalten"
+
+msgid "Keep this one and archive the others?"
+msgstr "Diese behalten und die anderen archivieren?"
+
+msgid "Loading your Tretu-Credits..."
+msgstr "Deine Tretu-Credits werden geladen..."
+
+msgid "Names can use letters, numbers and _ (up to 20)."
+msgstr "Namen dürfen Buchstaben, Zahlen und _ enthalten (bis zu 20)."
+
+msgid "No account with that email. Create one?"
+msgstr "Kein Konto mit dieser E-Mail. Möchtest du eins erstellen?"
+
+msgid "No farms in the cloud yet."
+msgstr "Noch keine Farmen in der Cloud."
+
+msgid "No new notifications"
+msgstr "Keine neuen Benachrichtigungen"
+
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+msgid "Old Discord account"
+msgstr "Altes Discord-Konto"
+
+msgid "Old Steam account"
+msgstr "Altes Steam-Konto"
+
+msgid "Password needs at least 8 characters."
+msgstr "Das Passwort braucht mindestens 8 Zeichen."
+
+msgid "Pick one of your farms."
+msgstr "Wähle eine deiner Farmen."
+
+msgid "Play this farm"
+msgstr "Diese Farm spielen"
+
+msgid "Restore this farm"
+msgstr "Diese Farm wiederherstellen"
+
+msgid "Sign in first."
+msgstr "Melde dich zuerst an."
+
+msgid "Sign in with Discord first."
+msgstr "Melde dich zuerst mit Discord an."
+
+msgid "Sign in with your Tretu account again."
+msgstr "Melde dich noch einmal mit deinem Tretu-Konto an."
+
+msgid "Sign in with your Tretu account first."
+msgstr "Melde dich zuerst mit deinem Tretu-Konto an."
+
+msgid "Sign in with your Tretu-Konto again."
+msgstr "Melde dich noch einmal mit deinem Tretu-Konto an."
+
+msgid "Sign in with your Tretu-Konto first."
+msgstr "Melde dich zuerst mit deinem Tretu-Konto an."
+
+msgid "Sign-in expired, please sign in again."
+msgstr "Die Anmeldung ist abgelaufen. Bitte melde dich neu an."
+
+msgid "Something went wrong."
+msgstr "Etwas ist schiefgelaufen."
+
+msgid "Switching farms..."
+msgstr "Farm wird gewechselt..."
+
+msgid "That email doesn't look right."
+msgstr "Diese E-Mail-Adresse sieht nicht richtig aus."
+
+msgid "That farm is not one of yours."
+msgstr "Diese Farm gehört nicht zu deinen Konten."
+
+msgid "That name or email is already taken."
+msgstr "Dieser Name oder diese E-Mail ist schon vergeben."
+
+msgid "This account was archived when you picked a farm for your Tretu-Konto. Sign in with Tretu instead."
+msgstr "Dieses Konto wurde archiviert, als du eine Farm für dein Tretu-Konto gewählt hast. Melde dich stattdessen mit Tretu an."
+
+msgid "Too many requests, try again in a minute."
+msgstr "Zu viele Anfragen. Versuch es in einer Minute noch einmal."
+
+msgid "Too many tries. Wait a minute and try again."
+msgstr "Zu viele Versuche. Warte eine Minute und versuch es noch einmal."
+
+msgid "Tretu sign-in is not reachable right now."
+msgstr "Die Tretu-Anmeldung ist gerade nicht erreichbar."
+
+msgid "Tretu-Credits and notifications are not set up on this server."
+msgstr "Tretu-Credits und Benachrichtigungen sind auf diesem Server nicht eingerichtet."
+
+msgid "Tretu-Credits: %s"
+msgstr "Tretu-Credits: %s"
+
+msgid "Tretu-Konto"
+msgstr "Tretu-Konto"
+
+msgid "Tretu-Konto (playing now)"
+msgstr "Tretu-Konto (spielst du gerade)"
+
+msgid "Unnamed farm"
+msgstr "Farm ohne Namen"
+
+msgid "Wallet"
+msgstr "Wallet"
+
+msgid "Wrong email or password."
+msgstr "E-Mail oder Passwort ist falsch."
+
+msgid "Yes, keep it"
+msgstr "Ja, behalten"
+
+msgid "Your Tretu-Konto and your old %s account each have a farm. Keep the one you want to play. The other one is archived, not deleted, and you can restore it here for %d days."
+msgstr "Dein Tretu-Konto und dein altes %s-Konto haben jeweils eine Farm. Behalte die, die du spielen willst. Die andere wird archiviert, nicht gelöscht, und du kannst sie hier %d Tage lang wiederherstellen."
+
+msgid "Your accounts changed in the meantime. Please look again."
+msgstr "Deine Konten haben sich inzwischen geändert. Bitte sieh noch einmal nach."
+
+msgid "Your old %s account has a farm too. Choose which one to keep."
+msgstr "Dein altes %s-Konto hat auch eine Farm. Wähle, welche du behalten willst."
+
+msgid "codes are 6 letters"
+msgstr "Farm-Codes haben 6 Zeichen."
+
+msgid "that farm isn't open right now"
+msgstr "Diese Farm ist gerade nicht geöffnet."
+
+msgid "tretu.de is not reachable right now. Try again later."
+msgstr "tretu.de ist gerade nicht erreichbar. Versuch es später noch einmal."

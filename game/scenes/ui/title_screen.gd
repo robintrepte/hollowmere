@@ -101,6 +101,8 @@ func _ready() -> void:
 	_account.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	add_child(_account)
 	Net.session_changed.connect(_on_session)
+	Tretu.summary_changed.connect(func(): _on_session(Net.has_session()))
+	Tretu.farm_choice_needed.connect(_offer_farm_choice)
 	_on_session(Net.has_session())
 	if not Net.has_session():
 		Net.try_restore_session()
@@ -200,13 +202,32 @@ func _open_page(page: String) -> void:
 var _join_link_used := false
 
 func _on_session(signed_in: bool) -> void:
-	_account.text = (tr("● %s") % Net.display_name) if signed_in else tr("Sign in")
+	_account.text = account_text(signed_in, Net.display_name, Net.is_tretu, Tretu.summary)
 	# Opened from a join link on tretu.de: go straight to the co-op panel (code filled in) once.
 	if signed_in and not _join_link_used and Net.web_join_code() != "":
 		_join_link_used = true
 		coop_requested.emit.call_deferred()
 	if signed_in:
 		_load_btn.disabled = false
+
+## Top-right account button: "Sign in", "● Mia", or for a Tretu-Konto "● Mia · 120 TC · 3 new".
+static func account_text(signed_in: bool, name: String, is_tretu: bool, summary: Dictionary) -> String:
+	if not signed_in:
+		return TranslationServer.translate("Sign in")
+	var t := TranslationServer.translate("● %s") % name
+	var extra := Tretu.indicator_text(summary) if is_tretu else ""
+	return t + ("  ·  " + extra if extra != "" else "")
+
+## A Tretu login found a second (Discord / Steam) farm: let the player pick one right away.
+func _offer_farm_choice() -> void:
+	if ui == null or not is_inside_tree():
+		return
+	for p in ui.stack:
+		if p is FarmChoicePanel:
+			return
+	var panel := FarmChoicePanel.new()
+	panel.farm_switched.connect(func(): _fill_menu())
+	ui.open(panel)
 
 func _latest_slot() -> int:
 	var best := -1

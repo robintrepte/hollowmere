@@ -72,33 +72,72 @@ func ping_server() -> bool:
 
 func call_rpc(id: String, payload: Dictionary = {}) -> Dictionary:
 	if not has_session():
-		return {"error": "Sign in first."}
+		return {"error": TranslationServer.translate("Sign in first.")}
 	var res = await client.rpc_async(session, id, JSON.stringify(payload))
 	if res.is_exception():
-		return {"error": friendly_error(res.get_exception())}
+		return {"error": rpc_error(res.get_exception())}
 	var j = JSON.parse_string(res.payload) if res.payload != "" else {}
 	return j if j is Dictionary else {}
 
+## Messages the Hollowmere server module sends to players (hollowmere.lua, tretu.lua), listed here
+## so they are extracted and translated like every other UI text.
+const SERVER_TEXT := {
+	"coop_closed": "that farm isn't open right now",
+	"coop_code": "codes are 6 letters",
+	"discord_first": "Sign in with Discord first.",
+	"discord_failed": "Discord sign-in failed.",
+	"discord_down": "Discord sign-in is not reachable right now.",
+	"tretu_first": "Sign in with your Tretu account first.",
+	"tretu_again": "Sign in with your Tretu account again.",
+	"tretu_down": "Tretu sign-in is not reachable right now.",
+	"busy": "Too many requests, try again in a minute.",
+	"pick": "Pick one of your farms.",
+	"not_yours": "That farm is not one of yours.",
+	"changed": "Your accounts changed in the meantime. Please look again.",
+	"no_switch": "Could not switch farms right now. Nothing was changed.",
+}
+
+## Errors from RPCs: transport problems get a fixed text, the server's own message otherwise.
+static func rpc_error(ex: NakamaException) -> String:
+	match ex.status_code:
+		-1, 0, 502, 504:
+			return TranslationServer.translate("Can't reach the Hollowmere server.")
+		401:
+			return TranslationServer.translate("Sign-in expired, please sign in again.")
+		429:
+			return TranslationServer.translate("Too many tries. Wait a minute and try again.")
+	if ex.message == "" or ex.status_code >= 500 and not ex.message in SERVER_TEXT.values():
+		return TranslationServer.translate("Something went wrong.") if ex.status_code != 503 \
+			else TranslationServer.translate("Can't reach the Hollowmere server.")
+	return TranslationServer.translate(ex.message)
+
+## Errors from sign-in calls.
 static func friendly_error(ex: NakamaException) -> String:
 	var m: String = ex.message
+	if m.contains("not reachable"):
+		return TranslationServer.translate(m)
 	match ex.status_code:
 		-1, 0, 503:
-			return "Can't reach the Hollowmere server."
+			return TranslationServer.translate("Can't reach the Hollowmere server.")
 		401:
 			if m.contains("password") or m.contains("credentials") or m.contains("Invalid"):
-				return "Wrong email or password."
-			return "Sign-in expired, please sign in again."
+				return TranslationServer.translate("Wrong email or password.")
+			return TranslationServer.translate("Sign-in expired, please sign in again.")
 		404:
-			return "No account with that email. Create one?"
+			return TranslationServer.translate("No account with that email. Create one?")
 		409:
-			return "That name or email is already taken."
+			return TranslationServer.translate("That name or email is already taken.")
+		429:
+			return TranslationServer.translate("Too many tries. Wait a minute and try again.")
+	if m.contains("banned"):
+		return TranslationServer.translate("This account was archived when you picked a farm for your Tretu-Konto. Sign in with Tretu instead.")
 	if m.contains("Password must be"):
-		return "Password needs at least 8 characters."
+		return TranslationServer.translate("Password needs at least 8 characters.")
 	if m.contains("Invalid email"):
-		return "That email doesn't look right."
+		return TranslationServer.translate("That email doesn't look right.")
 	if m.contains("Username"):
-		return "Names can use letters, numbers and _ (up to 20)."
-	return m if m != "" else "Something went wrong."
+		return TranslationServer.translate("Names can use letters, numbers and _ (up to 20).")
+	return TranslationServer.translate(m) if m != "" else TranslationServer.translate("Something went wrong.")
 
 func local_id() -> String:
 	if mode == "client":
@@ -149,10 +188,28 @@ func login_discord(access_token: String) -> String:
 func login_tretu(access_token: String) -> String:
 	_make_client()
 	var s: NakamaSession = await client.authenticate_custom_async("tretu-login", null, true, {"tretu_token": access_token})
-	if s != null and s.is_exception() and s.get_exception().status_code in [400, 401, 403]:
-		if s.get_exception().message.contains("not enabled"):
-			return tr("Tretu sign-in is not enabled on this server.")
-		return tr("Tretu sign-in failed.")
+	if s != null and s.is_exception():
+		var ex := s.get_exception()
+		if ex.message.contains("not reachable"):
+			return tr("Can't reach the Tretu sign-in right now.")
+		if ex.status_code in [400, 401, 403]:
+			if ex.message.contains("not enabled"):
+				return tr("Tretu sign-in is not enabled on this server.")
+			if ex.message.contains("banned"):
+				return friendly_error(ex)
+			return tr("Tretu sign-in failed.")
+	return await _finish_login(s)
+
+## A session the server minted for this player (after choosing a farm that belongs to another
+## Nakama user). Has no refresh token; desktop builds swap it for a full one right away.
+func adopt_session(token: String) -> String:
+	_make_client()
+	var s := NakamaSession.new(token, false, null)
+	if not s.valid or s.is_expired():
+		return tr("Sign in with your Tretu-Konto again.")
+	if mode == "offline":
+		socket = null
+		bridge = null
 	return await _finish_login(s)
 
 func web_oauth_token(which: String) -> String:
