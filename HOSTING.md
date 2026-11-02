@@ -4,7 +4,7 @@ Production runs on the Tretu Hetzner server next to the other Tretu apps:
 
 | Piece | Where | Name / port |
 |---|---|---|
-| Web build (static) | `/var/www/hollowmere`, served by nginx | `https://hollowmere.tretu.de` |
+| Web build (static) | `/var/www/hollowmere/site` (only the build; nginx serves nothing else), served by nginx | `https://hollowmere.tretu.de` |
 | Nakama (accounts, cloud saves, co-op relay, Lua module) | PM2 | `hollowmere-nakama`, API `127.0.0.1:7350`, console `127.0.0.1:7351` |
 | MCP relay for AI helpers, also `/api/health` | PM2 | `hollowmere-mcp`, `127.0.0.1:8787`, `https://mcp.hollowmere.tretu.de` |
 | Database | the shared Postgres server | database `nakama`, role `nakama` |
@@ -21,7 +21,7 @@ export MCP_DOMAIN=mcp.hollowmere.tretu.de
 export SERVER_IP=203.0.113.10          # Hetzner server IPv4
 export DEPLOY_USER=deploy              # the user that runs PM2 for the Tretu apps
 export APP_DIR=/srv/hollowmere         # git checkout
-export SITE_DIR=/var/www/hollowmere    # web build
+export SITE_DIR=/var/www/hollowmere/site   # web build ONLY (nginx root; never the checkout)
 export NAKAMA_VERSION=3.41.0           # https://github.com/heroiclabs/nakama/releases
 export NAKAMA_SHA256=71aea14384b097e043917d0b1e8c3799594064acbab01853e71ea10d80624ce2   # see "Checksums" below
 ```
@@ -100,24 +100,32 @@ cd "$APP_DIR"
 
 # PM2 env (MCP relay, Nakama binary path)
 cp server/.env.example server/.env && chmod 600 server/.env
-# Nakama secrets + Tretu runtime env
-cp server/nakama/local.example.yml server/nakama/local.yml && chmod 600 server/nakama/local.yml
 ```
 
-Fill in (generate each secret with `openssl rand -hex 24`; never commit these files):
+Fill in `server/.env` (generate each secret with `openssl rand -hex 24`; never commit it). Everything
+secret lives there: PM2 (`ecosystem.config.cjs`) hands the keys to the two processes, and
+`server/nakama/run.mjs` passes Nakama's keys and the Tretu runtime env to Nakama as command-line
+flags (nothing is written to a file; every logged command line shows `***` instead of the values).
 
-| File | Key | Value |
-|---|---|---|
-| `server/nakama/local.yml` | `database.address` | `nakama:<NAKAMA_DB_PASSWORD>@127.0.0.1:5432/nakama` |
-| | `session.encryption_key`, `session.refresh_encryption_key` | random |
-| | `runtime.http_key` | random, **same** as `NAKAMA_HTTP_KEY` below |
-| | `console.username`, `console.password` | Nakama console login (not a game account) |
-| | `runtime.env` `TRETU_AUTH_ISSUER` | **required**: `https://auth.tretu.de` (the Tretu-Konto is the only account sign-in; `nakama.sh start`/`migrate` refuse to run without it) |
-| | `runtime.env` other `TRETU_*` | see step 10 (platform part: leave empty = off) |
-| `server/.env` | `NAKAMA_HTTP_KEY` | same as `runtime.http_key` |
-| | `NAKAMA_BIN` | `/opt/nakama/nakama` |
-| | `MCP_PUBLIC_URL` | `https://$MCP_DOMAIN` |
-| | `TRETU_APP_SECRET` | optional, same as in `local.yml` (step 10, platform webhook) |
+| Key | Value |
+|---|---|
+| `NAKAMA_BIN` | `/opt/nakama/nakama` |
+| `NAKAMA_DATABASE_ADDRESS` | `nakama:<NAKAMA_DB_PASSWORD>@127.0.0.1:5432/nakama` |
+| `NAKAMA_HTTP_KEY` | random (Nakama `runtime.http_key`; the MCP relay uses the same value) |
+| `NAKAMA_SESSION_ENCRYPTION_KEY`, `NAKAMA_SESSION_REFRESH_ENCRYPTION_KEY` | random (changing them signs every player out) |
+| `NAKAMA_CONSOLE_USERNAME`, `NAKAMA_CONSOLE_PASSWORD`, `NAKAMA_CONSOLE_SIGNING_KEY` | Nakama console login (not a game account; not `admin`) and its token key |
+| `TRETU_AUTH_ISSUER` | **required**: `https://auth.tretu.de` (the Tretu-Konto is the only account sign-in) |
+| `TRETU_PLATFORM_URL`, `TRETU_APP_ID`, `TRETU_APP_SECRET`, `HOLLOWMERE_PUBLIC_URL`, `TRETU_PLATFORM_BACKOFF_SEC` | step 10 (platform part off while URL or secret is empty; `TRETU_APP_SECRET` is also the webhook secret of `hollowmere-mcp`) |
+| `MCP_PUBLIC_URL` | `https://$MCP_DOMAIN` |
+
+`run.mjs` **refuses to start** (and PM2 shows why in `pm2 logs hollowmere-nakama`) while any
+`NAKAMA_*` key above is missing, still a Nakama default (`defaulthttpkey`, `defaultencryptionkey`,
+`defaultsigningkey`, `admin`/`password`, …) or a `CHANGE_ME` placeholder, or while
+`TRETU_AUTH_ISSUER` is missing. `NAKAMA_ALLOW_DEFAULTS=1` lifts that for dev/CI only.
+`server/nakama/local.yml` is optional now (other Nakama options only, see `local.example.yml`); on
+a server that still has one with keys in it, move them to `server/.env`: the values in the
+environment win, and the start is refused until they are there. `server/nakama/nakama.sh args`
+prints the (redacted) command line and any problems.
 
 The Nakama **server key** `hollowmere_dev` is in `server/nakama/hollowmere.yml` and in every game
 build (`hollowmere/server/key` in `game/project.godot`). It is not a secret; change both or neither.
@@ -126,7 +134,8 @@ Check the Lua modules and migrate:
 
 ```bash
 server/nakama/nakama.sh check      # loads every module once, prints nothing when fine
-server/nakama/nakama.sh migrate    # nakama migrate up
+server/nakama/nakama.sh args       # the redacted Nakama command line; lists problems (missing keys)
+server/nakama/nakama.sh migrate    # nakama migrate up (same keys and checks as start)
 ```
 
 ## 6. PM2
@@ -146,21 +155,45 @@ Logs: `pm2 logs hollowmere-nakama --lines 100`.
 
 ## 7. nginx and TLS (root)
 
+The game site file is complete (TLS server block included), so its certificate is fetched first,
+through the default site's webroot `/var/www/html` (Ubuntu's nginx default site serves it on port 80;
+later renewals go through the ACME location of the site file itself):
+
 ```bash
 cd "$APP_DIR"
+sudo mkdir -p /var/www/html "$SITE_DIR"
+sudo certbot certonly --webroot -w /var/www/html -d "$DOMAIN" --agree-tos -m admin@tretu.de --non-interactive
+test -f /etc/letsencrypt/options-ssl-nginx.conf || sudo cp /usr/lib/python3/dist-packages/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf /etc/letsencrypt/
+test -f /etc/letsencrypt/ssl-dhparams.pem || sudo openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
 sudo cp deploy/nginx/hollowmere.tretu.de.conf deploy/nginx/mcp.hollowmere.tretu.de.conf /etc/nginx/sites-available/
 sudo ln -sfn ../sites-available/hollowmere.tretu.de.conf /etc/nginx/sites-enabled/hollowmere.tretu.de.conf
 sudo ln -sfn ../sites-available/mcp.hollowmere.tretu.de.conf /etc/nginx/sites-enabled/mcp.hollowmere.tretu.de.conf
 sudo nginx -t && sudo systemctl reload nginx
-sudo certbot --nginx -d "$DOMAIN" --redirect --agree-tos -m admin@tretu.de --non-interactive
 sudo certbot --nginx -d "$MCP_DOMAIN" --redirect --agree-tos -m admin@tretu.de --non-interactive
+sudo certbot renew --dry-run      # renewals use the webroot for $DOMAIN
 ```
+
+Do **not** run `certbot --nginx` on `hollowmere.tretu.de.conf` (it already has its TLS block). The
+web root is `/var/www/hollowmere/site` and nothing else: the checkout (with `server/.env`) lives in
+`$APP_DIR` (`/srv/hollowmere`), and the site refuses dotfiles anyway. **Moving an older setup** whose
+build sat directly in `/var/www/hollowmere`: `sudo mkdir -p /var/www/hollowmere/site`, rsync the build
+there (or set `DEPLOY_SITE_DIR` and run the next tag), then install the new site file. If the
+checkout ever lived under `/var/www/hollowmere`, move it to `/srv/hollowmere` (and the PM2 apps
+with it: `pm2 delete` the old ones, `pm2 start ecosystem.config.cjs` from the new path).
+
+Test the site file locally (no root, dummy certificates, fake upstreams; CI runs it too):
+`deploy/nginx/test_site.sh [build/web]` checks `nginx -t`, the HTTP→HTTPS redirect, the ACME
+webroot, HTTP/2, the security headers on every location, that dotfiles and the checkout are never
+served, `/api/health` and `/api/tretu/webhook` (POST only, 64 KB, rate limit) to `127.0.0.1:8787`,
+and the Nakama locations.
 
 What the site file does:
 
 | Path | Goes to |
 |---|---|
-| `/v2/account/authenticate/*` | Nakama, **rate-limited**: 30 sign-ins per minute per IP, burst 30, then `429` (zone `hollowmere_auth`, declared at the top of the file) |
+| port 80 | only `/.well-known/acme-challenge/` (webroot `/var/www/html`) and a `301` to HTTPS |
+| `/v2/account/authenticate/*`, `/v2/account/link/*` | Nakama, **rate-limited**: 30 sign-ins / guest upgrades per minute per IP, burst 30, then `429` (zone `hollowmere_auth`, declared at the top of the file) |
+| any path with a dotfile (`/.env`, `/.git/…`) | `404` |
 | `/v2/*`, `/ws` | Nakama `127.0.0.1:7350` (websocket upgrade on `/ws`, no gzip on the proxy) |
 | `/healthcheck` | Nakama's liveness check |
 | `/api/health` | contract health JSON from `hollowmere-mcp` (Nakama health RPC incl. a DB query); 503 when not ok |
@@ -219,10 +252,10 @@ Both sides:
    The issuer must allow CORS from `https://hollowmere.tretu.de` on discovery and the token endpoint
    (the web build exchanges the code in the browser). Userinfo carries the `legacy_ids` claim
    (scope `tretu`).
-2. Server (required): `TRETU_AUTH_ISSUER=https://auth.tretu.de` in `runtime.env` of
-   `server/nakama/local.yml` (the example has it), then `pm2 reload hollowmere-nakama`. Without it
-   `nakama.sh` stops with "Tretu sign-in not configured" (only `NAKAMA_ALLOW_DEFAULTS=1` dev/CI
-   runs without `local.yml` start without it, and then only guest play works).
+2. Server (required): `TRETU_AUTH_ISSUER=https://auth.tretu.de` in `server/.env` (the example has
+   it), then `pm2 reload ecosystem.config.cjs --update-env`. Without it `run.mjs` refuses to start
+   ("TRETU_AUTH_ISSUER is missing (Tretu sign-in not configured)"); only `NAKAMA_ALLOW_DEFAULTS=1`
+   dev/CI runs start without it, and then only guest play works.
 3. Game builds: `game/project.godot` ships `tretu/auth_issuer="https://auth.tretu.de"` and
    `tretu/client_id="hollowmere"`. The GitHub variable `TRETU_AUTH_ISSUER` only overrides the issuer
    (e.g. staging); CI fails the export if the setting is missing.
@@ -395,7 +428,7 @@ rsyncs the web build to `$SITE_DIR`, checks out the tag in `$APP_DIR`, runs
 |---|---|---|
 | `DEPLOY_HOST` | secret | server hostname or IP |
 | `DEPLOY_SSH_KEY` | secret | private ed25519 key of the deploy user |
-| `DEPLOY_USER`, `DEPLOY_APP_DIR`, `DEPLOY_SITE_DIR` | variables | optional, default `deploy`, `/srv/hollowmere`, `/var/www/hollowmere` |
+| `DEPLOY_USER`, `DEPLOY_APP_DIR`, `DEPLOY_SITE_DIR` | variables | optional, default `deploy`, `/srv/hollowmere`, `/var/www/hollowmere/site` |
 | `HOLLOWMERE_DOMAIN` | variable | `hollowmere.tretu.de` |
 | `TRETU_AUTH_ISSUER` | variable | optional override of the shipped `https://auth.tretu.de` (step 10) |
 
@@ -413,7 +446,7 @@ git pull --ff-only                       # or: git fetch --tags && git checkout 
 # no npm ci: the MCP relay has no dependencies
 server/nakama/nakama.sh check            # Lua modules load
 server/nakama/nakama.sh migrate          # nakama migrate up (also runs on every PM2 start)
-# build = the web export from CI, rsynced to /var/www/hollowmere (step 8)
+# build = the web export from CI, rsynced to /var/www/hollowmere/site (step 8)
 pm2 reload ecosystem.config.cjs --update-env
 curl -sf https://hollowmere.tretu.de/api/health
 ```
@@ -427,7 +460,7 @@ The Google, Apple and Discord buttons are gone: players sign in with the Tretu-K
 those providers itself at auth.tretu.de). Their old Hollowmere accounts are carried over (step 10).
 The Google OAuth client, the Apple Services ID and the Discord OAuth app of Hollowmere can be
 retired once the game version with Tretu-only sign-in is live; `social.apple` is no longer needed in
-`local.yml`.
+a `local.yml`.
 
 ## 14. Backups
 
@@ -455,7 +488,8 @@ docker compose -f /srv/hollowmere/docker-compose.yml down   # old stack, once th
 ```
 
 Keep the old `NAKAMA_SESSION_KEY` / `NAKAMA_REFRESH_KEY` / `NAKAMA_HTTP_KEY` values from the old
-`.env` in `local.yml` so signed-in players stay signed in.
+`.env` as `NAKAMA_SESSION_ENCRYPTION_KEY` / `NAKAMA_SESSION_REFRESH_ENCRYPTION_KEY` / `NAKAMA_HTTP_KEY`
+in `server/.env` so signed-in players stay signed in.
 
 ## 16. Smoke the live site
 
@@ -467,21 +501,31 @@ Keep the old `NAKAMA_SESSION_KEY` / `NAKAMA_REFRESH_KEY` / `NAKAMA_HTTP_KEY` val
 - [ ] `curl -sf https://hollowmere.tretu.de/api/health` is `"status":"ok"`
 - [ ] Nakama console through a tunnel only: `ssh -L 7351:127.0.0.1:7351 $DEPLOY_USER@$SERVER_IP`, then `http://127.0.0.1:7351`
 
+**Logs of `hollowmere-mcp`** are JSON lines, one object per line: `ts` (ISO-8601), `level`
+(`info` on stdout, `warn`/`error` on stderr), `msg`, plus context. Startup (`hollowmere-mcp started`:
+host, port, Nakama URL, version, webhook on/off), health changes (`health ok` / `health error` with
+the checks), relay tool calls (tool name, ok, duration; never the token) and every webhook delivery:
+`tretu webhook handled` / `ignored`, or `tretu webhook rejected` with `reason` (`bad_signature`,
+`stale_timestamp`, `wrong_app`, `body_too_large`, `malformed`, `not_configured`, `nakama_error`,
+`method_not_allowed`), `status`, `app` (the `x-tretu-app` header), `eventId` / `eventType` when the body
+parses, and `remote` (the client address from nginx's `X-Real-IP`). Secrets, signatures, tokens and
+bodies are never logged. Filter with e.g. `pm2 logs hollowmere-mcp --raw | grep '"reason"'` or `jq`.
+
 ## 17. If something is wrong
 
 | Symptom | Check |
 |---|---|
-| `/healthcheck` or `/v2` 502 | `pm2 status`, `pm2 logs hollowmere-nakama`; `local.yml` missing or DB login wrong |
+| `/healthcheck` or `/v2` 502 | `pm2 status`, `pm2 logs hollowmere-nakama`: "refusing to start: …" names the missing `server/.env` key; else the DB login (`NAKAMA_DATABASE_ADDRESS`) is wrong |
 | `/api/health` 503 | `checks.db` = Postgres down or `database.address`; `checks.nakama` = Nakama down or `NAKAMA_HTTP_KEY` ≠ `runtime.http_key` |
 | Game cannot reach the server | release build still has `%HOLLOWMERE_DOMAIN%`, or `http://` after certbot's redirect |
 | Co-op connects then drops | `/ws` upgrade headers; compare with `deploy/nginx/hollowmere.tretu.de.conf` |
 | Tretu button missing ("Tretu sign-in is not set up for this build.") | `tretu/auth_issuer` or `tretu/client_id` emptied in `game/project.godot` (step 10) |
-| "Tretu sign-in is not enabled on this server." | `TRETU_AUTH_ISSUER` missing in `local.yml` (only possible with `NAKAMA_ALLOW_DEFAULTS=1`), or Nakama not reloaded |
-| PM2 restarts `hollowmere-nakama`, log "Tretu sign-in not configured" | add `"TRETU_AUTH_ISSUER=https://auth.tretu.de"` under `runtime.env` in `local.yml` |
+| "Tretu sign-in is not enabled on this server." | `TRETU_AUTH_ISSUER` missing in `server/.env` (only possible with `NAKAMA_ALLOW_DEFAULTS=1`), or PM2 not reloaded with `--update-env` |
+| PM2 restarts `hollowmere-nakama`, log "refusing to start: … TRETU_AUTH_ISSUER is missing" | add `TRETU_AUTH_ISSUER=https://auth.tretu.de` to `server/.env`, then `pm2 reload ecosystem.config.cjs --update-env` |
 | Old player starts with an empty farm | the legacy import at auth.tretu.de did not link the Hollowmere account (`legacy_ids.hollowmere`), and no Discord/Steam claim matched: find the old account (`SELECT id, username, email FROM users WHERE …`), have auth.tretu.de add the legacy link, then the player keeps it in "Wähle deine Farm" |
 | Tretu web sign-in fails right away | CORS on the issuer's discovery / token endpoint, or redirect URI not registered |
 | Log `Tretu platform POST /api/v1/events -> 401` | `TRETU_APP_SECRET` differs from `TRETU_APPS_JSON.hollowmere.secret` on tretu.de, or clock skew > 300 s |
-| Webhook deliveries fail with `401` (tretu.de admin / worker log) | `TRETU_APP_SECRET` in `server/.env` differs from `TRETU_APPS_JSON.hollowmere.secret`, or `hollowmere-mcp` was not reloaded with `--update-env`; `pm2 logs hollowmere-mcp` shows `tretu webhook rejected (<reason>)` |
+| Webhook deliveries fail with `401` (tretu.de admin / worker log) | `TRETU_APP_SECRET` in `server/.env` differs from `TRETU_APPS_JSON.hollowmere.secret`, or `hollowmere-mcp` was not reloaded with `--update-env`; `pm2 logs hollowmere-mcp` shows `{"level":"warn","msg":"tretu webhook rejected","reason":"bad_signature",…}` |
 | Tretu menu always says "nicht erreichbar" | `pm2 logs hollowmere-nakama` for `Tretu platform GET /api/v1/wallet/…`: `0` = tretu.de unreachable from the server, `401` = secret/clock as above |
 | Player "lost" a farm after choosing | it is archived, not gone: restore it in the game (account panel → Archivierte Farmen) within 90 days, or find it with `SELECT key, value FROM storage WHERE collection = 'tretu_archive'` |
 | Sign-in says "too many tries" (`429`) | nginx `hollowmere_auth` limit (30/min per IP); raise `rate`/`burst` at the top of the site file if a venue shares one IP |

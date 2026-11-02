@@ -21,11 +21,11 @@ Short version: it runs on the Tretu Hetzner server: nginx + certbot on the host,
 
 ### 1.2 Sign-in: Tretu-Konto only
 
-"Mit Tretu-Konto anmelden" is the only account sign-in; guest play stays, and a guest keeps its farm with "Save to Tretu-Konto". Every build ships with `tretu/auth_issuer="https://auth.tretu.de"` and `tretu/client_id="hollowmere"` (the `TRETU_AUTH_ISSUER` repository variable only overrides the issuer, e.g. for staging). The server needs `TRETU_AUTH_ISSUER` in `server/nakama/local.yml` (required, `nakama.sh` refuses to start without it). The email, Google, Apple and Discord sign-ins were removed; their accounts are carried over on the first Tretu login (`legacy_ids.hollowmere`, then Discord/Steam). Release order: auth.tretu.de live and the legacy import done first. See HOSTING.md §10.
+"Mit Tretu-Konto anmelden" is the only account sign-in; guest play stays, and a guest keeps its farm with "Save to Tretu-Konto". Every build ships with `tretu/auth_issuer="https://auth.tretu.de"` and `tretu/client_id="hollowmere"` (the `TRETU_AUTH_ISSUER` repository variable only overrides the issuer, e.g. for staging). The server needs `TRETU_AUTH_ISSUER` in `server/.env` (required, `server/nakama/run.mjs` refuses to start without it). The email, Google, Apple and Discord sign-ins were removed; their accounts are carried over on the first Tretu login (`legacy_ids.hollowmere`, then Discord/Steam). Release order: auth.tretu.de live and the legacy import done first. See HOSTING.md §10.
 
 ### 1.3 Tretu platform events
 
-Events and presence for tretu.de need `TRETU_PLATFORM_URL`, `TRETU_APP_ID`, `TRETU_APP_SECRET` in `server/nakama/local.yml`; off until set. See HOSTING.md §10.
+Events and presence for tretu.de need `TRETU_PLATFORM_URL`, `TRETU_APP_ID`, `TRETU_APP_SECRET` in `server/.env`; off until set. See HOSTING.md §10.
 
 ### 1.4 Apple (macOS signing and notarization)
 
