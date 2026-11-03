@@ -215,8 +215,7 @@ For Brotli: `sudo apt install libnginx-mod-http-brotli-static` and uncomment `br
 
 ## 8. Web build
 
-Built on the dev machine (Godot 4.7.2 with its web export templates, `brotli`), from the commit
-that is deployed, normally HEAD of `main`:
+Built on the dev machine (Linux or macOS) from the commit that is deployed, normally HEAD of `main`:
 
 ```bash
 tools/release/build_web.sh
@@ -226,12 +225,36 @@ tools/release/build_web.sh
 
 It exports the "Web" preset, renames the engine files to `hm-<hash>.*`, adds the PWA files, legal
 redirects, `/auth/callback`, `robots.txt` and `sitemap.xml`, writes `.br`/`.gz`, enforces the 50 MB
-Brotli budget and runs `deploy/nginx/test_site.sh` against the result. `build/web` is then copied as
-is to the site directory:
+Brotli budget and runs `deploy/nginx/test_site.sh` against the result. If nginx is not installed,
+that last check is skipped with a `WARNING` (the build is still complete); install nginx to run it.
+`build/web` is then copied as is to the site directory:
 
 ```bash
 rsync -az --delete build/web/ "$DEPLOY_USER@$SERVER_IP:$SITE_DIR/"
 ```
+
+**Linux** (Ubuntu): Godot 4.7.2 as `godot` on `PATH` (or `GODOT=/path/to/godot`), its web export
+templates in `~/.local/share/godot/export_templates/4.7.2.stable/`, and
+`sudo apt install brotli nginx openssl curl` plus Node 22 for the site test.
+
+**macOS** (Apple silicon or Intel; the scripts use only bash 3.2, BSD tools and `perl -pi`, no GNU
+coreutils needed):
+
+1. Godot 4.7.2: `Godot_v4.7.2-stable_macos.universal.zip` from the GitHub release (check it against
+   that release's `SHA512-SUMS.txt` with `shasum -a 512`), move `Godot.app` to `/Applications`, then
+   `export GODOT=/Applications/Godot.app/Contents/MacOS/Godot`.
+2. Export templates: in the editor, Editor → Manage Export Templates → Download and Install, or
+   unpack `Godot_v4.7.2-stable_export_templates.tpz` (SHA-512 in §4) so that
+   `~/Library/Application Support/Godot/export_templates/4.7.2.stable/web_release.zip` exists. Only
+   the `web_*` files are needed for this build.
+3. `brew install brotli` (required; the system `gzip` and `perl` are enough for the rest).
+4. Optional, for the site file test: `brew install nginx node` (`openssl` and `curl` ship with macOS).
+   `test_site.sh` finds `mime.types` in `/etc/nginx`, `/opt/homebrew/etc/nginx`,
+   `/usr/local/etc/nginx` or next to nginx's compiled-in `--conf-path` (`nginx -V`);
+   `NGINX_MIME_TYPES=/path/to/mime.types` overrides that. It never touches the Homebrew nginx
+   service or its config: it runs its own nginx on free high ports from a temp directory.
+
+`tools/ci/check.sh` (all tests, §11) stays Linux-only (`sha256sum`, `lua5.1`, Postgres).
 
 ## 9. Release clients point at the live server
 
