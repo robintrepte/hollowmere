@@ -9,7 +9,6 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/robintrepte/hollowmere.tretu.de/actions/workflows/build.yml?query=branch%3Amain"><img src="https://github.com/robintrepte/hollowmere.tretu.de/actions/workflows/build.yml/badge.svg?branch=main" alt="Build & Test"></a>
   <img src="https://img.shields.io/badge/Godot-4.7.2-478cbf?logo=godotengine&logoColor=white" alt="Godot 4.7.2">
   <img src="https://img.shields.io/badge/version-1.0.0-blue.svg" alt="1.0.0">
   <img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="MIT License">
@@ -77,7 +76,7 @@ Store copy and capsule art live in [`store/STORE_PAGE.md`](store/STORE_PAGE.md).
 |---|---|
 | Browser | `https://hollowmere.tretu.de` (or host the web export yourself, see [HOSTING.md](HOSTING.md)) |
 | Phone | Same URL, landscape. Safari / Chrome → **Add to Home Screen** for fullscreen |
-| Desktop | Windows and macOS exports from CI (`v*` tags) or a local Godot export |
+| Desktop | Windows and macOS exports with a local Godot 4.7.2 (RELEASE.md) |
 
 Accounts: "Mit Tretu-Konto anmelden" (the only account sign-in) or play as a guest; a guest keeps its farm with "Save to Tretu-Konto". Cloud saves and co-op go through Nakama on your own server. AI clients talk to the MCP relay at `mcp.<your-domain>` with a token created in-game.
 
@@ -129,7 +128,7 @@ Release checklist, signing, itch and Steam: [RELEASE.md](RELEASE.md).
 
 Production is `hollowmere.tretu.de` on the Tretu **Hetzner** server: **nginx** for TLS and the static web build, **PM2** for Nakama (`hollowmere-nakama`) and the MCP relay (`hollowmere-mcp`), the `nakama` database on the shared **Postgres**. No Docker. The guide is written for humans and agents: one variable block at the top, then copy-paste commands.
 
-**[HOSTING.md](HOSTING.md)** — DNS, Postgres, Nakama binary, PM2, nginx + certbot, web deploy, Tretu-Konto and platform events, analytics, GitHub Actions, backups, moving off Docker.
+**[HOSTING.md](HOSTING.md)** — DNS, Postgres, Nakama binary, PM2, nginx + certbot, web deploy, Tretu-Konto and platform events, analytics, tests, backups, moving off Docker.
 
 ## Tretu
 
@@ -150,11 +149,10 @@ deploy/nginx/  nginx sites for hollowmere.tretu.de and mcp.hollowmere.tretu.de
 ecosystem.config.cjs  PM2 processes (hollowmere-nakama, hollowmere-mcp)
 docs/          Agent MCP setup (docs/agents.md)
 store/         Steam / itch capsules, screenshots, rating and store copy
-tools/         Art pipeline, string extraction, web fingerprint + precompress
-.github/       CI: 413 GUT tests, Lua + Tretu integration tests, Windows / macOS / Web export, tagged deploy
+tools/         Art pipeline, string extraction, all tests (tools/ci/check.sh), web build (tools/release/build_web.sh)
 ```
 
-CI (every pull request and push to `main`): script compile, GUT, translation template check, 112-day balance sim, casino RTP sim, Lua checks and the Tretu integration test (official Nakama binary, `postgres:16` service, game client included), Nakama integration, co-op and 4-peer desync tests, then Windows / macOS / Web exports, with checksum-verified Godot and Nakama downloads. GitHub Actions must be enabled for the repository (see HOSTING.md §11). Tagged `v*` releases can sign macOS, push itch, rsync the web build and reload PM2.
+No GitHub Actions: `tools/ci/check.sh` runs every test before a merge to `main` (script compile, GUT, translation template check, 112-day balance sim, casino RTP sim, MCP relay, nginx site file, Lua checks and the Tretu integration test with the official Nakama binary and the game client, Nakama integration, co-op and 4-peer desync tests; HOSTING.md §11). `tools/release/build_web.sh` builds the web export that the deploy copies to the server (HOSTING.md §8, §12).
 
 ## Made with
 
