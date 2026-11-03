@@ -418,8 +418,12 @@ Nakama 3.41.0 binary, a `postgres:16` service container, and the game client tes
 `tests/net/tretu_client_test.tscn` against it), the server / co-op / desync tests, then the
 Windows, macOS and Web exports. Godot and Nakama downloads are checked against the pinned checksums
 (§4). **GitHub Actions must be enabled for the repository** (Settings → Actions → General → "Allow all
-actions") and the account needs Actions minutes; the workflow has not run on GitHub since it was
-last changed, so check the first run after enabling it. On `v*` tags, `deploy-web`
+actions and reusable workflows"); the repository is public, so runs on GitHub-hosted runners cost no
+minutes. If pushes to `main` create no run at all (not even a failed one), Actions is switched off
+there. The workflow also has a manual trigger: Actions → "Build & Test" → "Run workflow", or
+`gh workflow run build.yml --ref main`, which rebuilds the `hollowmere-web` artifact for HEAD of
+`main`. All actions are on their Node 24 majors (`checkout@v6`, `setup-node@v6`,
+`upload-artifact@v6`, `download-artifact@v7`). On `v*` tags, `deploy-web`
 rsyncs the web build to `$SITE_DIR`, checks out the tag in `$APP_DIR`, runs
 `server/nakama/nakama.sh check` and `pm2 reload ecosystem.config.cjs --update-env`, then checks
 `/api/health`.
