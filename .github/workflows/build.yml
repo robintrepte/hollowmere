@@ -5,6 +5,14 @@ on:
     branches: [main]
     tags: ["v*"]
   pull_request:
+  # Manual runs (Actions tab -> "Build & Test" -> "Run workflow", or `gh workflow run build.yml
+  # --ref main`): rebuilds the web artifact for any branch without a new commit.
+  workflow_dispatch:
+
+# One run per ref: a newer push to the same branch/PR cancels the older run (tags never cancel).
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
 env:
   GODOT_VERSION: "4.7.2"
@@ -34,7 +42,7 @@ jobs:
           --health-timeout 5s
           --health-retries 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Godot
         run: |
           wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${GODOT_RELEASE}/Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64.zip
@@ -61,7 +69,7 @@ jobs:
         env:
           GODOT_OK: "Casino sim.+OK"
         run: tools/ci/godot.sh --headless --path game res://tests/sim/casino_rtp.tscn -- --rounds=1000000
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "22"
       - name: MCP relay self-test
@@ -113,7 +121,7 @@ jobs:
         env:
           GODOT_OK: "DESYNC TEST DONE, 0 failures"
         run: tools/ci/godot.sh --headless --path game res://tests/net/desync_test.tscn
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: test-results
@@ -128,7 +136,7 @@ jobs:
       matrix:
         preset: ["Windows Desktop", "macOS", "Web"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Godot + export templates
         run: |
           wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${GODOT_RELEASE}/Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_linux.x86_64.zip
@@ -183,7 +191,7 @@ jobs:
           total=$(cat build/web/*.br | wc -c)
           echo "Compressed download: $((total / 1048576)) MB"
           test "$total" -lt 52428800
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: hollowmere-${{ matrix.preset == 'Windows Desktop' && 'windows' || matrix.preset == 'macOS' && 'macos' || 'web' }}
           path: build/
@@ -200,8 +208,8 @@ jobs:
       APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
       APPLE_API_KEY_BASE64: ${{ secrets.APPLE_API_KEY_BASE64 }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v7
         with:
           name: hollowmere-macos
           path: dist
@@ -211,7 +219,7 @@ jobs:
       - name: Unsigned build (no Apple secrets yet)
         if: env.MACOS_SIGN_IDENTITY == ''
         run: echo "::warning::macOS build is unsigned; add the Apple secrets listed in RELEASE.md"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: hollowmere-macos-release
           path: dist/macos/Hollowmere.zip
@@ -224,11 +232,11 @@ jobs:
       BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
       ITCH_TARGET: ${{ vars.ITCH_TARGET }}
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: hollowmere-windows
           path: dist
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: hollowmere-macos-release
           path: dist/mac
@@ -249,8 +257,8 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v7
         with:
           name: hollowmere-web
           path: site
