@@ -2,10 +2,12 @@
 # Local test of deploy/nginx/hollowmere.tretu.de.conf without root and without real certificates:
 # a copy of the site file with high ports, dummy (self-signed) certificates, a temporary web root
 # and fake upstreams for Nakama (:7350) and hollowmere-mcp (:8787). Runs `nginx -t`, starts nginx,
-# and checks every location with curl. Needs nginx, openssl, curl and node.
+# and checks every location with curl. Needs nginx, openssl, curl and node. Runs on Linux and macOS
+# (Homebrew nginx, bash 3.2, BSD sed/sort, LibreSSL).
 #
 #   deploy/nginx/test_site.sh [path/to/web/build]     (default: a tiny fake build)
 set -euo pipefail
+command -v nginx >/dev/null || { echo "nginx not installed (Linux: apt install nginx, macOS: brew install nginx)" >&2; exit 1; }
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SITE_CONF="$HERE/hollowmere.tretu.de.conf"
 T="$(mktemp -d)"
@@ -38,13 +40,33 @@ printf 'ssl_session_cache shared:le_nginx_SSL:1m;\nssl_session_timeout 1440m;\ns
 openssl dhparam -dsaparam -out "$T/le/ssl-dhparams.pem" 2048 2>/dev/null
 
 # The site uses `http2 on;` (nginx 1.25.1+). Older nginx (Ubuntu 24.04: 1.24) gets the equivalent listen parameter.
+# version_lt a b: true if version a < b (numeric per dot-separated field; no `sort -V`, which older macOS lacks).
+version_lt() {
+  awk -v a="$1" -v b="$2" 'BEGIN { n = split(a, x, "."); m = split(b, y, "."); if (m > n) n = m
+    for (i = 1; i <= n; i++) { if (x[i] + 0 < y[i] + 0) exit 0; if (x[i] + 0 > y[i] + 0) exit 1 } exit 1 }'
+}
 LEGACY_HTTP2=()
 NGX_VERSION="$(nginx -v 2>&1 | sed -E 's#.*nginx/([0-9.]+).*#\1#')"
-if [ "$(printf '%s\n' 1.25.1 "$NGX_VERSION" | sort -V | head -n1)" != "1.25.1" ]; then
+if version_lt "$NGX_VERSION" 1.25.1; then
   LEGACY_HTTP2=(-e "/^[[:space:]]*http2 on;/d" -e "s#listen 127.0.0.1:$P443 ssl;#listen 127.0.0.1:$P443 ssl http2;#")
 fi
+# mime.types: Debian/Ubuntu, Homebrew on Apple silicon, Homebrew on Intel, else next to nginx's
+# compiled-in conf-path (`nginx -V`). NGINX_MIME_TYPES overrides the search.
+find_mime_types() {
+  local f conf
+  if [[ -n "${NGINX_MIME_TYPES:-}" ]]; then echo "$NGINX_MIME_TYPES"; return; fi
+  for f in /etc/nginx/mime.types /opt/homebrew/etc/nginx/mime.types /usr/local/etc/nginx/mime.types; do
+    [[ -f "$f" ]] && { echo "$f"; return; }
+  done
+  conf="$(nginx -V 2>&1 | tr ' ' '\n' | sed -n 's#^--conf-path=##p' | head -n1)"
+  [[ -n "$conf" && -f "$(dirname "$conf")/mime.types" ]] && { echo "$(dirname "$conf")/mime.types"; return; }
+  return 1
+}
+MIME_TYPES="$(find_mime_types)" || { echo "FAIL mime.types not found (looked in /etc/nginx, /opt/homebrew/etc/nginx, /usr/local/etc/nginx and nginx -V --conf-path; set NGINX_MIME_TYPES)"; exit 1; }
+[[ -f "$MIME_TYPES" ]] || { echo "FAIL NGINX_MIME_TYPES=$MIME_TYPES does not exist"; exit 1; }
+# ${a[@]+"${a[@]}"}: an empty array is "unbound" under set -u in bash < 4.4 (macOS ships 3.2).
 sed -e "s#listen 80;#listen 127.0.0.1:$P80;#; s#listen \[::\]:80;##" \
-    -e "s#listen 443 ssl;#listen 127.0.0.1:$P443 ssl;#; s#listen \[::\]:443 ssl;##" "${LEGACY_HTTP2[@]}" \
+    -e "s#listen 443 ssl;#listen 127.0.0.1:$P443 ssl;#; s#listen \[::\]:443 ssl;##" ${LEGACY_HTTP2[@]+"${LEGACY_HTTP2[@]}"} \
     -e "s#/etc/letsencrypt#$T/le#g; s#/var/www/hollowmere/site#$T/www/site#g; s#root /var/www/html;#root $T/acme;#" \
     -e "s#127.0.0.1:7350#127.0.0.1:$PNK#g; s#127.0.0.1:8787#127.0.0.1:$PMCP#g" "$SITE_CONF" > "$T/site.conf"
 grep -q "/var/www/hollowmere/site" "$SITE_CONF" || { echo "FAIL site root is not /var/www/hollowmere/site"; exit 1; }
@@ -55,7 +77,7 @@ events {}
 http {
   access_log off;
   client_body_temp_path $T/tmp; proxy_temp_path $T/tmp; fastcgi_temp_path $T/tmp; uwsgi_temp_path $T/tmp; scgi_temp_path $T/tmp;
-  include /etc/nginx/mime.types;
+  include $MIME_TYPES;
   include $T/site.conf;
 }
 EOF
