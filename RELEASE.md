@@ -1,15 +1,15 @@
 # Releasing Hollowmere
 
 The order is: playtests on itch.io, a free web launch on our own domain, then Steam.
-Everything after `git tag` is automated by `.github/workflows/build.yml`:
+There is no GitHub Actions CI. Changes are tested on the dev machine and only land on `main` when
+every check passes; `main` is what gets deployed. The deploy itself (server checkout, web build to
+the site directory, PM2 reload) is done by the owner's deploy agent with the steps in HOSTING.md §12.
 
-| Job | Runs on | Does |
-|---|---|---|
-| `test` | every push / PR | script compile, GUT unit tests, translation template check, 112-day balance sim, Nakama integration test, co-op test, host + 3 client desync test |
-| `export` | every push / PR | Windows, macOS and Web exports; the web build is fingerprinted, precompressed and must stay under 50 MB of Brotli |
-| `deploy-web` | `v*` tags | rsyncs the web build to `/srv/hollowmere/site` and rebuilds Nakama + the MCP relay (nginx on the host owns TLS; see HOSTING.md) |
-| `sign-macos` | `v*` tags | codesign (hardened runtime), notarize, staple; warns and ships unsigned if the Apple secrets are missing |
-| `itch` | `v*` tags | `butler push` to the `windows` and `mac` channels |
+| Script | Does |
+|---|---|
+| `tools/ci/check.sh` | every test: script compile, GUT unit tests, translation template check, 112-day balance sim, 1M-round casino sim, MCP relay self-test, Nakama runner tests, nginx site file test, Lua checks, Tretu integration test (real Nakama 3.41.0), server / co-op / host + 3 client desync tests (`--quick` skips the sims and the network tests) |
+| `tools/release/build_web.sh` | the production web export in `build/web`: fingerprinted, precompressed, under 50 MB of Brotli, served correctly by the nginx site file |
+| `tools/release/sign_macos.sh` | codesign (hardened runtime), notarize, staple a macOS export (on a Mac) |
 
 ## 1. One-time setup
 
@@ -17,11 +17,11 @@ Everything after `git tag` is automated by `.github/workflows/build.yml`:
 
 Step-by-step Hetzner + Ubuntu + nginx (the commands an agent can run): **[HOSTING.md](HOSTING.md)**.
 
-Short version: it runs on the Tretu Hetzner server: nginx + certbot on the host, Nakama and the MCP relay as PM2 processes (`ecosystem.config.cjs`), the `nakama` database on the shared Postgres. No Docker. Put the private SSH key in `DEPLOY_SSH_KEY` and the hostname in the `HOLLOWMERE_DOMAIN` variable. Leave `socket.server_key` in `server/nakama/hollowmere.yml` equal to `hollowmere/server/key` in `game/project.godot`: it ships inside every client and is not a secret.
+Short version: it runs on the Tretu Hetzner server: nginx + certbot on the host, Nakama and the MCP relay as PM2 processes (`ecosystem.config.cjs`), the `nakama` database on the shared Postgres. No Docker. The web build talks to `HOLLOWMERE_DOMAIN` (default `hollowmere.tretu.de` in `tools/release/build_web.sh`). Leave `socket.server_key` in `server/nakama/hollowmere.yml` equal to `hollowmere/server/key` in `game/project.godot`: it ships inside every client and is not a secret.
 
 ### 1.2 Sign-in: Tretu-Konto only
 
-"Mit Tretu-Konto anmelden" is the only account sign-in; guest play stays, and a guest keeps its farm with "Save to Tretu-Konto". Every build ships with `tretu/auth_issuer="https://auth.tretu.de"` and `tretu/client_id="hollowmere"` (the `TRETU_AUTH_ISSUER` repository variable only overrides the issuer, e.g. for staging). The server needs `TRETU_AUTH_ISSUER` in `server/.env` (required, `server/nakama/run.mjs` refuses to start without it). The email, Google, Apple and Discord sign-ins were removed; their accounts are carried over on the first Tretu login (`legacy_ids.hollowmere`, then Discord/Steam). Release order: auth.tretu.de live and the legacy import done first. See HOSTING.md §10.
+"Mit Tretu-Konto anmelden" is the only account sign-in; guest play stays, and a guest keeps its farm with "Save to Tretu-Konto". Every build ships with `tretu/auth_issuer="https://auth.tretu.de"` and `tretu/client_id="hollowmere"` (`TRETU_AUTH_ISSUER=… tools/release/build_web.sh` only overrides the issuer, e.g. for staging). The server needs `TRETU_AUTH_ISSUER` in `server/.env` (required, `server/nakama/run.mjs` refuses to start without it). The email, Google, Apple and Discord sign-ins were removed; their accounts are carried over on the first Tretu login (`legacy_ids.hollowmere`, then Discord/Steam). Release order: auth.tretu.de live and the legacy import done first. See HOSTING.md §10.
 
 ### 1.3 Tretu platform events
 
@@ -31,39 +31,19 @@ Events and presence for tretu.de need `TRETU_PLATFORM_URL`, `TRETU_APP_ID`, `TRE
 
 Needs an Apple Developer Program membership ($99/year).
 
-1. Create a **Developer ID Application** certificate, export it with its private key as `.p12`, then `base64 -i cert.p12 | pbcopy` gives `MACOS_CERT_P12_BASE64`. The export password goes in `MACOS_CERT_PASSWORD`.
+1. Create a **Developer ID Application** certificate, export it with its private key as `.p12`, then install it in the login keychain (or pass it as `MACOS_CERT_P12_BASE64` + `MACOS_CERT_PASSWORD`).
 2. `MACOS_SIGN_IDENTITY` is the certificate's full name, e.g. `Developer ID Application: Robin Trepte (TEAMID1234)`.
 3. App Store Connect, Users and Access, Integrations: create an API key with the Developer role. Download the `.p8` (`base64 -i AuthKey_X.p8` gives `APPLE_API_KEY_BASE64`), and note the key id (`APPLE_API_KEY_ID`) and issuer id (`APPLE_API_ISSUER`).
 4. The bundle id is `com.hollowmere.game` (`game/export_presets.cfg`).
 
-Locally: `tools/release/sign_macos.sh build/macos/Hollowmere.zip` with the same variables exported.
+Then `tools/release/sign_macos.sh build/macos/Hollowmere.zip` with these variables exported.
 
 ### 1.5 itch.io (playtests and desktop downloads)
 
 1. Create the project page (Kind: Downloadable). Use `store/STORE_PAGE.md` for the text and `store/itch/` for the cover and banner.
-2. Generate an API key under Settings, API keys: that's `BUTLER_API_KEY`. Set the repository **variable** `ITCH_TARGET` to `<itch user>/<game slug>`.
+2. Install [butler](https://itch.io/docs/butler/) and run `butler login` once. Push with `butler push build/windows <itch user>/<game slug>:windows --userversion <version>` and `butler push build/macos/Hollowmere.zip <itch user>/<game slug>:mac --userversion <version>`.
 3. For closed playtests, set the page to *Restricted* and hand out download keys or a password.
 4. Don't upload the HTML5 build to itch: the web build talks to the server that served it, so it only works on our domain. Link to the domain from the itch page instead.
-
-### 1.5 GitHub secrets and variables
-
-Settings, Secrets and variables, Actions:
-
-| Name | Kind | Used by |
-|---|---|---|
-| `DEPLOY_HOST` | secret | deploy-web (VPS hostname or IP) |
-| `DEPLOY_SSH_KEY` | secret | deploy-web (private key of `deploy`) |
-| `MACOS_SIGN_IDENTITY` | secret | sign-macos |
-| `MACOS_CERT_P12_BASE64` | secret | sign-macos |
-| `MACOS_CERT_PASSWORD` | secret | sign-macos |
-| `APPLE_API_KEY_ID` | secret | sign-macos |
-| `APPLE_API_ISSUER` | secret | sign-macos |
-| `APPLE_API_KEY_BASE64` | secret | sign-macos |
-| `BUTLER_API_KEY` | secret | itch |
-| `HOLLOWMERE_DOMAIN` | variable | all exports (release builds connect to it) |
-| `ITCH_TARGET` | variable | itch |
-
-Jobs whose secrets are missing skip with a warning instead of failing.
 
 ## 2. Every release
 
@@ -86,15 +66,15 @@ Jobs whose secrets are missing skip with a warning instead of failing.
    Hollowmere.app/Contents/MacOS/Hollowmere --write-movie /tmp/f.png --fixed-fps 30 --quit-after 150
    ```
    Then look at `/tmp/f00000149.png`: it should be the title screen.
-3. Commit, then `git tag v1.0.0 && git push --tags`.
-4. Watch the workflow. When it's green:
+3. `tools/ci/check.sh` must end with "All checks passed." Then PR, merge to `main`, and tag the merge: `git tag v1.0.0 && git push --tags`.
+4. Web: `tools/release/build_web.sh`, then the deploy agent ships `main` (HOSTING.md §12). Desktop: export Windows and macOS locally, sign the macOS build and push both to itch (1.4, 1.5). Then:
    - Open `https://<domain>` in a private window: title screen, guest login, new farm, save, reload, continue.
    - Download the macOS build from itch and check that it opens without a Gatekeeper warning (`spctl -a -vv Hollowmere.app` should say "Notarized Developer ID").
    - Start a co-op session between the web build and a desktop build.
    - On a phone (one iPhone with Safari, one Android with Chrome): open the domain in landscape, walk with the stick, open the bag, then add it to the home screen and check it opens full screen with the sprout icon.
 5. Check crash reports a day later (section 4).
 
-Rollback: re-run the `deploy-web` job of the previous tag. The engine files carry a content hash in their names, so browsers pick up the old build at once.
+Rollback: check out the previous tag on the server, build its web export, rsync it and reload PM2 (HOSTING.md §12). The engine files carry a content hash in their names, so browsers pick up the old build at once.
 
 ## 3. Launch plan
 
@@ -162,4 +142,4 @@ FROM storage WHERE collection = 'analytics' AND key = 'sessions';
 ## 5. Performance budget
 
 - **60 fps on a 2015 MacBook.** `tests/perf/perf_bench.tscn` measures the busiest scenes (a full farm at dusk with 30 Wildlings, the village, a region with wild spawns, a battle). Keep the p95 frame time under 4 ms on an Apple M-series machine, roughly 4 to 5 times faster than a 2015 MacBook.
-- **Web download under 50 MB.** CI fails the export if the Brotli files add up to 50 MB or more (currently about 10 MB).
+- **Web download under 50 MB.** `tools/release/build_web.sh` fails if the Brotli files add up to 50 MB or more (currently about 10 MB).

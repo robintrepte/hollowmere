@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run Godot in CI. 4.7.2 can SIGABRT (exit 134) while tearing down after a
+# Run Godot headless for tests (tools/ci/check.sh). 4.7.2 can SIGABRT (exit 134) while tearing down after a
 # clean quit; treat that as success when stdout matches GODOT_OK.
 set -u
 if [ -z "${GODOT_OK:-}" ]; then

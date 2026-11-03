@@ -77,7 +77,7 @@ sudo chmod 755 /opt/nakama/nakama
 
 Upgrading Nakama later: install the new tarball the same way, then `server/nakama/nakama.sh check`
 and `pm2 reload hollowmere-nakama` (the start script runs `nakama migrate up` first). Update the
-pinned checksum here and in `.github/workflows/build.yml` in the same commit.
+pinned checksum here and in `tools/ci/check.sh` in the same commit.
 
 ### Checksums
 
@@ -87,7 +87,7 @@ pinned checksum here and in `.github/workflows/build.yml` in the same commit.
 | `Godot_v4.7.2-stable_linux.x86_64.zip` | SHA-512 (official) | `9aa00f7a605200940bce3027a567b782f49bd8e940dd06ae9e987bd65aee1b1467edd56ed84fcdcbdd44354bf613bdbb4e5d2913e925850368e150c59ed54c65` | `SHA512-SUMS.txt` of the Godot 4.7.2-stable release (Godot publishes SHA-512, not SHA-256) |
 | `Godot_v4.7.2-stable_export_templates.tpz` | SHA-512 (official) | `ca4d71c4d7b81dfc15d1a98baa07534aa95b03fdda78a0075b06672e1648d2e5f40980c9adc28d23e1b92e732ee7bf3461997aa804af74ec2fcd7a93ccb84079` | same file |
 
-CI checks all three before using them (`sha256sum -c` / `sha512sum -c`). For other files (macOS
+`tools/ci/check.sh` checks the Nakama tarball before using it; check the Godot files the same way when you install them (`sha256sum -c` / `sha512sum -c`). For other files (macOS
 editor, other Nakama platforms) compare with the release's `SHA512-SUMS.txt` (Godot) or the GitHub
 asset digest (Nakama) by hand.
 
@@ -121,7 +121,7 @@ flags (nothing is written to a file; every logged command line shows `***` inste
 `run.mjs` **refuses to start** (and PM2 shows why in `pm2 logs hollowmere-nakama`) while any
 `NAKAMA_*` key above is missing, still a Nakama default (`defaulthttpkey`, `defaultencryptionkey`,
 `defaultsigningkey`, `admin`/`password`, …) or a `CHANGE_ME` placeholder, or while
-`TRETU_AUTH_ISSUER` is missing. `NAKAMA_ALLOW_DEFAULTS=1` lifts that for dev/CI only.
+`TRETU_AUTH_ISSUER` is missing. `NAKAMA_ALLOW_DEFAULTS=1` lifts that for dev and tests only.
 `server/nakama/local.yml` is optional now (other Nakama options only, see `local.example.yml`); on
 a server that still has one with keys in it, move them to `server/.env`: the values in the
 environment win, and the start is refused until they are there. `server/nakama/nakama.sh args`
@@ -177,11 +177,11 @@ Do **not** run `certbot --nginx` on `hollowmere.tretu.de.conf` (it already has i
 web root is `/var/www/hollowmere/site` and nothing else: the checkout (with `server/.env`) lives in
 `$APP_DIR` (`/srv/hollowmere`), and the site refuses dotfiles anyway. **Moving an older setup** whose
 build sat directly in `/var/www/hollowmere`: `sudo mkdir -p /var/www/hollowmere/site`, rsync the build
-there (or set `DEPLOY_SITE_DIR` and run the next tag), then install the new site file. If the
+there, then install the new site file. If the
 checkout ever lived under `/var/www/hollowmere`, move it to `/srv/hollowmere` (and the PM2 apps
 with it: `pm2 delete` the old ones, `pm2 start ecosystem.config.cjs` from the new path).
 
-Test the site file locally (no root, dummy certificates, fake upstreams; CI runs it too):
+Test the site file locally (no root, dummy certificates, fake upstreams; `tools/ci/check.sh` and `tools/release/build_web.sh` run it too):
 `deploy/nginx/test_site.sh [build/web]` checks `nginx -t`, the HTTP→HTTPS redirect, the ACME
 webroot, HTTP/2, the security headers on every location, that dotfiles and the checkout are never
 served, `/api/health` and `/api/tretu/webhook` (POST only, 64 KB, rate limit) to `127.0.0.1:8787`,
@@ -215,25 +215,28 @@ For Brotli: `sudo apt install libnginx-mod-http-brotli-static` and uncomment `br
 
 ## 8. Web build
 
-CI builds it on every push (artifact `hollowmere-web`) and deploys it on `v*` tags (step 11).
-By hand, on a machine with Godot 4.7.2 and its export templates:
+Built on the dev machine (Godot 4.7.2 with its web export templates, `brotli`), from the commit
+that is deployed, normally HEAD of `main`:
 
 ```bash
-sed -i.bak "s/%HOLLOWMERE_DOMAIN%/$DOMAIN/" game/project.godot
-# The Tretu issuer ships as https://auth.tretu.de (tretu/auth_issuer); another one only for staging:
-# sed -i 's|^auth_issuer=".*"$|auth_issuer="https://auth.staging.example"|' game/project.godot
-godot --headless --path game --export-release "Web" "$PWD/build/web/index.html"
-mv game/project.godot.bak game/project.godot          # never commit a live domain
+tools/release/build_web.sh
+# HOLLOWMERE_DOMAIN=hollowmere.tretu.de is the default; TRETU_AUTH_ISSUER=https://auth.staging.example
+# only for staging. game/project.godot is restored afterwards (never commit a live domain).
+```
 
-tools/release/fingerprint_web.sh build/web     # hm-<hash> names, PWA files, legal redirects, /auth/callback
-tools/release/precompress_web.sh build/web
+It exports the "Web" preset, renames the engine files to `hm-<hash>.*`, adds the PWA files, legal
+redirects, `/auth/callback`, `robots.txt` and `sitemap.xml`, writes `.br`/`.gz`, enforces the 50 MB
+Brotli budget and runs `deploy/nginx/test_site.sh` against the result. `build/web` is then copied as
+is to the site directory:
+
+```bash
 rsync -az --delete build/web/ "$DEPLOY_USER@$SERVER_IP:$SITE_DIR/"
 ```
 
 ## 9. Release clients point at the live server
 
 Desktop and web release builds read `hollowmere/server/host.release` (`%HOLLOWMERE_DOMAIN%` in the
-repo). CI fills it from the repository variable `HOLLOWMERE_DOMAIN` = `hollowmere.tretu.de`.
+repo). `tools/release/build_web.sh` fills it from `HOLLOWMERE_DOMAIN` (default `hollowmere.tretu.de`).
 
 ## 10. Tretu ecosystem
 
@@ -255,10 +258,10 @@ Both sides:
 2. Server (required): `TRETU_AUTH_ISSUER=https://auth.tretu.de` in `server/.env` (the example has
    it), then `pm2 reload ecosystem.config.cjs --update-env`. Without it `run.mjs` refuses to start
    ("TRETU_AUTH_ISSUER is missing (Tretu sign-in not configured)"); only `NAKAMA_ALLOW_DEFAULTS=1`
-   dev/CI runs start without it, and then only guest play works.
+   dev/test runs start without it, and then only guest play works.
 3. Game builds: `game/project.godot` ships `tretu/auth_issuer="https://auth.tretu.de"` and
-   `tretu/client_id="hollowmere"`. The GitHub variable `TRETU_AUTH_ISSUER` only overrides the issuer
-   (e.g. staging); CI fails the export if the setting is missing.
+   `tretu/client_id="hollowmere"`. `TRETU_AUTH_ISSUER=… tools/release/build_web.sh` only overrides the
+   issuer (e.g. staging); the build fails if the setting is missing.
 
 **Server-side, the removed sign-ins are refused** (old clients, direct API calls): Nakama before-hooks
 answer `AuthenticateEmail/Google/Apple/Facebook/FacebookInstantGame/GameCenter/Steam`, the matching
@@ -409,40 +412,29 @@ cache, `tretu_farm_choice` 12 and `tretu_farm_choose` 5 calls per minute (`429` 
 `tretu_report_battle` one per 8 s and 200 per day, `tretu_heartbeat` one per 30 s; sign-ins 30 per
 minute per IP in nginx.
 
-## 11. GitHub Actions
+## 11. Tests (no GitHub Actions)
 
-`.github/workflows/build.yml` runs on every pull request and on pushes to `main` (and `v*` tags): script
-compile check, GUT, translation template check, balance + casino simulations, MCP relay self-test,
-Lua unit tests + `nakama.sh check`, the Tretu integration test (fake issuer + platform, the official
-Nakama 3.41.0 binary, a `postgres:16` service container, and the game client test
-`tests/net/tretu_client_test.tscn` against it), the server / co-op / desync tests, then the
-Windows, macOS and Web exports. Godot and Nakama downloads are checked against the pinned checksums
-(§4). **GitHub Actions must be enabled for the repository** (Settings → Actions → General → "Allow all
-actions and reusable workflows"); the repository is public, so runs on GitHub-hosted runners cost no
-minutes. If pushes to `main` create no run at all (not even a failed one), Actions is switched off
-there. The workflow also has a manual trigger: Actions → "Build & Test" → "Run workflow", or
-`gh workflow run build.yml --ref main`, which rebuilds the `hollowmere-web` artifact for HEAD of
-`main`. All actions are on their Node 24 majors (`checkout@v6`, `setup-node@v6`,
-`upload-artifact@v6`, `download-artifact@v7`). On `v*` tags, `deploy-web`
-rsyncs the web build to `$SITE_DIR`, checks out the tag in `$APP_DIR`, runs
-`server/nakama/nakama.sh check` and `pm2 reload ecosystem.config.cjs --update-env`, then checks
-`/api/health`.
+There is no GitHub Actions workflow. `tools/ci/check.sh` runs every test on the dev machine and must
+end with "All checks passed." before anything is merged to `main`: script compile check, GUT,
+translation template check, balance + casino simulations, MCP relay self-test, Nakama runner tests,
+the nginx site file test, Lua unit tests + `nakama.sh check`, the Tretu integration test (fake
+issuer + platform, the official Nakama 3.41.0 binary, the game client test
+`tests/net/tretu_client_test.tscn` against it), then the server / co-op / desync tests.
+`--quick` skips the two simulations and the last three network tests.
 
-| Name | Kind | Value |
-|---|---|---|
-| `DEPLOY_HOST` | secret | server hostname or IP |
-| `DEPLOY_SSH_KEY` | secret | private ed25519 key of the deploy user |
-| `DEPLOY_USER`, `DEPLOY_APP_DIR`, `DEPLOY_SITE_DIR` | variables | optional, default `deploy`, `/srv/hollowmere`, `/var/www/hollowmere/site` |
-| `HOLLOWMERE_DOMAIN` | variable | `hollowmere.tretu.de` |
-| `TRETU_AUTH_ISSUER` | variable | optional override of the shipped `https://auth.tretu.de` (step 10) |
+Needs Godot 4.7.2 (`GODOT`), Node 22+, Python 3, `lua5.1`, nginx, openssl, `psql` and a Postgres 16
+reachable as `CHECK_PG` (default `postgres:postgres@127.0.0.1:5432`). The Nakama binary comes from
+`NAKAMA_BIN` or is downloaded into `.tools/nakama` and checked against the pinned SHA-256 (§4). Do not
+run it on the production server: it starts its own Nakama on `127.0.0.1:7350` and drops/creates the
+databases `hollowmere_check` and `nakama_test`.
 
-The former `GOOGLE_CLIENT_ID`, `APPLE_CLIENT_ID` and `DISCORD_CLIENT_ID` secrets are no longer used
-(the social sign-ins and `tools/release/inject_web_config.py` were removed); delete them in the
-repository settings.
+The former GitHub secrets and variables (`DEPLOY_HOST`, `DEPLOY_SSH_KEY`, `DEPLOY_*`,
+`HOLLOWMERE_DOMAIN`, `TRETU_AUTH_ISSUER`, the Apple and itch ones, and the old `GOOGLE_CLIENT_ID`,
+`APPLE_CLIENT_ID`, `DISCORD_CLIENT_ID`) are no longer used; delete them in the repository settings.
 
 ## 12. Deploy an update
 
-Same steps as every Tretu app (CI does this on tags):
+Same steps as every Tretu app (the deploy agent runs them for HEAD of `main` once `tools/ci/check.sh` passed there):
 
 ```bash
 cd /srv/hollowmere
@@ -450,12 +442,12 @@ git pull --ff-only                       # or: git fetch --tags && git checkout 
 # no npm ci: the MCP relay has no dependencies
 server/nakama/nakama.sh check            # Lua modules load
 server/nakama/nakama.sh migrate          # nakama migrate up (also runs on every PM2 start)
-# build = the web export from CI, rsynced to /var/www/hollowmere/site (step 8)
+# build = tools/release/build_web.sh for the same commit, rsynced to /var/www/hollowmere/site (step 8)
 pm2 reload ecosystem.config.cjs --update-env
 curl -sf https://hollowmere.tretu.de/api/health
 ```
 
-Rollback: check out the previous tag and reload; rsync the previous web artifact. Engine files are
+Rollback: check out the previous commit or tag, reload, and rsync its web build (`tools/release/build_web.sh` on that commit). Engine files are
 named `hm-<content hash>.*`, so browsers cannot keep a stale wasm under a new name.
 
 ## 13. Social sign-in (removed)

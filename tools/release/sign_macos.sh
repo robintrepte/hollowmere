@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Signs Hollowmere.app with a Developer ID, notarizes it with Apple and staples the ticket.
-# Runs on macOS (a CI macos runner or your Mac).
+# Runs on macOS (your Mac).
 #
 #   tools/release/sign_macos.sh build/macos/Hollowmere.zip
 #
 # Environment:
 #   MACOS_SIGN_IDENTITY   "Developer ID Application: Your Name (TEAMID)"
-#   MACOS_CERT_P12_BASE64 + MACOS_CERT_PASSWORD   optional: imports the certificate into a temp keychain (CI)
+#   MACOS_CERT_P12_BASE64 + MACOS_CERT_PASSWORD   optional: imports the certificate into a temp keychain
 #   APPLE_API_KEY_ID, APPLE_API_ISSUER, APPLE_API_KEY_BASE64   App Store Connect API key (.p8) for notarytool
 set -euo pipefail
 
